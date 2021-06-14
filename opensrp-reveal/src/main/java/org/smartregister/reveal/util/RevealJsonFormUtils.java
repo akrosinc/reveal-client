@@ -591,6 +591,12 @@ public class RevealJsonFormUtils {
                             dataCollector);
                 }
 
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.DISTRICT_MANAGERS, fieldsMap.get(JsonForm.DISTRICT_MANAGER),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
                 if (isZambiaIRSLite()) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA));
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
@@ -604,16 +610,23 @@ public class RevealJsonFormUtils {
             case JsonForm.TEAM_LEADER_DOS_SENEGAL:
 
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        Constants.CONFIGURATION.DATA_COLLECTORS, fieldsMap.get(JsonForm.DATA_COLLECTOR),
+                        CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
                         PreferencesUtil.getInstance().getCurrentDistrict());
 
-                dataCollector = JsonFormUtils.getString(fieldsMap.get(JsonForm.DATA_COLLECTOR), VALUE);
+                dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
                 if (StringUtils.isNotBlank(dataCollector)) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
                             dataCollector.split(":")[0]);
                 }
-
+                if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA){
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.DISTRICT_MANAGERS, fieldsMap.get(JsonForm.DISTRICT_MANAGER),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                }
                 if (isZambiaIRSLite()) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA));
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
