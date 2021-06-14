@@ -1,0 +1,89 @@
+---
+name: step1_total_males
+description: Total Males Treated
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_male_6_to_11_mos,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_1_to_4,0))+ Integer.valueOf(helper.ifNull(step1_treated_male_5_to_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_above_16,0))"
+---
+name: step1_total_female
+description: Total Females Treated
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_female_6_to_11_mos,0)) +  Integer.valueOf(helper.ifNull(step1_treated_female_1_to_4,0))  +  Integer.valueOf(helper.ifNull(step1_treated_female_5_to_15,0))  + Integer.valueOf(helper.ifNull(step1_treated_female_above_16,0))"
+---
+name: step1_business_status
+description: Business status calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_task_complete == 'Yes' ? 'Complete': 'In Progress' "
+---
+name: step1_total_tablet_admin_max
+description: step1_total_tablet_admin_max
+priority: 1
+condition: "true"
+actions:
+ - "calculation = (step1_received_when.equals('Initial balance') ? step1_received_number : 999999999)"
+
+---
+name: step1_total_males_label
+description: step1_total_males_label
+priority: 1
+condition: "true"
+actions:
+ - "calculation = [ 'total_males' : step1_total_males ]"
+---
+name: step1_total_females_label
+description: step1_total_females_label
+priority: 1
+condition: "true"
+actions:
+ - "calculation = [ 'total_female' : step1_total_female ]"
+
+---
+name: step1_total_males_and_females
+description: step1_total_males_and_females
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_total_female,0)) + Integer.valueOf(helper.ifNull(step1_total_males,0))"
+
+---
+name: step1_total_tablet_less_administered_max
+description: step1_total_tablet_less_administered_max
+priority: 1
+condition: "true"
+actions:
+ - "calculation = (step1_received_when.equals('Initial balance') ? (Integer.valueOf(helper.ifNull(step1_received_number,0)) - Integer.valueOf(helper.ifNull(step1_adminstered,0))) : 999999999)"
+
+---
+name: step1_sum_treated_6_to_11_mos
+description: step1_sum_treated_6_to_11_mos
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_male_6_to_11_mos,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_6_to_11_mos,0))"
+---
+name: step1_sum_treated_1_to_4
+description: step1_sum_treated_1_to_4
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_male_1_to_4,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_1_to_4,0))"
+
+---
+name: step1_sum_treated_above_16
+description: step1_sum_treated_above_16
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_male_above_16,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_above_16,0))"
+---
+name: step1_sum_treated_5_to_15
+description: step1_sum_treated_5_to_15
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_male_5_to_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_5_to_15,0))"
