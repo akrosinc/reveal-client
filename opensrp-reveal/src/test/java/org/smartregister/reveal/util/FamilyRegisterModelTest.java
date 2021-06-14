@@ -14,12 +14,10 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
-import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.family.domain.FamilyEventClient;
 import org.smartregister.reveal.BaseUnitTest;
 import org.smartregister.reveal.model.FamilyRegisterModel;
-import org.smartregister.util.Cache;
 import org.smartregister.util.JsonFormUtils;
 
 import java.util.List;
@@ -48,8 +46,6 @@ public class FamilyRegisterModelTest extends BaseUnitTest {
     @Mock
     public FormUtils formUtils;
 
-    private Location location = TestingUtils.getOperationalArea();
-
     @Captor
     private ArgumentCaptor<String> formNameCaptor;
 
@@ -59,10 +55,6 @@ public class FamilyRegisterModelTest extends BaseUnitTest {
     public void setUp() {
         familyRegisterModel = new FamilyRegisterModel("struct1", "task1", COMPLETE,
                 Task.TaskStatus.READY.name(), "test house");
-        PreferencesUtil.getInstance().setCurrentOperationalArea(location.getId());
-        Cache<Location> cache = new Cache<>();
-        cache.get(location.getId(), () -> location);
-        Whitebox.setInternalState(Utils.class, "cache", cache);
     }
 
     @Test
@@ -87,8 +79,6 @@ public class FamilyRegisterModelTest extends BaseUnitTest {
         assertEquals("task1", actualEvent.getDetails().get(TASK_IDENTIFIER));
         assertEquals(COMPLETE, actualEvent.getDetails().get(TASK_BUSINESS_STATUS));
         assertEquals("struct1", actualEvent.getDetails().get(LOCATION_UUID));
-        assertEquals(location.getId(),actualEvent.getLocationId());
-        assertEquals(location.getId(),actualClient.getLocationId());
         assertEquals(Task.TaskStatus.READY.name(), actualEvent.getDetails().get(TASK_STATUS));
         assertEquals(expectedPlanId, actualEvent.getDetails().get(PLAN_IDENTIFIER));
 
