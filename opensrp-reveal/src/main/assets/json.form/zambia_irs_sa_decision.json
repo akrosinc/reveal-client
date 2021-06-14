@@ -8,13 +8,13 @@
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "start",
-      "openmrs_entity_id": ""
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "end": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "end",
-      "openmrs_entity_id": ""
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "today": {
       "openmrs_entity_parent": "",
@@ -59,6 +59,10 @@
         "type": "edit_text",
         "hint": "Please write the name of the Village for this Spray Area",
         "text_size": "7sp",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Please enter a valid name"
+        },
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -397,7 +401,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Please make sure the SUPs know where they can find all remaining structures that were missed.",
+        "text": "Please make sure the SOPs know where they can find all remaining structures that were missed.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
