@@ -1,0 +1,87 @@
+---
+name: step1_treated_male_6_to_11_mos
+description: step1_treated_male_6_to_11_mos
+priority: 1
+condition: "step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_treated_male_1_to_4
+description: step1_treated_male_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('PZQ')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_treated_male_5_to_15
+description: step1_treated_male_5_to_15
+priority: 1
+condition: "!step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_treated_male_above_16
+description: step1_treated_male_above_16
+priority: 1
+condition: "!step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_treated_female_6_to_11_mos
+description: step1_treated_female_6_to_11_mos
+priority: 1
+condition: "step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_treated_female_1_to_4
+description: step1_treated_female_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('PZQ')"
+actions:
+  - "isRelevant = true"
+
+---
+name: step1_treated_female_5_to_15
+description: step1_treated_female_5_to_15
+priority: 1
+condition: "!step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+
+---
+name: step1_treated_female_above_16
+description: step1_treated_female_above_16
+priority: 1
+condition: "!step1_ntd_treated.equals('Vitamin A')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_received_number
+description: step1_received_number
+priority: 1
+condition: "!step1_received_when.equals('None')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pzq_drug_validation_err
+description: step1_pzq_drug_validation_err
+priority: 1
+condition: "step1_ntd_treated.equals('PZQ') && (step1_drugs.equals('ALB') || step1_drugs.equals('MEB') || step1_drugs.equals('VITA'))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_alb_meb_drug_validation_err
+description: step1_alb_meb_drug_validation_err
+priority: 1
+condition: "step1_ntd_treated.equals('ALB/MEB') && (step1_drugs.equals('PZQ') ||  step1_drugs.equals('VITA'))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_vita_drug_validation_err
+description: step1_vita_drug_validation_err
+priority: 1
+condition: "step1_ntd_treated.equals('Vitamin A') && (step1_drugs.equals('PZQ') ||  step1_drugs.equals('MEB') ||  step1_drugs.equals('ALB'))"
+actions:
+  - "isRelevant = true"
+
