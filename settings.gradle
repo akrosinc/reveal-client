@@ -1,1 +1,1 @@
-include ':reveal-app'
+include ':reveal-client'
