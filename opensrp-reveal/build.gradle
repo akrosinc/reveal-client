@@ -20,24 +20,7 @@ allprojects {
     repositories {
         maven { url 'https://maven.google.com' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        maven {
-            def githubProperties = new Properties()
-            if (rootProject.file("github.properties").exists()) {
-                githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-            }
-
-            name = "GitHubPackages"
-            /*  Configure path to the library hosted on GitHub Package Registry
-             *  Replace UserID with package owner userID and REPOSITORY with the repository name
-             *  e.g. ""https://maven.pkg.github.com/opensrp/opensrp-client-reporting""
-             */
-            url = uri("https://maven.pkg.github.com/onaio/kujaku")
-            credentials {
-                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
-            }
-
-        }
+        maven { url "http://dl.bintray.com/ona/kujaku" }
         maven { url 'https://maven.fabric.io/public' }
         mavenLocal()
     }
@@ -70,8 +53,8 @@ android {
         applicationId "org.smartregister.reveal"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 34
-        versionName "5.3.26"
+        versionCode 33
+        versionName "5.3.25"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -164,13 +147,13 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"https://reveal-stage.smartregister.org/opensrp/"'
+            resValue "string", 'opensrp_base_url', '"https://openspr-mcp-sn.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.THAILAND_EN"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.SENEGAL"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -223,7 +206,7 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
     }
 
-    implementation('org.smartregister:opensrp-client-core:4.3.3-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-core:4.2.11-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -235,7 +218,7 @@ dependencies {
         exclude group: 'com.ibm.fhir', module:'fhir-model'
     }
 
-    testImplementation 'com.ibm.fhir:fhir-model:4.7.0'
+    testImplementation 'com.ibm.fhir:fhir-model:4.2.3'
     implementation('org.smartregister:opensrp-client-configurable-views:1.1.5-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'org.smartregister', module: 'opensrp-client-core'

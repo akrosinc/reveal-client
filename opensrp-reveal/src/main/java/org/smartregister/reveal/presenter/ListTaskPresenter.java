@@ -87,7 +87,6 @@ import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORM
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
-import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
@@ -119,7 +118,6 @@ import static org.smartregister.reveal.util.Utils.getPropertyValue;
 import static org.smartregister.reveal.util.Utils.isFocusInvestigation;
 import static org.smartregister.reveal.util.Utils.isFocusInvestigationOrMDA;
 import static org.smartregister.reveal.util.Utils.isKenyaMDALite;
-import static org.smartregister.reveal.util.Utils.isRwandaMDALite;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 import static org.smartregister.reveal.util.Utils.validateFarStructures;
 
@@ -255,8 +253,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
         if (taskDetailsList != null && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
                 || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA)) {
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL)) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
@@ -336,7 +333,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         String code = getPropertyValue(feature, TASK_CODE);
         selectedFeatureInterventionType = code;
         if ((IRS.equals(code) || MOSQUITO_COLLECTION.equals(code) || LARVAL_DIPPING.equals(code) || PAOT.equals(code) || IRS_VERIFICATION.equals(code) || REGISTER_FAMILY.equals(code))
-                && (NOT_VISITED.equals(businessStatus) || businessStatus == null) || shouldOpenCDDSupervisionForm(businessStatus, code) || shouldOpenCellCoordinatorForm(businessStatus,code)) {
+                && (NOT_VISITED.equals(businessStatus) || businessStatus == null) || shouldOpenCDDSupervisionForm(businessStatus, code)) {
             if (validateFarStructures()) {
                 validateUserLocation();
             } else {
@@ -369,11 +366,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         return CDD_SUPERVISION.equals(code) && isKenyaMDALite() && (NOT_VISITED.equals(businessStatus) || IN_PROGRESS.equals(businessStatus));
     }
 
-
-    private boolean shouldOpenCellCoordinatorForm(String businessStatus, String code) {
-        return CELL_COORDINATION.equals(code) && isRwandaMDALite() && (NOT_VISITED.equals(businessStatus) || IN_PROGRESS.equals(businessStatus));
-    }
-
     private void onFeatureSelectedByLongClick(Feature feature) {
         String businessStatus = getPropertyValue(feature, TASK_BUSINESS_STATUS);
         String code = getPropertyValue(feature, TASK_CODE);
@@ -382,7 +374,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         selectedFeatureInterventionType = code;
         if (INACTIVE.name().equals(status)) {
             listTaskView.displayToast(R.string.structure_is_inactive);
-        } if (isKenyaMDALite() || isRwandaMDALite()) {
+        } if (isKenyaMDALite()) {
             listTaskView.displayEditCDDTaskCompleteDialog();
         } else if (NOT_VISITED.equals(businessStatus) || !feature.hasProperty(TASK_IDENTIFIER)) {
             listTaskView.displayMarkStructureInactiveDialog();
@@ -562,15 +554,19 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                         dataCollector);
             }
 
+            if(JsonForm.SPRAY_FORM_SENEGAL.equals(formName)){
+                jsonFormUtils.populateCompoundStructureOptions(formJson, org.smartregister.reveal.util.Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()));
+            }
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fields.get(JsonForm.LOCATION_ZONE),prefsUtil.getCurrentFacility());
         } else if (JsonForm.SPRAY_FORM_REFAPP.equals(formName)) {
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DATA_COLLECTORS, jsonFormUtils.getFields(formJson).get(JsonForm.DATA_COLLECTOR), prefsUtil.getCurrentDistrict());
         } else if (cardDetails instanceof SprayCardDetails && isZambiaIRSLite()) {
             jsonFormUtils.populateForm(event, formJson);
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson);
         } else if(isZambiaIRSLite()) {
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
-        }else if(isKenyaMDALite() || isRwandaMDALite()){
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,feature);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson);
+        }else if(isKenyaMDALite()){
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson);
         }
         listTaskView.startJsonForm(formJson);
     }
@@ -626,7 +622,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         listTaskView.setGeoJsonSource(getFeatureCollection(), null, isChangeMapPosition());
-       if(!isKenyaMDALite() && !isRwandaMDALite()){
+       if(!isKenyaMDALite()){
            listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
        }
     }
@@ -774,8 +770,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-
         listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
+        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
     }
 
     @Override
@@ -939,4 +935,5 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
         listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
     }
+
 }

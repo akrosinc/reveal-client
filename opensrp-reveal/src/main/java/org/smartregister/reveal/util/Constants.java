@@ -71,7 +71,7 @@ public interface Constants {
     String ACTIONS = "actions";
     String THAILAND_SYNC_INTERVAL = "720";
 
-    int SYNC_BACK_OFF_DELAY = 8000;
+    int SYNC_BACK_OFF_DELAY = 5000;
 
     interface CONFIGURATION {
         String LOGIN = "login";
@@ -149,8 +149,6 @@ public interface Constants {
         String VILLAGE = "Village";
         String OPERATIONAL_AREA = "Operational Area";
         String ZONE = "Zones";
-        String SECTOR = "Sector";
-        String CELL = "Cell";
     }
 
     interface Properties {
@@ -233,9 +231,6 @@ public interface Constants {
                 PAOT, IRS, IRS_VERIFICATION);
 
         String CDD_SUPERVISION = "CDD Supervision";
-
-        String CELL_COORDINATION = "Cell Coordination";
-
     }
 
 
@@ -275,9 +270,6 @@ public interface Constants {
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT);
-
-        String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
-
     }
 
     interface Tables {
@@ -291,6 +283,7 @@ public interface Constants {
         String STRUCTURE_TABLE = "structure";
         String EC_EVENTS_TABLE = "ec_events";
         String EC_EVENTS_SEARCH_TABLE = "ec_events_search";
+        String SPRAYED_STRUCTURES = "sprayed_structures";
     }
 
     interface BusinessStatus {
@@ -446,8 +439,6 @@ public interface Constants {
 
         String CDD_SUPERVISOR_DAILY_SUMMARY_FORM = "json.form/community_drug_distributor_supervisor_daily_summary_form.json";
 
-        String RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM = "json.form/rwanda_cell_coordinator_daily_summary_form.json";
-
         String JSON_FORM_FOLDER = "json.form/";
 
         String LOCATION_COMPONENT_ACTIVE = "my_location_active";
@@ -520,8 +511,6 @@ public interface Constants {
 
         String TABLET_ACCOUNTABILITY_FORM = "json.form/tablet_accountability_form.json";
 
-        String TABLET_ACCOUNTABILITY_FORM_RWANDA = "json.form/rwanda_tablet_accountability_form.json";
-
         String SPRAY_OPERATOR_CODE = "sprayop_code";
 
         String DATA_COLLECTOR = "datacollector";
@@ -569,21 +558,17 @@ public interface Constants {
 
         String CDD_SUPERVISION_TASK_COMPLETE = "task_complete";
 
-        String CELL_COORDINATOR = "cell_coordinator";
+        String LOCATION_ZONE = "location_zone";
 
-        String VILLAGE = "village";
 
-        String HEALTH_EDUCATION_5_TO_15 = "health_education_5_to_15";
+        String COMPOUND_STRUCTURE = "compoundStructure";
 
-        String HEALTH_EDUCATION_ABOVE_16 = "health_education_above_16";
+        String ROOMS_SPRAYED = "rooms_sprayed";
 
-        String SUM_TREATED_6_TO_11_MOS = "sum_treated_6_to_11_mos";
+        String ROOMS_ELIGIBLE = "rooms_eligible";
 
-        String SUM_TREATED_1_TO_4 = "sum_treated_1_to_4";
+        String LOCATION_OTHER = "location_other";
 
-        String SUM_TREATED_5_TO_15 = "sum_treated_5_to_15";
-
-        String SUM_TREATED_ABOVE_16 = "sum_treated_above_16";
 
     }
 
@@ -607,7 +592,6 @@ public interface Constants {
         String SENEGAL_EC_CLIENT_FIELDS = "ec_client_fields_senegal.json";
         String REFAPP_EC_CLIENT_FIELDS = "ec_client_fields_refapp.json";
         String KENYA_EC_CLIENT_FIELDS = "ec_client_fields_kenya.json";
-        String RWANDA_EC_CLIENT_FIELDS = "ec_client_fields_rwanda.json";
     }
 
 
@@ -776,6 +760,15 @@ public interface Constants {
         Object GEOJSON = "geojson";
 
         String DATA_COLLECTION_DATE = "data_collection_date";
+
+
+        String STRUCTURE_HEAD_NAME = "structure_head_name";
+
+        String COMPOUND_HEAD_NAME = "compound_head_name";
+
+        String COMPOUND_STRUCTURE = "compound_structure";
+
+        String SPRAY_DATE = "spray_date";
 
     }
 

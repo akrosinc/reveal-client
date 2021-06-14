@@ -10,6 +10,9 @@ import com.mapbox.geojson.Feature;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.FormUtils;
 
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +22,6 @@ import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
 import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
@@ -62,8 +64,11 @@ import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATIO
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
-import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
+import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
 import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_OTHER;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_ZONE;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_OPERATOR_CODE;
 import static org.smartregister.reveal.util.Constants.JsonForm.YES;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MACEPA_PROVINCES;
@@ -73,9 +78,7 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_G
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
 import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
-import static org.smartregister.reveal.util.Utils.evictCache;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
@@ -87,7 +90,6 @@ public class RevealJsonFormUtils {
 
     private Set<String> nonEditablefields;
     private LocationHelper locationHelper = LocationHelper.getInstance();
-    private StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
 
     public RevealJsonFormUtils() {
         nonEditablefields = new HashSet<>(Arrays.asList(JsonForm.HOUSEHOLD_ACCESSIBLE,
@@ -391,15 +393,9 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.VERIFICATION_FORM_SENEGAL;
             }
         } else if (Constants.EventType.TABLET_ACCOUNTABILITY_EVENT.equals(encounterType)){
-            if(Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)){
-                 formName = JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA;
-            } else if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY)){
-                formName = JsonForm.TABLET_ACCOUNTABILITY_FORM;
-            }
+            formName = JsonForm.TABLET_ACCOUNTABILITY_FORM;
         }else if(Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType) || Intervention.CDD_SUPERVISION.equals(taskCode)){
             return JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM;
-        } else if(Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType) || Intervention.CELL_COORDINATION.equals(taskCode)){
-            return  JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM;
         }
         return formName;
     }
@@ -455,7 +451,7 @@ public class RevealJsonFormUtils {
         if (event == null)
             return;
         JSONArray fields = JsonFormUtils.fields(formJSON);
-            for (int i = 0; i < fields.length(); i++) {
+        for (int i = 0; i < fields.length(); i++) {
             try {
                 JSONObject field = fields.getJSONObject(i);
                 String key = field.getString(KEY);
@@ -484,9 +480,30 @@ public class RevealJsonFormUtils {
                             field.remove(JsonFormConstants.RELEVANCE);
                         }
                     }
-                    if((Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)) && nonEditablefields.contains(key)){
+                    if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && nonEditablefields.contains(key)){
                         field.put(JsonFormConstants.READ_ONLY,true);
                     }
+
+                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+                        if(key.equals(COMPOUND_STRUCTURE)){
+                            populateCompoundStructureOptions(formJSON,Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()));
+                            JSONArray options = field.optJSONArray(OPTIONS);
+                            for(int j=0;j < options.length();j++){
+                                JSONObject option = (JSONObject) options.get(j);
+                                JSONArray value = new JSONArray();
+                                value.put(option);
+                                if(option.get(KEY).equals(obs.getValue())){
+                                    field.put(VALUE,value);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if(key.equals(LOCATION_ZONE) || key.equals(SPRAY_OPERATOR_CODE) || key.equals(LOCATION_OTHER)){
+                            field.put(JsonFormConstants.READ_ONLY,true);
+                        }
+                    }
+
                 }
                 if (JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE))) {
                     generateRepeatingGroupFields(field, event.getObs(), formJSON);
@@ -563,7 +580,7 @@ public class RevealJsonFormUtils {
         return fieldsMap;
     }
 
-    public void populateFormWithServerOptions(String formName, JSONObject formJSON,Feature feature) {
+    public void populateFormWithServerOptions(String formName, JSONObject formJSON) {
 
             Map<String, JSONObject> fieldsMap = getFields(formJSON);
         switch (formName) {
@@ -665,15 +682,6 @@ public class RevealJsonFormUtils {
                         PreferencesUtil.getInstance().getCurrentOperationalArea());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.WARDS, fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
                 break;
-            case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA:
-                populateChildLocations(formJSON, JsonForm.VILLAGE,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
-                setDefaultValue(formJSON,CELL_COORDINATOR,RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-                break;
-            case JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM:
-                setDefaultValue(formJSON,CELL_COORDINATOR, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-                if(feature != null)
-                    setDefaultValue(formJSON,JsonForm.VILLAGE,structureRepository.getLocationById(feature.id()).getProperties().getName());
-                break;
             case JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
@@ -681,10 +689,10 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());
+            default:
                 break;
         }
     }
-
 
     private void populateUserAssignedLocations(JSONObject formJSON, String fieldKey, List<String> allowedTags) {
         JSONArray options = new JSONArray();
@@ -703,30 +711,36 @@ public class RevealJsonFormUtils {
         }
     }
 
-    private void populateChildLocations(JSONObject formJSON, String fieldKey, String parentLocationId) {
-        List<Location> childLocations = structureRepository.getLocationsByParentId(parentLocationId);
+    public void populateCompoundStructureOptions(JSONObject form, Location currentOperationalArea){
+        SQLiteDatabase database = RevealApplication.getInstance().getRepository().getReadableDatabase();
+        JSONObject option;
+        JSONObject property;
         JSONArray options = new JSONArray();
-        if (childLocations == null) {
-            return;
-        }
-        childLocations.stream().map(location -> location.getProperties().getName()).forEach(options::put);
-        JSONObject field = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(formJSON), fieldKey);
+        String locationId  = currentOperationalArea.getId();
+        String query = String.format("SELECT %s,%s FROM %s WHERE %s IS NOT NULL AND %s IN (SELECT %s FROM %s WHERE %s = ? ) ORDER BY %s DESC",Constants.DatabaseKeys.ID,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.Tables.SPRAYED_STRUCTURES,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.DatabaseKeys.BASE_ENTITY_ID,Constants.DatabaseKeys.ID_,Constants.DatabaseKeys.STRUCTURES_TABLE,Constants.DatabaseKeys.PARENT_ID,Constants.DatabaseKeys.SPRAY_DATE);
+        try(Cursor cursor = database.rawQuery(query,new String[]{locationId})){
+            while (cursor.moveToNext()) {
+                property = new JSONObject();
+                property.put("presumed-id","err");
+                property.put("confirmed-id","err");
 
+                String structureId = cursor.getString(cursor.getColumnIndex(Constants.DatabaseKeys.ID));
+                String compoundHeadName = cursor.getString(cursor.getColumnIndex(Constants.DatabaseKeys.COMPOUND_HEAD_NAME));
+
+                option = new JSONObject();
+                option.put(KEY,structureId);
+                option.put(TEXT,compoundHeadName);
+                option.put(JsonFormConstants.MultiSelectUtils.PROPERTY,property);
+                options.put(option);
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error find Sprayed Structures with compound head names ");
+        }
+        JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),COMPOUND_STRUCTURE);
         try {
-            field.put(KEYS, options);
-            field.put(VALUES, options);
+            compoundStructureField.put(OPTIONS, options);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.e(e, "Error populating %s Options",COMPOUND_STRUCTURE);
         }
-    }
-
-    private void setDefaultValue(JSONObject formJSON,String fieldKey,String defaultValue){
-        JSONObject field = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(formJSON),fieldKey);
-        try {
-            field.put(VALUE,defaultValue);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-
     }
 }
