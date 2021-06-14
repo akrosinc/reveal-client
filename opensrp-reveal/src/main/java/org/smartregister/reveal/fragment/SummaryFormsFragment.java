@@ -104,7 +104,14 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnVerificationForm.setVisibility(View.GONE);
             view.findViewById(R.id.separator7).setVisibility(View.GONE);
             view.findViewById(R.id.separator8).setVisibility(View.GONE);
-        }else if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+        } else if(BuildConfig.BUILD_COUNTRY  == Country.ZAMBIA){
+            btnCbSprayArea.setVisibility(View.GONE);
+            view.findViewById(R.id.separator3).setVisibility(View.GONE);
+            btnVerificationForm.setVisibility(View.GONE);
+            view.findViewById(R.id.separator7).setVisibility(View.GONE);
+            btnTabletAccountabilityForm.setVisibility(View.GONE);
+            view.findViewById(R.id.separator8).setVisibility(View.GONE);
+        } else if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
             btnTeamLeaderDos.setVisibility(View.GONE);
             view.findViewById(R.id.separator2).setVisibility(View.GONE);
             btnCbSprayArea.setVisibility(View.GONE);
