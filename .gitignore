@@ -26,9 +26,9 @@ project.properties
 .settings
 build/
 .gradle
-opensrp-reveal/fabric.properties
-opensrp-reveal/reports/
-opensrp-reveal/jacoco.exec
+reveal-app/fabric.properties
+reveal-app/reports/
+reveal-app/jacoco.exec
 jacoco.exec
 release/
 *google-services.json
