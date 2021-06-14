@@ -76,6 +76,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             indicatorDetails = IndicatorUtils.getNamibiaIndicators(operationalArea.getId(), prefsUtil.getCurrentPlanId(), sqLiteDatabase);
             indicatorDetails.setTarget(calculateTarget());
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNamibiaSprayIndicators(this.activity, indicatorDetails));
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+            indicatorDetails  = IndicatorUtils.processRwandaIndicators(this.tasks);
+            indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateRwandaIndicators(this.activity,indicatorDetails));
         }
         return indicatorDetails;
 
@@ -141,13 +144,18 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, coverage));
 
             progressIndicator.setVisibility(View.GONE);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+            progressIndicator.setVisibility(View.GONE);
+            progressIndicator2.setVisibility(View.GONE);
+            progressIndicator3.setTitle("Click Here to show Indicators");
+            progressIndicator3.setSubTitle("");
         }
 
         tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
 
         //Show or hide depending on plan
 
-        ((View) progressIndicator.getParent()).setVisibility(Utils.getInterventionLabel() == R.string.irs ? View.VISIBLE : View.GONE);
+        ((View) progressIndicator.getParent()).setVisibility(Utils.getInterventionLabel() == R.string.irs || BuildConfig.BUILD_COUNTRY == Country.RWANDA ? View.VISIBLE : View.GONE);
 
         if (activity instanceof ListTasksActivity)
             ((ListTasksActivity) activity).positionMyLocationAndLayerSwitcher();
