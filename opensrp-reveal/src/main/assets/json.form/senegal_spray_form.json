@@ -1101,11 +1101,11 @@
         },
         "v_min": {
           "value": "0",
-          "err": "Pregnant Women must be greater than or equal to 0"
+          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
         },
         "v_relative_max": {
           "value": "sprayed_females",
-          "err": "Pregnant Women must be less than female population"
+          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
         },
         "relevance": {
           "rules-engine": {
@@ -1121,7 +1121,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Total Number of Nets Hanging and in Use must be less than or equal to the total population (females + males). Also, it must be less than total available nets.",
+        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1142,7 +1142,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
+        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
         "v_required": {
           "value": "true"
         },
@@ -1163,7 +1163,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
+        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
         "v_required": {
           "value": "true"
         },
@@ -1184,7 +1184,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Number of Children Under 5 Yrs Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
+        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1260,7 +1260,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Female Population in rooms not sprayed",
+        "hint": "Population féminine dans les pièces non traitées",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
@@ -1292,7 +1292,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Female Population in rooms not sprayed is required",
+        "text": "La population féminine dans les pièces non traitées est requise",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1329,7 +1329,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Children <5 years in rooms not sprayed",
+        "hint": "Enfants <5 ans dans des chambres non traitées",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
@@ -1357,7 +1357,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Female Population in rooms not sprayed is required",
+        "text": "La population féminine dans les pièces non traitées est requise",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1401,7 +1401,7 @@
         "type": "edit_text",
         "edit_type": "number",
         "text_size": "8sp",
-        "hint": "Pregnant Women in rooms not sprayed",
+        "hint": "Femmes enceintes dans des chambres non traitées",
         "v_numeric": {
           "value": "true",
           "err": "Les femmes enceintes doivent être un numéro"
@@ -1412,11 +1412,11 @@
         },
         "v_min": {
           "value": "0",
-          "err": "Pregnant Women must be greater than or equal to 0"
+          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
         },
         "v_relative_max": {
           "value": "notsprayed_females",
-          "err": "Pregnant Women must be less than female population"
+          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
         },
         "relevance": {
           "rules-engine": {
@@ -1432,7 +1432,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Female Population in rooms not sprayed is required",
+        "text": "La population féminine dans les pièces non traitées est requise",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1453,7 +1453,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Was a new insecticide sachet mixed at this structure?",
+        "label": "Un nouveau sachet d'insecticide a-t-il été mélangé dans cette structure ?",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
@@ -1479,8 +1479,8 @@
       {
         "key": "serial_numbers",
         "type": "repeating_group",
-        "reference_edit_text_hint": "Number of insecticide sachets mixed",
-        "repeating_group_label": "serial number",
+        "reference_edit_text_hint": "Nombre de sachets d'insecticide mélangés",
+        "repeating_group_label": "numéro de série",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -1498,16 +1498,16 @@
             "openmrs_entity_id": "",
             "type": "edit_text",
             "edit_type": "number",
-            "hint": "Sachet Serial Number",
+            "hint": "Numéro de série du sachet",
             "text_size": "8sp",
             "is_mandatory": true,
             "v_numeric": {
               "value": "true",
-              "err": "Sachet Serial Number must be a number"
+              "err": "Le numéro de série du sachet doit être un nombre"
             },
             "v_numeric_integer": {
               "value": "true",
-              "err": "Sachet Serial Number must be a whole number"
+              "err": "Le numéro de série du sachet doit être un nombre entier"
             },
             "v_required": {
               "value": "true",
@@ -1527,15 +1527,15 @@
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Must be a number"
+          "err": "Doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Must be a whole number"
+          "err": "Doit être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Must be greater than or equal to 0"
+          "err": "Doit être supérieur ou égal à 0"
         },
         "v_max": {
           "value": "99",
@@ -1580,7 +1580,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Total Number of Nets Hanging and in Use must be less than or equal to the total population (females + males). Also, it must be less than total available nets.",
+        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1601,7 +1601,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
+        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1651,7 +1651,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
+        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1701,7 +1701,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Number of Children Under 5 Yrs Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
+        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -2172,7 +2172,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "New Structure Status: {business_status}",
+        "text": "Statut de la nouvelle structure : {business_status}",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
