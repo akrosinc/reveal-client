@@ -267,6 +267,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.SPRAY_FORM_REFAPP;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
                 formName = JsonForm.SPRAY_FORM_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.SPRAY_FORM_SENEGAL_EN;
             } else {
                 formName = JsonForm.SPRAY_FORM;
             }
@@ -688,6 +690,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.SPRAY_FORM_ZAMBIA:
             case JsonForm.SPRAY_FORM_SENEGAL:
+            case JsonForm.SPRAY_FORM_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.DATA_COLLECTORS, fieldsMap.get(JsonForm.DATA_COLLECTOR),
                         PreferencesUtil.getInstance().getCurrentDistrict());

@@ -383,6 +383,8 @@ public interface Constants {
 
         String SPRAY_FORM_SENEGAL = "json.form/senegal_spray_form.json";
 
+        String SPRAY_FORM_SENEGAL_EN = "json.form/senegal_en_spray_form.json";
+
         String LARVAL_DIPPING_FORM = "json.form/larval_dipping_form.json";
 
         String ADD_STRUCTURE_FORM = "json.form/add_structure.json";
