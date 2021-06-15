@@ -58,20 +58,20 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "text_size": "8sp",
-        "label": "Is this a residential structure?",
+        "label": "Est ce que c'est une structure résidentielle?",
         "options": [
           {
             "key": "residential",
-            "text": "Residential"
+            "text": "Résidentielle"
           },
           {
             "key": "nonResidential",
-            "text": "Non-Residential"
+            "text": "Non Résidentielle"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         }
       },
       {
@@ -80,7 +80,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "What type of non-residential structure is this?",
+        "label": "Quel genre de structure non résidentielle est ce?",
         "text_size": "8sp",
         "relevance": {
           "step1:structure_type": {
@@ -91,60 +91,60 @@
         "options": [
           {
             "key": "toilet",
-            "text": "Toilet"
+            "text": "Toilette"
           },
           {
             "key": "kitchen",
-            "text": "Kitchen"
+            "text": "Cuisine"
           },
           {
             "key": "animalShelter",
-            "text": "Animal shelter"
+            "text": "Refuge animalier"
           },
           {
             "key": "foodStorage",
-            "text": "Food storage"
+            "text": "Grenier"
           },
           {
             "key": "school",
-            "text": "School"
+            "text": "Ecole"
           },
           {
             "key": "lodge",
-            "text": "Lodge"
+            "text": "Logement payant"
           },
           {
             "key": "shop",
-            "text": "Shop"
+            "text": "Boutique"
           },
           {
             "key": "office",
-            "text": "Office"
+            "text": "Bureau"
           },
           {
             "key": "hospital",
-            "text": "Hospital"
+            "text": "Hopital"
           },
           {
             "key": "clinic",
-            "text": "Clinic"
+            "text": "Clinique"
           },
           {
             "key": "noStructure",
-            "text": "No structure here"
+            "text": "Pas de structure ici"
           },
           {
             "key": "notHabitable",
-            "text": "Not habitable"
+            "text": "Pas habitable"
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         }
       },
       {
@@ -153,7 +153,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is this structure eligible?",
+        "label": "Est ce que cette structure est eligible",
         "text_size": "8sp",
         "options": [
           {
@@ -162,12 +162,12 @@
           },
           {
             "key": "notEligible",
-            "text": "Not Eligible"
+            "text": "Non eligible"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -183,28 +183,28 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Why is this residential structure not eligible?",
+        "label": "Pourquoi cette structure résidentielle n'est pas éligible?",
         "text_size": "8sp",
         "options": [
           {
             "key": "notSprayableMaterial",
-            "text": "Not sprayable material"
+            "text": "Mur non eligible (matiere)"
           },
           {
             "key": "seasonalHome",
-            "text": "Seasonal home"
+            "text": "Maison saisonniére"
           },
           {
             "key": "noPersonLivesHereNow",
-            "text": "No person lives here now"
+            "text": "Maison abandonnée"
           },
           {
             "key": "structureDoesNotExist",
-            "text": "Structure does not exist"
+            "text": "Structure n'existe pas"
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "relevance": {
@@ -216,7 +216,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         }
       },
       {
@@ -225,19 +225,19 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please type the reason",
+        "hint": "Merci de saisir les raisons",
         "v_max_length": {
           "value": "110",
-          "err": "Not more than 110 characters."
+          "err": "Pas plus de 110 caractéres"
         },
         "v_regex": {
           "value": "[A-Za-z\\s]*",
-          "err": "Please enter a valid reason, no numbers allowed"
+          "err": "Merci de saisir une raison valable, les nombres ne sont pas autorisés\n"
         },
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:residential_noteligible": {
@@ -252,16 +252,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Why is this Non-Residential structure eligible?",
+        "label": "Pourquoi cette structure non résidentielle est éligible?",
         "text_size": "8sp",
         "options": [
           {
             "key": "toilet",
-            "text": "Toilet with roof"
+            "text": "Toilette avec toit"
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "relevance": {
@@ -273,7 +273,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         }
       },
       {
@@ -282,10 +282,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "What is the name of the village this structure is in?",
+        "hint": "Sélectionner le nom village ou se trouve cette structure?",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         }
       },
       {
@@ -294,16 +294,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Specify other village:",
+        "hint": "Spécifier autre village:",
         "edit_type": "name",
         "v_regex": {
           "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Please enter a valid name"
+          "err": "Merci d'entrer un nomp valide"
         },
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:location_zone": {
@@ -318,10 +318,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Select the spray operator code who collected data against this structure",
+        "hint": "Selectionner le code de l'applicateur qui renseigné les données de cette structure",
         "v_required": {
           "value": "true",
-          "err": "Please enter the spray operator code"
+          "err": "Merci de renseigner le code de l'applicateur"
         },
         "relevance": {
           "step1:eligibility": {
@@ -336,15 +336,15 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is this the structure in which the head of the compound lives?",
+        "label": "Est ce la structure ou vit le chef de concession?",
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "v_required": {
@@ -365,16 +365,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please enter the name of the head of the compound",
+        "hint": "Renseigner le nom du chef de concession",
         "edit_type": "name",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "v_regex": {
           "value": "[A-Za-z\\s]*",
-          "err": "Please enter a valid name"
+          "err": "Merci d'entrer un nomp valide"
         },
         "relevance": {
           "step1:compoundheadstructure": {
@@ -389,14 +389,14 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "multi_select_list",
-        "dialogTitle": "Select name of the head of the compound",
-        "buttonText": "+ Select name of the head of the compound",
-        "searchHint": "Type Name head of the compound",
+        "dialogTitle": "Sélectionner le nom du chef de concession",
+        "buttonText": "+ Sélectionner le nom du chef de concession",
+        "searchHint": "Saisir le nom du chef de concession",
         "text_size": "8sp",
         "maxSelectable": "1",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -412,16 +412,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Enter the name of the head of this structure",
+        "hint": "Entrer le nom du chef de cette structure",
         "text_size": "8sp",
         "edit_type": "name",
         "v_regex": {
           "value": "[A-Za-z\\s]*",
-          "err": "Please enter a valid name"
+          "err": "Merci d'entrer un nomp valide"
         },
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:compoundheadstructure": {
@@ -436,21 +436,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Gender",
+        "label": "Genre",
         "text_size": "8sp",
         "options": [
           {
             "key": "male",
-            "text": "Male"
+            "text": "Masculin"
           },
           {
             "key": "female",
-            "text": "Female"
+            "text": "Féminin"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -467,23 +467,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Structure Identification Number",
+        "hint": "Numéro d'identification de la structure",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Please enter a number"
+          "err": "Merci d'entre un nombre"
         },
         "v_min_length": {
           "value": "8",
-          "err": "Must be 8 digits long."
+          "err": "Doit etre 8 chiffres."
         },
         "v_max_length": {
           "value": "8",
-          "err": "Must be 8 digits long."
+          "err": "Doit etre 8 chiffres."
         },
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -499,21 +499,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Were any rooms in this structure sprayed?",
+        "label": "Des pièces de cette structure ont-elles été traitées ?",
         "text_size": "8sp",
         "options": [
           {
             "key": "yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "no",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:eligibility": {
@@ -528,37 +528,37 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Why was this structure not sprayed?",
+        "label": "Pourquoi cette structure n'a-t-elle pas été traitée?",
         "text_size": "8sp",
         "options": [
           {
             "key": "sick",
-            "text": "Sick"
+            "text": "Malade"
           },
           {
             "key": "locked",
-            "text": "Locked"
+            "text": "Fermé à clé"
           },
           {
             "key": "funeral",
-            "text": "Funeral"
+            "text": "Funérailles"
           },
           {
             "key": "refused",
-            "text": "Refused"
+            "text": "Refusé"
           },
           {
             "key": "noOneHome",
-            "text": "No one home"
+            "text": "Personne à la maison"
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:structure_sprayed": {
@@ -603,7 +603,7 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -619,11 +619,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Specify other reason:",
+        "hint": "Spécifiez une autre raison:",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:refused_reason": {
@@ -639,28 +639,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of ELIGIBLE rooms",
+        "hint": "Nombre de chambres ELIGIBLES",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Number of eligible rooms must be a number"
+          "err": "Le nombre de chambres éligibles doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Number of eligible rooms must be a whole number"
+          "err": "Le nombre de chambres éligibles doit être un nombre entier"
         },
         "v_min": {
           "value": "1",
-          "err": "Number of eligible rooms must be greater than or equal to 1"
+          "err": "Le nombre de chambres éligibles doit être supérieur ou égal à 1"
         },
         "v_max": {
           "value": "99",
-          "err": "Cannot be greater than 99"
+          "err": "Ne peut pas être supérieur à 99"
         },
         "relevance": {
           "rules-engine": {
@@ -677,28 +677,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of rooms sprayed in TOTAL",
+        "hint": "Nombre de pièces traitées au TOTAL",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Please specify number of rooms sprayed"
+          "err": "Veuillez préciser le nombre de pièces traitées"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Number of rooms sprayed must be a number"
+          "err": "Le nombre de pièces traitées doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Number of rooms sprayed must be a whole number"
+          "err": "Le nombre de pièces traitées doit être un nombre entier"
         },
         "v_min": {
           "value": "1",
-          "err": "Number of rooms sprayed must be greater than or equal to 1"
+          "err": "Le nombre de pièces traitées doit être supérieur ou égal à 1"
         },
         "v_relative_max": {
           "value": "rooms_eligible",
-          "err": "Number of rooms sprayed cannot be greater than number of eligible rooms."
+          "err": "Le nombre de pièces pulvérisées ne peut pas être supérieur au nombre de pièces éligibles."
         },
         "relevance": {
           "rules-engine": {
@@ -714,7 +714,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "hidden",
-        "hint": "Number of rooms not sprayed",
+        "hint": "Nombre de pièces non traitées",
         "calculation": {
           "rules-engine": {
             "ex-rules": {
@@ -727,7 +727,7 @@
         "key": "partiallysprayed_reasons",
         "type": "repeating_group",
         "reference_edit_text_hint": "Confirmed # rooms not sprayed",
-        "repeating_group_label": "Room Reason",
+        "repeating_group_label": "Raison de la chambre",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -745,24 +745,24 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "Reason why this eligible room was not sprayed",
+            "label": "Raison pour laquelle cette pièce éligible n'a pas été traitée",
             "text_size": "8sp",
             "v_required": {
               "value": "true",
-              "err": "Please select reason"
+              "err": "Veuillez sélectionner la raison"
             },
             "options": [
               {
                 "key": "refused",
-                "text": "Refused"
+                "text": "Refusé"
               },
               {
                 "key": "locked",
-                "text": "Locked"
+                "text": "Fermé à clé"
               },
               {
                 "key": "sick",
-                "text": "Sick"
+                "text": "Malade"
               },
               {
                 "key": "foodStorage",
@@ -774,7 +774,7 @@
               },
               {
                 "key": "other",
-                "text": "Other"
+                "text": "Autre"
               }
             ]
           },
@@ -784,11 +784,11 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
-            "hint": "Specify other reason:",
+            "hint": "Spécifiez une autre raison:",
             "text_size": "8sp",
             "v_required": {
               "value": "true",
-              "err": "Required field"
+              "err": "Champ obligatoire"
             },
             "relevance": {
               "step1:partiallysprayed_reason": {
@@ -802,7 +802,7 @@
       {
         "key": "rooms_sprayed_hint",
         "type": "label",
-        "text": "If this is a mop-up or revisit, please record TOTAL rooms sprayed",
+        "text": "S'il s'agit d'un nettoyage ou d'une nouvelle visite, veuillez enregistrer TOTAL des pièces traitées",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -824,32 +824,32 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Male Population in rooms sprayed",
+        "hint": "Population masculine dans les chambres traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Please specify male population"
+          "err": "Veuillez préciser la population masculine"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Male population must be a number"
+          "err": "La population masculine doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Male population must be a whole number"
+          "err": ""
         },
         "v_min": {
           "value": "0",
-          "err": "Male population must be greater than or equal to 0"
+          "err": "La population masculine doit être supérieure ou égale à 0"
         },
         "v_max": {
           "value": "99",
-          "err": "Male population must be less than 99"
+          "err": "La population masculine doit être inférieure à 99"
         },
         "v_relative_min": {
           "value": "sprayed_totalmale",
-          "err": "You can not enter 0 Male population when head of household gender is Male"
+          "err": "Vous ne pouvez pas saisir 0 Population masculine lorsque le sexe du chef de ménage est un homme"
         },
         "relevance": {
           "rules-engine": {
@@ -866,32 +866,32 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Female Population in rooms sprayed",
+        "hint": "Population féminine dans les chambres traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Please specify female population"
+          "err": "Veuillez préciser la population féminine"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Female population must be a number"
+          "err": "La population féminine doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Female population must be a whole number"
+          "err": "La population féminine doit être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Female population must be greater than or equal to 0"
+          "err": "La population féminine doit être supérieure ou égale à 0"
         },
         "v_max": {
           "value": "99",
-          "err": "Female population must be less than 99"
+          "err": "La population féminine doit être inférieure à 99"
         },
         "v_relative_min": {
           "value": "sprayed_totalfemale",
-          "err": "You can not enter 0 Female population when head of household gender is Female"
+          "err": "Vous ne pouvez pas saisir 0 Population féminine lorsque le sexe du chef de ménage est une femme"
         },
         "relevance": {
           "rules-engine": {
@@ -922,7 +922,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Total population: {sprayed_totalpop}",
+        "text": "Population totale: {sprayed_totalpop}",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -978,7 +978,7 @@
         "openmrs_entity_id": "",
         "type": "check_box",
         "label_text_size": "8sp",
-        "label": "Click the checkbox to approve the total population.",
+        "label": "Cliquez sur la case à cocher pour approuver la population totale.",
         "options": [
           {
             "key": "isConsented",
@@ -998,7 +998,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Please check the item"
+          "err": "Veuillez vérifier l'article"
         }
       },
       {
@@ -1007,7 +1007,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "You can not enter a population of 0 for a sprayed structure",
+        "text": "Vous ne pouvez pas saisir une population de 0 pour une structure traitée",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1029,24 +1029,24 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Children <5 years in rooms sprayed",
+        "hint": "Enfants <5 ans dans des chambres traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Children <5 years is mandatory"
+          "err": "Enfants <5 ans est obligatoire"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Children <5 years must be a number"
+          "err": "Les enfants de moins de 5 ans doivent être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Children <5 years must be a whole number"
+          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Children <5 years must be greater than or equal to 0"
+          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
         },
         "relevance": {
           "rules-engine": {
@@ -1084,20 +1084,20 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Pregnant Women in rooms sprayed",
+        "hint": "Femmes enceintes dans des chambres pulvérisées",
         "is_mandatory": true,
         "text_size": "8sp",
         "v_required": {
           "value": true,
-          "err": "Pregnant Women is mandatory"
+          "err": "Les femmes enceintes est obligatoire"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Pregnant Women must be a number"
+          "err": "Les femmes enceintes doivent être un numéro"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Pregnant Women must be a whole number"
+          "err": "Les femmes enceintes doivent être un nombre entier"
         },
         "v_min": {
           "value": "0",
@@ -1210,19 +1210,19 @@
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Male population must be a number"
+          "err": "La population masculine doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Male population must be a whole number"
+          "err": "La population masculine doit être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Male population must be greater than or equal to 0"
+          "err": "La population masculine doit être supérieure ou égale à 0"
         },
         "v_max": {
           "value": "99",
-          "err": "Male population must be less than 99"
+          "err": "La population masculine doit être inférieure à 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1264,19 +1264,19 @@
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Female population must be a number"
+          "err": "La population féminine doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Female population must be a whole number"
+          "err": "La population féminine doit être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Female population must be greater than or equal to 0"
+          "err": "La population féminine doit être supérieure ou égale à 0"
         },
         "v_max": {
           "value": "99",
-          "err": "Female population must be less than 99"
+          "err": "La population féminine doit être inférieure à 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1333,15 +1333,15 @@
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Children <5 years must be a number"
+          "err": "Les enfants de moins de 5 ans doivent être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Children <5 years must be a whole number"
+          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
         },
         "v_min": {
           "value": "0",
-          "err": "Children <5 years must be greater than or equal to 0"
+          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
         },
         "relevance": {
           "rules-engine": {
@@ -1404,11 +1404,11 @@
         "hint": "Pregnant Women in rooms not sprayed",
         "v_numeric": {
           "value": "true",
-          "err": "Pregnant Women must be a number"
+          "err": "Les femmes enceintes doivent être un numéro"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Pregnant Women must be a whole number"
+          "err": "Les femmes enceintes doivent être un nombre entier"
         },
         "v_min": {
           "value": "0",
@@ -1457,16 +1457,16 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "options": [
           {
             "key": "yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "no",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "relevance": {
@@ -1511,7 +1511,7 @@
             },
             "v_required": {
               "value": "true",
-              "err": "Required field"
+              "err": "Champ obligatoire"
             }
           }
         ]
@@ -1523,7 +1523,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of ELIGIBLE rooms",
+        "hint": "Nombre de chambres ELIGIBLES",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
@@ -1539,7 +1539,7 @@
         },
         "v_max": {
           "value": "99",
-          "err": "Cannot be greater than 99"
+          "err": "Ne peut pas être supérieur à 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1727,16 +1727,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -1757,16 +1757,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:sbc": {
@@ -1822,12 +1822,12 @@
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:about_malaria": {
@@ -1846,7 +1846,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:information": {
@@ -1903,12 +1903,12 @@
           },
           {
             "key": "other",
-            "text": "Other"
+            "text": "Autre"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -1928,7 +1928,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:preferred_source": {
@@ -1953,16 +1953,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Non"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "rules-engine": {
@@ -1996,7 +1996,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:health_service": {
@@ -2015,7 +2015,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:health_service": {
@@ -2034,7 +2034,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:hfc_seek": {
@@ -2053,7 +2053,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:health_service": {
@@ -2072,7 +2072,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:hfc_belong": {
@@ -2092,11 +2092,11 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Oui"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Non"
           },
           {
             "key": "dontKnow",
@@ -2105,7 +2105,7 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:health_service": {
@@ -2124,7 +2124,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:chw": {
@@ -2143,7 +2143,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Required field"
+          "err": "Champ obligatoire"
         },
         "relevance": {
           "step1:hfc_belong": {
