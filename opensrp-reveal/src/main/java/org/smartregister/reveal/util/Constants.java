@@ -507,6 +507,8 @@ public interface Constants {
 
         String DAILY_SUMMARY_SENEGAL= "json.form/senegal_daily_summary.json";
 
+        String DAILY_SUMMARY_SENEGAL_EN= "json.form/senegal_en_daily_summary.json";
+
         String TEAM_LEADER_DOS_SENEGAL = "json.form/senegal_team_leader_dos.json";
 
         String CB_SPRAY_AREA_SENEGAL = "json.form/senegal_cb_spray_area.json";

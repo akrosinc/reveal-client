@@ -366,6 +366,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.DAILY_SUMMARY_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.DAILY_SUMMARY_SENEGAL;
+            }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.DAILY_SUMMARY_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_FIELD_OFFICER_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
@@ -620,6 +622,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.DAILY_SUMMARY_ZAMBIA:
             case JsonForm.DAILY_SUMMARY_SENEGAL:
+            case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
                         PreferencesUtil.getInstance().getCurrentDistrict());
