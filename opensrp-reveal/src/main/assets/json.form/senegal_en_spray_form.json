@@ -573,32 +573,32 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Pourquoi ont-ils refusé l'IRS ?",
+        "label": "Why did they refuse IRS?",
         "text_size": "8sp",
         "options": [
           {
             "key": "notSafe",
-            "text": "Pas sécurisé"
+            "text": "Not safe"
           },
           {
             "key": "fearOfChemical",
-            "text": "Peur du chimique"
+            "text": "Fear of chemical"
           },
           {
             "key": "notWorthInconvinience",
-            "text": "Ne vaut pas le dérangement"
+            "text": "Not worth the inconvenience"
           },
           {
             "key": "makesBugsAppear",
-            "text": "Fait apparaître des bugs"
+            "text": "Makes bugs appear"
           },
           {
             "key": "religiousObjection",
-            "text": "Objection religieuse"
+            "text": "Religious objection"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
