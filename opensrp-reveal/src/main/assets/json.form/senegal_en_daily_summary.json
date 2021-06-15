@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Saisir le formulaire de synthése journaliére",
+    "title": "Enter Daily Summary Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,11 +57,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Date de la collecte",
+        "hint": "What is the date that this data collection happened?",
         "max_date": "today",
         "v_required": {
           "value": true,
-          "err": "Merci de spécifier la date de la collecte"
+          "err": "Please specify the date data collection was done"
         }
       },
       {
@@ -71,14 +71,14 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "name",
-        "hint": "Nom de la localité",
+        "hint": "Please write the name of the Zone/Location",
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
         },
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -94,7 +94,7 @@
         "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -106,7 +106,7 @@
         "hint": "District Manager name",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -118,7 +118,7 @@
         "hint": "Name of Coordinator/Decision Maker/Supervisor",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -130,7 +130,7 @@
         "hint": "Name of Team Leader who conducted observation",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -139,10 +139,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Nom de l'applicateur",
+        "hint": "Spray Operator name",
         "v_required": {
           "value": "true",
-          "err": "Merci de saisir le code l'applicateur"
+          "err": "Please enter the spray operator code"
         }
       },
       {
@@ -152,34 +152,34 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de structures éligibles trouvées par applicateur",
+        "hint": "Number of eligible structures FOUND by the SOP",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Le nombre de structures éligibles trouvées par applicateur est obligatoire"
+          "err": "Number of eligible structures FOUND by the SOP is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre un nombre"
+          "err": "Number of eligible structures FOUND by the SOP must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre une nombre entier"
+          "err": "Number of eligible structures FOUND by the SOP must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre une nombre entier"
+          "err": "Number of eligible structures FOUND by the SOP must be greater than or equal to 0"
         },
         "v_max": {
           "value": "50",
-          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre infierieur à 50"
+          "err": "Number of eligible structures FOUND by the SOP must be less than 50"
         }
       },
       {
         "key": "found_hint",
         "type": "label",
-        "text": "Vérifiez que cela correspond au nombre total enregistré sur la fiche de collecte de l'applicateur",
+        "text": "Check this matches with the total number recorded on the SOP paper form",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -195,34 +195,34 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de structures éligibles TRAITEES par applicateur",
+        "hint": "Number of eligible structures SPRAYED by the SOP",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Nombre de structures éligibles TRAITEES par applicateur est obligatoire"
+          "err": "Number of eligible structures SPRAYED by the SOP is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre un nombre"
+          "err": "Number of eligible structures SPRAYED by the SOP must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre un nombre entier"
+          "err": "Number of eligible structures SPRAYED by the SOP must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre supérieur ou égal à 0"
+          "err": "Number of eligible structures SPRAYED by the SOP must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "found",
-          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre inférieur au nombre de structures trouvées"
+          "err": "Number of eligible structures SPRAYED by the SOP must be less than eligible structures found."
         }
       },
       {
         "key": "sprayed_hint",
         "type": "label",
-        "text": "Vérifiez que cela correspond au numéro enregistré sur la fiche de collecte de l'applicateur",
+        "text": "Check this matches with the number recorded on the SOP paper form",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -243,23 +243,23 @@
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Le champ est mandatory"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le champ doit etre un nombre"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le champ doit etre un nombre entier"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Le champ doit etre superieur ou égal à 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_max": {
           "value": "10",
-          "err": "Le champ doit etre inférieur à 10"
+          "err": "This field must be less than 10"
         }
       },
       {
@@ -274,23 +274,23 @@
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Le champ est mandatory"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le champ doit etre un nombre"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le champ doit etre un nombre entier"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Le champ doit etre superieur ou égal à 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "bottles_start",
-          "err": "Doit etre inférieur ou égal au sachets reçus"
+          "err": "Must be less than or equal to sachets received"
         }
       },
       {
@@ -305,19 +305,19 @@
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Le champ est mandatory"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Doit etre un nombre"
+          "err": "Must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Doit etre un nombre entier"
+          "err": "Must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Doit etre inférieur ou égal à 0"
+          "err": "Must be greater than or equal to 0"
         }
       },
       {
@@ -326,7 +326,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Doit etre inférieur ou égal au nombre de sachets recus moins le nombre de sachets pleins",
+        "text": "Must be less than or equal to the number of sachets received minus sachets full",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -348,24 +348,24 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Combien de sachets sont perdus ou gatés",
+        "hint": "How many sachets/bottles were lost or damaged?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Le champ est mandatory"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Doit etre un nombre"
+          "err": "Must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Doit etre un nombre entier"
+          "err": "Must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Doit etre inférieur ou égal à 0"
+          "err": "Must be greater than or equal to 0"
         }
       },
       {
@@ -374,7 +374,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Doit etre inférieur ou égal au nombre de sachets recus moins le nombre de sachets pleins minus sachets empty",
+        "text": "Must be less than or equal to the number of sachets received minus sachets full minus sachets empty",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -429,7 +429,7 @@
         "openmrs_entity_id": "",
         "type": "check_box",
         "label_text_size": "8sp",
-        "label": "Merci de vérifier si c'est correct.",
+        "label": "Please confirm if this is correct.",
         "options": [
           {
             "key": "isConsented",
@@ -456,7 +456,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Merci de vérifier l'item"
+          "err": "Please check the item"
         }
       },
       {
@@ -470,20 +470,20 @@
         "options": [
           {
             "key": "lost",
-            "text": "Perdu"
+            "text": "Lost"
           },
           {
             "key": "damaged",
-            "text": "Endommagé"
+            "text": "Damaged"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -499,11 +499,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Merci de saisir la raison de la nom comptabilisation des sachets",
+        "hint": "Please write the reason for the unaccounted bottles/sachets",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:bottles_reason": {
