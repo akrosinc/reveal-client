@@ -196,6 +196,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.DAILY_SUMMARY_ZAMBIA);
                 } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_SENEGAL);
+                }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                    presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_team_leader_dos:
