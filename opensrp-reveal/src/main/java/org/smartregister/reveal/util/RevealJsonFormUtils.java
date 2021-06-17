@@ -495,7 +495,7 @@ public class RevealJsonFormUtils {
                         field.put(JsonFormConstants.READ_ONLY,true);
                     }
 
-                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY)){
                         if(key.equals(COMPOUND_STRUCTURE)){
                             populateCompoundStructureOptions(formJSON,Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()));
                             JSONArray options = field.optJSONArray(OPTIONS);
