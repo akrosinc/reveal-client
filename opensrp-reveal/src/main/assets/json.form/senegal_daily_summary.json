@@ -238,7 +238,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many full bottles/sachets were RECEIVED by the SOP at the beginning of the day?",
+        "hint": "Combien de sachets ont été RECUS par l'applicateur en début de journée",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -269,7 +269,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many FULL bottles/sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "Combien de sachets PLEINS ont été RETOURNES par l'applicateur à la fin de la journée",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -300,7 +300,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many EMPTY bottles/sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "Combien de sachets VIDES ont été RETOURNES par l'appliacteur à la fin de la journée?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
