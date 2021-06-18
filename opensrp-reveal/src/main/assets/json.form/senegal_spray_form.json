@@ -1206,7 +1206,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Male Population in rooms not sprayed",
+        "hint": "Population masculine dans les pièces non traitées",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
