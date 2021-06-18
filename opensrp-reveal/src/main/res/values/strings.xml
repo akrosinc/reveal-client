@@ -220,7 +220,9 @@
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
     <string name="partially_sprayed">Partially Sprayed</string>
+
     <string name="daily_summary">Enter Daily Summary Form</string>
+
     <string name="team_leader_dos">Enter Team Leader DOS Form</string>
     <string name="cb_spray_area">Enter CB Spray Area Visit Form</string>
     <string name="irs_sa_decision">Enter IRS SA Decision Form</string>

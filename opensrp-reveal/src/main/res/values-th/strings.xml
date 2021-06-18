@@ -221,7 +221,8 @@
     <string name="discard_changes_msg">การดำเนินการนี้จะยกเลิกการแก้ไขที่ไม่ได้บันทึกที่คุณทำไว้ในขอบเขตกลุ่มบ้าน</string>
     <string name="tap_point_msg">แตะจุดดำเพื่อย้ายหรือลบ</string>
     <string name="drag_selected_point_msg">ลากจุดที่เลือกเพื่อเปลี่ยนขอบเขต</string>
-
+    <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
     <string name="menu">เมนู</string>
     <string name="offline_maps">แผนที่แบบออฟไลน์</string>
     <string name="device_data_synced">ซิงค์ข้อมูลในอุปกรณ์แล้ว</string>
