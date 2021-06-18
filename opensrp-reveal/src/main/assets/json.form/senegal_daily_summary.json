@@ -74,7 +74,7 @@
         "hint": "Nom de la localité",
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
+          "err": "Merci d'entrer un nomp valide"
         },
         "v_required": {
           "value": "true",
