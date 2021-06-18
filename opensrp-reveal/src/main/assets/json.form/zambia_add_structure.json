@@ -83,15 +83,6 @@
         "openmrs_entity_id": ""
       },
       {
-        "key": "structureName",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Name of structure",
-        "edit_type": "name"
-      },
-      {
         "key": "zoom_level",
         "type": "hidden",
         "openmrs_entity_parent": "",
