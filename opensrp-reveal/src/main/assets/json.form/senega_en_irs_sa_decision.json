@@ -57,11 +57,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Veuillez écrire le nom du village pour cette zone d'aspersion",
+        "hint": "Please write the name of the Village for this Spray Area",
         "text_size": "7sp",
         "v_required": {
           "value": "true",
-          "err": "Champs requis"
+          "err": "Required field"
         }
       },
       {
@@ -71,24 +71,24 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Combien de structures y a-t-il dans cette zone de pulvérisation ? (structures au sol répertoriées sur le tableau de bord Reveal) »",
+        "hint": "How many structures are in this Spray Area? (structures on ground as listed on the Reveal dashboard)",
         "is_mandatory": true,
         "text_size": "7sp",
         "v_required": {
           "value": true,
-          "err": "Ce champ est obligatoire"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Ce champ doit être un nombre"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Ce champ doit être un nombre entier"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
+          "err": "This field must be greater than or equal to 0"
         }
       },
       {
@@ -112,7 +112,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Pour atteindre 90 % d'efficacité d'aspersion, votre équipe doit pulvériser au moins {structures_toreach90} structures.",
+        "text": "To reach 90% spray effectiveness, your team must spray at least {structures_toreach90} structures.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -131,28 +131,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "« Combien de structures ont été traitées ? (comme indiqué sur le tableau de bord Reveal) »",
+        "hint": "How many structures were sprayed? (as listed on the Reveal dashboard)",
         "is_mandatory": true,
         "text_size": "7sp",
         "v_required": {
           "value": true,
-          "err": "Ce champ est obligatoire"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Ce champ doit être un nombre"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Ce champ doit être un nombre entier"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "structures_ground",
-          "err": "Le nombre de structures pulvérisées doit être inférieur au nombre de structures au sol."
+          "err": "The number of structures sprayed must be less than the number of structures on the ground."
         }
       },
       {
@@ -206,7 +206,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "L'efficacité de la pulvérisation est de {spray_effectiveness} % et il reste encore {structures_remaining} structures éligibles. Cela comprend à la fois les structures qui n'ont pas été trouvées et les structures qui ont été trouvées mais non traitées. Au moins {structures_tospray} doivent encore être traitées pour atteindre 90 % d'efficacité de.",
+        "text": " Spray effectiveness is {spray_effectiveness}% and {structures_remaining} eligible structures are still remaining. This includes both structures that have not been found and structures that were found but not sprayed. At least {structures_tospray} must still be sprayed to reach 90% spray effectiveness.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -247,25 +247,25 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "« Quelle était la principale raison pour laquelle le taux d'efficacité n'a pas été atteint à 90 % ? (Nonn trouvée ou non traitée ?)",
+        "label": "What was the main reason for not reaching 90% spray effectiveness? (Not Found or Not Sprayed?)",
         "text_size": "8sp",
         "options": [
           {
             "key": "lowCoverage",
-            "text": "Faible couverture trouvée"
+            "text": "Low Found Coverage"
           },
           {
             "key": "lowSuccess",
-            "text": "Faible taux de réussite de pulvérisation"
+            "text": "Low Spray Success Rate"
           },
           {
             "key": "both",
-            "text": "Les deux ci-dessus"
+            "text": "Both of the Above"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champs requis"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -281,32 +281,32 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Quelle est la principale raison qui a contribué au faible taux de réussite de pulvérisation ?",
+        "label": "What was the main reason contributing to Low Spray Success Rate?",
         "text_size": "8sp",
         "options": [
           {
             "key": "sick",
-            "text": "Malade"
+            "text": "Sick"
           },
           {
             "key": "locked",
-            "text": "Fermé à clé"
+            "text": "Locked"
           },
           {
             "key": "funeral",
-            "text": "Funérailles"
+            "text": "Funeral"
           },
           {
             "key": "refused",
-            "text": "Refusé"
+            "text": "Refused"
           },
           {
             "key": "noOneHome",
-            "text": "Personne à la maison/manqué"
+            "text": "No One Home/Missed"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           },
           {
             "key": "na",
@@ -315,7 +315,7 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Champs requis"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -331,7 +331,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Veuillez vous assurer que la mobilisation a été bien faite pour s'assurer que les gens sont à la maison lors de la pulvérisation.",
+        "text": "Please make sure mobilization has been done well to ensure people are at home when spraying occurs.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -349,7 +349,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Veuillez vous assurer que vous avez pris les mesures appropriées pour promouvoir l'acceptation de la pulvérisation dans les zones qui ont connu un nombre élevé de refus.",
+        "text": "Please make sure you've taken the appropriate steps to promote acceptance of spraying in the areas that had high refusals.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -367,21 +367,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Envisagez-vous de retourner dans cette zone de pulvérisation ?",
+        "label": "Are you planning to return to this Spray Area?",
         "text_size": "8sp",
         "options": [
           {
             "key": "yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "no",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champs requis"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -397,7 +397,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Veuillez vous assurer que les applicateurs savent où ils peuvent trouver toutes les structures restantes qui ont été manquées.",
+        "text": "Please make sure the SUPs know where they can find all remaining structures that were missed.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -415,10 +415,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "« Qui prend cette décision ? »",
+        "hint": "Who is making this decision?",
         "v_required": {
           "value": "true",
-          "err": "Ce champ est requis."
+          "err": "This field is required."
         }
       },
       {
@@ -428,23 +428,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Combien d'équipes d'applicateur doivent retourner dans cette zone de pulvérisation ?",
+        "hint": "How many SOP teams need to return to this Spray Area?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Ce champ est obligatoire"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Ce champ doit être un nombre"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Ce champ doit être un nombre entier"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -460,11 +460,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Veuillez fournir une raison valable pour ne pas revenir pour vous assurer que cette zone de d'aspersion est traitée efficacement.",
+        "hint": "Please provide a valid reason for not returning to ensure this Spray Area is being Sprayed Effectively.",
         "text_size": "7sp",
         "v_required": {
           "value": "true",
-          "err": "Champs requis"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -485,7 +485,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "L'efficacité de la pulvérisation est de {spray_effectiveness} %. Félicitations, cette zone a été traitée efficacement !",
+        "text": " Spray effectiveness is {spray_effectiveness}%. Congratulations this area was sprayed effectively!",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
