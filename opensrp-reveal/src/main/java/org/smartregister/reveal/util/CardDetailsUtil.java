@@ -44,7 +44,7 @@ public class CardDetailsUtil {
         if (cardDetails == null || cardDetails.getStatus() == null)
             return;
         // extract status color
-        String status = cardDetails.getStatus();
+        String status = getBaseBusinessStatus(cardDetails.getStatus());
         switch (status) {
             case BusinessStatus.NOT_SPRAYED:
             case BusinessStatus.INCOMPLETE:
@@ -258,7 +258,6 @@ public class CardDetailsUtil {
             default:
                 return businessStatus;
         }
-
     }
 
     /**
@@ -286,6 +285,32 @@ public class CardDetailsUtil {
         }
 
 
+    }
+
+    public static String getBaseBusinessStatus(String businessStatus){
+        Context context =  RevealApplication.getInstance().getContext().applicationContext();
+        if(context.getString(R.string.not_visited).equals(businessStatus)){
+            return NOT_VISITED;
+        } else if (context.getString(R.string.not_sprayed).equals(businessStatus)){
+            return NOT_SPRAYED;
+        } else if (context.getString(R.string.sprayed).equals(businessStatus)){
+            return SPRAYED;
+        } else if (context.getString(R.string.not_sprayable).equals(businessStatus)){
+            return NOT_SPRAYABLE;
+        } else if (context.getString(R.string.complete).equals(businessStatus)){
+            return COMPLETE;
+        } else if (context.getString(R.string.incomplete).equals(businessStatus)){
+            return INCOMPLETE;
+        } else if (context.getString(R.string.not_eligible).equals(businessStatus)){
+            return NOT_ELIGIBLE;
+        } else if (context.getString(R.string.in_progress).equals(businessStatus)){
+            return IN_PROGRESS;
+        } else if (context.getString(R.string.sprayed).equals(businessStatus) && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL)){
+            return PARTIALLY_SPRAYED;
+        } else if( context.getString(R.string.partially_sprayed).equals(businessStatus)){
+            return PARTIALLY_SPRAYED;
+        }
+        return businessStatus;
     }
 
 
