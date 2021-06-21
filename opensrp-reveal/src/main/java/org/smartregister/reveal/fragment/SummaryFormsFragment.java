@@ -124,6 +124,17 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             view.findViewById(R.id.separator8).setVisibility(View.GONE);
             btnIrsFieldOfficer.setVisibility(View.GONE);
             view.findViewById(R.id.separator6).setVisibility(View.GONE);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+            btnTeamLeaderDos.setVisibility(View.GONE);
+            view.findViewById(R.id.separator2).setVisibility(View.GONE);
+            btnCbSprayArea.setVisibility(View.GONE);
+            view.findViewById(R.id.separator3).setVisibility(View.GONE);
+            btnMobilization.setVisibility(View.GONE);
+            view.findViewById(R.id.separator5).setVisibility(View.GONE);
+            btnVerificationForm.setVisibility(View.GONE);
+            view.findViewById(R.id.separator7).setVisibility(View.GONE);
+            btnTabletAccountabilityForm.setVisibility(View.GONE);
+            view.findViewById(R.id.separator8).setVisibility(View.GONE);
         }
 
         setClickListeners();
@@ -237,6 +248,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.IRS_FIELD_OFFICER_ZAMBIA);
                 } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.IRS_FIELD_OFFICER_SENEGAL);
+                } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                    presenter.showBasicForm(Constants.JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_verification_form:

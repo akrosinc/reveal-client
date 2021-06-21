@@ -256,7 +256,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         if (taskDetailsList != null && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
                 || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
                 || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA)) {
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
@@ -315,7 +316,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         listTaskView.closeAllCardViews();
         listTaskView.displaySelectedFeature(feature, clickedPoint);
         if (isLongclick && (BuildConfig.BUILD_COUNTRY != Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL)) {
+                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL || BuildConfig.BUILD_COUNTRY != Country.SENEGAL_EN)) {
             onFeatureSelectedByLongClick(feature);
         } else {
             onFeatureSelectedByNormalClick(feature);
