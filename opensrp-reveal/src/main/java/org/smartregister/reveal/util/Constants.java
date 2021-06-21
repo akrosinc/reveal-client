@@ -519,10 +519,11 @@ public interface Constants {
 
         String IRS_SA_DECISION_SENEGAL_EN = "json.form/senegal_en_irs_sa_decision.json";
 
-
         String MOBILIZATION_FORM_SENEGAL = "json.form/senegal_mobilization_form.json";
 
         String IRS_FIELD_OFFICER_SENEGAL = "json.form/senegal_irs_field_officer.json";
+
+        String IRS_FIELD_OFFICER_SENEGAL_EN = "json.form/senegal_en_irs_field_officer.json";
 
         String VERIFICATION_FORM_SENEGAL = "json.form/senegal_verification_form.json";
 

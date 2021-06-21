@@ -22,7 +22,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
 
     @Override
     protected void addOnDoneAction(TextView textView) {
-        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY) ){
             String inputText = textView.getText().toString();
             if(inputText.isEmpty()){
                 textView.setError(PLEASE_ENTER_A_VALUE_ERROR_MESSAGE);

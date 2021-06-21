@@ -376,6 +376,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.IRS_FIELD_OFFICER_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_SA_DECISION_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
@@ -501,7 +503,7 @@ public class RevealJsonFormUtils {
                         field.put(JsonFormConstants.READ_ONLY,true);
                     }
 
-                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY)){
                         if(key.equals(COMPOUND_STRUCTURE)){
                             populateCompoundStructureOptions(formJSON,Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()));
                             JSONArray options = field.optJSONArray(OPTIONS);
@@ -617,6 +619,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
             case JsonForm.IRS_FIELD_OFFICER_SENEGAL:
+            case JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.FIELD_OFFICERS, fieldsMap.get(JsonForm.FIELD_OFFICER),
                         PreferencesUtil.getInstance().getCurrentDistrict());
@@ -649,7 +652,7 @@ public class RevealJsonFormUtils {
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(HEALTH_CENTER));
                 } else {
-                    if(!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY))
+                    if(!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)  && !Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY))
                         populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
                 break;
