@@ -217,53 +217,53 @@ public class IndicatorUtils {
         EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
 
         List<Event> dataCaptured = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
-        value  = dataCaptured.stream().map(event -> event.getObs())
+        value  = dataCaptured.stream().map(Event::getObs)
                                               .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_5_TO_15)).findFirst().get())
                                               .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setHealthEducatedChildren5To15(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_ABOVE_16)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setHealthEducatedChildrenAbove16(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_6_TO_11_MOS)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setVitaminTreatedChildren6To11Months(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setVitaminTreatedChildren12To59Months(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> (obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4))).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildren12To59Months(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildren5To15Years(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(PZQ)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setPzqTreatedChildren5To15Years(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getValue().equals(ALB_MEB)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildrenAbove16Years(value);
 
-        value = dataCaptured.stream().map(event -> event.getObs())
+        value = dataCaptured.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getValue().equals(PZQ)).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
