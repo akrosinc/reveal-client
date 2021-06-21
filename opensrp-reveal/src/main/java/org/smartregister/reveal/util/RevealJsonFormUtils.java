@@ -382,6 +382,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.IRS_SA_DECISION_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.IRS_SA_DECISION_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.IRS_SA_DECISION_SENEGAL_EN;
             }
         } else if (Constants.EventType.MOBILIZATION_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
@@ -605,6 +607,7 @@ public class RevealJsonFormUtils {
             case JsonForm.IRS_LITE_VERIFICATION:
             case JsonForm.MOBILIZATION_FORM_ZAMBIA:
             case JsonForm.IRS_SA_DECISION_SENEGAL:
+            case JsonForm.IRS_SA_DECISION_SENEGAL_EN:
             case JsonForm.CB_SPRAY_AREA_SENEGAL:
             case JsonForm.MOBILIZATION_FORM_SENEGAL:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),

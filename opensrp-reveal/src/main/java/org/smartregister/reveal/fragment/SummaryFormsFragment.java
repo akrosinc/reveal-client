@@ -221,6 +221,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.IRS_SA_DECISION_ZAMBIA);
                 } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.IRS_SA_DECISION_SENEGAL);
+                } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                    presenter.showBasicForm(Constants.JsonForm.IRS_SA_DECISION_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_mobilization_form:
