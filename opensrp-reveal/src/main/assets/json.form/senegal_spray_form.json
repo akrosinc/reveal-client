@@ -537,6 +537,25 @@
         }
       },
       {
+        "key": "notsprayed_reason_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Spécifiez une autre raison:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:notsprayed_reason": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
         "key": "refused_reason",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
