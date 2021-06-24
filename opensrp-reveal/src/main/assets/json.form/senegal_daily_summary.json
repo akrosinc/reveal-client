@@ -89,7 +89,7 @@
         "type": "multi_select_list",
         "buttonText": "Select the SA(s) that this spray operator worked in today",
         "dialogTitle": "Select the SA(s) that this spray operator worked in today",
-        "searchHint": "Type Spray Area Name",
+        "searchHint": "Saisier le nom de la zone d'aspersion",
         "source": "true",
         "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
         "v_required": {
@@ -103,7 +103,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "District Manager name",
+        "hint": "Nom du manager du district",
         "v_required": {
           "value": "true",
           "err": "Champ obligatoire"
@@ -115,7 +115,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Coordinator/Decision Maker/Supervisor",
+        "hint": "Nom du coodinateur/Décideur/Superviseur",
         "v_required": {
           "value": "true",
           "err": "Champ obligatoire"
@@ -410,7 +410,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "A total of {bottles_accounted} bottles / sachets are unaccounted for.",
+        "text": "Un total de {bottles_accounted} n'a pas été retrouvé",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -465,7 +465,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Select a reason for the unaccounted bottles/sachets",
+        "label": "Selectionner une raison pour les sachte non retrouvés",
         "text_size": "8sp",
         "options": [
           {
