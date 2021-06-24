@@ -2025,25 +2025,6 @@
         "type": "hidden"
       },
       {
-        "key": "district",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "What district are you in?",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
         "key": "hfc_seek",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
