@@ -399,8 +399,8 @@
           "err": "Required field"
         },
         "v_regex": {
-          "value": "^$|0[0-9]{8,9}",
-          "err": "Number must be 9-10 digits and must start with 0."
+          "value": "^[0-9]{9,10}$",
+          "err": "Number must be 9-10 digits"
         },
         "relevance": {
           "step1:compoundheadstructure": {
