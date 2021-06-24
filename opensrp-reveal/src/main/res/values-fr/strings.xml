@@ -111,7 +111,7 @@
     <string name="map">Carte</string>
     <string name="hamburger_menu">Menu Hamburger </string>
     <string name="focus_investigation">Focus Investigation</string>
-    <string name="summary_forms">Other Forms</string>
+    <string name="summary_forms">Autres formulaires</string>
     <string name="irs">IRS</string>
     <string name="mda">MDA</string>
     <string name="task_icon">Task Icon</string>
@@ -234,13 +234,13 @@
 
 
     <string name="found_coverage">Found Coverage</string>
-    <string name="spray_coverage">Spray Coverage</string>
-    <string name="structures_remaining_90">Structures Remaining 90%</string>
-    <string name="total_structures">Total Structures</string>
-    <string name="structures_not_visited">Structures Not Visited</string>
-    <string name="structures_visited_found">Structures Visited/Found</string>
+    <string name="spray_coverage">Taux d\'aspersion (Couverture)</string>
+    <string name="structures_remaining_90">Structures restantes 90%</string>
+    <string name="total_structures">Total structures</string>
+    <string name="structures_not_visited">Strutcures non visitées</string>
+    <string name="structures_visited_found">Structures visitées/trouvées</string>
     <string name="structures_sprayed">Structures Sprayed</string>
-    <string name="structures_not_sprayed">Structures Not Sprayed</string>
+    <string name="structures_not_sprayed">Sttructures non traitées</string>
     <string name="room_coverage">Room coverage of sprayed</string>
     <string name="target_coverage">Target coverage</string>
     <string name="structures_targeted">Structures targeted</string>
@@ -391,7 +391,7 @@
     <string name="device_data_not_synced">Device data not synced</string>
     <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
-    <string name="filled_forms">Filled Forms</string>
+    <string name="filled_forms">Formulaires renseignés</string>
     <string name="event_date">Date</string>
     <string name="form_name">Form Name</string>
     <string name="sop">SOP</string>
