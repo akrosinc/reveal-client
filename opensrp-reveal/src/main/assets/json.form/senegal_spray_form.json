@@ -438,7 +438,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Genre",
+        "label": "Sexe",
         "text_size": "8sp",
         "options": [
           {
@@ -714,7 +714,7 @@
       {
         "key": "partiallysprayed_reasons",
         "type": "repeating_group",
-        "reference_edit_text_hint": "Confirmed # rooms not sprayed",
+        "reference_edit_text_hint": "Confirmer le nbre pieces non traités",
         "repeating_group_label": "Raison de la chambre",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -754,11 +754,11 @@
               },
               {
                 "key": "foodStorage",
-                "text": "Food Storage"
+                "text": "Grenier"
               },
               {
                 "key": "dontWantToClear",
-                "text": "Didn't want to clear"
+                "text": "Ne veux pas sortir ses bagages"
               },
               {
                 "key": "other",
