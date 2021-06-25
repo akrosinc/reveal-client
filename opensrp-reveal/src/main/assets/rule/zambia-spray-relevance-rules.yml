@@ -72,7 +72,7 @@ actions:
 name: step1_sprayed_nets_use
 description: step1_sprayed_nets_use
 priority: 1
-condition: "step1_structure_sprayed.equals('yes') && step1_eligibility.equals('eligible')"
+condition: "step1_structure_sprayed.equals('yes') && step1_eligibility.equals('eligible') && helper.ifNull(step1_sprayed_nets_available,0) > 0 "
 actions:
   - "isRelevant = true"
 ---
@@ -261,5 +261,20 @@ name: step1_preferred_source
 description: step1_preferred_source
 priority: 1
 condition: "step1_sbc.equals('Yes') && step1_about_malaria.equals('Yes') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
+actions:
+  - "isRelevant = true"
+---
+name: step1_compoundheadstructure
+description: step1_compoundheadstructure
+priority: 1
+condition: "step1_eligibility.equals('eligible') && !step1_nonresidential_type.equals('toilet')"
+actions:
+  - "isRelevant = true"
+
+---
+name: step1_compoundStructure
+description: step1_compoundStructure
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('No')"
 actions:
   - "isRelevant = true"

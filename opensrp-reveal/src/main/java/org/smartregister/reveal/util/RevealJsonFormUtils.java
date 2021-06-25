@@ -80,9 +80,7 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_G
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
 import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
-import static org.smartregister.reveal.util.Utils.evictCache;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
@@ -335,6 +333,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.THAILAND_ADD_STRUCTURE_FORM;
             } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
                 formName = JsonForm.NAMIBIA_ADD_STRUCTURE_FORM;
+            }else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA){
+                formName = JsonForm.ZAMBIA_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }
@@ -503,7 +503,7 @@ public class RevealJsonFormUtils {
                         field.put(JsonFormConstants.READ_ONLY,true);
                     }
 
-                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY)){
+                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY) ||  Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY)){
                         if(key.equals(COMPOUND_STRUCTURE)){
                             populateCompoundStructureOptions(formJSON,Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()));
                             JSONArray options = field.optJSONArray(OPTIONS);
