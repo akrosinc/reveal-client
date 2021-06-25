@@ -360,7 +360,10 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     geometry.setCoordinates(coordinates);
                     structure.setGeometry(geometry);
                     LocationProperty properties = new LocationProperty();
-                    String structureType = event.findObs(null, false, STRUCTURE_TYPE).getValue().toString();
+                    Obs structureTypeObs = event.findObs(null,false,STRUCTURE_TYPE);
+                    String structureType = null;
+                    if(structureTypeObs != null)
+                       structureType = structureTypeObs.getValue().toString();
                     properties.setType(structureType);
                     properties.setEffectiveStartDate(now);
                     properties.setParentId(operationalAreaId);
@@ -385,7 +388,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
                         task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
                     } else {
-                        if (StructureType.RESIDENTIAL.equals(structureType)) {
+                        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);
                         } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {

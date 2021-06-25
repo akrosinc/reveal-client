@@ -305,21 +305,97 @@
         }
       },
       {
+        "key": "compoundheadstructure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this the structure in which the head of household lives?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "compoundheadname",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please enter the name of the head of household",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s]*",
+          "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:compoundheadstructure": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "compoundStructure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "multi_select_list",
+        "dialogTitle": "Select name of the head of household",
+        "buttonText": "+ Select name of the head of household",
+        "searchHint": "Type Name of head of household",
+        "text_size": "8sp",
+        "maxSelectable": "1",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "nameHoH",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Name of structure household head",
+        "hint": "Name of structure head",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
         },
         "relevance": {
-          "step1:eligibility": {
+          "step1:compoundheadstructure": {
             "type": "string",
-            "ex": "equalTo(., \"eligible\")"
+            "ex": "equalTo(., \"No\")"
           }
         }
       },
