@@ -389,7 +389,7 @@ public interface Constants {
 
         String ADD_STRUCTURE_FORM = "json.form/add_structure.json";
 
-        String ZAMBIA_ADD_STRUCTURE_FORM = "json.form/zambia_add_structure.json";
+        String IRS_ADD_STRUCTURE_FORM = "json.form/irs_add_structure.json";
 
         String BEDNET_DISTRIBUTION_FORM = "json.form/bednet_distribution.json";
 
