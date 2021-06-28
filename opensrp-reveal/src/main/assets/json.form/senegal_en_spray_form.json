@@ -394,12 +394,8 @@
           "value": "true",
           "err": "Please enter a number"
         },
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "v_regex": {
-          "value": "^[0-9]{9}$",
+          "value": "^$|^[0-9]{9}$",
           "err": "Number must be 9 digits"
         },
         "relevance": {
@@ -1496,10 +1492,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Sachet Serial Number must be a whole number"
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
             }
           }
         ]

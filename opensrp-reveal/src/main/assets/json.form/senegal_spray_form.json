@@ -394,12 +394,8 @@
           "value": "true",
           "err": "Please enter a number"
         },
-        "v_required": {
-          "value": "true",
-          "err": "Champ obligatoire"
-        },
         "v_regex": {
-          "value": "^[0-9]{9}$",
+          "value": "^$|^[0-9]{9}$",
           "err": "Number must be 9 digits"
         },
         "relevance": {
@@ -1496,10 +1492,6 @@
             "v_numeric_integer": {
               "value": "true",
               "err": "Le numéro de série du sachet doit être un nombre entier"
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Champ obligatoire"
             }
           }
         ]
