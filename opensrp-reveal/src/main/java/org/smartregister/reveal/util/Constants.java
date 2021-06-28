@@ -383,11 +383,13 @@ public interface Constants {
 
         String SPRAY_FORM_SENEGAL = "json.form/senegal_spray_form.json";
 
+        String SPRAY_FORM_SENEGAL_EN = "json.form/senegal_en_spray_form.json";
+
         String LARVAL_DIPPING_FORM = "json.form/larval_dipping_form.json";
 
         String ADD_STRUCTURE_FORM = "json.form/add_structure.json";
 
-        String ZAMBIA_ADD_STRUCTURE_FORM = "json.form/zambia_add_structure.json";
+        String IRS_ADD_STRUCTURE_FORM = "json.form/irs_add_structure.json";
 
         String BEDNET_DISTRIBUTION_FORM = "json.form/bednet_distribution.json";
 
@@ -509,15 +511,21 @@ public interface Constants {
 
         String DAILY_SUMMARY_SENEGAL= "json.form/senegal_daily_summary.json";
 
+        String DAILY_SUMMARY_SENEGAL_EN= "json.form/senegal_en_daily_summary.json";
+
         String TEAM_LEADER_DOS_SENEGAL = "json.form/senegal_team_leader_dos.json";
 
         String CB_SPRAY_AREA_SENEGAL = "json.form/senegal_cb_spray_area.json";
 
         String IRS_SA_DECISION_SENEGAL = "json.form/senegal_irs_sa_decision.json";
 
+        String IRS_SA_DECISION_SENEGAL_EN = "json.form/senegal_en_irs_sa_decision.json";
+
         String MOBILIZATION_FORM_SENEGAL = "json.form/senegal_mobilization_form.json";
 
         String IRS_FIELD_OFFICER_SENEGAL = "json.form/senegal_irs_field_officer.json";
+
+        String IRS_FIELD_OFFICER_SENEGAL_EN = "json.form/senegal_en_irs_field_officer.json";
 
         String VERIFICATION_FORM_SENEGAL = "json.form/senegal_verification_form.json";
 

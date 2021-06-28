@@ -284,7 +284,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         if(BuildConfig.SELECT_JURISDICTION) {
             findViewById(R.id.btn_add_structure).setVisibility(View.GONE);
         }
-        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
             sprayCardView.findViewById(R.id.btn_undo_spray).setVisibility(View.GONE);
         }
     }
@@ -357,7 +357,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                         RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
 
-                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL) {
+                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN) {
                             layerSwitcherFab.setVisibility(View.GONE);
                         }
 
@@ -435,7 +435,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
-                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA) {
+                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
             int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
