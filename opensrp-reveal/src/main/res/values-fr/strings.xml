@@ -1,45 +1,45 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Actions -->
-    <string name="action_logout">Logout</string>
+<!-- Actions -->
+    <string name="action_logout">Se déconnecter</string>
     <!-- General -->
     <string name="reveal_app_name" translatable="false">Reveal</string>
     <string name="app_name" translatable="false">@string/reveal_app_name</string>
     <!--Temp -->
-    <string name="unauthorized">Please check the credentials</string>
-    <string name="unauthorized_group">Your user group is not allowed to access this device</string>
-    <string name="unknown_response">login failed. Try later</string>
-    <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity</string>
-    <string name="login_text">Log In</string>
-    <string name="show_password_text">Show password</string>
+    <string name="unauthorized">Merci de vérifier le nom d\'utilisateur et le mot de passe</string>
+    <string name="unauthorized_group">Votre groupe d\'utilisateur ne vous permet pas d\'accés</string>
+    <string name="unknown_response">Echec de la connexion, Essayer plutard</string>
+    <string name="no_internet_connectivity">Pas de connexion Internet. Merci de vérifier la connexion de données</string>
+    <string name="login_text">Se connecter </string>
+    <string name="show_password_text">Afficher mot de passe</string>
     <string name="url_separator">/</string>
 
-    <string name="device_timezone_changed">"The device's timezone changed. Please login again."</string>
-    <string name="device_time_changed">"The device's time has changed. Please login again."</string>
+    <string name="device_timezone_changed">"Le Time Zone de l'équipement a changé. Merci de vous reconnecter."</string>
+    <string name="device_time_changed">"L'heure de l'équipement à changé.Merci de vous reconnecter."</string>
 
-    <string name="prompt_password">Enter Password </string>
-    <string name="prompt_username">Enter Username</string>
+    <string name="prompt_password">Entrer le mot de passe </string>
+    <string name="prompt_username">Entrer le nom d\'utilisateur</string>
     <string name="reveal">Reveal</string>
-    <string name="sync">Sync</string>
+    <string name="sync">Synchroniser</string>
     <string name="campaign">Plan</string>
-    <string name="operational_area">Operational Area</string>
+    <string name="operational_area">Zone d\'Opération</string>
 
-    <string name="offline_maps">Offline Maps</string>
+    <string name="offline_maps">Cartes offline</string>
     <string name="app_version">Version %1$s</string>
-    <string name="app_updated">Updated %1$s</string>
+    <string name="app_updated">Mise à jour %1$s</string>
     <string name="district">District:</string>
-    <string name="facility">Location:</string>
+    <string name="facility">Localité:</string>
     <string name="canton">Canton:</string>
-    <string name="operator">User:</string>
+    <string name="operator">Utilisateur:</string>
 
-    <string name="fetch_location_and_structures_failed">This operational area has not been defined in the system. Please try to sync your device. Please contact the system administrator if that doesn\'t solve the issue noting the operational area number %1$s.</string>
+    <string name="fetch_location_and_structures_failed">Cette zone d’opération n’a pas été défini dans le systéme. Merci d’essayer de syncrhoniser votre tablette/smartphone. Merci de contacter l’administrateur du système si ça ne résous pas le probléme noté le le numéro de la zone d’opération%1$s.</string>
     <string name="fetch_structures_title">Loading failed</string>
-    <string name="fetching_structures_title">Fetching Structures</string>
-    <string name="fetching_structures_message">Fetching Structures for Selected Operational Area and Plan</string>
+    <string name="fetching_structures_title">Récupération de structures</string>
+    <string name="fetching_structures_message">Récupération de structures pour les zones d\'opération et plan sélectionnés</string>
 
-    <string name="select_campaign_operational_area_title">Plan and Operational area not set</string>
-    <string name="select_campaign_operational_area">Plan and Operational area not set. Select from the hamburger menu</string>
-    <string name="revoked_plan_operational_area">Previously selected Plan and/or Operational area revoked. Select from the hamburger menu</string>
 
+    <string name="select_campaign_operational_area_title">Le plan et la zone d\'opération n\'est pas configurer </string>
+    <string name="select_campaign_operational_area">Le plan et la zone d\'opération n\'est pas configuré.Sélectionner à partir du menu Hamburger</string>
+    <string name="revoked_plan_operational_area">Plan précédemment sélectionné et/ou domaine opérationnel révoqué. Choisissez dans le menu hamburgers</string>
     <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
     <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
     <string name="reveal_streets_style" translatable="false">reveal-streets-style.json</string>
@@ -50,42 +50,43 @@
     <string name="base_map_feature_json" translatable="false">base_map_feature.json</string>
 
 
-    <string name="task_not_found">This structure does not have a task assigned to it for the Plan %1s</string>
+    <string name="task_not_found">Aucune tache n\'est assigné pour le Plan  %1s</string>
 
-    <string name="error_fetching_location_hierarchy_title">Error Processing Locations Hierarchy</string>
-    <string name="error_fetching_location_hierarchy">Error Processing Location Hierarchy. Log off to download location hierarchy again</string>
+    <string name="error_fetching_location_hierarchy_title">Erreur dans le traitement de la hiérarchie</string>
 
-    <string name="selected_datasource_name" translatable="false">select-data</string>
+    <string name="error_fetching_location_hierarchy">Erreur dans le traitement de la hiérarchie. Déconnectez-vous pour télécharger la hiérarchie à nouveau</string>
 
-    <string name="irs_task_description"> Visit the structure, assess and perform spray activities.</string>
-    <string name="poat_task_description"> Update Potential Areas of Transmission</string>
-    <string name="irs_verification_task_description"> Visit each structure in the operational area and verify status</string>
+    <string name="selected_datasource_name">selectionnez-données</string>
 
-    <string name="form_save_failure_title">Error Saving Form</string>
-    <string name="spray_form_save_failure">Error saving spray form</string>
-    <string name="add_structure_form_save_failure">Error saving add structure form</string>
-    <string name="zoom_in_to_select">Zoom in to select a structure</string>
+    <string name="irs_task_description"> Visiter la structure, enquéter et réaliser l\'aspersion.</string>
+    <string name="poat_task_description"> Mettre à jour les zones potentielles de transmission</string>
+    <string name="irs_verification_task_description"> Visiter toutes les structres de la zone d\'aspersion et vérifier le statut</string>
+
+    <string name="form_save_failure_title">Erreur de sauvegarde du formulaire</string>
+    <string name="spray_form_save_failure">Erreur de sauvegarde du formulaire d\'aspersion</string>
+    <string name="add_structure_form_save_failure">Erreur de sauvegarde du formulaire d\'aspersion et de structure</string>
+    <string name="zoom_in_to_select">Zoomer sur une structure sélectionner</string>
 
 
-    <string name="details_sprayed">Sprayable, Sprayed</string>
-    <string name="details_not_sprayed">Sprayable, Not Sprayed</string>
-    <string name="details_not_sprayable">Not Sprayable</string>
-    <string name="no_structures_found">There are no structures mapped to this operational area. Please add a point to begin</string>
-    <string name="change_spray_status">Change Spray Status</string>
+    <string name="details_sprayed">Eligible, Traitée</string>
+    <string name="details_not_sprayed">Eligible, Non Traitée</string>
+    <string name="details_not_sprayable">Non Eligible</string>
+    <string name="no_structures_found">Il n\'existe pas de structure cartographiée pour cette zone d\'aspersion. Merci d\'ajouter le point pour débuter</string>
+    <string name="change_spray_status">Changer le statut d\'aspersion</string>
     <string name="reveal_icon">Reveal Icon</string>
 
     <string name="attribution_text">Powered by OpenSRP \nBuilt on mSpray and DiSARM</string>
     <string name="thailand_attribution_text">Powered by Reveal</string>
 
-    <string name="request_password_title">You are not near the structure</string>
-    <string name="enter_admin_password"> Input admin password</string>
-    <string name="wrong_admin_password">Wrong admin password</string>
+    <string name="request_password_title">Vous n\'êtes pas a côté de cette structure</string>
+    <string name="enter_admin_password">Saisissez le mot de passe administrateur</string>
+    <string name="wrong_admin_password">Mot de passe incorrect</string>
 
-    <string name="saving_title">Saving</string>
-    <string name="saving_message">Saving form in Progress. Please wait</string>
+    <string name="saving_title">Enregistrement</string>
+    <string name="saving_message">Enregistrement du formulaire en cours. Merci de patienter</string>
 
-    <string name="fetching_structure_title">Fetching Structure Details</string>
-    <string name="fetching_structure_message">Fetching Structure Details. Please wait</string>
+    <string name="fetching_structure_title">Récupération des informations de la structure</string>
+    <string name="fetching_structure_message">Récupération des informations de la structure. Merci de patienter</string>
 
     <string name="fetching_mosquito_collection_points_title">Fetching Mosquito Collection Point Details</string>
     <string name="fetching_mosquito_collection_points_message">Fetching Mosquito Collection Point Details. Please wait</string>
@@ -93,30 +94,29 @@
     <string name="fetching_larval_dipping_points_title">Fetching Larval Dipping Point Details</string>
     <string name="fetching_larval_dipping_points_message">Fetching Larval Dipping Point Details. Please wait</string>
 
-    <string name="fetching_paot_title">Fetching PAOT Details</string>
-    <string name="fetching_paot_message">Fetching PAOT Details. Please wait</string>
+    <string name="fetching_paot_title">Récupération des informations PAOT</string>
+    <string name="fetching_paot_message">Récupération des informations PAOT. Merci de patienter</string>
 
-    <string name="narrowing_location_title">Calculating your location</string>
-    <string name="narrowing_location_message">Calculating your location. Please wait</string>
+    <string name="narrowing_location_title">Calcul de votre emplacement</string>
+    <string name="narrowing_location_message">Calcul de votre emplacement. Merci de patienter</string>
 
-    <string name="location_services_disabled">Location Services Disabled</string>
-    <string name="location_services_disabled_spray">You have declined enabling location services to get your current location. You shall have to enter admin password to spray the structure</string>
-    <string name="location_services_disabled_add">You have declined enabling location services to get your current location. You shall have to enter admin password to add the structure</string>
-
-    <string name="mosquito_collection_task_description">Setup Mosquito Collection Point and Record Results</string>
-    <string name="larval_dipping_task_description">Perform Larval Dipping, Classify and Intervene</string>
+    <string name="location_services_disabled">Services de localisation desactivés</string>
+    <string name="location_services_disabled_spray">Vous avez refusé d\'activer les services de localisation pour obtenir votre position actuelle. Vous devrez entrer le mot de passe administrateur pour pulvériser la structure</string>
+    <string name="location_services_disabled_add">Vous avez refusé d\'activer les services de localisation pour obtenir votre position actuelle. Vous devrez entrer le mot de passe administrateur pour ajouter la structure</string>
+    <string name="mosquito_collection_task_description">Configurer la zone de collecte de moustique et Enregistrer les resultats</string>
+    <string name="larval_dipping_task_description">Effectuer le trempage des larves, classer et intervenir</string>
 
     <string name="register_family">Register Family</string>
-    <string name="list">List</string>
-    <string name="map">Map</string>
-    <string name="hamburger_menu">Hamburger menu</string>
+    <string name="list">Liste</string>
+    <string name="map">Carte</string>
+    <string name="hamburger_menu">Menu Hamburger </string>
     <string name="focus_investigation">Focus Investigation</string>
-    <string name="summary_forms">Other Forms</string>
+    <string name="summary_forms">Autres formulaires</string>
     <string name="irs">IRS</string>
     <string name="mda">MDA</string>
     <string name="task_icon">Task Icon</string>
     <string name="distance_from_structure">%1.0f m away</string>
-    <string name="distance_from_center">%1.0f m from %2s center </string>
+    <string name="distance_from_center" formatted="false">%1.0f m from %2s center </string>
 
     <string name="mosquito_collection_point">Mosquito collection point</string>
     <string name="record_mosquito_collection">Record\nCollection</string>
@@ -126,13 +126,13 @@
     <string name="record_bcc">Record\nBCC</string>
     <string name="record_status">Record\nStatus</string>
     <string name="record_index">Record\nIndex</string>
-    <string name="opening_form_title">Opening Form</string>
-    <string name="opening_form_message">Please wait, Opening form</string>
-    <string name="task_reason">Reason: %1s</string>
+    <string name="opening_form_title">Ouverture du formulaire</string>
+    <string name="opening_form_message">Merci de patienter, ouverture du formulaire</string>
+    <string name="task_reason">Raison: %1s</string>
 
     <plurals name="structures">
-        <item quantity="one">%1d structure within %2.0f m (%3$d total)</item>
-        <item quantity="other">%1d structures within %2.0f m (%3$d total)</item>
+        <item quantity="one">%1d structure avec %2.0f m (%3$d total)</item>
+        <item quantity="other">%1d structures avec%2.0f m (%3$d total)</item>
     </plurals>
 
     <string name="card_view_record_mosquito_collection">Record mosquito collection</string>
@@ -141,22 +141,22 @@
     <string name="mosquito_breeding_site">Mosquito Breeding Site</string>
 
     <string name="mosquito_collection_status_test_text">Status: Inactive</string>
-    <string name="mosquito_collection_trap_set_date_test_text">Set Date: DD/MM/YY</string>
-    <string name="mosquito_collection_trap_follow_up_date_test_text">Follow-up Date: DD/MM/YY</string>
-    <string name="mosquito_collection_trap_collected_date_test_text">Collected Date: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_set_date_test_text">Date: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_follow_up_date_test_text">Date de suivi: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_collected_date_test_text">Date de collecte: DD/MM/YY</string>
 
-    <string name="larval_breeding_identified_date_test_text">Identified Date:&#160;</string>
-    <string name="larval_breeding_larvacide_date_test_text">Larvacide Date:&#160;</string>
-    <string name="mosquito_collection_trap_set_date">Set Date:&#160;</string>
-    <string name="mosquito_collection_trap_follow_up_date">Follow-up Date:&#160;</string>
+    <string name="larval_breeding_identified_date_test_text">Date indentifié:&#160;</string>
+    <string name="larval_breeding_larvacide_date_test_text">Date de larvicide:&#160;</string>
+    <string name="mosquito_collection_trap_set_date">Date :&#160;</string>
+    <string name="mosquito_collection_trap_follow_up_date">Date de suivi:&#160;</string>
 
-    <string name="paot_last_updated_date_test_text">Last Updated Date:&#160;</string>
+    <string name="paot_last_updated_date_test_text">Date de la derniére mise à jour:&#160;</string>
     <string name="card_view_edit_paot_details">Edit PAOT Details</string>
     <string name="card_view_paot">Potential Area of Transmission</string>
 
     <string name="residents">RESIDENTS</string>
     <string name="return_to_all_families">Return</string>
-    <string name="tasks">TASKS (%1$d)</string>
+    <string name="tasks">TACHES(%1$d)</string>
     <string name="comma">,</string>
     <string name="distribute_llin">Distribute Bednet</string>
     <string name="record_llin">Record\nDistribution</string>
@@ -172,62 +172,61 @@
     <string name="mda_dispense_desciption">Visit all residential structures (100%) dispense prophylaxis to each registered person</string>
     <string name="mda_adherence_desciption">"Visit all residential structures (100%) and confirm adherence of each registered person</string>
     <string name="case_confirmation_description">Case Confirmation</string>
-    <string name="house">House</string>
+    <string name="house">Concession</string>
 
-    <string name="unenumerated_structure">Unenumerated Structure</string>
-    <string name="form_not_found">Form not Found</string>
-    <string name="edit_member_form_title">Edit Family Member</string>
+    <string name="unenumerated_structure">Structure non enquété</string>
+    <string name="form_not_found">Formulaire non trouvé</string>
+    <string name="edit_member_form_title">Editer les membre de la famille</string>
 
-    <string name="view_tasks">View \nTasks</string>
-    <string name="tasks_complete">Tasks Complete</string>
+    <string name="view_tasks">Vue\n Taches</string>
+    <string name="tasks_complete">Taches complétées</string>
     <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
 
-    <string name="classification_details">Classification Details</string>
-    <string name="view">View</string>
-    <string name="family_details">Family Details</string>
-    <string name="family_name_format">Family name: %1s</string>
-    <string name="village_town_format">Village Town: %1s</string>
-    <string name="quarter_clan_format">Quarter/Clan: %1s</string>
-    <string name="street_format">Street: %1s</string>
-    <string name="landmark_format">Landmark : %1s</string>
-    <string name="family_member_data">Family Member Data</string>
-    <string name="surname_format">Surname : %1s</string>
-    <string name="first_name_format">First Name: %1s</string>
-    <string name="middle_name_format">Middle Name: %1s</string>
-    <string name="dob_format">Date of Birth(DOB) : %1s</string>
-    <string name="case_classification_data">Case Classification Data</string>
+    <string name="classification_details">Détails de la classification</string>
+    <string name="view">Vue</string>
+    <string name="family_details">Détails de la famille</string>
+    <string name="family_name_format">Nom de la famille: %1s</string>
+    <string name="village_town_format">Village Ville: %1s</string>
+    <string name="quarter_clan_format">Carré/Clan: %1s</string>
+    <string name="street_format">Rue: %1s</string>
+    <string name="landmark_format">Point de repére: %1s</string>
+    <string name="family_member_data">Données de numéro de famille</string>
+    <string name="surname_format">Nom de famille: %1s</string>
+    <string name="first_name_format">Prénom: %1s</string>
+    <string name="middle_name_format">Autre(s) prénom(s): %1s</string>
+    <string name="dob_format">Date de naissance : %1s</string>
+    <string name="case_classification_data">Données de classification du cs</string>
     <string name="case_number_format">Case Number: %1s</string>
     <string name="case_classification_format">Case Classification: %1s</string>
     <string name="focus_reason_format">Focus Reason: %1s</string>
     <string name="focus_status_format">Focus Status: %1s</string>
-    <string name="return_to_register">Return</string>
+    <string name="return_to_register">Retour</string>
     <string name="index_case_not_found">Index Case details not found</string>
     <string name="detect_case_button">Detect Case</string>
 
-    <string name="not_visited">Not Visited</string>
-    <string name="not_sprayed">Not Sprayed</string>
-    <string name="sprayed">Sprayed</string>
-    <string name="not_sprayable">Not Sprayable</string>
-    <string name="complete">Complete</string>
-    <string name="incomplete">Incomplete</string>
-    <string name="in_progress">In Progress</string>
-    <string name="not_eligible">Not Eligible</string>
-    <string name="plans_download_on_progress_title">Download in Progress</string>
-    <string name="plans_download_on_progress">Downloading of Plans In Progress. Please wait</string>
-    <string name="numero_sign">No.</string>
-    <string name="register_outside_boundary_title">Register structure outside area boundary?</string>
-    <string name="register_outside_boundary_warning">Warning: this location is beyond the boundaries of the selected operational area. If you continue, the structure may be added to an incorrect area</string>
-    <string name="register">Register</string>
-    <string name="cancel">Cancel</string>
-    <string name="partially_sprayed">Partially Sprayed</string>
-    <string name="daily_summary">Enter Daily Summary Form</string>
-
-    <string name="team_leader_dos" translatable="false">Enter Team Leader DOS Form</string>
-    <string name="cb_spray_area" translatable="false">Enter CB Spray Area Visit Form</string>
-    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
-    <string name="mobilization_form" translatable="false">Enter Mobilization Form</string>
-    <string name="irs_field_officer" translatable="false">Enter IRS Field Officer Form</string>
-    <string name="verification_form" translatable="false">Enter Verification Form</string>
+    <string name="not_visited">Non Visitées</string>
+    <string name="not_sprayed">Non Traitées</string>
+    <string name="sprayed">Traitées</string>
+    <string name="not_sprayable">Non éligible</string>
+    <string name="complete">Compléte</string>
+    <string name="incomplete">Incompléte</string>
+    <string name="in_progress">En cours</string>
+    <string name="not_eligible">Non Eligible</string>
+    <string name="plans_download_on_progress_title">Téléchargement en cours</string>
+    <string name="plans_download_on_progress">Téléchargement des plans en cours. Merci de patienter</string>
+    <string name="numero_sign">Non.</string>
+    <string name="register_outside_boundary_title">Enregistrer la structure en dehors des limites de la zone ?</string>
+    <string name="register_outside_boundary_warning">Attention : cet emplacement est au-delà des limites de la zone opérationnelle sélectionnée. Si vous continuez, la structure peut être ajoutée à une zone incorrecte</string>
+    <string name="register">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="partially_sprayed">Traitement partiel</string>
+    <string name="daily_summary">Renseigner le formualire de synthése journaliére</string>
+    <string name="team_leader_dos">Enter Team Leader DOS Form</string>
+    <string name="cb_spray_area">Enter CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision">Renseigner le formulaire de décision IRS SA</string>
+    <string name="mobilization_form">Enter Mobilization Form</string>
+    <string name="irs_field_officer">Renseigner le formulaire AID d\'agent de terrain</string>
+    <string name="verification_form">Enter Verification Form</string>
 
 
     <string name="last_edited">Edited %1s</string>
@@ -235,13 +234,13 @@
 
 
     <string name="found_coverage">Found Coverage</string>
-    <string name="spray_coverage">Spray Coverage</string>
-    <string name="structures_remaining_90">Structures Remaining 90%</string>
-    <string name="total_structures">Total Structures</string>
-    <string name="structures_not_visited">Structures Not Visited</string>
-    <string name="structures_visited_found">Structures Visited/Found</string>
+    <string name="spray_coverage">Taux d\'aspersion (Couverture)</string>
+    <string name="structures_remaining_90">Structures restantes 90%</string>
+    <string name="total_structures">Total structures</string>
+    <string name="structures_not_visited">Strutcures non visitées</string>
+    <string name="structures_visited_found">Structures visitées/trouvées</string>
     <string name="structures_sprayed">Structures Sprayed</string>
-    <string name="structures_not_sprayed">Structures Not Sprayed</string>
+    <string name="structures_not_sprayed">Sttructures non traitées</string>
     <string name="room_coverage">Room coverage of sprayed</string>
     <string name="target_coverage">Target coverage</string>
     <string name="structures_targeted">Structures targeted</string>
@@ -282,7 +281,7 @@
     <string name="archive_member">Archive Member</string>
     <string name="confirm_archive_member">Are you sure you want archive family member? All tasks and events will be archived </string>
     <string name="confirm">Confirm</string>
-    <string name="archive_member_failed">Archiving member %1s %2s failed</string>
+    <string name="archive_member_failed" formatted="false">Archiving member %1s %2s failed</string>
     <string name="archive_family">Archive Household</string>
     <string name="confirm_archive_family">Confirm Household Archival</string>
     <string name="confirm_archive_family_message">Please confirm that you want to archive this household. This will delete all information and can not be undone.</string>
@@ -387,12 +386,12 @@
     <string name="discard_changes_msg">This will undo any unsaved edits you have made on the boundary</string>
     <string name="tap_point_msg">Tap black point to move or delete</string>
     <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
-    <string name="progressBarLabel">Syncing %s : %d%% </string>
+    <string name="progressBarLabel" formatted="false">Syncing %s : %d%% </string>
     <string name="device_data_synced">Device data synced</string>
     <string name="device_data_not_synced">Device data not synced</string>
     <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
-    <string name="filled_forms">Filled Forms</string>
+    <string name="filled_forms">Formulaires renseignés</string>
     <string name="event_date">Date</string>
     <string name="form_name">Form Name</string>
     <string name="sop">SOP</string>

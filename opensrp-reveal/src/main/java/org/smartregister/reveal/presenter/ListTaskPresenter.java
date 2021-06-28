@@ -256,7 +256,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         if (taskDetailsList != null && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
                 || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
                 || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA)) {
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
@@ -315,7 +316,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         listTaskView.closeAllCardViews();
         listTaskView.displaySelectedFeature(feature, clickedPoint);
         if (isLongclick && (BuildConfig.BUILD_COUNTRY != Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL)) {
+                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL || BuildConfig.BUILD_COUNTRY != Country.SENEGAL_EN)) {
             onFeatureSelectedByLongClick(feature);
         } else {
             onFeatureSelectedByNormalClick(feature);
@@ -543,7 +544,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateForm(event, formJson);
         } else if (cardDetails instanceof SprayCardDetails && Country.NAMIBIA.equals(BuildConfig.BUILD_COUNTRY)) {
             jsonFormUtils.populateForm(event, formJson);
-        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL.equals(formName)) {
+        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
             try {
                 jsonFormUtils.populateField(formJson, DISTRICT_NAME, prefsUtil.getCurrentDistrict().trim(), VALUE);
                 jsonFormUtils.populateField(formJson, PROVINCE_NAME, prefsUtil.getCurrentProvince().trim(), VALUE);

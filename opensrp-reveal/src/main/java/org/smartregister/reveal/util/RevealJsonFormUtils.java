@@ -265,6 +265,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.SPRAY_FORM_REFAPP;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
                 formName = JsonForm.SPRAY_FORM_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.SPRAY_FORM_SENEGAL_EN;
             } else {
                 formName = JsonForm.SPRAY_FORM;
             }
@@ -331,8 +333,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.THAILAND_ADD_STRUCTURE_FORM;
             } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
                 formName = JsonForm.NAMIBIA_ADD_STRUCTURE_FORM;
-            }else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA){
-                formName = JsonForm.ZAMBIA_ADD_STRUCTURE_FORM;
+            }else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }
@@ -366,18 +368,24 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.DAILY_SUMMARY_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.DAILY_SUMMARY_SENEGAL;
+            }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.DAILY_SUMMARY_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_FIELD_OFFICER_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                 formName = JsonForm.IRS_FIELD_OFFICER_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_SA_DECISION_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                 formName = JsonForm.IRS_SA_DECISION_ZAMBIA;
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.IRS_SA_DECISION_SENEGAL;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                formName = JsonForm.IRS_SA_DECISION_SENEGAL_EN;
             }
         } else if (Constants.EventType.MOBILIZATION_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
@@ -495,7 +503,7 @@ public class RevealJsonFormUtils {
                         field.put(JsonFormConstants.READ_ONLY,true);
                     }
 
-                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY)){
+                    if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY) ||  Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY)){
                         if(key.equals(COMPOUND_STRUCTURE)){
                             populateCompoundStructureOptions(formJSON,Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()));
                             JSONArray options = field.optJSONArray(OPTIONS);
@@ -601,6 +609,7 @@ public class RevealJsonFormUtils {
             case JsonForm.IRS_LITE_VERIFICATION:
             case JsonForm.MOBILIZATION_FORM_ZAMBIA:
             case JsonForm.IRS_SA_DECISION_SENEGAL:
+            case JsonForm.IRS_SA_DECISION_SENEGAL_EN:
             case JsonForm.CB_SPRAY_AREA_SENEGAL:
             case JsonForm.MOBILIZATION_FORM_SENEGAL:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
@@ -610,6 +619,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
             case JsonForm.IRS_FIELD_OFFICER_SENEGAL:
+            case JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.FIELD_OFFICERS, fieldsMap.get(JsonForm.FIELD_OFFICER),
                         PreferencesUtil.getInstance().getCurrentDistrict());
@@ -620,6 +630,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.DAILY_SUMMARY_ZAMBIA:
             case JsonForm.DAILY_SUMMARY_SENEGAL:
+            case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
                         PreferencesUtil.getInstance().getCurrentDistrict());
@@ -641,7 +652,7 @@ public class RevealJsonFormUtils {
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(HEALTH_CENTER));
                 } else {
-                    if(!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY))
+                    if(!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)  && !Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY))
                         populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
                 break;
@@ -685,6 +696,7 @@ public class RevealJsonFormUtils {
 
             case JsonForm.SPRAY_FORM_ZAMBIA:
             case JsonForm.SPRAY_FORM_SENEGAL:
+            case JsonForm.SPRAY_FORM_SENEGAL_EN:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.DATA_COLLECTORS, fieldsMap.get(JsonForm.DATA_COLLECTOR),
                         PreferencesUtil.getInstance().getCurrentDistrict());

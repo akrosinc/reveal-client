@@ -46,7 +46,7 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         map.put(LABEL, new RevealLabelFactory());
         map.put(TOASTER_NOTES, new RevealToasterNotesFactory());
 
-        if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+        if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             map.put(REPEATING_GROUP, new RevealRepeatingGroupFactory());
         }
 

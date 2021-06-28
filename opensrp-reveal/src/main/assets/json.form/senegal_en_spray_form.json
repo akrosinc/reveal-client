@@ -58,20 +58,20 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "text_size": "8sp",
-        "label": "Est ce que c'est une structure résidentielle?",
+        "label": "Is this a residential structure?",
         "options": [
           {
             "key": "residential",
-            "text": "Résidentielle"
+            "text": "Residential"
           },
           {
             "key": "nonResidential",
-            "text": "Non Résidentielle"
+            "text": "Non-Residential"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -80,7 +80,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Quel genre de structure non résidentielle est ce?",
+        "label": "What type of non-residential structure is this?",
         "text_size": "8sp",
         "relevance": {
           "step1:structure_type": {
@@ -91,60 +91,60 @@
         "options": [
           {
             "key": "toilet",
-            "text": "Toilette"
+            "text": "Toilet"
           },
           {
             "key": "kitchen",
-            "text": "Cuisine"
+            "text": "Kitchen"
           },
           {
             "key": "animalShelter",
-            "text": "Refuge animalier"
+            "text": "Animal shelter"
           },
           {
             "key": "foodStorage",
-            "text": "Grenier"
+            "text": "Food storage"
           },
           {
             "key": "school",
-            "text": "Ecole"
+            "text": "School"
           },
           {
             "key": "lodge",
-            "text": "Logement payant"
+            "text": "Lodge"
           },
           {
             "key": "shop",
-            "text": "Boutique"
+            "text": "Shop"
           },
           {
             "key": "office",
-            "text": "Bureau"
+            "text": "Office"
           },
           {
             "key": "hospital",
-            "text": "Hopital"
+            "text": "Hospital"
           },
           {
             "key": "clinic",
-            "text": "Clinique"
+            "text": "Clinic"
           },
           {
             "key": "noStructure",
-            "text": "Pas de structure ici"
+            "text": "No structure here"
           },
           {
             "key": "notHabitable",
-            "text": "Pas habitable"
+            "text": "Not habitable"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -153,7 +153,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Est ce que cette structure est eligible",
+        "label": "Is this structure eligible?",
         "text_size": "8sp",
         "options": [
           {
@@ -162,12 +162,12 @@
           },
           {
             "key": "notEligible",
-            "text": "Non eligible"
+            "text": "Not Eligible"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -183,28 +183,28 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Pourquoi cette structure résidentielle n'est pas éligible?",
+        "label": "Why is this residential structure not eligible?",
         "text_size": "8sp",
         "options": [
           {
             "key": "notSprayableMaterial",
-            "text": "Mur non eligible (matiere)"
+            "text": "Not sprayable material"
           },
           {
             "key": "seasonalHome",
-            "text": "Maison saisonniére"
+            "text": "Seasonal home"
           },
           {
             "key": "noPersonLivesHereNow",
-            "text": "Maison abandonnée"
+            "text": "No person lives here now"
           },
           {
             "key": "structureDoesNotExist",
-            "text": "Structure n'existe pas"
+            "text": "Structure does not exist"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "relevance": {
@@ -216,7 +216,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -225,19 +225,19 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Merci de saisir les raisons",
+        "hint": "Please type the reason",
         "v_max_length": {
           "value": "110",
-          "err": "Pas plus de 110 caractéres"
+          "err": "Not more than 110 characters."
         },
         "v_regex": {
           "value": "[A-Za-z\\s]*",
-          "err": "Merci de saisir une raison valable, les nombres ne sont pas autorisés\n"
+          "err": "Please enter a valid reason, no numbers allowed"
         },
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:residential_noteligible": {
@@ -252,16 +252,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Pourquoi cette structure non résidentielle est éligible?",
+        "label": "Why is this Non-Residential structure eligible?",
         "text_size": "8sp",
         "options": [
           {
             "key": "toilet",
-            "text": "Toilette avec toit"
+            "text": "Toilet with roof"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "relevance": {
@@ -273,7 +273,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -282,10 +282,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Sélectionner le nom village ou se trouve cette structure?",
+        "hint": "What is the name of the village this structure is in?",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         }
       },
       {
@@ -294,16 +294,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Spécifier autre village:",
+        "hint": "Specify other village:",
         "edit_type": "name",
         "v_regex": {
           "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Merci d'entrer un nomp valide"
+          "err": "Please enter a valid name"
         },
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:location_zone": {
@@ -318,10 +318,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Selectionner le code de l'applicateur qui renseigné les données de cette structure",
+        "hint": "Select the spray operator code who collected data against this structure",
         "v_required": {
           "value": "true",
-          "err": "Merci de renseigner le code de l'applicateur"
+          "err": "Please enter the spray operator code"
         },
         "relevance": {
           "step1:eligibility": {
@@ -336,15 +336,15 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Est ce la structure ou vit le chef de concession?",
+        "label": "Is this the structure in which the head of the compound lives?",
         "options": [
           {
             "key": "Yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
@@ -365,16 +365,16 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Renseigner le nom du chef de concession",
+        "hint": "Please enter the name of the head of the compound",
         "edit_type": "name",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "v_regex": {
           "value": "[A-Za-z\\s]*",
-          "err": "Merci d'entrer un nomp valide"
+          "err": "Please enter a valid name"
         },
         "relevance": {
           "step1:compoundheadstructure": {
@@ -396,7 +396,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "v_regex": {
           "value": "^[0-9]{9}$",
@@ -415,14 +415,14 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "multi_select_list",
-        "dialogTitle": "Sélectionner le nom du chef de concession",
-        "buttonText": "+ Sélectionner le nom du chef de concession",
-        "searchHint": "Saisir le nom du chef de concession",
+        "dialogTitle": "Select name of the head of the compound",
+        "buttonText": "+ Select name of the head of the compound",
+        "searchHint": "Type Name head of the compound",
         "text_size": "8sp",
         "maxSelectable": "1",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -438,21 +438,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Sexe",
+        "label": "Gender",
         "text_size": "8sp",
         "options": [
           {
             "key": "male",
-            "text": "Masculin"
+            "text": "Male"
           },
           {
             "key": "female",
-            "text": "Féminin"
+            "text": "Female"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -468,21 +468,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Des pièces de cette structure ont-elles été traitées ?",
+        "label": "Were any rooms in this structure sprayed?",
         "text_size": "8sp",
         "options": [
           {
             "key": "yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "no",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:eligibility": {
@@ -497,37 +497,37 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Pourquoi cette structure n'a-t-elle pas été traitée?",
+        "label": "Why was this structure not sprayed?",
         "text_size": "8sp",
         "options": [
           {
             "key": "sick",
-            "text": "Malade"
+            "text": "Sick"
           },
           {
             "key": "locked",
-            "text": "Fermé à clé"
+            "text": "Locked"
           },
           {
             "key": "funeral",
-            "text": "Funérailles"
+            "text": "Funeral"
           },
           {
             "key": "refused",
-            "text": "Refusé"
+            "text": "Refused"
           },
           {
             "key": "noOneHome",
-            "text": "Personne à la maison"
+            "text": "No one home"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:structure_sprayed": {
@@ -542,11 +542,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Spécifiez une autre raison:",
+        "hint": "Specify other reason:",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:notsprayed_reason": {
@@ -561,37 +561,37 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Pourquoi ont-ils refusé l'IRS ?",
+        "label": "Why did they refuse IRS?",
         "text_size": "8sp",
         "options": [
           {
             "key": "notSafe",
-            "text": "Pas sécurisé"
+            "text": "Not safe"
           },
           {
             "key": "fearOfChemical",
-            "text": "Peur du chimique"
+            "text": "Fear of chemical"
           },
           {
             "key": "notWorthInconvinience",
-            "text": "Ne vaut pas le dérangement"
+            "text": "Not worth the inconvenience"
           },
           {
             "key": "makesBugsAppear",
-            "text": "Fait apparaître des bugs"
+            "text": "Makes bugs appear"
           },
           {
             "key": "religiousObjection",
-            "text": "Objection religieuse"
+            "text": "Religious objection"
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -607,11 +607,11 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Spécifiez une autre raison:",
+        "hint": "Specify other reason:",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:refused_reason": {
@@ -627,28 +627,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de chambres ELIGIBLES",
+        "hint": "Number of ELIGIBLE rooms",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le nombre de chambres éligibles doit être un nombre"
+          "err": "Number of eligible rooms must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le nombre de chambres éligibles doit être un nombre entier"
+          "err": "Number of eligible rooms must be a whole number"
         },
         "v_min": {
           "value": "1",
-          "err": "Le nombre de chambres éligibles doit être supérieur ou égal à 1"
+          "err": "Number of eligible rooms must be greater than or equal to 1"
         },
         "v_max": {
           "value": "99",
-          "err": "Ne peut pas être supérieur à 99"
+          "err": "Cannot be greater than 99"
         },
         "relevance": {
           "rules-engine": {
@@ -665,28 +665,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de pièces traitées au TOTAL",
+        "hint": "Number of rooms sprayed in TOTAL",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Veuillez préciser le nombre de pièces traitées"
+          "err": "Please specify number of rooms sprayed"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le nombre de pièces traitées doit être un nombre"
+          "err": "Number of rooms sprayed must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le nombre de pièces traitées doit être un nombre entier"
+          "err": "Number of rooms sprayed must be a whole number"
         },
         "v_min": {
           "value": "1",
-          "err": "Le nombre de pièces traitées doit être supérieur ou égal à 1"
+          "err": "Number of rooms sprayed must be greater than or equal to 1"
         },
         "v_relative_max": {
           "value": "rooms_eligible",
-          "err": "Le nombre de pièces pulvérisées ne peut pas être supérieur au nombre de pièces éligibles."
+          "err": "Number of rooms sprayed cannot be greater than number of eligible rooms."
         },
         "relevance": {
           "rules-engine": {
@@ -702,7 +702,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "hidden",
-        "hint": "Nombre de pièces non traitées",
+        "hint": "Number of rooms not sprayed",
         "calculation": {
           "rules-engine": {
             "ex-rules": {
@@ -714,8 +714,8 @@
       {
         "key": "partiallysprayed_reasons",
         "type": "repeating_group",
-        "reference_edit_text_hint": "Confirmer le nbre pieces non traités",
-        "repeating_group_label": "Raison de la chambre",
+        "reference_edit_text_hint": "Confirmed # rooms not sprayed",
+        "repeating_group_label": "Room Reason",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -733,36 +733,36 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "Raison pour laquelle cette pièce éligible n'a pas été traitée",
+            "label": "Reason why this eligible room was not sprayed",
             "text_size": "8sp",
             "v_required": {
               "value": "true",
-              "err": "Veuillez sélectionner la raison"
+              "err": "Please select reason"
             },
             "options": [
               {
                 "key": "refused",
-                "text": "Refusé"
+                "text": "Refused"
               },
               {
                 "key": "locked",
-                "text": "Fermé à clé"
+                "text": "Locked"
               },
               {
                 "key": "sick",
-                "text": "Malade"
+                "text": "Sick"
               },
               {
                 "key": "foodStorage",
-                "text": "Grenier"
+                "text": "Food Storage"
               },
               {
                 "key": "dontWantToClear",
-                "text": "Ne veux pas sortir ses bagages"
+                "text": "Didn't want to clear"
               },
               {
                 "key": "other",
-                "text": "Autre"
+                "text": "Other"
               }
             ]
           },
@@ -772,11 +772,11 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
-            "hint": "Spécifiez une autre raison:",
+            "hint": "Specify other reason:",
             "text_size": "8sp",
             "v_required": {
               "value": "true",
-              "err": "Champ obligatoire"
+              "err": "Required field"
             },
             "relevance": {
               "step1:partiallysprayed_reason": {
@@ -790,7 +790,7 @@
       {
         "key": "rooms_sprayed_hint",
         "type": "label",
-        "text": "S'il s'agit d'un nettoyage ou d'une nouvelle visite, veuillez enregistrer TOTAL des pièces traitées",
+        "text": "If this is a mop-up or revisit, please record TOTAL rooms sprayed",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -812,32 +812,32 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population masculine dans les chambres traitées",
+        "hint": "Male Population in rooms sprayed",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Veuillez préciser la population masculine"
+          "err": "Please specify male population"
         },
         "v_numeric": {
           "value": "true",
-          "err": "La population masculine doit être un nombre"
+          "err": "Male population must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": ""
+          "err": "Male population must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "La population masculine doit être supérieure ou égale à 0"
+          "err": "Male population must be greater than or equal to 0"
         },
         "v_max": {
           "value": "99",
-          "err": "La population masculine doit être inférieure à 99"
+          "err": "Male population must be less than 99"
         },
         "v_relative_min": {
           "value": "sprayed_totalmale",
-          "err": "Vous ne pouvez pas saisir 0 Population masculine lorsque le sexe du chef de ménage est un homme"
+          "err": "You can not enter 0 Male population when head of household gender is Male"
         },
         "relevance": {
           "rules-engine": {
@@ -854,32 +854,32 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population féminine dans les chambres traitées",
+        "hint": "Female Population in rooms sprayed",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Veuillez préciser la population féminine"
+          "err": "Please specify female population"
         },
         "v_numeric": {
           "value": "true",
-          "err": "La population féminine doit être un nombre"
+          "err": "Female population must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "La population féminine doit être un nombre entier"
+          "err": "Female population must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "La population féminine doit être supérieure ou égale à 0"
+          "err": "Female population must be greater than or equal to 0"
         },
         "v_max": {
           "value": "99",
-          "err": "La population féminine doit être inférieure à 99"
+          "err": "Female population must be less than 99"
         },
         "v_relative_min": {
           "value": "sprayed_totalfemale",
-          "err": "Vous ne pouvez pas saisir 0 Population féminine lorsque le sexe du chef de ménage est une femme"
+          "err": "You can not enter 0 Female population when head of household gender is Female"
         },
         "relevance": {
           "rules-engine": {
@@ -910,7 +910,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Population totale: {sprayed_totalpop}",
+        "text": "Total population: {sprayed_totalpop}",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -966,7 +966,7 @@
         "openmrs_entity_id": "",
         "type": "check_box",
         "label_text_size": "8sp",
-        "label": "Cliquez sur la case à cocher pour approuver la population totale.",
+        "label": "Click the checkbox to approve the total population.",
         "options": [
           {
             "key": "isConsented",
@@ -986,7 +986,7 @@
         },
         "v_required": {
           "value": "true",
-          "err": "Veuillez vérifier l'article"
+          "err": "Please check the item"
         }
       },
       {
@@ -995,7 +995,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Vous ne pouvez pas saisir une population de 0 pour une structure traitée",
+        "text": "You can not enter a population of 0 for a sprayed structure",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1017,24 +1017,24 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Enfants <5 ans dans des chambres traitées",
+        "hint": "Children <5 years in rooms sprayed",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Enfants <5 ans est obligatoire"
+          "err": "Children <5 years is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Les enfants de moins de 5 ans doivent être un nombre"
+          "err": "Children <5 years must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
+          "err": "Children <5 years must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
+          "err": "Children <5 years must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -1050,7 +1050,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre d'enfant de moins de 5 ans devra etre inférieur au total de la population des piéces traitées",
+        "text": "Children < 5 should be less than total population in rooms sprayed",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1072,28 +1072,28 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Femmes enceintes dans des chambres pulvérisées",
+        "hint": "Pregnant Women in rooms sprayed",
         "is_mandatory": true,
         "text_size": "8sp",
         "v_required": {
           "value": true,
-          "err": "Les femmes enceintes est obligatoire"
+          "err": "Pregnant Women is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Les femmes enceintes doivent être un numéro"
+          "err": "Pregnant Women must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Les femmes enceintes doivent être un nombre entier"
+          "err": "Pregnant Women must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
+          "err": "Pregnant Women must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "sprayed_females",
-          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
+          "err": "Pregnant Women must be less than female population"
         },
         "relevance": {
           "rules-engine": {
@@ -1109,7 +1109,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
+        "text": "Total Number of Nets Hanging and in Use must be less than or equal to the total population (females + males). Also, it must be less than total available nets.",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1130,7 +1130,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
+        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
         "v_required": {
           "value": "true"
         },
@@ -1151,7 +1151,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
         "v_required": {
           "value": "true"
         },
@@ -1172,7 +1172,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text": "Number of Children Under 5 Yrs Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1194,23 +1194,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population masculine dans les pièces non traitées",
+        "hint": "Male Population in rooms not sprayed",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "La population masculine doit être un nombre"
+          "err": "Male population must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "La population masculine doit être un nombre entier"
+          "err": "Male population must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "La population masculine doit être supérieure ou égale à 0"
+          "err": "Male population must be greater than or equal to 0"
         },
         "v_max": {
           "value": "99",
-          "err": "La population masculine doit être inférieure à 99"
+          "err": "Male population must be less than 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1248,23 +1248,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population féminine dans les pièces non traitées",
+        "hint": "Female Population in rooms not sprayed",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "La population féminine doit être un nombre"
+          "err": "Female population must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "La population féminine doit être un nombre entier"
+          "err": "Female population must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "La population féminine doit être supérieure ou égale à 0"
+          "err": "Female population must be greater than or equal to 0"
         },
         "v_max": {
           "value": "99",
-          "err": "La population féminine doit être inférieure à 99"
+          "err": "Female population must be less than 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1280,7 +1280,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "La population féminine dans les pièces non traitées est requise",
+        "text": "Female Population in rooms not sprayed is required",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1317,19 +1317,19 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Enfants <5 ans dans des chambres non traitées",
+        "hint": "Children <5 years in rooms not sprayed",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Les enfants de moins de 5 ans doivent être un nombre"
+          "err": "Children <5 years must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
+          "err": "Children <5 years must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
+          "err": "Children <5 years must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -1345,7 +1345,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "La population féminine dans les pièces non traitées est requise",
+        "text": "Female Population in rooms not sprayed is required",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1389,22 +1389,22 @@
         "type": "edit_text",
         "edit_type": "number",
         "text_size": "8sp",
-        "hint": "Femmes enceintes dans des chambres non traitées",
+        "hint": "Pregnant Women in rooms not sprayed",
         "v_numeric": {
           "value": "true",
-          "err": "Les femmes enceintes doivent être un numéro"
+          "err": "Pregnant Women must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Les femmes enceintes doivent être un nombre entier"
+          "err": "Pregnant Women must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
+          "err": "Pregnant Women must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "notsprayed_females",
-          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
+          "err": "Pregnant Women must be less than female population"
         },
         "relevance": {
           "rules-engine": {
@@ -1420,7 +1420,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "La population féminine dans les pièces non traitées est requise",
+        "text": "Female Population in rooms not sprayed is required",
         "text_color": "#CF0800",
         "toaster_type": "problem",
         "text_size": "8sp",
@@ -1441,20 +1441,20 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Un nouveau sachet d'insecticide a-t-il été mélangé dans cette structure ?",
+        "label": "Was a new insecticide sachet mixed at this structure?",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "options": [
           {
             "key": "yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "no",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "relevance": {
@@ -1467,8 +1467,8 @@
       {
         "key": "serial_numbers",
         "type": "repeating_group",
-        "reference_edit_text_hint": "Nombre de sachets d'insecticide mélangés",
-        "repeating_group_label": "numéro de série",
+        "reference_edit_text_hint": "Number of insecticide sachets mixed",
+        "repeating_group_label": "serial number",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -1486,20 +1486,20 @@
             "openmrs_entity_id": "",
             "type": "edit_text",
             "edit_type": "number",
-            "hint": "Numéro de série du sachet",
+            "hint": "Sachet Serial Number",
             "text_size": "8sp",
             "is_mandatory": true,
             "v_numeric": {
               "value": "true",
-              "err": "Le numéro de série du sachet doit être un nombre"
+              "err": "Sachet Serial Number must be a number"
             },
             "v_numeric_integer": {
               "value": "true",
-              "err": "Le numéro de série du sachet doit être un nombre entier"
+              "err": "Sachet Serial Number must be a whole number"
             },
             "v_required": {
               "value": "true",
-              "err": "Champ obligatoire"
+              "err": "Required field"
             }
           }
         ]
@@ -1511,23 +1511,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de chambres ELIGIBLES",
+        "hint": "Number of ELIGIBLE rooms",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
-          "err": "Doit être un nombre"
+          "err": "Must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Doit être un nombre entier"
+          "err": "Must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Doit être supérieur ou égal à 0"
+          "err": "Must be greater than or equal to 0"
         },
         "v_max": {
           "value": "99",
-          "err": "Ne peut pas être supérieur à 99"
+          "err": "Cannot be greater than 99"
         },
         "relevance": {
           "rules-engine": {
@@ -1568,7 +1568,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
+        "text": "Total Number of Nets Hanging and in Use must be less than or equal to the total population (females + males). Also, it must be less than total available nets.",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1589,7 +1589,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
+        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1639,7 +1639,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -1689,7 +1689,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text": "Number of Children Under 5 Yrs Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
@@ -1715,16 +1715,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -1745,16 +1745,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:sbc": {
@@ -1810,12 +1810,12 @@
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:about_malaria": {
@@ -1834,7 +1834,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:information": {
@@ -1891,12 +1891,12 @@
           },
           {
             "key": "other",
-            "text": "Autre"
+            "text": "Other"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -1916,7 +1916,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:preferred_source": {
@@ -1941,16 +1941,16 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "Non"
+            "text": "No"
           }
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "rules-engine": {
@@ -1984,7 +1984,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:health_service": {
@@ -2003,7 +2003,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:health_service": {
@@ -2022,7 +2022,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:hfc_seek": {
@@ -2041,7 +2041,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:health_service": {
@@ -2060,7 +2060,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:hfc_belong": {
@@ -2080,11 +2080,11 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Oui"
+            "text": "Yes"
           },
           {
             "key": "No",
-            "text": "Non"
+            "text": "No"
           },
           {
             "key": "dontKnow",
@@ -2093,7 +2093,7 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:health_service": {
@@ -2112,7 +2112,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "true",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:chw": {
@@ -2131,7 +2131,7 @@
         "text_size": "8sp",
         "v_required": {
           "value": "false",
-          "err": "Champ obligatoire"
+          "err": "Required field"
         },
         "relevance": {
           "step1:hfc_belong": {
@@ -2160,7 +2160,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Statut de la nouvelle structure : {business_status}",
+        "text": "New Structure Status: {business_status}",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
