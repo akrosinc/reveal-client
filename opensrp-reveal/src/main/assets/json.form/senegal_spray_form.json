@@ -623,7 +623,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de chambres ELIGIBLES",
+        "hint": "Nombre de piéces ELIGIBLES",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -632,15 +632,15 @@
         },
         "v_numeric": {
           "value": "true",
-          "err": "Le nombre de chambres éligibles doit être un nombre"
+          "err": "Le nombre de piéces éligibles doit être un nombre"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Le nombre de chambres éligibles doit être un nombre entier"
+          "err": "Le nombre de piéces éligibles doit être un nombre entier"
         },
         "v_min": {
           "value": "1",
-          "err": "Le nombre de chambres éligibles doit être supérieur ou égal à 1"
+          "err": "Le nombre de piéces éligibles doit être supérieur ou égal à 1"
         },
         "v_max": {
           "value": "99",
@@ -710,8 +710,8 @@
       {
         "key": "partiallysprayed_reasons",
         "type": "repeating_group",
-        "reference_edit_text_hint": "Confirmer le nbre pieces non traités",
-        "repeating_group_label": "Raison de la chambre",
+        "reference_edit_text_hint": "Confirmer le nbre pièces non traités",
+        "repeating_group_label": "Raison de la pièce",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -808,7 +808,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population masculine dans les chambres traitées",
+        "hint": "Population masculine dans les piéces traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -850,7 +850,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Population féminine dans les chambres traitées",
+        "hint": "Population féminine dans les piéces traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -1013,7 +1013,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Enfants <5 ans dans des chambres traitées",
+        "hint": "Enfants <5 ans dans des piéces traitées",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -1068,7 +1068,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Femmes enceintes dans des chambres pulvérisées",
+        "hint": "Femmes enceintes dans des piéces pulvérisées",
         "is_mandatory": true,
         "text_size": "8sp",
         "v_required": {
@@ -1313,7 +1313,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Enfants <5 ans dans des chambres non traitées",
+        "hint": "Enfants <5 ans dans des piéces non traitées",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
@@ -1385,7 +1385,7 @@
         "type": "edit_text",
         "edit_type": "number",
         "text_size": "8sp",
-        "hint": "Femmes enceintes dans des chambres non traitées",
+        "hint": "Femmes enceintes dans des piéces non traitées",
         "v_numeric": {
           "value": "true",
           "err": "Les femmes enceintes doivent être un numéro"
@@ -1503,7 +1503,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Nombre de chambres ELIGIBLES",
+        "hint": "Nombre de piéces ELIGIBLES",
         "text_size": "8sp",
         "v_numeric": {
           "value": "true",
