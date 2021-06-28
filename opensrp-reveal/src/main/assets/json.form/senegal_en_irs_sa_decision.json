@@ -410,18 +410,6 @@
         }
       },
       {
-        "key": "supervisor",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Who is making this decision?",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
-        }
-      },
-      {
         "key": "number_returning_tlas",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
