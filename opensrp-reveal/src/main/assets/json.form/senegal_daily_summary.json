@@ -98,42 +98,6 @@
         }
       },
       {
-        "key": "district_manager",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Nom du manager du district",
-        "v_required": {
-          "value": "true",
-          "err": "Champ obligatoire"
-        }
-      },
-      {
-        "key": "supervisor",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Nom du coodinateur/Décideur/Superviseur",
-        "v_required": {
-          "value": "true",
-          "err": "Champ obligatoire"
-        }
-      },
-      {
-        "key": "teamLeader",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Team Leader who conducted observation",
-        "v_required": {
-          "value": "true",
-          "err": "Champ obligatoire"
-        }
-      },
-      {
         "key": "sprayop_code",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
