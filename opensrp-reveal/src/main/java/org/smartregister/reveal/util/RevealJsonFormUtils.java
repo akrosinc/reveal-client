@@ -631,22 +631,23 @@ public class RevealJsonFormUtils {
             case JsonForm.DAILY_SUMMARY_ZAMBIA:
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
-                        PreferencesUtil.getInstance().getCurrentDistrict());
+                if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA){
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.DISTRICT_MANAGERS, fieldsMap.get(JsonForm.DISTRICT_MANAGER),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
+                }
                 String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
                 if (StringUtils.isNotBlank(dataCollector)) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
                             dataCollector);
                 }
-
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                            CONFIGURATION.DISTRICT_MANAGERS, fieldsMap.get(JsonForm.DISTRICT_MANAGER),
-                            PreferencesUtil.getInstance().getCurrentDistrict());
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                            CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
-                            PreferencesUtil.getInstance().getCurrentDistrict());
                 if (isZambiaIRSLite()) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA));
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
