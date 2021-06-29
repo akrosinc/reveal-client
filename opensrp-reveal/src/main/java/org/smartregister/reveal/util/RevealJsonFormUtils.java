@@ -410,11 +410,17 @@ public class RevealJsonFormUtils {
                  formName = JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA;
             } else if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY)){
                 formName = JsonForm.TABLET_ACCOUNTABILITY_FORM;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+                formName = JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN;
             }
-        }else if(Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType) || Intervention.CDD_SUPERVISION.equals(taskCode)){
-            return JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM;
+        } else if(Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType) || Intervention.CDD_SUPERVISION.equals(taskCode)){
+            formName =  JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM;
         } else if(Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType) || Intervention.CELL_COORDINATION.equals(taskCode)){
-            return  JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM;
+            if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+                formName = JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM;
+            }else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+                formName = JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM_EN;
+            }
         }
         return formName;
     }
@@ -721,10 +727,13 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.WARDS, fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
                 break;
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA:
+            case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN:
                 populateChildLocations(formJSON, JsonForm.VILLAGE,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
                 setDefaultValue(formJSON,CELL_COORDINATOR,RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
+
             case JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM:
+            case JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM_EN:
                 setDefaultValue(formJSON,CELL_COORDINATOR, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 if(feature != null)
                     setDefaultValue(formJSON,JsonForm.VILLAGE,structureRepository.getLocationById(feature.id()).getProperties().getName());
