@@ -453,6 +453,8 @@ public interface Constants {
 
         String RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM = "json.form/rwanda_cell_coordinator_daily_summary_form.json";
 
+        String RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM_EN = "json.form/rwanda_en_cell_coordinator_daily_summary_form.json";
+
         String JSON_FORM_FOLDER = "json.form/";
 
         String LOCATION_COMPONENT_ACTIVE = "my_location_active";
@@ -532,6 +534,8 @@ public interface Constants {
         String TABLET_ACCOUNTABILITY_FORM = "json.form/tablet_accountability_form.json";
 
         String TABLET_ACCOUNTABILITY_FORM_RWANDA = "json.form/rwanda_tablet_accountability_form.json";
+
+        String TABLET_ACCOUNTABILITY_FORM_RWANDA_EN = "json.form/rwanda_en_tablet_accountability_form.json";
 
         String SPRAY_OPERATOR_CODE = "sprayop_code";
 
