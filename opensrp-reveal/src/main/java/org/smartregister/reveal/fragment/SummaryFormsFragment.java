@@ -89,7 +89,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnVerificationForm = view.findViewById(R.id.summary_verification_form);
         btnTabletAccountabilityForm = view.findViewById(R.id.summary_tablet_accountability_form);
 
-        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             btnDailySummary.setVisibility(View.GONE);
             view.findViewById(R.id.separator1).setVisibility(View.GONE);
             btnTeamLeaderDos.setVisibility(View.GONE);

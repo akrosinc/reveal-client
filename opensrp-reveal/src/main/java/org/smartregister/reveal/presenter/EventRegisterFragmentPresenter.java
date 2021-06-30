@@ -91,7 +91,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
 
     private String mainSelect(String tableName, String mainCondition) {
         SmartRegisterQueryBuilder queryBUilder = new SmartRegisterQueryBuilder();
-        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)) {
+        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA_EN.equals(BuildConfig.BUILD_COUNTRY) ) {
             List<String> mainColumns =  new ArrayList<>(Arrays.asList(mainColumns(tableName)));
             mainColumns.add(tableName + "." + DatabaseKeys.DATA_COLLECTION_DATE);
             queryBUilder.selectInitiateMainTable(tableName, mainColumns.toArray(new String[mainColumns.size()]));

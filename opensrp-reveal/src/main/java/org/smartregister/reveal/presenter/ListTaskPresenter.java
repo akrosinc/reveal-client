@@ -257,7 +257,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
                 || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
                 || BuildConfig.BUILD_COUNTRY == Country.RWANDA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)) {
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN)) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }

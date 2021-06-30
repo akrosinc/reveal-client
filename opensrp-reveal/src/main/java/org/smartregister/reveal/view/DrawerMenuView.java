@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.customviews.TreeViewDialog;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,7 +170,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             filledForms.setVisibility(View.VISIBLE);
             filledForms.setOnClickListener(this);
 
-        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA || BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA || BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             summaryFormsTextView.setVisibility(View.VISIBLE);
             summaryFormsTextView.setOnClickListener(this);
 
