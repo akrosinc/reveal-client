@@ -153,7 +153,7 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
             statusTextView = itemView.findViewById(R.id.status);
             dataCollectionDateTextView = itemView.findViewById(R.id.data_collection_date);
 
-            if(!Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)){
+            if(!Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA_EN.equals(BuildConfig.BUILD_COUNTRY) ){
                 dataCollectionDateTextView.setVisibility(View.GONE);
             }
         }

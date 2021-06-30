@@ -435,7 +435,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
-                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN) {
+                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
             int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
