@@ -677,8 +677,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
-                .setLabelTextSize(getResources().getDimension(R.dimen.operational_area_boundary_text_size))
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.WHITE)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
