@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.location.Location;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -73,6 +75,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
+import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
@@ -82,6 +85,7 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
@@ -113,6 +117,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER
 import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
+import static org.smartregister.reveal.util.Constants.USER_NAME;
 import static org.smartregister.reveal.util.Utils.formatDate;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
@@ -179,6 +184,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     private TaskFilterParams filterParams;
 
     private MapboxMap mapboxMap;
+
+    private final String USER_INTERACTS_WITH_STRUCTURE = "user_interacts_with_structure";
+
 
     public ListTaskPresenter(ListTaskView listTaskView, BaseDrawerContract.Presenter drawerPresenter) {
         this.listTaskView = listTaskView;
@@ -722,6 +730,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }
         }
+        RevealApplication.getInstance().getAppExecutors().networkIO().execute(() -> logStructureInteractionEvent(selectedFeature));
     }
 
     @Override
@@ -942,6 +951,13 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         }
 
         listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
+    }
+    private void logStructureInteractionEvent(Feature feature){
+        Bundle bundle = new Bundle();
+        bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
+        bundle.putString(STRUCTURE_ID,feature.id());
+        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(USER_INTERACTS_WITH_STRUCTURE,bundle);
     }
 
 }
