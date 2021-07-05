@@ -21,12 +21,14 @@ import java.util.TimerTask;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
+import static org.smartregister.reveal.util.Constants.USER_NAME;
+
 /**
  * Created by samuelgithengi on 2/13/19.
  */
 public class ValidateUserLocationPresenter implements UserLocationContract.UserLocationPresenter {
 
-    public static final String BUILD_COUNTRY = "build_country";
     private UserLocationView locationView;
 
     private UserLocationCallback callback;
@@ -36,7 +38,6 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     private AppExecutors appExecutors;
 
     private final String ADMIN_PASSWORD_REQUIRED = "admin_password_required";
-    private final String USER_NAME = "user_name";
     private final String LATITUDE = "latitude";
     private final String LONGITUDE = "longitude";
 

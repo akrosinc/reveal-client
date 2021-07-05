@@ -73,6 +73,10 @@ public interface Constants {
 
     int SYNC_BACK_OFF_DELAY = 8000;
 
+    String USER_NAME = "user_name";
+
+    String BUILD_COUNTRY = "build_country";
+
     interface CONFIGURATION {
         String LOGIN = "login";
         String GLOBAL_CONFIGS = "global_configs";
