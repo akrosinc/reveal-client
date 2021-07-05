@@ -102,7 +102,7 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
             getPresenter().onFilterTasksClicked();
         });
 
-        if(!Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)){
+        if(BuildConfig.BUILD_COUNTRY != Country.KENYA  && BuildConfig.BUILD_COUNTRY != Country.RWANDA && BuildConfig.BUILD_COUNTRY != Country.RWANDA_EN){
             view.findViewById(R.id.data_collection_date_header).setVisibility(View.GONE);
         }
     }

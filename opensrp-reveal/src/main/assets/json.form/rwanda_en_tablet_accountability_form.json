@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Injiza Ifishi yo Kubazwa",
+    "title": "Enter Tablet Accountability Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,10 +57,10 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Izina ry'umudugudu",
+        "hint": "Name of Village",
         "v_required": {
           "value": "true",
-          "err": "Ningombwa kuzuza muruyu mwanya"
+          "err": "This field is required."
         }
       },
       {
@@ -76,7 +76,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "check_box",
-        "label": "Ni uwuhe muti watanzwe?",
+        "label": "What drug was dispensed?",
         "text_size": "8sp",
         "options": [
           {
@@ -98,7 +98,7 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Umwanya ukenewe"
+          "err": "Required field"
         }
       },
       {
@@ -108,23 +108,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya PZQ wakiriwe",
+        "hint": "Number of PZQ tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -141,23 +141,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya PZQ wakiriye byongeweho kubyo warufite",
+        "hint": "Number of PZQ tablet top-ups received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -188,23 +188,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya PZQ washubije",
+        "hint": "Number of PZQ Returned",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -217,7 +217,7 @@
           {
             "type": "numeric",
             "ex": "lessThanEqualTo(.,step1:sum_pzq_received_and_top_up)",
-            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa PZQ wakiriwe ndetse na PZQ zongewe kuzo warufite"
+            "err": "Value should be less than or equal to sum of PZQ received and PZQ top-ups"
           }
         ]
       },
@@ -228,23 +228,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya Albendazole wakiriye",
+        "hint": "Number of Albendazole tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -261,23 +261,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya Albendazole wakiriye byongewe kubyo warufite",
+        "hint": "Number of Albendazole tablet top-ups received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -308,23 +308,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya Albendazole washubije",
+        "hint": "Number of Albendazole Returned",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -337,7 +337,7 @@
           {
             "type": "numeric",
             "ex": "lessThanEqualTo(.,step1:sum_alb_received_and_top_up)",
-            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa Albendazole wakiriwe ndetse na Albendazole zongewe kuzo warufite"
+            "err": "Value should be less than or equal to sum of Albendazole received and Albendazole top-ups"
           }
         ]
       },
@@ -348,23 +348,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya AMebendazole wakiriye",
+        "hint": "Number of Mebendezole tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -381,23 +381,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya Mebendazole wakiriye byongewe kubyo warufite",
+        "hint": "Number of Mebendazole tablet top-ups received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -428,23 +428,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya Mebendazole washubije",
+        "hint": "Number of Mebendazole Returned",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -457,7 +457,7 @@
           {
             "type": "numeric",
             "ex": "lessThanEqualTo(.,step1:sum_mbz_received_and_top_up)",
-            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa Mebendazole wakiriwe ndetse na Mebendazole zongewe kuzo warufite"
+            "err": "Value should be less than or equal to sum of Mebendezole received and Mebendezole top-ups"
           }
         ]
       },
@@ -468,23 +468,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya VitA wakiriye",
+        "hint": "Number of VitA tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -501,23 +501,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya VitA wakiriye byongewe kubyo warufite",
+        "hint": "Number of VitA tablet top-ups received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -548,23 +548,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wibinini bya VitA washubije",
+        "hint": "Number of VitA Returned",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -577,7 +577,7 @@
           {
             "type": "numeric",
             "ex": "lessThanEqualTo(.,step1:sum_vita_received_and_top_up)",
-            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa VitA wakiriwe ndetse na VitA zongewe kuzo warufite"
+            "err": "Value should be less than or equal to sum of VitA received and VitA top-ups"
           }
         ]
       }

@@ -568,6 +568,6 @@ public class Utils {
     }
 
     public static boolean isRwandaMDALite(){
-        return (BuildConfig.SELECT_JURISDICTION && Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY));
+        return (BuildConfig.SELECT_JURISDICTION && (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN));
     }
 }

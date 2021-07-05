@@ -40,6 +40,8 @@ public abstract class BaseRevealRegisterActivity extends BaseRegisterActivity {
             LangUtils.saveLanguage(base.getApplicationContext(), "th");
         } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL ) {
             LangUtils.saveLanguage(base.getApplicationContext(), "fr");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+            LangUtils.saveLanguage(base.getApplicationContext(), "rw");
         } else {
             LangUtils.saveLanguage(base.getApplicationContext(), "en");
         }

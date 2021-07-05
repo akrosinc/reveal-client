@@ -226,7 +226,7 @@ public class IndicatorUtils {
         List<Event> dataCaptured = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
 
         List<Event> latestEvents = validTasks.stream().map(taskDetails -> {
-            Map<DateTime,Event> eachTaskEventAndDateMap = dataCaptured.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getEventDate,Function.identity()));
+            Map<DateTime,Event> eachTaskEventAndDateMap = dataCaptured.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
             List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(Collectors.toList());
             DateTime maxDatTime = Collections.max(eventDates);
             return eachTaskEventAndDateMap.get(maxDatTime);
