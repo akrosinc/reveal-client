@@ -4,14 +4,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import org.json.JSONObject;
 import org.smartregister.reveal.BuildConfig;
@@ -88,7 +89,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnVerificationForm = view.findViewById(R.id.summary_verification_form);
         btnTabletAccountabilityForm = view.findViewById(R.id.summary_tablet_accountability_form);
 
-        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             btnDailySummary.setVisibility(View.GONE);
             view.findViewById(R.id.separator1).setVisibility(View.GONE);
             btnTeamLeaderDos.setVisibility(View.GONE);
@@ -253,6 +254,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM);
                 } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA){
                     presenter.showBasicForm(Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA);
+                } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+                    presenter.showBasicForm(Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN);
                 }
             default:
                 break;

@@ -140,7 +140,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
         } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
@@ -163,6 +163,8 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             LangUtils.saveLanguage(getApplicationContext(), "th");
         } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
             LangUtils.saveLanguage(getApplicationContext(),"fr");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
+            LangUtils.saveLanguage(getApplicationContext(),"rw");
         } else {
             LangUtils.saveLanguage(getApplicationContext(), "en");
         }

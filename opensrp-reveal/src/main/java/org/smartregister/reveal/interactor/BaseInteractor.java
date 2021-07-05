@@ -308,7 +308,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         String locationName = null;
                         if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
                             locationName = JsonFormUtils.getFieldValue(jsonForm.toString(),JsonForm.LOCATION);
-                        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+                        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
                             locationName = JsonFormUtils.getFieldValue(jsonForm.toString(),JsonForm.VILLAGE);
                         }
                         jsonForm.put(ENTITY_ID,getStructureIdByName(locationName));

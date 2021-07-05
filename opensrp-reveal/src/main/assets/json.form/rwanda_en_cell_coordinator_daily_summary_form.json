@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Umuhuzabikorwa w'akagari Ifishi y'incamake ya buri munsi",
+    "title": "Cell Coordinator Daily Summary Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,11 +57,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Itariki yo gukusanya amakuru",
+        "hint": "Date of data collection",
         "max_date": "today",
         "v_required": {
           "value": true,
-          "err": "Nyamuneka uzuza neza itariki ukusanyirijeho amakuru"
+          "err": "Please specify the date of data collection"
         }
       },
       {
@@ -71,11 +71,11 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabantu bafite imyaka hagati ya 5-15 bahawe inyigisho zubuzima",
+        "hint": "Number of people ages 5-15 years who received health education",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
@@ -83,11 +83,11 @@
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         }
       },
       {
@@ -97,23 +97,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabantu bafite imyaka 16 nohejuru yayo bahawe inyigisho zubuzima",
+        "hint": "Number of people ages 16 and above who received health education",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         }
       },
       {
@@ -122,7 +122,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Ni ubuhe buvuzi bwatanzwe?",
+        "label": "What treatment was provided?",
         "options": [
           {
             "key": "Vitamin A",
@@ -139,7 +139,7 @@
         ],
         "v_required": {
           "value": true,
-          "err": "Hitamo ubuvuzi"
+          "err": "Select treatment"
         }
       },
       {
@@ -149,23 +149,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gabo bavuwe bafite amezi 6 kugeza 11",
+        "hint": "Number of treated males aged 6 to 11 months",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -182,23 +182,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gabo bavuwe bafite amezi 12 kugeza 59",
+        "hint": "Number of treated males aged 12 to 59 months",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -215,23 +215,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka hagati 5 na 15",
+        "hint": "Number of treated males aged 5 to 15 years",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
         "rules-engine": {
@@ -248,23 +248,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka 16 kuzamura",
+        "hint": "Number of treated males aged 16 years and above",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -294,7 +294,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Igiteranyo cyumubare wabana bigitsina gabo bavuwe ni  {total_males}",
+        "text": "Total Males Treated is  {total_males}",
         "text_color": "#000000",
         "toaster_type": "info",
         "calculation": {
@@ -312,23 +312,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gore bavuwe bafite amezi 6 kugeza 11",
+        "hint": "Number of treated females aged 6 to 11 months",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -345,23 +345,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gore bavuwe bafite amezi 12 kugeza 59",
+        "hint": "Number of treated females aged 12 to 59 months",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -378,23 +378,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka hagati 5 na 15",
+        "hint": "Number of treated females aged 5 to 15 years",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -411,23 +411,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka 16 kuzamura",
+        "hint": "Number of treated females aged 16 years and above",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -457,7 +457,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Igiteranyo cyumubare wabana bigitsina gore bavuwe ni {total_female} ",
+        "text": "Total Females Treated  is {total_female} ",
         "text_color": "#000000",
         "toaster_type": "info",
         "calculation": {
@@ -545,27 +545,27 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wingaruka zibinini byatanzwe zagaragaye",
+        "hint": "Number of Serious Adverse Reaction cases reported",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "total_males_and_females",
-          "err": "Umubare wibibazo bikomeye byagaragajwe bigomba kuba bike ugereranije nabana bigitsina gabo bose Bavuwe + Abana Bose bigitsina gore"
+          "err": "Number of Serious Adverse Reaction cases reported should be less that Total Male Treated + Total Females Treated"
         }
       },
       {
@@ -574,7 +574,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Ni uwuhe muti wakoreshejwe?",
+        "label": "What drug was used?",
         "options": [
           {
             "key": "PZQ",
@@ -595,7 +595,7 @@
         ],
         "v_required": {
           "value": true,
-          "err": "Hitamo umuti wakoreshejwe mu kuvura"
+          "err": "Select Drug that was used for  treatment"
         }
       },
       {
@@ -604,7 +604,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text": "The drug selected does not match the treatment provided",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -625,7 +625,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text": "The drug selected does not match the treatment provided",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -646,7 +646,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text": "The drug selected does not match the treatment provided",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
@@ -667,24 +667,24 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Wakiriye ibinini bya mbere uyumunsi, hari ibinini wongeweho cyangwa nta binini wabonye uyumunsi?",
+        "label": "Did you receive your initial balance today, top up or no pills today?",
         "options": [
           {
             "key": "Initial balance",
-            "text": "Ibinini warusanganwe mububiko"
+            "text": "Initial balance"
           },
           {
             "key": "Top Up",
-            "text": "ibinini bindi wahawe"
+            "text": "Top Up"
           },
           {
             "key": "None",
-            "text": "Nta binini hawe"
+            "text": "None"
           }
         ],
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         }
       },
       {
@@ -694,23 +694,23 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Wakiriye ibinini bingahe?",
+        "hint": "How many tablets did you receive?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "relevance": {
           "rules-engine": {
@@ -755,31 +755,31 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Ibinini Byose byatanzwe uyu munsi",
+        "hint": "Total adminstered today",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_max": {
           "value": "999999999",
-          "err": "Uyu mwanya wakazu ugomba kuba muto cyangwa ungana na 999999999"
+          "err": "This field must be less that or equal to 999999999"
         },
         "v_relative_max": {
           "value": "total_tablet_admin_max",
-          "err": "Wahisemo Imiti warusanganwe yambere mububiko, kubwibyo ibyatanzwe byose uyumunsi bigomba kuba munsi cyangwa bingana ibinini byambere byakiriwe mububiko"
+          "err": "You selected Initial balance, therefore  the total administered today must be less than or equal initial tablets received"
         }
       },
       {
@@ -789,27 +789,27 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Ibinini Byangiritse",
+        "hint": "Total damaged",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+          "err": "This field must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+          "err": "This field must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "total_tablet_less_administered_max",
-          "err": "Wahisemo Impirimbanyi Yambere, kubwibyo ibyangiritse byose bigomba kuba munsi cyangwa bingana ibinini byambere byakiriwe mububiko hakuweho ibyatanzwe"
+          "err": "You selected Initial balance, therefore  the total damaged must be less than or equal initial tablets received minus administered"
         }
       },
       {
@@ -818,21 +818,21 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Ese aya makuru yagenzuwe hamwe nimpapuro zakopi zayo",
+        "label": "Has this data been verified with hard copy forms",
         "options": [
           {
             "key": "verified",
-            "text": "Yego"
+            "text": "Yes"
           },
           {
             "key": "not verified",
-            "text": "Oya"
+            "text": "No"
           }
         ],
         "value": "not verified",
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         }
       },
       {
@@ -841,7 +841,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Iki gikorwa cyarangiye?",
+        "label": "Has this task been completed?",
         "options": [
           {
             "key": "Yes",
@@ -855,7 +855,7 @@
         "value": "No",
         "v_required": {
           "value": true,
-          "err": "Uyu mwanya ni itegeko kuwuzuza"
+          "err": "This field is mandatory"
         }
       },
       {
