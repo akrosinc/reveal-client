@@ -25,14 +25,210 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="4dp">
-
-
             <org.smartregister.reporting.view.TableView
                 android:id="@+id/tableView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:headerTextStyle="bold" />
+        </ScrollView>
+
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+            <!--NOTE: this is a temporary solution,until we can be able to extend the opensrp TableView, we do the following-->
+            <TableLayout
+                android:id="@+id/tempTableView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/indicator"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/value"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/health_education_ages_5_to_15_years"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/health_education_ages_5_to_15_years_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/health_education_16_years_and_above"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/health_education_16_years_and_above_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/vitamina_total_6_to_11_months"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/vitamina_total_6_to_11_months_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/vitamina_total_12_to_59_months"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/vitamina_total_12_to_59_months_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/alb_meb_total_12_to_59_months"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/alb_meb_total_12_to_59_months_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/alb_meb_total_5_to_15_years"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/alb_meb_total_5_to_15_years_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/alb_meb_total_16_years_and_above"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/alb_meb_total_16_years_and_above_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/pzq_total_5_to_15_years"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/pzq_total_5_to_15_years_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/pzq_total_16_years_and_above"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/pzq_total_16_years_and_above_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+
+
+
+            </TableLayout>
 
         </ScrollView>
 

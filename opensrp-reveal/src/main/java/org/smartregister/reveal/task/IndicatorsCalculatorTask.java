@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -45,6 +47,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     protected Activity activity;
     private List<TaskDetails> tasks;
     private TableView tableView;
+    private TableLayout tempTableLayoutView;
 
     public IndicatorsCalculatorTask(Activity context, List<TaskDetails> tasks) {
         this.activity = context;
@@ -61,6 +64,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         progressIndicator2 = activity.findViewById(R.id.progressIndicatorView2);
         progressIndicator3 = activity.findViewById(R.id.progressIndicatorView3);
         tableView = activity.findViewById(R.id.tableView);
+        tempTableLayoutView = activity.findViewById(R.id.tempTableView);
 
     }
 
@@ -151,7 +155,21 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             progressIndicator3.setSubTitle("");
         }
 
-        tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
+        if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+            tableView.setVisibility(View.GONE);
+            populateTableView(Arrays.asList(R.id.health_education_ages_5_to_15_years_cell,
+                                            R.id.health_education_16_years_and_above_cell,
+                                            R.id.vitamina_total_6_to_11_months_cell,
+                                            R.id.vitamina_total_12_to_59_months_cell,
+                                            R.id.alb_meb_total_12_to_59_months_cell,
+                                            R.id.alb_meb_total_5_to_15_years_cell,
+                                            R.id.alb_meb_total_16_years_and_above_cell,
+                                            R.id.pzq_total_5_to_15_years_cell,
+                                            R.id.pzq_total_16_years_and_above_cell),indicatorDetails.getSprayIndicatorList());
+        } else {
+            tempTableLayoutView.setVisibility(View.GONE);
+            tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
+        }
 
         //Show or hide depending on plan
 
@@ -162,4 +180,11 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     }
 
 
+
+    private void populateTableView(List<Integer> cellResourceIdentifiers,List<String> sprayIndicatorList){
+        for(Integer resourceId : cellResourceIdentifiers){
+            TextView textView = tempTableLayoutView.findViewById(resourceId);
+            textView.setText(sprayIndicatorList.get(cellResourceIdentifiers.indexOf(resourceId) * 2 + 1));
+        }
+    }
 }
