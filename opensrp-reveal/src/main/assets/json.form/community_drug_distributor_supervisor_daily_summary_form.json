@@ -598,7 +598,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Has this task been completed?",
+        "label": "Has the MDA been completed?",
         "options": [
           {
             "key": "Yes",
