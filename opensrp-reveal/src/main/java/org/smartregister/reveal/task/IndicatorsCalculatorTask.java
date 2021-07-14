@@ -1,6 +1,7 @@
 package org.smartregister.reveal.task;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -151,7 +152,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             progressIndicator.setVisibility(View.GONE);
             progressIndicator2.setVisibility(View.GONE);
-            progressIndicator3.setTitle("Click Here to show Indicators");
+
+
+            progressIndicator3.setTitle(activity.getString(R.string.click_to_show_indicators));
             progressIndicator3.setSubTitle("");
         }
 

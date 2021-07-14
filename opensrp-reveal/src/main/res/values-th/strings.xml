@@ -295,5 +295,9 @@
     <string name="downloading">กำลังดาวน์โหลด</string>
     <string name="map_download_progress">กำลังดาวน์โหลด: %,.2f %%</string>
     <string name="sync_started">เริ่มการซิงค์แล้ว</string>
+    <string name="click_to_show_indicators">Click Here to show Indicators</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="account_disabled">Account Disabled</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
 
 </resources>
