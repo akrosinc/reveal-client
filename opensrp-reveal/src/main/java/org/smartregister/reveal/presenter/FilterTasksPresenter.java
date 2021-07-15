@@ -134,6 +134,10 @@ public class FilterTasksPresenter implements FilterTasksContract.Presenter {
             return Intervention.MDA_INTERVENTIONS;
         } else if (Utils.isFocusInvestigation()) {
             return Intervention.FI_INTERVENTIONS;
+        } else if(Utils.isRwandaMDALite()) {
+            return Intervention.RWANDA_INTERVENTIONS;
+        }else if(Utils.isKenyaMDALite()){
+            return Intervention.KENYA_INTERVENTIONS;
         } else
             return Intervention.IRS_INTERVENTIONS;
     }
