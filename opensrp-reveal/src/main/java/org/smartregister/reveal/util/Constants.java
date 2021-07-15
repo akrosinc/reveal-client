@@ -241,6 +241,11 @@ public interface Constants {
 
         String CELL_COORDINATION = "Cell Coordination";
 
+        List<String> RWANDA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
+
+        List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
+
+
     }
 
 
