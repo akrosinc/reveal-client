@@ -144,8 +144,8 @@ public class FilterTasksPresenter implements FilterTasksContract.Presenter {
 
     @Override
     public List<String> getBusinessStatusOptions() {
-        return filterConfiguration.getBusinessStatusList() != null ? filterConfiguration.getBusinessStatusList() :
-                Utils.isFocusInvestigation() ? BusinessStatus.FI_BUSINESS_STATUS : Utils.isMDA() ? BusinessStatus.MDA_BUSINESS_STATUS: BuildConfig.SELECT_JURISDICTION ? BusinessStatus.MDA_LITE_BUSINESS_STATUS : BusinessStatus.IRS_BUSINESS_STATUS;
+        return  BuildConfig.SELECT_JURISDICTION ? BusinessStatus.MDA_LITE_BUSINESS_STATUS : filterConfiguration.getBusinessStatusList() != null ? filterConfiguration.getBusinessStatusList() :
+                Utils.isFocusInvestigation() ? BusinessStatus.FI_BUSINESS_STATUS : Utils.isMDA() ? BusinessStatus.MDA_BUSINESS_STATUS : BusinessStatus.IRS_BUSINESS_STATUS;
     }
 
     @Override
