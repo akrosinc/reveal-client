@@ -18,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.flexbox.FlexboxLayout;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.FilterTasksContract;
 import org.smartregister.reveal.model.FilterConfiguration;
@@ -168,7 +169,8 @@ public class FilterTasksActivity extends MultiLanguageActivity implements Filter
     private void setUpToggleButtonGroups() {
         populateToggleButtons(businessStatusLayout, presenter.getBusinessStatusOptions());
         populateToggleButtons(taskCodeLayout, presenter.getIntentionTypes());
-        populateToggleButtons(interventionTypeLayout, InterventionType.FILTERABLE_INTERVENTION_TYPES);
+        if(!BuildConfig.SELECT_JURISDICTION)
+            populateToggleButtons(interventionTypeLayout, InterventionType.FILTERABLE_INTERVENTION_TYPES);
         if (filterConfiguration.isFormsLayoutEnabled() && filterConfiguration.getEventTypeList() != null) {
             populateToggleButtons(formNameLayout, filterConfiguration.getEventTypeList());
         }
