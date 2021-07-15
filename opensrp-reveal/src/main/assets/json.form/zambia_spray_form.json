@@ -134,6 +134,22 @@
             "text": "Not habitable"
           },
           {
+            "key": "boardingSchool",
+            "text": "Boarding school"
+          },
+          {
+            "key": "wardClinic",
+            "text": "Ward Clinic"
+          },
+          {
+            "key": "lodge",
+            "text": "Lodge"
+          },
+          {
+            "key": "toilet",
+            "text": "Toilet"
+          },
+          {
             "key": "other",
             "text": "Other"
           }
@@ -225,48 +241,6 @@
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }
-        }
-      },
-      {
-        "key": "notreseidential_eligible",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Why is this Non-Residential structure eligible?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "boardingSchool",
-            "text": "Boarding school"
-          },
-          {
-            "key": "wardClinic",
-            "text": "Ward Clinic"
-          },
-          {
-            "key": "lodge",
-            "text": "Lodge"
-          },
-          {
-            "key": "toilet",
-            "text": "Toilet"
-          },
-          {
-            "key": "other",
-            "text": "Other"
-          }
-        ],
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia-spray-relevance-rules.yml"
-            }
-          }
-        },
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
         }
       },
       {
@@ -422,9 +396,10 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:eligibility": {
-            "type": "string",
-            "ex": "equalTo(., \"eligible\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },
