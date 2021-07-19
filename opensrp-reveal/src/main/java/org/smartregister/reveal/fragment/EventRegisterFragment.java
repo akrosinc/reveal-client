@@ -25,12 +25,14 @@ import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.EventType;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.DrawerMenuView;
 import org.smartregister.reveal.view.EventRegisterActivity;
 import org.smartregister.reveal.view.FilterTasksActivity;
 import org.smartregister.reveal.view.ListTasksActivity;
 import org.smartregister.reveal.viewholder.EventViewHolder;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -189,9 +191,15 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
         Intent intent = new Intent(getContext(), FilterTasksActivity.class);
         intent.putExtra(FILTER_SORT_PARAMS, filterParams);
         List<String> forms = new ArrayList<>();
-        forms.add(Constants.SPRAY_EVENT);
-        forms.addAll(EventType.SUMMARY_EVENT_TYPES);
-        forms.add(EventType.IRS_LITE_VERIFICATION);
+        if(Utils.isKenyaMDALite()){
+            forms.addAll(Arrays.asList(EventType.TABLET_ACCOUNTABILITY_EVENT,EventType.CDD_SUPERVISOR_DAILY_SUMMARY));
+        } else if(Utils.isRwandaMDALite()){
+            forms.addAll(Arrays.asList(EventType.TABLET_ACCOUNTABILITY_EVENT, EventType.CELL_COORDINATOR_DAILY_SUMMARY));
+        } else {
+            forms.add(Constants.SPRAY_EVENT);
+            forms.addAll(EventType.SUMMARY_EVENT_TYPES);
+            forms.add(EventType.IRS_LITE_VERIFICATION);
+        }
         intent.putExtra(FILTER_CONFIGURATION, FilterConfiguration.builder()
                 .businessStatusLayoutEnabled(true)
                 .businessStatusList(Arrays.asList(BusinessStatus.COMPLETE, BusinessStatus.SPRAYED, BusinessStatus.NOT_SPRAYED, BusinessStatus.NOT_ELIGIBLE))

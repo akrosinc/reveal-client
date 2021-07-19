@@ -29,15 +29,21 @@
         android:layout_weight="1"
         android:background="@drawable/listview_background_rounded"
         android:orientation="vertical">
-
-        <include layout="@layout/event_register_list_header" />
-
-        <androidx.recyclerview.widget.RecyclerView
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="vertical">
+            <include layout="@layout/event_register_list_header" />
+            <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:scrollbars="vertical"
-            android:visibility="invisible" />
+            android:visibility="invisible"/>
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <ProgressBar
             android:id="@+id/client_list_progress"

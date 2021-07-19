@@ -1,5 +1,6 @@
 package org.smartregister.reveal.util;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -240,6 +241,11 @@ public interface Constants {
 
         String CELL_COORDINATION = "Cell Coordination";
 
+        List<String> RWANDA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
+
+        List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
+
+
     }
 
 
@@ -330,6 +336,7 @@ public interface Constants {
 
         List<String> MDA_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, FULLY_RECEIVED, NONE_RECEIVED,
                 ADHERENCE_VISIT_DONE, PARTIALLY_RECEIVED, COMPLETE, NOT_ELIGIBLE);
+        List<String> MDA_LITE_BUSINESS_STATUS = Arrays.asList(NOT_VISITED,IN_PROGRESS,COMPLETE);
     }
 
     interface BusinessStatusWrapper {

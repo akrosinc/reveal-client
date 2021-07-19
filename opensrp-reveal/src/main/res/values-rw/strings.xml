@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Actions -->
-    <string name="action_logout">Sohokamo</string>
+    <string name="action_logout">sohokamo</string>
     <!-- General -->
     <string name="reveal_app_name" translatable="false">Reveal</string>
     <string name="app_name" translatable="false">@string/reveal_app_name</string>
@@ -16,20 +16,21 @@
     <string name="device_timezone_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
     <string name="device_time_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
 
-    <string name="prompt_password">Erekana Ijambo Banga </string>
-    <string name="prompt_username">shyiramo izina banga</string>
+    <string name="prompt_password">Injiza ijambo Banga ryawe</string>
+    <string name="prompt_username">Injija izina ukoresha ryawe</string>
     <string name="reveal">Reveal</string>
-    <string name="sync">Guhuza</string>
+    <string name="sync">Guhuza Amakuru</string>
     <string name="campaign">Igenamigambi</string>
     <string name="operational_area">Agace gakorerwamo</string>
 
     <string name="offline_maps">Ikarita yo hanze ya murandasi</string>
-    <string name="app_version">verisiyo ya porogaramu %1$s</string>
+    <string name="app_version">Verisiyo ya porogaramu%1$s</string>
     <string name="app_updated">Yavuguruwe %1$s</string>
-    <string name="district">Akarere:</string>
-    <string name="facility">Ivuriro riherereye:</string>
+    <string name="district">Umurenge:</string>
+    <string name="facility">Aho Ivuriro riherereye:</string>
     <string name="canton">Canton:</string>
-    <string name="operator">uyikoresha:</string>
+    <string name="operator">Uyikoresha cg Nyirayo:</string>
+
 
     <string name="fetch_location_and_structures_failed">Aka gace gakorerwamo ntabwo kasobanuwe neza muri sisitemu. Nyamuneka gerageza guhuza igikoresho cyawe. Nyamuneka saba umuyobozi wa sisitemu kugufasha niba ibyo bidakemuye ikibazo hagaragazwe umubare wuduce dukorerwamo%1$s.</string>
     <string name="fetch_structures_title">kugera kuntego ntibirigukunda</string>
@@ -203,7 +204,7 @@
     <string name="index_case_not_found">Index Case details not found</string>
     <string name="detect_case_button">Detect Case</string>
 
-    <string name="not_visited">Not Visited</string>
+    <string name="not_visited">Ntiyasuwe</string>
     <string name="not_sprayed">Not Sprayed</string>
     <string name="sprayed">Sprayed</string>
     <string name="not_sprayable">Not Sprayable</string>
@@ -212,7 +213,7 @@
     <string name="in_progress">Ibigikorwaho</string>
     <string name="not_eligible">Ntabwo bujuje ibisabwa</string>
     <string name="plans_download_on_progress_title">Ikurwamo ryamakuru rigikomeza</string>
-    <string name="plans_download_on_progress">Hari gukurwamo Gahunda Zikomeje. Nyamuneka tegereza</string>
+    <string name="plans_download_on_progress">Gahunda yogukuramo igenamigambi yuzuye irakomeje. Nyamuneka tegereza</string>
     <string name="numero_sign">No.</string>
     <string name="register_outside_boundary_title">Register structure outside area boundary?</string>
     <string name="register_outside_boundary_warning">Warning: this location is beyond the boundaries of the selected operational area. If you continue, the structure may be added to an incorrect area</string>
@@ -387,7 +388,7 @@
     <string name="tap_point_msg">Tap black point to move or delete</string>
     <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
     <string name="progressBarLabel">Syncing %s : %d%% </string>
-    <string name="device_data_synced">Device data synced</string>
+    <string name="device_data_synced">Amakuru mashya yo mugikoresho cyawe yahujwe</string>
     <string name="device_data_not_synced">Device data not synced</string>
     <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
@@ -429,7 +430,7 @@
 
     <string name="events">Events</string>
     <string name="sync_started">Ihuzwa ryatangiye</string>
-    <string name="ok">Byakozwe</string>
+    <string name="ok">Byatunganye</string>
     <string name="locations">Ahantu</string>
     <string name="plans">Gahunda</string>
     <string name="structures">Imiterere</string>
@@ -450,4 +451,10 @@
     <string name="alb_meb_total_16_years_and_above">Igiteranyo cya ALB/MEB zahawe abana kuva imyaka 16 kuzamura</string>
     <string name="pzq_total_5_to_15_years">Igiteranyo cya PZQ zahawe abana hagati 5-15 imyaka</string>
     <string name="pzq_total_16_years_and_above">Igiteranyo cya PZQ zahawe abana kuva ku imyaka 16 kuzamura</string>
+    <string name="click_to_show_indicators">Kanda hano ubone ibipimo</string>
+    <string name="sync_complete">Ihuzwa ryashojwe</string>
+    <string name="search_hint">Shaka izina cg numero ndanga</string>
+    <string name="account_disabled">Konti yawe yahagaritswe</string>
+    <string name="account_new_assignment_logged_off">Ubu wasohowe hanze kuko konti yawe ifite inshingano nshya yawe. Ongera winjiremo kugirango imirimo mishya itangire gukurikizwa</string>
+
 </resources>
