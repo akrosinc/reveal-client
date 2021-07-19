@@ -451,4 +451,10 @@
     <string name="alb_meb_total_16_years_and_above">ALB/MEB total 16 years and above</string>
     <string name="pzq_total_5_to_15_years">PZQ total 5-15 years</string>
     <string name="pzq_total_16_years_and_above">PZQ total 16 years and above</string>
+    <string name="click_to_show_indicators">Click Here to show Indicators</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="search_hint">Find name or ID</string>
+    <string name="account_disabled">Account Disabled</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+
 </resources>

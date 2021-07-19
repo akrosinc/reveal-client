@@ -278,3 +278,11 @@ priority: 1
 condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('No')"
 actions:
   - "isRelevant = true"
+
+---
+name: step1_genderHoH
+description: step1_genderHoH
+priority: 1
+condition: "step1_eligibility.equals('eligible') && !step1_nonresidential_type.equals('toilet')"
+actions:
+  - "isRelevant = true"

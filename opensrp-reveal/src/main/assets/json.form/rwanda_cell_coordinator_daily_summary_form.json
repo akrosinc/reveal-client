@@ -248,7 +248,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka 16 kuzamura",
+        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka 16 kuzamura harimo nabantu bakuru",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -411,7 +411,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka 16 kuzamura",
+        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka 16 kuzamura harimo nabantu bakuru",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -841,7 +841,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Iki gikorwa cyarangiye?",
+        "label": "Ese MDA yaba yararangiye?",
         "options": [
           {
             "key": "Yes",
