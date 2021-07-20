@@ -71,7 +71,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "name",
-        "hint": "Please write the name of the Zone/Location",
+        "hint": "Please write the name of the Zone",
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
@@ -115,7 +115,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Coordinator/Decision Maker/Supervisor",
+        "hint": "Name of Supervisor who filled out daily summary form",
         "v_required": {
           "value": "true",
           "err": "Required field"
