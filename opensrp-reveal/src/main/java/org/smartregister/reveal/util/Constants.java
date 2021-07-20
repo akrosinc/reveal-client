@@ -625,6 +625,7 @@ public interface Constants {
 
         String LOCATION_OTHER = "location_other";
 
+        String SPRAY_AREAS = "spray_areas";
 
     }
 

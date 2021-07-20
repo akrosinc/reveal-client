@@ -88,6 +88,7 @@ import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATIO
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
@@ -103,6 +104,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTUR
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -218,6 +220,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     }
 
     private org.smartregister.domain.Event saveEvent(JSONObject jsonForm, String encounterType, String bindType) throws JSONException {
+        //TODO: clean up this method, upgrade native forms where necessary
         String entityId = getString(jsonForm, ENTITY_ID);
         JSONArray fields = JsonFormUtils.fields(jsonForm);
         JSONObject metadata = getJSONObject(jsonForm, METADATA);
@@ -241,18 +244,38 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 }
             }
         }
-        if(DAILY_SUMMARY_EVENT.equals(event.getEventType())){
+        if(DAILY_SUMMARY_EVENT.equals(event.getEventType())) {
             JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, COLLECTION_DATE);
-            for(int i=0; i < obsList.length() ;i++){
+            for (int i = 0; i < obsList.length(); i++) {
                 JSONObject obs = (JSONObject) obsList.get(i);
-                if(obs.get("fieldCode").equals(COLLECTION_DATE)){
+                if (obs.get("fieldCode").equals(COLLECTION_DATE)) {
                     JSONArray values = obs.optJSONArray("values");
-                    if(values != null){
+                    if (values != null) {
                         String oldFormatDate = (String) values.get(0);
                         List<String> items = Arrays.asList(oldFormatDate.split("-"));
-                        String newFormatDate = String.format("%s-%s-%s",items.get(2),items.get(1),items.get(0));
+                        String newFormatDate = String.format("%s-%s-%s", items.get(2), items.get(1), items.get(0));
                         obs.put("values", new JSONArray().put(newFormatDate));
-                        collectionDateField.put("value",newFormatDate);
+                        collectionDateField.put("value", newFormatDate);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
+            JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
+            if (sprayArea != null) {
+                for (int i = 0; i < obsList.length(); i++) {
+                    JSONObject obs = (JSONObject) obsList.get(i);
+                    if (obs.get("formSubmissionField").equals(SPRAY_AREAS)) {
+                        JSONArray multiSelectFieldValue = new JSONArray(sprayArea.get(VALUE).toString());
+                        JSONArray values = new JSONArray();
+                        for (int j = 0; j < multiSelectFieldValue.length(); j++) {
+                            JSONObject each = multiSelectFieldValue.getJSONObject(j);
+                            values.put(each.get(KEY));
+                        }
+                        obs.put(VALUES, values);
+                        obs.put("fieldCode", SPRAY_AREAS);
                         break;
                     }
                 }
