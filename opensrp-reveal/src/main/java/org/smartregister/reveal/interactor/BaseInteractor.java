@@ -224,9 +224,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType);
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
+        JSONArray obsList = (JSONArray) eventJson.get("obs");
         if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN)){
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields,COMPOUND_STRUCTURE);
-            JSONArray obsList = (JSONArray) eventJson.get("obs");
             if(compoundStructureField != null) {
                 for(int i =0; i < obsList.length();i++){
                     JSONObject obs = (JSONObject) obsList.get(i);
@@ -240,21 +240,20 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     }
                 }
             }
-
-            if(DAILY_SUMMARY_EVENT.equals(event.getEventType())){
-                JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, COLLECTION_DATE);
-                for(int i=0; i < obsList.length() ;i++){
-                    JSONObject obs = (JSONObject) obsList.get(i);
-                    if(obs.get("fieldCode").equals(COLLECTION_DATE)){
-                       JSONArray values = obs.optJSONArray("values");
-                       if(values != null){
-                           String oldFormatDate = (String) values.get(0);
-                           List<String> items = Arrays.asList(oldFormatDate.split("-"));
-                           String newFormatDate = String.format("%s-%s-%s",items.get(2),items.get(1),items.get(0));
-                           obs.put("values", new JSONArray().put(newFormatDate));
-                           collectionDateField.put("value",newFormatDate);
-                           break;
-                       }
+        }
+        if(DAILY_SUMMARY_EVENT.equals(event.getEventType())){
+            JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, COLLECTION_DATE);
+            for(int i=0; i < obsList.length() ;i++){
+                JSONObject obs = (JSONObject) obsList.get(i);
+                if(obs.get("fieldCode").equals(COLLECTION_DATE)){
+                    JSONArray values = obs.optJSONArray("values");
+                    if(values != null){
+                        String oldFormatDate = (String) values.get(0);
+                        List<String> items = Arrays.asList(oldFormatDate.split("-"));
+                        String newFormatDate = String.format("%s-%s-%s",items.get(2),items.get(1),items.get(0));
+                        obs.put("values", new JSONArray().put(newFormatDate));
+                        collectionDateField.put("value",newFormatDate);
+                        break;
                     }
                 }
             }
