@@ -456,5 +456,6 @@
     <string name="search_hint">Shaka izina cg numero ndanga</string>
     <string name="account_disabled">Konti yawe yahagaritswe</string>
     <string name="account_new_assignment_logged_off">Ubu wasohowe hanze kuko konti yawe ifite inshingano nshya yawe. Ongera winjiremo kugirango imirimo mishya itangire gukurikizwa</string>
+    <string name="fpp_form_name">FPP Form</string>
 
 </resources>
