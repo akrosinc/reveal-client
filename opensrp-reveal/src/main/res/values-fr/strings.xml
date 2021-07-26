@@ -456,5 +456,6 @@
     <string name="search_hint">Find name or ID</string>
     <string name="account_disabled">Account Disabled</string>
     <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="fpp_form_name">FPP Form</string>
 
 </resources>
