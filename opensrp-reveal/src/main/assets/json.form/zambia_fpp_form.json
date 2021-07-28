@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Reveal FPP Form",
+    "title": "Reveal Focal Point Person Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -245,6 +245,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:data_match": {
+            "type": "string",
+            "ex": "equalTo(., \"No\")"
+          }
         }
       },
       {
