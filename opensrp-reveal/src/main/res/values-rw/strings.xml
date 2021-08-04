@@ -16,7 +16,7 @@
     <string name="device_timezone_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
     <string name="device_time_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
 
-    <string name="prompt_password">Injiza ijambo Banga ryawe</string>
+    <string name="prompt_password">Ijambo banga</string>
     <string name="prompt_username">Injija izina ukoresha ryawe</string>
     <string name="reveal">Reveal</string>
     <string name="sync">Guhuza Amakuru</string>
@@ -115,7 +115,7 @@
     <string name="irs">IRS</string>
     <string name="mda">MDA</string>
     <string name="task_icon">Task Icon</string>
-    <string name="distance_from_structure">%1.0f m away</string>
+    <string name="distance_from_structure">%1.0f m Kure...ya cg hanze ya...</string>
     <string name="distance_from_center">%1.0f m from %2s center </string>
 
     <string name="mosquito_collection_point">Mosquito collection point</string>
@@ -132,7 +132,7 @@
 
     <plurals name="structures">
         <item quantity="one">%1d structure within %2.0f m (%3$d total)</item>
-        <item quantity="other">%1d structures within %2.0f m (%3$d total)</item>
+        <item quantity="other">%1d Imiterere yimbere mu... %2.0f m (%3$d total)</item>
     </plurals>
 
     <string name="card_view_record_mosquito_collection">Record mosquito collection</string>
@@ -155,7 +155,7 @@
     <string name="card_view_paot">Potential Area of Transmission</string>
 
     <string name="residents">RESIDENTS</string>
-    <string name="return_to_all_families">Return</string>
+    <string name="return_to_all_families">Garuka inyuma</string>
     <string name="tasks">TASKS (%1$d)</string>
     <string name="comma">,</string>
     <string name="distribute_llin">Distribute Bednet</string>
@@ -200,7 +200,7 @@
     <string name="case_classification_format">Case Classification: %1s</string>
     <string name="focus_reason_format">Focus Reason: %1s</string>
     <string name="focus_status_format">Focus Status: %1s</string>
-    <string name="return_to_register">Return</string>
+    <string name="return_to_register">Garuka inyuma</string>
     <string name="index_case_not_found">Index Case details not found</string>
     <string name="detect_case_button">Detect Case</string>
 
@@ -246,8 +246,8 @@
     <string name="target_coverage">Target coverage</string>
     <string name="structures_targeted">Structures targeted</string>
     <string name="n_percent">%1$d%%</string>
-    <string name="indicator">Indicator</string>
-    <string name="value">Value</string>
+    <string name="indicator">Ibipimo</string>
+    <string name="value">Agaciro mumibare</string>
 
     <string name="spray_success_rate">Spray Success Rate</string>
 
@@ -319,10 +319,10 @@
     <string name="structure">Structure</string>
     <string name="person">Person</string>
     <string name="family">Family</string>
-    <string name="task_type">Task type</string>
-    <string name="intervention_unit">Intervention Unit</string>
-    <string name="apply_filters">Apply Filters</string>
-    <string name="apply_filters_formatter">Apply Filters (%1$d)</string>
+    <string name="task_type">Ubwoko bwibikorwa</string>
+    <string name="intervention_unit">Igice cyubutabazi</string>
+    <string name="apply_filters">Koresha muyunguruzi</string>
+    <string name="apply_filters_formatter">Koresha muyunguruzi (%1$d)</string>
     <string name="bcc_code">BCC</string>
     <string name="mosquito_collection">Mosquito Collection</string>
     <string name="larval_dipping">Larval dipping</string>
@@ -340,20 +340,20 @@
     <string name="add_fam">Household Registration</string>
 
     <string-array name="task_sort_options">
-        <item>Distance (nearest first)</item>
+        <item>Intera (ahambere cg hafi habanza)</item>
         <item>Status</item>
-        <item>Type</item>
+        <item>Andika</item>
     </string-array>
 
     <string-array name="form_sort_options">
-        <item>Date (Recent)</item>
-        <item>Form Name</item>
-        <item>SOP</item>
+        <item>Itariki (Yavuba)</item>
+        <item>Izina ry\'ifishi</item>
+        <item>Imikorere isanzwe ihuriweho</item>
     </string-array>
 
     <string-array name="task_sort_options_namibia">
-        <item>Distance (nearest first)</item>
-        <item>Status</item>
+        <item>Intera (ahambere cg hafi habanza)</item>
+        <item>Imimerere/imitere</item>
     </string-array>
 
     <string name="select_task_action">Select action to perform</string>
@@ -370,7 +370,7 @@
     <string name="tested">Tested</string>
     <string name="done">Done</string>
     <string name="not_tested">Not Tested</string>
-    <string name="yes">Yes</string>
+    <string name="yes">Yego</string>
 
     <string name="save_point">Save Point</string>
     <string name="change_point">Change Point</string>
@@ -395,7 +395,7 @@
     <string name="filled_forms">Ifishi zuzujwe</string>
     <string name="event_date">Date</string>
     <string name="form_name">Form Name</string>
-    <string name="sop">SOP</string>
+    <string name="sop">Imikorere isanzwe ihuriweho</string>
     <string name="hh_village_name">HH/ village Name</string>
     <string name="daily_summary_status">%1$dF/%2$dS/%3$dNS</string>
     <string name="search">Shakisha</string>
@@ -416,7 +416,7 @@
     <string name="filter_by_date">Yungurura ukurikije Itariki</string>
 
     <string name="date_format">DD-MM-YYYY</string>
-    <string name="view_all_events">View All Events</string>
+    <string name="view_all_events">Reba ibyabaye byose</string>
     <string name="point_within_known_operational_area">This point falls within the boundaries of another operational area (%1$s). Would you like to add it to that operational area or undo</string>
     <string name="add_point">Add Point</string>
     <string name="add_structure_form_redirecting">Redirecting you to operational area (%1$s) so you can collect information against this point.</string>
@@ -456,5 +456,8 @@
     <string name="search_hint">Shaka izina cg numero ndanga</string>
     <string name="account_disabled">Konti yawe yahagaritswe</string>
     <string name="account_new_assignment_logged_off">Ubu wasohowe hanze kuko konti yawe ifite inshingano nshya yawe. Ongera winjiremo kugirango imirimo mishya itangire gukurikizwa</string>
+    <string name="loading_client_settings">Itwarwa ryigenamiterere ryabakiriya…</string>
+    <string name="syncing">Ihuzwa ryamakuru...</string>
+    <string name="please_wait">Nyabuneka tegereza...</string>
 
 </resources>
