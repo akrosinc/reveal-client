@@ -303,5 +303,6 @@
     <string name="syncing">Syncing...</string>
     <string name="please_wait">Please wait...</string>
     <string name="summary_forms">Other Forms</string>
+    <string name="fpp_form_name">FPP Form</string>
 
 </resources>

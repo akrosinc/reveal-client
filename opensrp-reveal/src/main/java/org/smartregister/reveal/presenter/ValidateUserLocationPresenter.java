@@ -62,7 +62,7 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
             double offset = callback.getTargetCoordinates().distanceTo(
                     new LatLng(location.getLatitude(), location.getLongitude()));
             if (offset > Utils.getLocationBuffer()) {
-                appExecutors.networkIO().execute(() -> logAdminPassRequiredEvent(location));
+                appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location));
                 callback.requestUserPassword();
             } else {
                 callback.onLocationValidated();

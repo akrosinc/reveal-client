@@ -51,6 +51,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
 
     private Button btnTabletAccountabilityForm;
 
+    private Button btnFPPForm;
+
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -88,6 +90,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnIrsFieldOfficer = view.findViewById(R.id.summary_irs_field_officer);
         btnVerificationForm = view.findViewById(R.id.summary_verification_form);
         btnTabletAccountabilityForm = view.findViewById(R.id.summary_tablet_accountability_form);
+        btnFPPForm = view.findViewById(R.id.fpp_form);
 
         if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             btnDailySummary.setVisibility(View.GONE);
@@ -105,6 +108,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnVerificationForm.setVisibility(View.GONE);
             view.findViewById(R.id.separator7).setVisibility(View.GONE);
             view.findViewById(R.id.separator8).setVisibility(View.GONE);
+            view.findViewById(R.id.separator9).setVisibility(View.GONE);
+            btnFPPForm.setVisibility(View.GONE);
         } else if(BuildConfig.BUILD_COUNTRY  == Country.ZAMBIA){
             btnCbSprayArea.setVisibility(View.GONE);
             view.findViewById(R.id.separator3).setVisibility(View.GONE);
@@ -125,6 +130,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             view.findViewById(R.id.separator8).setVisibility(View.GONE);
             btnIrsFieldOfficer.setVisibility(View.GONE);
             view.findViewById(R.id.separator6).setVisibility(View.GONE);
+            view.findViewById(R.id.separator9).setVisibility(View.GONE);
+            btnFPPForm.setVisibility(View.GONE);
         }
 
         setClickListeners();
@@ -139,6 +146,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnMobilization.setOnClickListener(this);
             btnIrsFieldOfficer.setOnClickListener(this);
             btnVerificationForm.setOnClickListener(this);
+            btnFPPForm.setOnClickListener(this);
     }
 
     @Override
@@ -257,6 +265,10 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
                     presenter.showBasicForm(Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN);
                 }
+                break;
+            case R.id.fpp_form:
+                presenter.showBasicForm(Constants.JsonForm.FPP_FORM_ZAMBIA);
+                break;
             default:
                 break;
         }

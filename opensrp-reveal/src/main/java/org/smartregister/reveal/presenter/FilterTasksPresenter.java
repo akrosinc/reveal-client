@@ -94,6 +94,7 @@ public class FilterTasksPresenter implements FilterTasksContract.Presenter {
         labelsMap.put(EventType.IRS_FIELD_OFFICER_EVENT, R.string.irs_field_officer_form);
         labelsMap.put(EventType.CB_SPRAY_AREA_EVENT, R.string.cb_spray_area_form);
         labelsMap.put(EventType.IRS_LITE_VERIFICATION, R.string.irs_lite_verification_form_name);
+        labelsMap.put(EventType.FPP_EVENT,R.string.fpp_form_name);
 
         // Following are for grouped structure tasks.
         labelsMap.put(BusinessStatus.FAMILY_REGISTERED, R.string.family_registered);

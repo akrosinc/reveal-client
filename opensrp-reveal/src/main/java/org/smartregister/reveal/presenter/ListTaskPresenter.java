@@ -730,7 +730,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }
         }
-        RevealApplication.getInstance().getAppExecutors().networkIO().execute(() -> logStructureInteractionEvent(selectedFeature));
+        RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> logStructureInteractionEvent(selectedFeature));
     }
 
     @Override
