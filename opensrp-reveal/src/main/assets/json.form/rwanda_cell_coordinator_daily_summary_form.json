@@ -845,11 +845,11 @@
         "options": [
           {
             "key": "Yes",
-            "text": "Yes"
+            "text": "Yego"
           },
           {
             "key": "No",
-            "text": "No"
+            "text": "Oya"
           }
         ],
         "value": "No",
