@@ -459,5 +459,6 @@
     <string name="loading_client_settings">Itwarwa ryigenamiterere ryabakiriya…</string>
     <string name="syncing">Ihuzwa ryamakuru...</string>
     <string name="please_wait">Nyabuneka tegereza...</string>
+    <string name="fpp_form_name">FPP Form</string>
 
 </resources>

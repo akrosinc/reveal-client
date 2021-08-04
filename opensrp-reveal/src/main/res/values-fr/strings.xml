@@ -459,5 +459,6 @@
     <string name="loading_client_settings">Loading client settings…</string>
     <string name="syncing">Syncing...</string>
     <string name="please_wait">Please wait...</string>
+    <string name="fpp_form_name">FPP Form</string>
 
 </resources>

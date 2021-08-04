@@ -186,6 +186,13 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "FPP",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

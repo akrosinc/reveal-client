@@ -283,10 +283,13 @@ public interface Constants {
 
         String TABLET_ACCOUNTABILITY_EVENT =  "tablet_accountability";
 
+        String FPP_EVENT = "FPP";
+
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
-                IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT);
+                IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT);
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
+
 
     }
 
@@ -547,6 +550,8 @@ public interface Constants {
         String TABLET_ACCOUNTABILITY_FORM_RWANDA = "json.form/rwanda_tablet_accountability_form.json";
 
         String TABLET_ACCOUNTABILITY_FORM_RWANDA_EN = "json.form/rwanda_en_tablet_accountability_form.json";
+
+        String FPP_FORM_ZAMBIA = "json.form/zambia_fpp_form.json";
 
         String SPRAY_OPERATOR_CODE = "sprayop_code";
 

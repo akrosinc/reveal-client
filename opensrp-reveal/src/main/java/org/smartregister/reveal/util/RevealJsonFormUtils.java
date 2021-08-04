@@ -421,6 +421,8 @@ public class RevealJsonFormUtils {
             }else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
                 formName = JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM_EN;
             }
+        } else if(Constants.EventType.FPP_EVENT.equals(encounterType)){
+            formName = JsonForm.FPP_FORM_ZAMBIA;
         }
         return formName;
     }
@@ -618,6 +620,7 @@ public class RevealJsonFormUtils {
             case JsonForm.IRS_SA_DECISION_SENEGAL_EN:
             case JsonForm.CB_SPRAY_AREA_SENEGAL:
             case JsonForm.MOBILIZATION_FORM_SENEGAL:
+            case JsonForm.FPP_FORM_ZAMBIA:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         Constants.CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
                         PreferencesUtil.getInstance().getCurrentDistrict());
