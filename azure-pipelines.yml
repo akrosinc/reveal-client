@@ -17,19 +17,19 @@ steps:
 - task: Bash@3
   inputs:
     targetType: inline
-    script: sed -i 's/BUILD_NUMBER/$(Build.BuildNumber)/' opensrp-reveal/build.gradle
+    script: sed -i 's/BUILD_NUMBER/$(Build.BuildId)/' opensrp-reveal/build.gradle
 - task: Bash@3
   inputs:
     targetType: inline
     script: cat opensrp-reveal/build.gradle | grep versionName
-# - task: Gradle@2
-#   inputs:
-#     workingDirectory: ''
-#     gradleWrapperFile: 'gradlew'
-#     gradleOptions: '-Xmx3072m'
-#     publishJUnitResults: false
-#     testResultsFiles: '**/TEST-*.xml'
-#     tasks: 'assembleDebug'
+- task: Gradle@2
+  inputs:
+    workingDirectory: ''
+    gradleWrapperFile: 'gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    testResultsFiles: '**/TEST-*.xml'
+    tasks: 'assembleDebug'
 # - task: AndroidSigning@2
 #   inputs:
 #     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
