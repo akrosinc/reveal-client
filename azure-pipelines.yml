@@ -57,11 +57,11 @@ steps:
   inputs:
     targetType: inline
     script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-client-release-$(build_country)-$(Build.BuildId).apk
-- task: Npm@0
+- task: UniversalPackages@0
   displayName: Upload the APK
   inputs:
     command: publish
-    workingDir: opensrp-reveal/build/outputs/apk/release/
-    verbose: true
-    publishRegistry: useFeed
-    publishFeed: 'reveal-client/reveal-npm'
+    publishDirectory: opensrp-reveal/build/outputs/apk/release/
+    vstsFeedPublish: 'Reveal/reveal-client'
+    vstsFeedPackagePublish: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
+    packagePublishDescription: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
