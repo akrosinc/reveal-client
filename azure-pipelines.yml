@@ -15,18 +15,21 @@ variables:
 
 steps:
 - task: CopyFiles@2
+  displayName: Copy the google-services.json
   inputs:
     SourceFolder: '/opt/'
     Contents: 'google-services.json'
     TargetFolder: 'opensrp-reveal'
     OverWrite: true
 - task: CopyFiles@2
+  displayName: Copy the local.properties
   inputs:
     SourceFolder: '/opt/'
     Contents: 'local.properties'
     TargetFolder: '.'
     OverWrite: true
 - task: Bash@3
+  displayName: Set the build country
   inputs:
     targetType: inline
     script: |
@@ -34,14 +37,12 @@ steps:
       echo $BUILD_COUNTRY
       echo "##vso[task.setvariable variable=build_country]$BUILD_COUNTRY"
 - task: Bash@3
+  displayName: Set the build number to version number
   inputs:
     targetType: inline
     script: sed -i 's/BUILD_NUMBER/$(Build.BuildId)/' opensrp-reveal/build.gradle
-- task: Bash@3
-  inputs:
-    targetType: inline
-    script: cat opensrp-reveal/build.gradle | grep versionName
 - task: Gradle@2
+  displayName: Build the APK
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
@@ -52,11 +53,15 @@ steps:
     #options: '-x test --debug'
     options: '-x test'
 - task: Bash@3
+  displayName: Sign and zip the APK
   inputs:
     targetType: inline
     script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-client-release-$(build_country)-$(Build.BuildId).apk
-# - task: CopyFiles@2
-#   inputs:
-#     contents: '**/*.apk'
-#     targetFolder: '$(build.artifactStagingDirectory)'
-# - task: PublishBuildArtifacts@1
+- task: Npm@0
+  displayName: Upload the APK
+  inputs:
+    command: publish
+    workingDir: opensrp-reveal/build/outputs/apk/release/
+    verbose: true
+    publishRegistry: useFeed
+    publishFeed: 'reveal-client/reveal-npm'
