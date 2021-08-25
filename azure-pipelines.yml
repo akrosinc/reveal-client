@@ -1,0 +1,33 @@
+# Android
+# Build your Android project with Gradle.
+# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+
+trigger:
+- main
+
+pool:
+  name: Default
+
+steps:
+- task: Bash@3
+  inputs:
+   targetType: inline
+   script: cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'
+# - task: Gradle@2
+#   inputs:
+#     workingDirectory: ''
+#     gradleWrapperFile: 'gradlew'
+#     gradleOptions: '-Xmx3072m'
+#     publishJUnitResults: false
+#     testResultsFiles: '**/TEST-*.xml'
+#     tasks: 'assembleDebug'
+# - task: AndroidSigning@2
+#   inputs:
+#     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
+#     jarsign: true
+#     jarsignerKeystoreFile: '/opt/'
+#     jarsignerKeystorePassword: '$(jarsignerKeystorePassword)'
+#     jarsignerKeystoreAlias: 'akros.online'
+#     jarsignerKeyPassword: '$(jarsignerKeyPassword)'
+#     zipalign: true
