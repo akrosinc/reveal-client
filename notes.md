@@ -11,6 +11,4 @@ keytool -genkey -v -keystore akros.online.keystore -alias akros.online -keyalg R
 ```
 
 // Signing
-jarsigner -keystore keystore.jks -storepass {{PASSWORD}} reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk upload && zipalign 4 reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk reveal-client/build/outputs/apk/release/reveal-client-release.apk"
-
-curl -v -u user:password --upload-file ./reveal-client/build/outputs/apk/release/app-release.apk https://OUR-ARTIFACTS-REPO/repository/reveal-client/release/reveal-client-release-${env.BUILD_NUMBER}.apk
+jarsigner -keystore /opt/keystore.jks -storepass {{PASSWORD}} reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk reveal-client/build/outputs/apk/release/reveal-client-release.apk
