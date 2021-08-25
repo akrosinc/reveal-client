@@ -14,6 +14,14 @@ steps:
   inputs:
    targetType: inline
    script: cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'
+- task: Bash@3
+  inputs:
+    targetType: inline
+    script: sed -i 's/BUILD_NUMBER/$(Build.BuildNumber)/' opensrp-reveal/build.gradle
+- task: Bash@3
+  inputs:
+    targetType: inline
+    script: cat opensrp-reveal/build.gradle | grep versionName
 # - task: Gradle@2
 #   inputs:
 #     workingDirectory: ''
