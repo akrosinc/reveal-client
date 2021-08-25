@@ -47,7 +47,7 @@ steps:
   inputs:
     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
     jarsign: true
-    jarsignerKeystoreFile: '/opt/'
+    jarsignerKeystoreFile: '/opt/keystore.jks'
     jarsignerKeystorePassword: '$(jarsignerKeystorePassword)'
     jarsignerKeystoreAlias: 'akros.online'
     jarsignerKeyPassword: '$(jarsignerKeyPassword)'
