@@ -38,11 +38,11 @@ steps:
   inputs:
     workingDirectory: ''
     gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m --debug -x test'
+    gradleOptions: '-Xmx3072m'
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assembleDebug'
-    
+    options: '-x test --debug'
 # - task: AndroidSigning@2
 #   inputs:
 #     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
