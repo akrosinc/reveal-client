@@ -43,12 +43,17 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'clean build'
     options: '-x test --debug'
-# - task: AndroidSigning@2
+- task: AndroidSigning@2
+  inputs:
+    apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
+    jarsign: true
+    jarsignerKeystoreFile: '/opt/'
+    jarsignerKeystorePassword: '$(jarsignerKeystorePassword)'
+    jarsignerKeystoreAlias: 'akros.online'
+    jarsignerKeyPassword: '$(jarsignerKeyPassword)'
+    zipalign: true
+# - task: CopyFiles@2
 #   inputs:
-#     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
-#     jarsign: true
-#     jarsignerKeystoreFile: '/opt/'
-#     jarsignerKeystorePassword: '$(jarsignerKeystorePassword)'
-#     jarsignerKeystoreAlias: 'akros.online'
-#     jarsignerKeyPassword: '$(jarsignerKeyPassword)'
-#     zipalign: true
+#     contents: '**/*.apk'
+#     targetFolder: '$(build.artifactStagingDirectory)'
+# - task: PublishBuildArtifacts@1
