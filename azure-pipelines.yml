@@ -10,6 +10,12 @@ pool:
   name: Default
 
 steps:
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '/opt/'
+    Contents: 'google-services.json'
+    TargetFolder: 'reveal-client'
+    OverWrite: true
 - task: Bash@3
   inputs:
    targetType: inline
