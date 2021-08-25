@@ -30,7 +30,7 @@ steps:
   inputs:
     targetType: inline
     script: |
-      BUILD_COUNTRY=`(cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'`
+      BUILD_COUNTRY=`cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'`
       echo $BUILD_COUNTRY
       echo "##vso[task.setvariable variable=build_country]$BUILD_COUNTRY"
 - task: Bash@3
