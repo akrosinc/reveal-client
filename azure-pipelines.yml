@@ -14,7 +14,7 @@ steps:
   inputs:
     SourceFolder: '/opt/'
     Contents: 'google-services.json'
-    TargetFolder: 'reveal-client'
+    TargetFolder: 'opensrp-reveal'
     OverWrite: true
 - task: Bash@3
   inputs:
@@ -36,6 +36,7 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assembleDebug'
+    
 # - task: AndroidSigning@2
 #   inputs:
 #     apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
