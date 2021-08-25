@@ -62,6 +62,6 @@ steps:
   inputs:
     command: publish
     publishDirectory: opensrp-reveal/build/outputs/apk/release/
-    vstsFeedPublish: 'Reveal/reveal-client'
+    vstsFeedPublish: 'Reveal/reveal-client-release'
     vstsFeedPackagePublish: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
     packagePublishDescription: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
