@@ -25,7 +25,7 @@ steps:
 - task: Bash@3
   inputs:
    targetType: inline
-   script: cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'
+   script: COUNTRY=`cat opensrp-reveal/build.gradle | grep BUILD_COUNTRY | head -n 1 | awk {'print $4'} | awk -F'.' {'print tolower($6)'} | sed 's/"//'`
 - task: Bash@3
   inputs:
     targetType: inline
@@ -43,15 +43,10 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'clean build'
     options: '-x test --debug'
-- task: AndroidSigning@2
+- task: Bash@3
   inputs:
-    apkFiles: 'reveal-client/build/outputs/apk/release/.apk'
-    jarsign: true
-    jarsignerKeystoreFile: '/opt/keystore.jks'
-    jarsignerKeystorePassword: '$(jarsignerKeystorePassword)'
-    jarsignerKeystoreAlias: 'akros.online'
-    jarsignerKeyPassword: '$(jarsignerKeyPassword)'
-    zipalign: true
+    targetType: inline
+    script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 reveal-client/build/outputs/apk/release/reveal-client-release-unsigned.apk reveal-client/build/outputs/apk/release/reveal-client-release-$COUNTRY-$(Build.BuildId).apk
 # - task: CopyFiles@2
 #   inputs:
 #     contents: '**/*.apk'
