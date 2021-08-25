@@ -42,11 +42,12 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'clean build'
-    options: '-x test --debug'
+    #options: '-x test --debug'
+    options: '-x test'
 - task: Bash@3
   inputs:
     targetType: inline
-    script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/reveal-client-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/reveal-client-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-client-release-$COUNTRY-$(Build.BuildId).apk
+    script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-client-release-$COUNTRY-$(Build.BuildId).apk
 # - task: CopyFiles@2
 #   inputs:
 #     contents: '**/*.apk'
