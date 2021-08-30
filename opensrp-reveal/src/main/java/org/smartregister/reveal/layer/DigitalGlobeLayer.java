@@ -31,11 +31,10 @@ public class DigitalGlobeLayer extends BaseLayer {
     }
 
     private void createLayersAndSources() {
-        String dgTileUrl = "https://access.maxar.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService@EPSG:3857@png/{z}/{x}/{y}.png?connectId=" + BuildConfig.DG_CONNECT_ID;
+        String dgTileUrl = "https://api.mapbox.com/v4/mapbox.satellite/{z}/{y}/{x}.png?access_token=" + BuildConfig.MAPBOX_SDK_ACCESS_TOKEN;
         TileSet tileSet = new TileSet("1.0.0", dgTileUrl);
         tileSet.setScheme("tms");
         RasterSource rasterSource = new RasterSource(satelliteSourceId, tileSet, 256);
-
         RasterLayer rasterLayer = new RasterLayer(satelliteLayerId, satelliteSourceId);
         rasterLayer.setSourceLayer(satelliteSourceId);
 
