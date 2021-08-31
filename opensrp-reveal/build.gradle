@@ -18,6 +18,13 @@ buildscript {
 
 allprojects {
     repositories {
+        // maven {
+        //     url 'https://pkgs.dev.azure.com/akrosinc/Reveal/_packaging/reveal-client-core/maven/v1'
+        //     name 'reveal-client-core'
+        //     authentication {
+        //         basic(BasicAuthentication)
+        //     }
+        // }
         maven { url 'https://maven.google.com' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         maven {
@@ -72,7 +79,7 @@ android {
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 34
-        versionName "5.5.BUILD_NUMBER"
+        versionName "5.4.BUILD_NUMBER.lite"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -146,7 +153,7 @@ android {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", 'opensrp_base_url', '"https://opensrp-mcp-zm.akros.online/opensrp/"'
+            resValue "string", 'opensrp_base_url', '"https://opensrp-mcp-zm-uat.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
@@ -160,7 +167,7 @@ android {
             buildConfigField "int", "RESOLVE_LOCATION_TIMEOUT_IN_SECONDS", '90'
             buildConfigField "boolean", "DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK", 'false'
             buildConfigField "boolean", "DISPLAY_DISTANCE_SCALE", 'true'
-            buildConfigField "Boolean", "SELECT_JURISDICTION", 'false'
+            buildConfigField "Boolean", "SELECT_JURISDICTION", 'true'
 
         }
 
