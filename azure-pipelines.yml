@@ -9,6 +9,9 @@ trigger:
 pool:
   name: Default
 
+pr:
+- none
+
 variables:
 - name: build_country
   value: none
@@ -29,7 +32,7 @@ steps:
     TargetFolder: '.'
     OverWrite: true
 - task: Bash@3
-  displayName: Set the build country
+  displayName: Get the build country
   inputs:
     targetType: inline
     script: |
@@ -40,7 +43,7 @@ steps:
   displayName: Set the build number to version number
   inputs:
     targetType: inline
-    script: sed -i 's/BUILD_NUMBER/$(Build.BuildId)/' opensrp-reveal/build.gradle
+    script: sed -i 's/BUILD_NUMBER/$(build_country).$(Build.BuildId)/' opensrp-reveal/build.gradle
 - task: Gradle@2
   displayName: Build the APK
   inputs:
@@ -56,12 +59,30 @@ steps:
   displayName: Sign and zip the APK
   inputs:
     targetType: inline
-    script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-client-release-$(build_country)-$(Build.BuildId).apk
+    script: jarsigner -keystore /opt/keystore.jks -storepass $(jarsignerKeystorePassword) opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk akros.online && /home/fanie/Android/Sdk/build-tools/29.0.3/zipalign 4 opensrp-reveal/build/outputs/apk/release/opensrp-reveal-release-unsigned.apk opensrp-reveal/build/outputs/apk/release/reveal-release-$(build_country)-$(Build.BuildId).apk
+- task: CopyFiles@2
+  displayName: Gather the debug apk
+  inputs:
+    SourceFolder: 'opensrp-reveal/build/outputs/apk/debug/'
+    Contents: 'opensrp-reveal-debug.apk'
+    TargetFolder: 'opensrp-reveal/build/outputs/apk/upload'
+    OverWrite: true
+- task: CmdLine@2
+  displayName: Rename the debug apk
+  inputs:
+    script: mv opensrp-reveal/build/outputs/apk/upload/opensrp-reveal-debug.apk opensrp-reveal/build/outputs/apk/upload/reveal-debug-$(build_country)-$(Build.BuildId).apk
+- task: CopyFiles@2
+  displayName: Gather the release apk
+  inputs:
+    SourceFolder: 'opensrp-reveal/build/outputs/apk/release/'
+    Contents: 'reveal-release-$(build_country)-$(Build.BuildId).apk'
+    TargetFolder: 'opensrp-reveal/build/outputs/apk/upload'
+    OverWrite: true
 - task: UniversalPackages@0
   displayName: Upload the APK
   inputs:
     command: publish
-    publishDirectory: opensrp-reveal/build/outputs/apk/release/
+    publishDirectory: opensrp-reveal/build/outputs/apk/upload/
     vstsFeedPublish: 'Reveal/reveal-client-release'
-    vstsFeedPackagePublish: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
-    packagePublishDescription: 'reveal-client-release-$(build_country)-$(Build.BuildId).apk'
+    vstsFeedPackagePublish: 'reveal-release-$(build_country)-$(Build.BuildId).apk'
+    packagePublishDescription: 'reveal-release-$(build_country)-$(Build.BuildId).apk'
