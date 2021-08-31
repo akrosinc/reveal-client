@@ -41,7 +41,6 @@ public class FileHTTPServer {
         styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
 
         styleJson = Utils.readAssetContents(context, styleJsonFile);
-        styleJson = styleJson.replace(dgIdPlaceHolder, BuildConfig.DG_CONNECT_ID);
     }
 
     public void start() {
