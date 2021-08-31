@@ -83,6 +83,6 @@ steps:
   inputs:
     command: publish
     publishDirectory: opensrp-reveal/build/outputs/apk/upload/
-    vstsFeedPublish: 'Reveal/reveal-release'
+    vstsFeedPublish: 'Reveal/reveal-client-release'
     vstsFeedPackagePublish: 'reveal-release-$(build_country)-$(Build.BuildId).apk'
     packagePublishDescription: 'reveal-release-$(build_country)-$(Build.BuildId).apk'
