@@ -4,8 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import androidx.annotation.NonNull;
 import android.widget.ImageButton;
+
+import androidx.annotation.NonNull;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -25,7 +26,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.reveal.R;
-import org.smartregister.reveal.layer.DigitalGlobeLayer;
 import org.smartregister.reveal.layer.MapBoxLayer;
 import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.util.Constants.StructureType;
@@ -261,6 +261,8 @@ public class RevealMapHelper {
         MapBoxLayer mapBoxLayer = new MapBoxLayer();
         baseLayerSwitcherPlugin.addBaseLayer(mapBoxLayer, true);
         kujakuMapView.getMbTilesHelper().setMBTileLayers(context, baseLayerSwitcherPlugin);
+
+        baseLayerSwitcherPlugin.show();
     }
 
 }
