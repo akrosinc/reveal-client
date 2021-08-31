@@ -37,7 +37,6 @@ public class FileHTTPServer {
         }
         server = new ServerThread(socket);
 
-        dgIdPlaceHolder = StringUtils.isNotBlank(digitalGlobeIdPlaceHolder) ? digitalGlobeIdPlaceHolder : DEFAULT_DG_ID_PLACEHOLDER;
         styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
 
         styleJson = Utils.readAssetContents(context, styleJsonFile);
