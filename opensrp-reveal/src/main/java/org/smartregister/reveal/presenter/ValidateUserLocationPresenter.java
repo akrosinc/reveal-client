@@ -55,10 +55,6 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     @Override
     public void onGetUserLocation(Location location) {
         locationView.hideProgressDialog();
-
-        if(BuildConfig.SELECT_JURISDICTION ) {
-            callback.onGetUserLocation(location);
-        } else {
             double offset = callback.getTargetCoordinates().distanceTo(
                     new LatLng(location.getLatitude(), location.getLongitude()));
             if (offset > Utils.getLocationBuffer()) {
@@ -67,7 +63,6 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
             } else {
                 callback.onLocationValidated();
             }
-        }
     }
 
     @Override
