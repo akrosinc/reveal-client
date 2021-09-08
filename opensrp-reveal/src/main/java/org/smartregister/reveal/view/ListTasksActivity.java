@@ -124,6 +124,8 @@ import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundary
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
+import static org.smartregister.reveal.util.Utils.isKenyaMDALite;
+import static org.smartregister.reveal.util.Utils.isRwandaMDALite;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
 /**
@@ -676,7 +678,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
+        if(isRwandaMDALite() || isKenyaMDALite()){
+            return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+                .setLabelColorInt(Color.WHITE)
+                .setBoundaryColor(Color.WHITE)
+                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+        }
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.WHITE)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
