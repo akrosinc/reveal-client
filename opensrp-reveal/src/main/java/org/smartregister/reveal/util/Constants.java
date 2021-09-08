@@ -632,6 +632,11 @@ public interface Constants {
 
         String SPRAY_AREAS = "spray_areas";
 
+        String DATE = "date";
+
+        String DATE_COMM = "dateComm";
+
+        String SPRAY_DATE = "sprayDate";
     }
 
     interface DateFormat {
