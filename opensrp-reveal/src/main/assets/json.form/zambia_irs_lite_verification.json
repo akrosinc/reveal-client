@@ -109,7 +109,14 @@
             "type": "string",
             "ex": "equalTo(., \"yes\")"
           }
-        }
+        },
+        "constraints": [
+          {
+            "type": "date",
+            "ex": "greaterThanEqualTo(., step1:date)",
+            "err": "Communicated date can't occur before Date of community dialogue meeting"
+          }
+        ]
       },
       {
         "key": "notmobilized_reason",

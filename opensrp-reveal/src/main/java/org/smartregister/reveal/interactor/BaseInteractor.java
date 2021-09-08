@@ -88,6 +88,7 @@ import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATIO
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -101,10 +102,13 @@ import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLL
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.JsonForm.COLLECTION_DATE;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE_COMM;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_DATE;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -245,23 +249,17 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             }
         }
         if(DAILY_SUMMARY_EVENT.equals(event.getEventType())) {
-            JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, COLLECTION_DATE);
-            for (int i = 0; i < obsList.length(); i++) {
-                JSONObject obs = (JSONObject) obsList.get(i);
-                if (obs.get("fieldCode").equals(COLLECTION_DATE)) {
-                    JSONArray values = obs.optJSONArray("values");
-                    if (values != null) {
-                        String oldFormatDate = (String) values.get(0);
-                        List<String> items = Arrays.asList(oldFormatDate.split("-"));
-                        String newFormatDate = String.format("%s-%s-%s", items.get(2), items.get(1), items.get(0));
-                        obs.put("values", new JSONArray().put(newFormatDate));
-                        collectionDateField.put("value", newFormatDate);
-                        break;
-                    }
-                }
-            }
+            fixEditTextValueWithCorrectDateFormat(obsList,fields,COLLECTION_DATE);
         }
-
+        if(IRS_LITE_VERIFICATION.equals(event.getEventType())){
+            Arrays.asList(DATE,DATE_COMM,SPRAY_DATE).stream().forEach(key -> {
+                try {
+                    fixEditTextValueWithCorrectDateFormat(obsList,fields,key);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         if(DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
             JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
             if (sprayArea != null) {
@@ -606,6 +604,24 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             Timber.e(e);
         }
         return structureId;
+    }
+
+    private void fixEditTextValueWithCorrectDateFormat(JSONArray obsList, JSONArray fields, String key) throws JSONException{
+        JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, key);
+        for (int i = 0; i < obsList.length(); i++) {
+            JSONObject obs = (JSONObject) obsList.get(i);
+            if (obs.get("fieldCode").equals(key)) {
+                JSONArray values = obs.optJSONArray("values");
+                if (values != null) {
+                    String oldFormatDate = (String) values.get(0);
+                    List<String> items = Arrays.asList(oldFormatDate.split("-"));
+                    String newFormatDate = String.format("%s-%s-%s", items.get(2), items.get(1), items.get(0));
+                    obs.put("values", new JSONArray().put(newFormatDate));
+                    collectionDateField.put("value", newFormatDate);
+                    break;
+                }
+            }
+        }
     }
 
 }
