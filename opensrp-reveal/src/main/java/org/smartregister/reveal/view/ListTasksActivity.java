@@ -122,6 +122,7 @@ import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTR
 import static org.smartregister.reveal.util.Utils.displayDistanceScale;
 import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
+import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
 import static org.smartregister.reveal.util.Utils.isKenyaMDALite;
@@ -673,6 +674,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 } else {
                     revealMapHelper.updateIndexCaseLayers(mMapboxMap, featureCollection, this);
                 }
+                mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                    @Override
+                    public void onCameraMove() {
+                        //TODO dynamically update oa labels based on zoom level
+                    }
+                });
             }
         }
     }
