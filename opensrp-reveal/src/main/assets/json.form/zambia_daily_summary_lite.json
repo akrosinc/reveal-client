@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Daily Summary Form",
+    "title": "Supervisor Daily Summary Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -73,7 +73,7 @@
         "edit_type": "name",
         "hint": "Please write the name of the Zone",
         "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
           "err": "Please enter a valid name"
         },
         "v_required": {
@@ -87,8 +87,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "multi_select_list",
-        "buttonText": "Select the SA(s) that this spray operator worked in today",
-        "dialogTitle": "Select the SA(s) that this spray operator worked in today",
+        "buttonText": "Select the spray areas that this supervisors team visited for this daily summary form data",
+        "dialogTitle": "Select the spray areas that this supervisors team visited for this daily summary form data",
         "searchHint": "Type Spray Area Name",
         "source": "true",
         "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
@@ -122,52 +122,40 @@
         }
       },
       {
-        "key": "sprayop_code",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Spray Operator name",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the spray operator code"
-        }
-      },
-      {
         "key": "found",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of eligible structures FOUND by the SOP",
+        "hint": "Number of eligible structures FOUND",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Number of eligible structures FOUND by the SOP is mandatory"
+          "err": "Number of eligible structures FOUND is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Number of eligible structures FOUND by the SOP must be a number"
+          "err": "Number of eligible structures FOUND must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Number of eligible structures FOUND by the SOP must be a whole number"
+          "err": "Number of eligible structures FOUND must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Number of eligible structures FOUND by the SOP must be greater than or equal to 0"
+          "err": "Number of eligible structures FOUND must be greater than or equal to 0"
         },
         "v_max": {
           "value": "50",
-          "err": "Number of eligible structures FOUND by the SOP must be less than 50"
+          "err": "Number of eligible structures FOUND must be less than 50"
         }
       },
       {
         "key": "found_hint",
         "type": "label",
-        "text": "Check this matches with the total number recorded on the SOP paper form",
+        "text": "Check this matches with the total number recorded on the supervisor paper form",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -183,34 +171,34 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of eligible structures SPRAYED by the SOP",
+        "hint": "Number of eligible structures SPRAYED",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
           "value": true,
-          "err": "Number of eligible structures SPRAYED by the SOP is mandatory"
+          "err": "Number of eligible structures SPRAYED is mandatory"
         },
         "v_numeric": {
           "value": "true",
-          "err": "Number of eligible structures SPRAYED by the SOP must be a number"
+          "err": "Number of eligible structures SPRAYED must be a number"
         },
         "v_numeric_integer": {
           "value": "true",
-          "err": "Number of eligible structures SPRAYED by the SOP must be a whole number"
+          "err": "Number of eligible structures SPRAYED must be a whole number"
         },
         "v_min": {
           "value": "0",
-          "err": "Number of eligible structures SPRAYED by the SOP must be greater than or equal to 0"
+          "err": "Number of eligible structures SPRAYED must be greater than or equal to 0"
         },
         "v_relative_max": {
           "value": "found",
-          "err": "Number of eligible structures SPRAYED by the SOP must be less than eligible structures found."
+          "err": "Number of eligible structures SPRAYED must be less than eligible structures found."
         }
       },
       {
         "key": "sprayed_hint",
         "type": "label",
-        "text": "Check this matches with the number recorded on the SOP paper form",
+        "text": "Check this matches with the total number recorded on the supervisor paper form",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -226,7 +214,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many full sachets were RECEIVED by the SOP at the begining of the day?",
+        "hint": "How many FULL sachets were RECEIVED at the beginning of the day",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -257,7 +245,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many FULL sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "How many FULL sachets were RETURNED at the end of the day",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -288,7 +276,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many EMPTY sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "How many EMPTY sachets were RETURNED at the end of the day",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -398,42 +386,12 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "A total of {bottles_accounted} sachets are unaccounted for.",
+        "text": "A total of {bottles_accounted} are unaccounted for.Returned full, returned empty and lost/damaged must equal total received",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_daily_summary_calculation.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "bottles_accounted_approve",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "check_box",
-        "label_text_size": "8sp",
-        "label": "Please confirm if this is correct.",
-        "options": [
-          {
-            "key": "isConsented",
-            "text": "I Accept",
-            "value": false,
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          }
-        ],
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_daily_summary_relevance.yml"
-            }
-          }
+        "v_required": {
+          "value": "true"
         },
         "calculation": {
           "rules-engine": {
@@ -442,61 +400,11 @@
             }
           }
         },
-        "v_required": {
-          "value": "true",
-          "err": "Please check the item"
-        }
-      },
-      {
-        "key": "bottles_reason",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select a reason for the unaccounted sachets",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "lost",
-            "text": "Lost"
-          },
-          {
-            "key": "damaged",
-            "text": "Damaged"
-          },
-          {
-            "key": "other",
-            "text": "Other"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "rules-engine": {
             "ex-rules": {
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
-          }
-        }
-      },
-      {
-        "key": "bottles_reasontext",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Please write the reason for the unaccounted sachets",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:bottles_reason": {
-            "type": "string",
-            "ex": "equalTo(., \"other\")"
           }
         }
       }

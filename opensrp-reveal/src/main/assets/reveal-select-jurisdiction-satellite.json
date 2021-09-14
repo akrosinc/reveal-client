@@ -65,12 +65,13 @@
           ],
           "hsl(46, 88%, 62%)",
           [
-            "Not Sprayed",
             "Incomplete",
             "In Progress",
             "None Received"
           ],
           "hsl(33, 100%, 50%)",
+          ["Not Sprayed"],
+          "hsl(0, 88%, 55%)",
           [
             "Sprayed",
             "Complete",

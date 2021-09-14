@@ -352,7 +352,7 @@ public interface Constants {
 
     interface Map {
         int MAX_SELECT_ZOOM_LEVEL = 16;
-        int SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = 12;
+        int SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = 14;
         int CLICK_SELECT_RADIUS = 24;
         String NAME_PROPERTY = "name";
         double DOWNLOAD_MAX_ZOOM = 21.0;
@@ -510,6 +510,8 @@ public interface Constants {
          * Non-Task Related Forms
          */
         String DAILY_SUMMARY_ZAMBIA = "json.form/zambia_daily_summary.json";
+
+        String DAILY_SUMMARY_ZAMBIA_LITE = "json.form/zambia_daily_summary_lite.json";
 
         String TEAM_LEADER_DOS_ZAMBIA = "json.form/zambia_team_leader_dos.json";
 
