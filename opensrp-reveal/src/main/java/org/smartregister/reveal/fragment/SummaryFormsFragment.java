@@ -23,6 +23,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.LocationUtils;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.SummaryFormsActivity;
 
 public class SummaryFormsFragment extends Fragment implements OtherFormsfragmentContract.View, View.OnClickListener {
@@ -204,7 +205,11 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         switch(view.getId()) {
             case R.id.summary_daily_summary:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
-                    presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.DAILY_SUMMARY_ZAMBIA);
+                    if(Utils.isZambiaIRSLite()){
+                        presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_ZAMBIA_LITE);
+                    } else {
+                        presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.DAILY_SUMMARY_ZAMBIA);
+                    }
                 } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_SENEGAL);
                 }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
