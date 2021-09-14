@@ -42,6 +42,7 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
@@ -86,7 +87,10 @@ import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
@@ -125,8 +129,6 @@ import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
-import static org.smartregister.reveal.util.Utils.isKenyaMDALite;
-import static org.smartregister.reveal.util.Utils.isRwandaMDALite;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
 /**
@@ -661,10 +663,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     }
                 }
 
+                Map<String, String> featureToLayerMapping = new HashMap<>();
+
                 if (BuildConfig.SELECT_JURISDICTION ) {
                     RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
                         for (Feature feature : featureCollection.features()) {
-                            createIRSLiteOABoundaryLayer(feature);
+                            BoundaryLayer boundaryLayer = createIRSLiteOABoundaryLayer(feature);
+                            kujakuMapView.addLayer(boundaryLayer);
+                            featureToLayerMapping.put(boundaryLayer.getLayerIds()[0],feature.id());
                         }
                     });
                 }
@@ -677,7 +683,20 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
                     @Override
                     public void onCameraMove() {
-                        //TODO dynamically update oa labels based on zoom level
+                        final FeatureCollection lambdaFeatureCollection = featureCollection;
+                        final Map<String,String> lambdaFeatureToLayersMapping = featureToLayerMapping;
+                       if(mMapboxMap.getCameraPosition().zoom  > getMaxZoomLevel()){
+                          mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+
+                                Optional<Feature> feature = lambdaFeatureCollection.features().stream().filter(f-> f.id().equals(lambdaFeatureToLayersMapping.get(layer.getId()))).findAny();
+                                if(feature.isPresent()){
+                                      layer.setProperties(PropertyFactory.textField(feature.get().getStringProperty("name")));
+                                }
+                            });
+                       } else {
+                           mMapboxMap.getStyle().getLayers().stream().forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+                       }
+
                     }
                 });
             }
@@ -685,12 +704,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
-        if(isRwandaMDALite() || isKenyaMDALite()){
-            return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                .setLabelColorInt(Color.WHITE)
-                .setBoundaryColor(Color.WHITE)
-                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
-        }
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
                 .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
                 .setLabelColorInt(Color.WHITE)
@@ -698,16 +711,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
     }
 
-    private void createIRSLiteOABoundaryLayer(Feature operationalArea) {
-        if (operationalArea != null) {
-
-            BoundaryLayer.Builder boundaryBuilder = new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                    .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+    private BoundaryLayer createIRSLiteOABoundaryLayer(Feature operationalArea) {
+         return   new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
                     .setLabelTextSize(getResources().getDimension(R.dimen.operational_area_boundary_text_size))
                     .setLabelColorInt(Color.WHITE)
-                    .setBoundaryWidth(getResources().getDimension(R.dimen.irs_lite_operational_area_boundary_width));
-            kujakuMapView.addLayer(boundaryBuilder.build());
-        }
+                    .setBoundaryWidth(getResources().getDimension(R.dimen.irs_lite_operational_area_boundary_width)).build();
     }
 
     @Override
