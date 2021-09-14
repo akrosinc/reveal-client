@@ -694,7 +694,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                                 }
                             });
                        } else {
-                           mMapboxMap.getStyle().getLayers().stream().forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+                           mMapboxMap.getStyle().getLayers().stream().filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId())).forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
                        }
 
                     }
