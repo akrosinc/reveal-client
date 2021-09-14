@@ -365,7 +365,11 @@ public class RevealJsonFormUtils {
             formName = JsonForm.ZAMBIA_IRS_VERIFICATION_FORM;
         } else if (Constants.EventType.DAILY_SUMMARY_EVENT.equals(encounterType)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
-                formName = JsonForm.DAILY_SUMMARY_ZAMBIA;
+                if(isZambiaIRSLite()){
+                    formName = JsonForm.DAILY_SUMMARY_ZAMBIA_LITE;
+                } else {
+                    formName = JsonForm.DAILY_SUMMARY_ZAMBIA;
+                }
             } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
                 formName = JsonForm.DAILY_SUMMARY_SENEGAL;
             }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
@@ -643,6 +647,7 @@ public class RevealJsonFormUtils {
             case JsonForm.DAILY_SUMMARY_ZAMBIA:
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
+            case JsonForm.DAILY_SUMMARY_ZAMBIA_LITE:
                 if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA){
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),

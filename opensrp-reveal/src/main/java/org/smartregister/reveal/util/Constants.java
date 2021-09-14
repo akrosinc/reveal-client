@@ -511,6 +511,8 @@ public interface Constants {
          */
         String DAILY_SUMMARY_ZAMBIA = "json.form/zambia_daily_summary.json";
 
+        String DAILY_SUMMARY_ZAMBIA_LITE = "json.form/zambia_daily_summary_lite.json";
+
         String TEAM_LEADER_DOS_ZAMBIA = "json.form/zambia_team_leader_dos.json";
 
         String CB_SPRAY_AREA_ZAMBIA = "json.form/zambia_cb_spray_area.json";
