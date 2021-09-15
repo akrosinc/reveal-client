@@ -221,6 +221,8 @@
     <string name="cancel">Cancel</string>
     <string name="partially_sprayed">Partially Sprayed</string>
     <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
+
 
     <string name="team_leader_dos" translatable="false">Enter Team Leader DOS Form</string>
     <string name="cb_spray_area" translatable="false">Enter CB Spray Area Visit Form</string>

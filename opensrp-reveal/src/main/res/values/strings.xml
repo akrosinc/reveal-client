@@ -220,14 +220,16 @@
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
     <string name="partially_sprayed">Partially Sprayed</string>
-    <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="daily_summary">Daily Summary Form</string>
+    <string name="supervisor_daily_summary">Supervisor Daily Summary Form</string>
 
-    <string name="team_leader_dos" translatable="false">Enter Team Leader DOS Form</string>
-    <string name="cb_spray_area" translatable="false">Enter CB Spray Area Visit Form</string>
-    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
-    <string name="mobilization_form" translatable="false">Enter Mobilization Form</string>
-    <string name="irs_field_officer" translatable="false">Enter IRS Field Officer Form</string>
-    <string name="verification_form" translatable="false">Enter Verification Form</string>
+
+    <string name="team_leader_dos" translatable="false">Team Leader DOS Form</string>
+    <string name="cb_spray_area" translatable="false">CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision">IRS SA Decision Form</string>
+    <string name="mobilization_form" translatable="false">Mobilization Form</string>
+    <string name="irs_field_officer" translatable="false">IRS Field Officer Form</string>
+    <string name="verification_form" translatable="false">Verification Form</string>
 
 
     <string name="last_edited">Edited %1s</string>
@@ -437,7 +439,7 @@
     <string name="tasks_text">Tasks</string>
     <string name="registration_info">Registration info</string>
     <string name="view_paot_details">View Details</string>
-    <string name="tablet_accountability_form">Enter Tablet Accountability Form</string>
+    <string name="tablet_accountability_form">Tablet Accountability Form</string>
 
     <string name="edit_cdd_task_complete_status">Edit Task Complete Status</string>
     <string name="confirm_edit_cdd_task_complete_status">Please confirm that the task is complete</string>
