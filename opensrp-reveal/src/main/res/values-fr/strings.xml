@@ -221,6 +221,7 @@
     <string name="cancel">Annuler</string>
     <string name="partially_sprayed">Traitement partiel</string>
     <string name="daily_summary">Renseigner le formualire de synthése journaliére</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
     <string name="team_leader_dos">Enter Team Leader DOS Form</string>
     <string name="cb_spray_area">Enter CB Spray Area Visit Form</string>
     <string name="irs_sa_decision">Renseigner le formulaire de décision IRS SA</string>

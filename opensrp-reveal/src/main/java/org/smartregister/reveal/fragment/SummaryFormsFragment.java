@@ -54,6 +54,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
 
     private Button btnFPPForm;
 
+    private Button btnSupervisorDailySummary;
+
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -91,50 +93,30 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnIrsFieldOfficer = view.findViewById(R.id.summary_irs_field_officer);
         btnVerificationForm = view.findViewById(R.id.summary_verification_form);
         btnTabletAccountabilityForm = view.findViewById(R.id.summary_tablet_accountability_form);
+        btnSupervisorDailySummary = view.findViewById(R.id.supervisor_daily_summary);
         btnFPPForm = view.findViewById(R.id.fpp_form);
-
-        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
-            btnDailySummary.setVisibility(View.GONE);
-            view.findViewById(R.id.separator1).setVisibility(View.GONE);
-            btnTeamLeaderDos.setVisibility(View.GONE);
-            view.findViewById(R.id.separator2).setVisibility(View.GONE);
-            btnCbSprayArea.setVisibility(View.GONE);
-            view.findViewById(R.id.separator3).setVisibility(View.GONE);
-            btnIrsSaDecision.setVisibility(View.GONE);
-            view.findViewById(R.id.separator4).setVisibility(View.GONE);
-            btnMobilization.setVisibility(View.GONE);
-            view.findViewById(R.id.separator5).setVisibility(View.GONE);
-            btnIrsFieldOfficer.setVisibility(View.GONE);
-            view.findViewById(R.id.separator6).setVisibility(View.GONE);
-            btnVerificationForm.setVisibility(View.GONE);
-            view.findViewById(R.id.separator7).setVisibility(View.GONE);
-            view.findViewById(R.id.separator8).setVisibility(View.GONE);
-            view.findViewById(R.id.separator9).setVisibility(View.GONE);
-            btnFPPForm.setVisibility(View.GONE);
-        } else if(BuildConfig.BUILD_COUNTRY  == Country.ZAMBIA){
-            btnCbSprayArea.setVisibility(View.GONE);
-            view.findViewById(R.id.separator3).setVisibility(View.GONE);
-            btnVerificationForm.setVisibility(View.GONE);
-            view.findViewById(R.id.separator7).setVisibility(View.GONE);
-            btnTabletAccountabilityForm.setVisibility(View.GONE);
-            view.findViewById(R.id.separator8).setVisibility(View.GONE);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
-            btnTeamLeaderDos.setVisibility(View.GONE);
-            view.findViewById(R.id.separator2).setVisibility(View.GONE);
-            btnCbSprayArea.setVisibility(View.GONE);
-            view.findViewById(R.id.separator3).setVisibility(View.GONE);
-            btnMobilization.setVisibility(View.GONE);
-            view.findViewById(R.id.separator5).setVisibility(View.GONE);
-            btnVerificationForm.setVisibility(View.GONE);
-            view.findViewById(R.id.separator7).setVisibility(View.GONE);
-            btnTabletAccountabilityForm.setVisibility(View.GONE);
-            view.findViewById(R.id.separator8).setVisibility(View.GONE);
-            btnIrsFieldOfficer.setVisibility(View.GONE);
-            view.findViewById(R.id.separator6).setVisibility(View.GONE);
-            view.findViewById(R.id.separator9).setVisibility(View.GONE);
-            btnFPPForm.setVisibility(View.GONE);
+        if(Utils.isZambiaIRSLite()){
+            btnSupervisorDailySummary.setVisibility(View.VISIBLE);
+        } else if(Utils.isZambiaIRSFull()){
+            btnDailySummary.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
+            btnTeamLeaderDos.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator3).setVisibility(View.VISIBLE);
+            btnIrsSaDecision.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator5).setVisibility(View.VISIBLE);
+            btnMobilization.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator6).setVisibility(View.VISIBLE);
+            btnIrsFieldOfficer.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator7).setVisibility(View.VISIBLE);
+            btnFPPForm.setVisibility(View.VISIBLE);
+        } else if(Utils.isMDALite()){
+            btnTabletAccountabilityForm.setVisibility(View.VISIBLE);
+        }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+            btnDailySummary.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
+            btnIrsSaDecision.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator5).setVisibility(View.VISIBLE);
         }
-
         setClickListeners();
     }
 
@@ -148,6 +130,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnIrsFieldOfficer.setOnClickListener(this);
             btnVerificationForm.setOnClickListener(this);
             btnFPPForm.setOnClickListener(this);
+            btnSupervisorDailySummary.setOnClickListener(this);
     }
 
     @Override
@@ -204,6 +187,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.summary_daily_summary:
+            case R.id.supervisor_daily_summary:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                     if(Utils.isZambiaIRSLite()){
                         presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_ZAMBIA_LITE);
