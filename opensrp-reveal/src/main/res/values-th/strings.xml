@@ -222,6 +222,7 @@
     <string name="tap_point_msg">แตะจุดดำเพื่อย้ายหรือลบ</string>
     <string name="drag_selected_point_msg">ลากจุดที่เลือกเพื่อเปลี่ยนขอบเขต</string>
     <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
     <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
     <string name="menu">เมนู</string>
     <string name="offline_maps">แผนที่แบบออฟไลน์</string>
@@ -304,5 +305,7 @@
     <string name="please_wait">Please wait...</string>
     <string name="summary_forms">Other Forms</string>
     <string name="fpp_form_name">FPP Form</string>
+    <string name="tablet_accountability_form">Tablet Accountability Form</string>
+
 
 </resources>

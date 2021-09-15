@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_daily_summary"
@@ -28,14 +29,16 @@
             android:text="@string/daily_summary"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_team_leader_dos"
@@ -47,14 +50,16 @@
             android:text="@string/team_leader_dos"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_cb_spray_area"
@@ -66,14 +71,16 @@
             android:text="@string/cb_spray_area"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator4"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_irs_sa_decision"
@@ -85,14 +92,16 @@
             android:text="@string/irs_sa_decision"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator5"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_mobilization_form"
@@ -104,14 +113,16 @@
             android:text="@string/mobilization_form"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator6"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_irs_field_officer"
@@ -123,14 +134,16 @@
             android:text="@string/irs_field_officer"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator7"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_verification_form"
@@ -142,14 +155,16 @@
             android:text="@string/verification_form"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator8"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/summary_tablet_accountability_form"
@@ -161,14 +176,16 @@
             android:text="@string/tablet_accountability_form"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/separator9"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/fpp_form"
@@ -180,7 +197,28 @@
             android:text="@string/fpp_form_name"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator10"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/supervisor_daily_summary"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/supervisor_daily_summary"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

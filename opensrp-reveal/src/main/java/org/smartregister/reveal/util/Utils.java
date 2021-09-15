@@ -574,4 +574,7 @@ public class Utils {
     public static boolean isZambiaIRSFull(){
         return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && !BuildConfig.SELECT_JURISDICTION;
     }
+    public static boolean isMDALite(){
+       return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN;
+    }
 }
