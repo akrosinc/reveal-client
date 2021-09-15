@@ -148,8 +148,8 @@
           "err": "Number of eligible structures FOUND must be greater than or equal to 0"
         },
         "v_max": {
-          "value": "50",
-          "err": "Number of eligible structures FOUND must be less than 50"
+          "value": "99999999",
+          "err": "Number of eligible structures FOUND must be less than 99999999"
         }
       },
       {
@@ -234,8 +234,8 @@
           "err": "This field must be greater than or equal to 0"
         },
         "v_max": {
-          "value": "10",
-          "err": "This field must be less than 10"
+          "value": "99999999",
+          "err": "This field must be less than 99999999"
         }
       },
       {
@@ -388,7 +388,7 @@
         "type": "toaster_notes",
         "text": "A total of {bottles_accounted} are unaccounted for.Returned full, returned empty and lost/damaged must equal total received",
         "text_color": "#CF0800",
-        "toaster_type": "info",
+        "toaster_type": "problem",
         "text_size": "8sp",
         "v_required": {
           "value": "true"
