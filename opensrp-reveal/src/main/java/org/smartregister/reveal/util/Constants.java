@@ -128,8 +128,8 @@ public interface Constants {
         String COMMUNITY_DRUG_DISTRIBUTORS = "community_drug_distributors";
         String HEALTH_WORKER_SUPERVISORS = "health_worker_supervisors";
         String VILLAGES = "villages";
-
-
+        String SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = "select_jurisdiction_max_select_zoom_level";
+        String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
     }
 
     interface Preferences {
@@ -218,6 +218,8 @@ public interface Constants {
         String MDA_ADHERENCE = "MDA Adherence";
 
         String MDA = "MDA";
+
+        String MDA_LITE = "MDA-Lite";
 
         String DYNAMIC_MDA = "Dynamic-MDA";
 
