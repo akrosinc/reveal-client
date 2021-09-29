@@ -76,6 +76,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.FI;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MDA;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_LITE;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
@@ -220,6 +221,8 @@ public class Utils {
             return R.string.irs;
         else if (interventionType.equals(MDA) || interventionType.equals(MDA))
             return R.string.mda;
+        else if (interventionType.equals(MDA_LITE))
+            return R.string.mda_lite;
         else
             return R.string.irs;
     }
@@ -558,7 +561,7 @@ public class Utils {
     }
 
     public static int getMaxZoomLevel() {
-        return BuildConfig.SELECT_JURISDICTION ? SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL  : MAX_SELECT_ZOOM_LEVEL;
+        return BuildConfig.SELECT_JURISDICTION ? getSelectJurisdictionMaxSelectZoomLevel()  : getMaxSelectZoomLevel();
     }
 
 
@@ -576,5 +579,11 @@ public class Utils {
     }
     public static boolean isMDALite(){
        return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN;
+    }
+    public static Integer getMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.MAX_SELECT_ZOOM_LEVEL,String.valueOf(MAX_SELECT_ZOOM_LEVEL)));
+    }
+    public static Integer getSelectJurisdictionMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL,String.valueOf(SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL)));
     }
 }
