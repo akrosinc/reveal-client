@@ -219,6 +219,8 @@ public interface Constants {
 
         String MDA = "MDA";
 
+        String MDA_LITE = "MDA-Lite";
+
         String DYNAMIC_MDA = "Dynamic-MDA";
 
         String IRS_VERIFICATION = "IRS Verification";

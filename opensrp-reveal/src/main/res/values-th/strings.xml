@@ -95,6 +95,8 @@
     <string name="hamburger_menu">เมนูหลัก-เมนูแฮมเบอร์เกอร์</string>
     <string name="focus_investigation">บัญชีรายการ</string>
     <string name="irs">IRS การพ่นเคมีชนิดมีฤทธิ์ตกค้าง</string>
+    <string name="mda">MDA</string>
+    <string name="mda_lite">MDA-Lite</string>
     <string name="task_icon">ไอคอนงาน</string>
     <string name="distance_from_structure">ห่างออกไป %1.0f ม.</string>
     <string name="distance_from_center">%1.0f ม. จากใจกลาง %2s </string>
