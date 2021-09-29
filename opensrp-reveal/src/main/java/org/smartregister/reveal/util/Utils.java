@@ -558,7 +558,7 @@ public class Utils {
     }
 
     public static int getMaxZoomLevel() {
-        return BuildConfig.SELECT_JURISDICTION ? SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL  : MAX_SELECT_ZOOM_LEVEL;
+        return BuildConfig.SELECT_JURISDICTION ? getSelectJurisdictionMaxSelectZoomLevel()  : getMaxSelectZoomLevel();
     }
 
 
@@ -576,5 +576,11 @@ public class Utils {
     }
     public static boolean isMDALite(){
        return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN;
+    }
+    public static Integer getMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.MAX_SELECT_ZOOM_LEVEL,String.valueOf(Constants.Map.MAX_SELECT_ZOOM_LEVEL)));
+    }
+    public static Integer getSelectJurisdictionMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL,String.valueOf(SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL)));
     }
 }
