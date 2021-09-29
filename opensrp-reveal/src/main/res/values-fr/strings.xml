@@ -114,6 +114,7 @@
     <string name="summary_forms">Autres formulaires</string>
     <string name="irs">IRS</string>
     <string name="mda">MDA</string>
+    <string name="mda_lite">MDA-Lite</string>
     <string name="task_icon">Task Icon</string>
     <string name="distance_from_structure">%1.0f m away</string>
     <string name="distance_from_center" formatted="false">%1.0f m from %2s center </string>
