@@ -90,8 +90,6 @@
         "buttonText": "Select the SA(s) that this spray operator worked in today",
         "dialogTitle": "Select the SA(s) that this spray operator worked in today",
         "searchHint": "Type Spray Area Name",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
         "v_required": {
           "value": "true",
           "err": "Required field"

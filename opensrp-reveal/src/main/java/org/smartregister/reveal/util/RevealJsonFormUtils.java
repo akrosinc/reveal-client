@@ -17,11 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
 import org.smartregister.location.helper.LocationHelper;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
@@ -36,20 +38,24 @@ import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.util.JsonFormUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
 import static com.vijay.jsonwizard.constants.JsonFormConstants.CHECK_BOX;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEYS;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUES;
@@ -70,6 +76,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTUR
 import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_OTHER;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_ZONE;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_OPERATOR_CODE;
 import static org.smartregister.reveal.util.Constants.JsonForm.YES;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -486,7 +493,14 @@ public class RevealJsonFormUtils {
             try {
                 JSONObject field = fields.getJSONObject(i);
                 String key = field.getString(KEY);
-                Obs obs = event.findObs(null, false, key);
+                Obs obs = null;
+                if(field.optString(TYPE).equals(MULTI_SELECT_LIST)){
+                    Optional<Obs> obsOptional = event.getObs().stream().filter(obs1 -> obs1.getFieldCode().equals(key)).findFirst();
+                    if(obsOptional.isPresent())
+                        obs = obsOptional.get();
+                } else {
+                    obs = event.findObs(null, true, key);
+                }
                 if (obs != null && obs.getValues() != null) {
                     if (CHECK_BOX.equals(field.getString(TYPE))) {
                         JSONArray options = field.getJSONArray(OPTIONS);
@@ -502,7 +516,7 @@ public class RevealJsonFormUtils {
                         field.put(VALUE, keys);
 
                     } else {
-                        if (!JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE))) {
+                        if (!JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE)) && !MULTI_SELECT_LIST.equals(field.optString(TYPE))) {
                             field.put(VALUE, obs.getValue());
                         }
                         if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA && nonEditablefields.contains(key)
@@ -533,6 +547,21 @@ public class RevealJsonFormUtils {
                         if(key.equals(LOCATION_ZONE) || key.equals(SPRAY_OPERATOR_CODE) || key.equals(LOCATION_OTHER)){
                             field.put(JsonFormConstants.READ_ONLY,true);
                         }
+                    }
+                    if(key.equals(SPRAY_AREAS) && MULTI_SELECT_LIST.equals(field.optString(TYPE))){
+                        populateSprayAreasField(formJSON);
+                        JSONArray options = field.optJSONArray(OPTIONS);
+                        JSONArray values = new JSONArray();
+                        for(int j=0;j < options.length();j++){
+                            JSONObject option = (JSONObject) options.get(j);
+                            for(Object obsValue:obs.getValues()){
+                                if(option.get(KEY).equals(obsValue.toString())){
+                                    values.put(option);
+                                    break;
+                                }
+                            }
+                        }
+                        field.put(VALUE,values);
                     }
 
                 }
@@ -575,7 +604,7 @@ public class RevealJsonFormUtils {
                 if (operator == null)
                     continue;
                 String code = operator.optString(CONFIGURATION.CODE, null);
-                String name = operator.optString(CONFIGURATION.NAME);
+                String name = operator.optString(CONFIGURATION.NAME).trim();
                 if (StringUtils.isBlank(code) || code.equalsIgnoreCase(name)) {
                     codes.put(name);
                     values.put(name);
@@ -673,6 +702,7 @@ public class RevealJsonFormUtils {
                     if(!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)  && !Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY))
                         populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
+                populateSprayAreasField(formJSON);
                 break;
 
             case JsonForm.TEAM_LEADER_DOS_ZAMBIA:
@@ -836,6 +866,43 @@ public class RevealJsonFormUtils {
             compoundStructureField.put(OPTIONS, options);
         } catch (JSONException e) {
             Timber.e(e, "Error populating %s Options",COMPOUND_STRUCTURE);
+        }
+    }
+    public void populateSprayAreasField(JSONObject form){
+        LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
+        StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
+        List<String> locationNames;
+        if(Utils.isZambiaIRSFull()){
+            //TODO: might just use this for both ZAMBIA and SENeGAL, check preferences first.
+            locationNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
+        } else if(Utils.isZambiaIRSLite()){
+            List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
+            locationNames = operationalAreaNames.stream()
+                    .map(name -> locationRepository.getLocationByName(name))
+                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
+                    .map(childLocation -> childLocation.getProperties().getName()).filter(name -> !name.isEmpty()).collect(Collectors.toList());
+        } else {
+            final String currentFacility = PreferencesUtil.getInstance().getCurrentFacility();
+            locationNames = LocationHelper.getInstance().locationNamesFromHierarchy(currentFacility).stream().filter(name -> !name.equals(currentFacility)).collect(Collectors.toList());
+        }
+
+        try {
+            JSONArray options = new JSONArray();
+            JSONObject property = new JSONObject();
+            property.put("presumed-id","err");
+            property.put("confirmed-id","err");
+            JSONObject option;
+            for(String name:locationNames){
+                option = new JSONObject();
+                option.put(KEY,name);
+                option.put(TEXT,name);
+                option.put(JsonFormConstants.MultiSelectUtils.PROPERTY,property);
+                options.put(option);
+            }
+            JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
+            sprayAreaField.put(OPTIONS,options);
+        } catch (JSONException e){
+            e.printStackTrace();
         }
     }
 }
