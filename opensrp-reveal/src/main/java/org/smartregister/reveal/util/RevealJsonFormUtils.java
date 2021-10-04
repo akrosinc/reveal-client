@@ -516,8 +516,13 @@ public class RevealJsonFormUtils {
                         field.put(VALUE, keys);
 
                     } else {
-                        if (!JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE)) && !MULTI_SELECT_LIST.equals(field.optString(TYPE))) {
+                        if (!JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE)) && !MULTI_SELECT_LIST.equals(field.optString(TYPE)) && !JsonFormConstants.DATE_PICKER.equals(field.optString(TYPE)) ) {
                             field.put(VALUE, obs.getValue());
+                        }
+                        if(JsonFormConstants.DATE_PICKER.equals(field.optString(TYPE))){
+                            //dirty
+                            List<String> comps = Arrays.asList(obs.getValue().toString().split("-"));
+                            field.put(VALUE,String.format("%s-%s-%s",comps.get(2),comps.get(1),comps.get(0)));
                         }
                         if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA && nonEditablefields.contains(key)
                                 && YES.equalsIgnoreCase(obs.getValue().toString())) {
