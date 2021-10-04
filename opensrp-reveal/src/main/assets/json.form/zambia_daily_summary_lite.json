@@ -90,8 +90,6 @@
         "buttonText": "Select the spray areas that this supervisors team visited for this daily summary form data",
         "dialogTitle": "Select the spray areas that this supervisors team visited for this daily summary form data",
         "searchHint": "Type Spray Area Name",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
         "v_required": {
           "value": "true",
           "err": "Required field"
