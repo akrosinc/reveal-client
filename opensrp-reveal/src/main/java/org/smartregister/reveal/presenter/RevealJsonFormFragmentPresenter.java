@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.VisibleForTesting;
@@ -39,6 +40,7 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.RevealMapView;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
+import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
 import org.smartregister.util.JsonFormUtils;
 
@@ -90,6 +92,8 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
     @Override
     public void validateAndWriteValues() {
         super.validateAndWriteValues();
+        Boolean multiSelectFieldInvalid = false;
+        String multiSelectFieldKey = null;
         for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
             if (childAt instanceof RevealMapView) {
                 RevealMapView mapView = (RevealMapView) childAt;
@@ -116,6 +120,17 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                 } else {
                     getInvalidFields().remove(address);
                 }
+            } else if(childAt instanceof RelativeLayout){
+                ValidationStatus validationStatus = RevealMultiSelectListFactory.validate(formFragment,(RelativeLayout)childAt);
+                String address = (String) childAt.getTag(com.vijay.jsonwizard.R.id.address);
+                 multiSelectFieldKey = (String) childAt.getTag(com.vijay.jsonwizard.R.id.key);
+                if (!validationStatus.isValid()) {
+                    getInvalidFields().put(address, validationStatus);
+                    multiSelectFieldInvalid = true;
+                } else {
+                    multiSelectFieldInvalid = false;
+                    getInvalidFields().remove(address);
+                }
             }
         }
         if (isFormValid()) {// if form is valid and did not have a map, if it had a map view it will be handled above
@@ -126,7 +141,12 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                 launchErrorDialog();
                 getView().showToast(getView().getContext().getResources().getString(R.string.json_form_error_msg, this.getInvalidFields().size()));
             } else {
-                getView().showSnackBar(getView().getContext().getResources().getString(R.string.json_form_error_msg, this.getInvalidFields().size()));
+                if(multiSelectFieldInvalid){
+                    getView().showSnackBar(String.format("%s is Required",multiSelectFieldKey));
+                }else {
+                    getView().showSnackBar(getView().getContext().getResources().getString(R.string.json_form_error_msg, this.getInvalidFields().size()));
+                }
+
             }
         }
     }
