@@ -577,7 +577,7 @@ public class RevealJsonFormUtilsTest extends BaseUnitTest {
         revealJsonFormUtils = spy(revealJsonFormUtils);
         Map<String, JSONObject> fieldsMap = revealJsonFormUtils.getFields(formJSON);
         PreferencesUtil.getInstance().setCurrentDistrict("Lusaka");
-        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.IRS_SA_DECISION_ZAMBIA,formJSON);
+        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.IRS_SA_DECISION_ZAMBIA,formJSON,null);
 
         verify(revealJsonFormUtils).populateServerOptions(serverConfigs, Constants.CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR), "Lusaka");
     }
@@ -589,7 +589,7 @@ public class RevealJsonFormUtilsTest extends BaseUnitTest {
         revealJsonFormUtils = spy(revealJsonFormUtils);
         Map<String, JSONObject> fieldsMap = revealJsonFormUtils.getFields(formJSON);
         PreferencesUtil.getInstance().setCurrentDistrict("Lusaka");
-        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.VERIFICATION_FORM_ZAMBIA,formJSON);
+        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.VERIFICATION_FORM_ZAMBIA,formJSON,null);
 
         verify(revealJsonFormUtils).populateServerOptions(serverConfigs, Constants.CONFIGURATION.FIELD_OFFICERS, fieldsMap.get(JsonForm.FIELD_OFFICER), "Lusaka");
     }
@@ -748,7 +748,7 @@ public class RevealJsonFormUtilsTest extends BaseUnitTest {
         revealJsonFormUtils = spy(revealJsonFormUtils);
         Map<String,JSONObject> fieldsMap = revealJsonFormUtils.getFields(formJSON);
         PreferencesUtil.getInstance().setCurrentOperationalArea("emuhaya");
-        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM,formJSON);
+        revealJsonFormUtils.populateFormWithServerOptions(JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM,formJSON,null);
 
         verify(revealJsonFormUtils).populateServerOptions(serverConfigs,Constants.CONFIGURATION.HEALTH_WORKER_SUPERVISORS,fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),"emuhaya");
         verify(revealJsonFormUtils).populateServerOptions(serverConfigs,Constants.CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),"emuhaya");
