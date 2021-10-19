@@ -78,6 +78,12 @@ public interface Constants {
 
     String BUILD_COUNTRY = "build_country";
 
+    String ADMIN_PASSWORD_REQUIRED = "admin_password_required";
+
+    String ADMIN_PASSWORD_ENTERED = "admin_password_entered";
+
+    String GPS_ACCURACY = "gps_accuracy";
+
     interface CONFIGURATION {
         String LOGIN = "login";
         String GLOBAL_CONFIGS = "global_configs";
@@ -141,6 +147,10 @@ public interface Constants {
         String FACILITY_LEVEL = "FACILITY_LEVEL";
         String CURRENT_OPERATIONAL_AREA = "CURRENT_OPERATIONAL_AREA";
         String CURRENT_OPERATIONAL_AREA_ID = "CURRENT_OPERATIONAL_AREA_ID";
+        String EVENT_LATITUDE = "EVENT_LATITUDE";
+        String EVENT_LONGITUDE = "EVENT_LONGITUDE";
+        String GPS_ACCURACY = "GPS_ACCURACY";
+        String ADMIN_PASSWORD_ENTERED = "ADMIN_PASSWORD_ENTERED";
     }
 
     interface Tags {
@@ -641,6 +651,10 @@ public interface Constants {
         String DATE_COMM = "dateComm";
 
         String SPRAY_DATE = "sprayDate";
+
+        String EVENT_POSITION = "event_position";
+
+
     }
 
     interface DateFormat {

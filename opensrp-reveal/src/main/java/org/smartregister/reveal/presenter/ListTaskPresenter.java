@@ -126,6 +126,7 @@ import static org.smartregister.reveal.util.Utils.isFocusInvestigationOrMDA;
 import static org.smartregister.reveal.util.Utils.isKenyaMDALite;
 import static org.smartregister.reveal.util.Utils.isRwandaMDALite;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
+import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
 import static org.smartregister.reveal.util.Utils.validateFarStructures;
 
 
@@ -731,6 +732,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> logStructureInteractionEvent(selectedFeature));
+        Location location = listTaskView.getUserCurrentLocation();
+        if (location == null) {
+            locationPresenter.requestUserLocation();
+            locationPresenter.waitForUserLocation();
+        } else {
+            if(!validateFarStructures())
+                RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> logAdminPassRequiredEvent(location,false));
+        }
     }
 
     @Override
