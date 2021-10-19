@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.util.Pair;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
@@ -66,6 +68,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.util.Constants.ADMIN_PASSWORD_REQUIRED;
+import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LATITUDE_AT_EQUITOR;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LONGITUDE_AT_EQUITOR;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.METERS_PER_KILOMETER;
@@ -81,6 +85,11 @@ import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLL
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
 import static org.smartregister.reveal.util.Constants.Map.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.USER_NAME;
 
 public class Utils {
 
@@ -585,5 +594,27 @@ public class Utils {
     }
     public static Integer getSelectJurisdictionMaxSelectZoomLevel(){
         return Integer.valueOf(getGlobalConfig(CONFIGURATION.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL,String.valueOf(SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL)));
+    }
+    public static void logAdminPassRequiredEvent(android.location.Location location, boolean passwordEntered){
+        AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
+        sharedPreferences.savePreference(EVENT_LATITUDE,"");
+        sharedPreferences.savePreference(EVENT_LONGITUDE,"");
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,"");
+        sharedPreferences.savePreference(GPS_ACCURACY,"");
+        Bundle bundle = new Bundle();
+        bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+        Double latitude = location.getLatitude();
+        bundle.putDouble(EVENT_LATITUDE,latitude);
+        sharedPreferences.savePreference(EVENT_LATITUDE,latitude.toString());
+        Double longitude = location.getLongitude();
+        bundle.putDouble(EVENT_LONGITUDE,longitude);
+        sharedPreferences.savePreference(EVENT_LONGITUDE,longitude.toString());
+        Float accuracy = location.getAccuracy();
+        bundle.putFloat(GPS_ACCURACY,accuracy);
+        sharedPreferences.savePreference(GPS_ACCURACY,accuracy.toString());
+        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
+        bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
+        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
     }
 }
