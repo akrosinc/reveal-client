@@ -1,13 +1,11 @@
 package org.smartregister.reveal.presenter;
 
 import android.location.Location;
-import android.os.Bundle;
 import android.os.SystemClock;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
-import org.smartregister.reveal.BuildConfig;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.UserLocationContract;
@@ -21,8 +19,10 @@ import java.util.TimerTask;
 
 import timber.log.Timber;
 
-import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
-import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
+import static org.smartregister.reveal.util.Utils.validateFarStructures;
+
+;
 
 /**
  * Created by samuelgithengi on 2/13/19.
@@ -36,15 +36,12 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     private long resolutionStarted;
 
     private AppExecutors appExecutors;
-
-    private final String ADMIN_PASSWORD_REQUIRED = "admin_password_required";
-    private final String LATITUDE = "latitude";
-    private final String LONGITUDE = "longitude";
-
+    private AllSharedPreferences sharedPreferences;
     protected ValidateUserLocationPresenter(UserLocationView locationView, UserLocationCallback callback) {
         this.locationView = locationView;
         this.callback = callback;
         appExecutors = RevealApplication.getInstance().getAppExecutors();
+        sharedPreferences = RevealApplication.getInstance().getContext().allSharedPreferences();
     }
 
     @Override
@@ -57,8 +54,8 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
         locationView.hideProgressDialog();
             double offset = callback.getTargetCoordinates().distanceTo(
                     new LatLng(location.getLatitude(), location.getLongitude()));
-            if (offset > Utils.getLocationBuffer()) {
-                appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location));
+         appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location,offset > Utils.getLocationBuffer() && validateFarStructures()));
+         if (offset > Utils.getLocationBuffer() && validateFarStructures()) {
                 callback.requestUserPassword();
             } else {
                 callback.onLocationValidated();
@@ -100,16 +97,4 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
 
         }
     }
-
-    private void logAdminPassRequiredEvent(Location location){
-        Bundle bundle = new Bundle();
-        bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-        bundle.putDouble(LATITUDE,location.getLatitude());
-        bundle.putDouble(LONGITUDE,location.getLongitude());
-        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
-        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
-    }
-
-
-
 }

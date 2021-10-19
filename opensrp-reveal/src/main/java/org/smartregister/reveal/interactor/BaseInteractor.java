@@ -75,6 +75,7 @@ import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
@@ -84,6 +85,8 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
@@ -105,6 +108,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTUR
 import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
 import static org.smartregister.reveal.util.Constants.JsonForm.DATE_COMM;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.EVENT_POSITION;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
@@ -114,6 +118,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.METADATA;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.STRUCTURE;
@@ -285,7 +290,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     }
 
     private void saveLocationInterventionForm(JSONObject jsonForm) {
-        String encounterType = null;
+            String encounterType = null;
         String interventionType = null;
         try {
             encounterType = jsonForm.getString(ENCOUNTER_TYPE);
@@ -333,6 +338,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         }
                         jsonForm.put(ENTITY_ID,getStructureIdByName(locationName));
                     }
+                    jsonForm.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
+                    jsonForm.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
+                    jsonForm.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
                     org.smartregister.domain.Event event = saveEvent(jsonForm, finalEncounterType, STRUCTURE);
                     clientProcessor.processClient(Collections.singletonList(new EventClient(event, null)), true);
                     appExecutors.mainThread().execute(new Runnable() {
