@@ -285,6 +285,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             }
         }
         eventJson.put(DETAILS, getJSONObject(jsonForm, DETAILS));
+        eventJson.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
+        eventJson.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
+        eventJson.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
         eventClientRepository.addEvent(entityId, eventJson);
         return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
     }
@@ -338,9 +341,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         }
                         jsonForm.put(ENTITY_ID,getStructureIdByName(locationName));
                     }
-                    jsonForm.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
-                    jsonForm.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
-                    jsonForm.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
                     org.smartregister.domain.Event event = saveEvent(jsonForm, finalEncounterType, STRUCTURE);
                     clientProcessor.processClient(Collections.singletonList(new EventClient(event, null)), true);
                     appExecutors.mainThread().execute(new Runnable() {
