@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 
 import net.sqlcipher.Cursor;
@@ -284,10 +285,11 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 }
             }
         }
-        eventJson.put(DETAILS, getJSONObject(jsonForm, DETAILS));
-        eventJson.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
-        eventJson.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
-        eventJson.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
+        JSONObject details = getJSONObject(jsonForm, DETAILS);
+        details.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
+        details.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
+        details.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
+        eventJson.put(DETAILS,details);
         eventClientRepository.addEvent(entityId, eventJson);
         return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
     }
