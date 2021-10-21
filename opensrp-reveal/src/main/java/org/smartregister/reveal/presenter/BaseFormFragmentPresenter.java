@@ -1,6 +1,7 @@
 package org.smartregister.reveal.presenter;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Pair;
@@ -16,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Location;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseFormFragmentContract;
@@ -49,6 +51,11 @@ import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE
 import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
 
 /**
  * Created by samuelgithengi on 4/18/19.
@@ -98,6 +105,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         } else {
             locationPresenter.onGetUserLocation(location);
         }
+
     }
 
     @Override
@@ -133,6 +141,11 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
     public void showBasicForm(String formName) {
         JSONObject formJSON = getView().getJsonFormUtils().getFormJSON(context, formName, null, null);
         jsonFormUtils.populateFormWithServerOptions(formName, formJSON,null);
+        AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
+        sharedPreferences.savePreference(EVENT_LATITUDE,"");
+        sharedPreferences.savePreference(EVENT_LONGITUDE,"");
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,"");
+        sharedPreferences.savePreference(GPS_ACCURACY,"");
         getView().startForm(formJSON);
     }
 
