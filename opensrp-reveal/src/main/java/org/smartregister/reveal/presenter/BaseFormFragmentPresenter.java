@@ -131,6 +131,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
                     jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), Constants.CONFIGURATION.MDA_CATCHMENT_AREAS, jsonFormUtils.getFields(formJSON).get(JsonForm.CATCHMENT_AREA), prefsUtil.getCurrentDistrict());
                     getView().startForm(formJSON);
                 } else {
+                    jsonFormUtils.populateFormWithServerOptions(formName,formJSON,null);
                     getView().startForm(formJSON);
                 }
             }
