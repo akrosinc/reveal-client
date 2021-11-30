@@ -254,10 +254,12 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 }
             }
         }
+
         if(DAILY_SUMMARY_EVENT.equals(event.getEventType())) {
             fixEditTextValueWithCorrectDateFormat(obsList,fields,COLLECTION_DATE);
         }
-        if(IRS_LITE_VERIFICATION.equals(event.getEventType())){
+
+        if(IRS_LITE_VERIFICATION.equals(event.getEventType()) || CDD_SUPERVISOR_DAILY_SUMMARY.equals(event.getEventType())){
             Arrays.asList(DATE,DATE_COMM,SPRAY_DATE).stream().forEach(key -> {
                 try {
                     fixEditTextValueWithCorrectDateFormat(obsList,fields,key);
