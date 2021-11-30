@@ -264,7 +264,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                             spinner.setSelection(newAdapterValues.indexOf(selected.toString()));
                         }
                         if(childPreviousValue  != null && !childPreviousValue.isEmpty() && selected == null){
-                            spinner.setSelection(newAdapterValues.indexOf(childPreviousValue));
+                            spinner.setSelection(newAdapterValues.indexOf(childPreviousValue) + 1);
                         }
                     }
                 }
