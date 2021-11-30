@@ -27,6 +27,8 @@ import com.vijay.jsonwizard.utils.ValidationStatus;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.family.util.DBConstants;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
@@ -249,6 +251,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                     MaterialSpinner spinner = (MaterialSpinner) jsonFormView.getFormDataView(JsonFormConstants.STEP1 + ":" + childWidget.optString(JsonFormUtils.KEY));
                     if (spinner != null) {
                         Object selected;
+                        String childPreviousValue = JsonFormUtils.getFieldValue(getView().getCurrentJsonState(),childWidget.optString(JsonFormUtils.KEY));
                         if (spinner.getAdapter().getCount() == spinner.getSelectedItemPosition()) {
                             selected = spinner.getAdapter().getItem(spinner.getSelectedItemPosition() - 1);
                         } else {
@@ -259,6 +262,9 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                         spinner.setTag(R.id.keys, options.first);
                         if (selected != null && newAdapterValues.contains(selected.toString())) {
                             spinner.setSelection(newAdapterValues.indexOf(selected.toString()));
+                        }
+                        if(childPreviousValue  != null && !childPreviousValue.isEmpty() && selected == null){
+                            spinner.setSelection(newAdapterValues.indexOf(childPreviousValue) + 1);
                         }
                     }
                 }
