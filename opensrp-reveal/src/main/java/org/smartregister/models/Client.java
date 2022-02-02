@@ -73,12 +73,12 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         setType(DOC_TYPE);
     }
 
-    public static org.smartregister.cloudant.models.Client fromRevision(DocumentRevision rev) throws ParseException {
-        org.smartregister.cloudant.models.Client client = new org.smartregister.cloudant.models.Client();
+    public static Client fromRevision(DocumentRevision rev) throws ParseException {
+        Client client = new Client();
         client.rev = rev;
         // this could also be done by a fancy object mapper
         Map<String, Object> map = rev.asMap();
-        if (map.containsKey(type_key) && map.get(type_key).equals(org.smartregister.cloudant.models.Client.DOC_TYPE)) {
+        if (map.containsKey(type_key) && map.get(type_key).equals(Client.DOC_TYPE)) {
             //client.setType((String) map.get(type_key));
             if (map.get(addresses_key) != null) {
                 client.setAddresses((List<Address>) map.get(addresses_key));

@@ -1,4 +1,4 @@
-package org.smartregister.helper;
+package org.smartregister.helper.location;
 
 import android.util.Pair;
 
@@ -35,7 +35,7 @@ import timber.log.Timber;
 
 public class LocationHelper {
 
-    private static org.smartregister.location.helper.LocationHelper instance;
+    private static LocationHelper instance;
     private String childLocationId;
     private String parentLocationId;
     private List<String> locationIds;
@@ -70,19 +70,19 @@ public class LocationHelper {
 
     public static void init(List<String> allowedLevels, String defaultLocationLevel) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
-            instance = new org.smartregister.location.helper.LocationHelper(allowedLevels, defaultLocationLevel);
+            instance = new LocationHelper(allowedLevels, defaultLocationLevel);
 
         }
     }
 
     public static void init(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
-            instance = new org.smartregister.location.helper.LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
+            instance = new LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
 
         }
     }
 
-    public static org.smartregister.location.helper.LocationHelper getInstance() {
+    public static LocationHelper getInstance() {
         return instance;
     }
 

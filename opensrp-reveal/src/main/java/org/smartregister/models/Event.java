@@ -70,12 +70,12 @@ public class Event extends org.smartregister.clientandeventmodel.Event {
         setVersion(event.getVersion());
     }
 
-    public static org.smartregister.cloudant.models.Event fromRevision(DocumentRevision rev) throws ParseException {
-        org.smartregister.cloudant.models.Event event = new org.smartregister.cloudant.models.Event();
+    public static Event fromRevision(DocumentRevision rev) throws ParseException {
+        Event event = new Event();
         event.rev = rev;
         // this could also be done by a fancy object mapper
         Map<String, Object> map = rev.asMap();
-        if (map.containsKey(type_key) && map.get(type_key).equals(org.smartregister.cloudant.models.Event.DOC_TYPE)) {
+        if (map.containsKey(type_key) && map.get(type_key).equals(Event.DOC_TYPE)) {
             // event.setType((String) map.get(type_key));
             if (map.get(date_created_key) != null) {
                 Date dateCreated = DateUtil.toDate(map.get(date_created_key));
