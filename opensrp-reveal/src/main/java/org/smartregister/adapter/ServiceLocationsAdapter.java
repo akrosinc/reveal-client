@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.location.helper.LocationHelper;
 
 import java.util.ArrayList;

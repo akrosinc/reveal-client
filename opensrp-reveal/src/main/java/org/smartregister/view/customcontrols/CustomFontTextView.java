@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
 

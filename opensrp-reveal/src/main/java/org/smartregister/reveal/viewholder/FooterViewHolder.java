@@ -15,8 +15,8 @@ public class FooterViewHolder extends RecyclerView.ViewHolder {
 
     public FooterViewHolder(android.view.View view) {
         super(view);
-        this.nextPageView = view.findViewById(org.smartregister.R.id.btn_next_page);
-        this.previousPageView = view.findViewById(org.smartregister.R.id.btn_previous_page);
-        this.pageInfoView = view.findViewById(org.smartregister.R.id.txt_page_info);
+        this.nextPageView = view.findViewById(org.smartregister.reveal.R.id.btn_next_page);
+        this.previousPageView = view.findViewById(org.smartregister.reveal.R.id.btn_previous_page);
+        this.pageInfoView = view.findViewById(org.smartregister.reveal.R.id.txt_page_info);
     }
 }

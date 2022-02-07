@@ -2,7 +2,7 @@ package org.smartregister.view.contract;
 
 import android.graphics.Color;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 public enum AlertStatus {
     EMPTY {

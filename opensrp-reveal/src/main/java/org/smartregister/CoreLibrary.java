@@ -26,6 +26,9 @@ import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
+
 
 import java.util.Map;
 import java.util.Set;

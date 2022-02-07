@@ -23,10 +23,10 @@ import static org.smartregister.AllConstants.FORM_SUBMISSION_ROUTER;
 import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
 import static org.smartregister.AllConstants.REPOSITORY;
 import static org.smartregister.AllConstants.ZIGGY_FILE_LOADER;
-import static org.smartregister.R.string.form_back_confirm_dialog_message;
-import static org.smartregister.R.string.form_back_confirm_dialog_title;
-import static org.smartregister.R.string.no_button_label;
-import static org.smartregister.R.string.yes_button_label;
+import static org.smartregister.reveal.R.string.form_back_confirm_dialog_message;
+import static org.smartregister.reveal.R.string.form_back_confirm_dialog_title;
+import static org.smartregister.reveal.R.string.no_button_label;
+import static org.smartregister.reveal.R.string.yes_button_label;
 import static org.smartregister.util.Log.logError;
 
 public abstract class SecuredFormActivity extends SecuredWebActivity {

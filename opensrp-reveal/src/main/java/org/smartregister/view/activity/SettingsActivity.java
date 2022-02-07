@@ -13,7 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LangUtils;
 import org.smartregister.util.UrlUtil;

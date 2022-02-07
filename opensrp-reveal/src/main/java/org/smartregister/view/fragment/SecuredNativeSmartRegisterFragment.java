@@ -22,7 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.VisibleForTesting;
 
 import org.joda.time.LocalDate;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;

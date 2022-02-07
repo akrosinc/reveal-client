@@ -10,6 +10,7 @@ public class DristhiConfiguration {
 
     public static final String TAG = "DristhiConfiguration";
     protected static final String DRISHTI_BASE_URL = "DRISHTI_BASE_URL";
+    protected static final String AUTH_BASE_URL = "AUTH_BASE_URL";
 
     protected static final String HOST = "HOST";
     protected static final String PORT = "PORT";
@@ -52,6 +53,10 @@ public class DristhiConfiguration {
     public String dristhiBaseURL() {
 
         return preferences.fetchBaseURL(this.get(AllConstants.DRISHTI_BASE_URL));
+    }
+
+    public String getAuthBaseUrl(){
+        return preferences.fetchAuthBaseURL(this.get(AllConstants.AUTH_BASE_URL));
     }
 
     public int syncDownloadBatchSize() {

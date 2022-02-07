@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 
 /**

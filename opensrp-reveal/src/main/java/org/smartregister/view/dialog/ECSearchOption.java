@@ -2,7 +2,7 @@ package org.smartregister.view.dialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.SmartRegisterClient;
 
 public class ECSearchOption implements FilterOption {

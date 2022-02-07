@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.view.View;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.provider.ECSmartRegisterClientsProvider;
 import org.smartregister.provider.SmartRegisterClientsProvider;

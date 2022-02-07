@@ -63,7 +63,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.SyncFilter;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.commonregistry.CommonPersonObject;

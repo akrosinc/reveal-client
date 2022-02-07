@@ -152,6 +152,8 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke.akros.online/opensrp/"'
+            resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
+
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
@@ -166,11 +168,19 @@ android {
             buildConfigField "boolean", "DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK", 'false'
             buildConfigField "boolean", "DISPLAY_DISTANCE_SCALE", 'true'
             buildConfigField "Boolean", "SELECT_JURISDICTION", 'true'
+            buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
+            buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
+
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
+
 
         }
 
         debug {
             resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke-uat.akros.online/opensrp/"'
+            resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
@@ -185,6 +195,13 @@ android {
             buildConfigField "boolean", "DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK", 'false'
             buildConfigField "boolean", "DISPLAY_DISTANCE_SCALE", 'true'
             buildConfigField "Boolean", "SELECT_JURISDICTION", 'true'
+
+            buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
+            buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
+
 
             testCoverageEnabled true
         }
@@ -343,22 +360,20 @@ dependencies {
 
 
 
+    implementation('com.github.akrosinc:android-p2p-sync:0.3.7-SNAPSHOT') {
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'android.arch.core', module: 'runtime'
+    }
+
+    implementation 'com.github.akrosinc:opensrp-plan-evaluator:1.5.1-SNAPSHOT'
+
+
+
     //*****End temp fix*****
     implementation('io.ona.kujaku:library:0.9.0') {
         exclude group: 'com.android.volley'
         exclude group: 'stax', module: 'stax-api'
-    }
-
-    implementation('org.smartregister:opensrp-client-core:4.3.3-SNAPSHOT@aar') {
-        transitive = true
-        exclude group: 'com.google.guava', module: 'guava'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.github.ybq', module: 'Android-SpinKit'
-        exclude group: 'org.apache.httpcomponents', module: 'httpmime'
-        exclude group: 'com.github.ybq', module: 'Android-SpinKit'
-        exclude group: 'com.github.bmelnychuk', module: 'atv'
-        exclude group: 'com.google.android.gms', module: 'play-services-vision'
-        exclude group: 'com.ibm.fhir', module:'fhir-model'
     }
 
     testImplementation 'com.ibm.fhir:fhir-model:4.7.0'
@@ -433,6 +448,20 @@ dependencies {
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
 }
+
+task clearJar(type: Delete) {
+    delete 'build/libs/myCompiledLibrary.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', 'myCompiledLibrary.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
 

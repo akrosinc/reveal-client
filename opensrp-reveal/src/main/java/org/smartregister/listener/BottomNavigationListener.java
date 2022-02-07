@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.activity.BaseRegisterActivity;
 
 public class BottomNavigationListener implements BottomNavigationView.OnNavigationItemSelectedListener {

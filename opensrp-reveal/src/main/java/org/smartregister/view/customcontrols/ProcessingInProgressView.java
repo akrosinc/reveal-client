@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.snackbar.ContentViewCallback;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 /**
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-06-27

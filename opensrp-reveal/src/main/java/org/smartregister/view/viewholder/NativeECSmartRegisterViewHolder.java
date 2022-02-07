@@ -4,7 +4,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.customcontrols.ClientChildrenView;
 import org.smartregister.view.customcontrols.ClientFpMethodView;
 import org.smartregister.view.customcontrols.ClientGplsaView;

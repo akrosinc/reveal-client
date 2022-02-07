@@ -12,7 +12,7 @@ import com.evernote.android.job.JobManager;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.listener.OnCompleteClearDataCallback;

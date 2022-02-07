@@ -182,6 +182,12 @@ public class AllSharedPreferences {
 
     }
 
+    public String fetchAuthBaseURL(String baseUrl){
+        String  url = preferences.getString(AllConstants.AUTH_BASE_URL,baseUrl);
+        return StringUtils.isNotBlank(url) && url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+
+    }
+
     public String fetchHost(String host) {
         if ((host == null || host.isEmpty()) && preferences.getString(HOST, host).equals(host)) {
             updateUrl(fetchBaseURL(""));

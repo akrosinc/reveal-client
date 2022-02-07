@@ -1,7 +1,7 @@
 package org.smartregister.view.contract;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 import java.util.EnumSet;
 import java.util.HashMap;

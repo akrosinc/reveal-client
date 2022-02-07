@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.adapter.ServiceLocationsAdapter;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.view.customcontrols.CustomFontTextView;

@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import org.smartregister.AllConstants;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.event.CapturedPhotoInformation;
 import org.smartregister.util.Log;
 import org.smartregister.util.Utils;

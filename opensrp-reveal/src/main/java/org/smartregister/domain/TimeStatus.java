@@ -1,6 +1,6 @@
 package org.smartregister.domain;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 /**
  * Created by Jason Rogena - jrogena@ona.io on 18/05/2017.

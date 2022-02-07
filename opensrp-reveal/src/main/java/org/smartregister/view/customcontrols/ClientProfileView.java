@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.viewholder.ProfilePhotoLoader;

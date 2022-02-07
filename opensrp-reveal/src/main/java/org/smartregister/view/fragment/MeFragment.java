@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.LocationPickerView;

@@ -28,7 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.joda.time.DateTime;
 import org.smartregister.AllConstants;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.security.SecurityHelper;
 import org.smartregister.util.SyncUtils;

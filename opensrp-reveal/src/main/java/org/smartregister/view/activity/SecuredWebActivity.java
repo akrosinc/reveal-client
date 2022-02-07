@@ -10,7 +10,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import org.acra.ACRA;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.sync.SyncAfterFetchListener;
 import org.smartregister.sync.SyncProgressIndicator;
 import org.smartregister.sync.UpdateActionsTask;

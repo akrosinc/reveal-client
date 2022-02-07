@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 /**
  * Created by ndegwamartin on 2020-03-04.

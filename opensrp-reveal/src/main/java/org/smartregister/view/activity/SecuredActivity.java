@@ -22,7 +22,7 @@ import org.apache.commons.collections.MapUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
 import org.smartregister.receiver.P2pProcessingStatusBroadcastReceiver;

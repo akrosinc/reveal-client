@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 
 public class DeliveryInfoView extends LinearLayout {

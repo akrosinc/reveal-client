@@ -2,7 +2,7 @@ package org.smartregister.domain;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.util.Utils;
 
 import java.util.Map;

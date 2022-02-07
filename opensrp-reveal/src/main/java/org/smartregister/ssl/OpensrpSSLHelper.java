@@ -7,9 +7,9 @@ import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.AbstractVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
-import org.smartregister.BuildConfig;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 import java.io.InputStream;
 import java.security.KeyStore;

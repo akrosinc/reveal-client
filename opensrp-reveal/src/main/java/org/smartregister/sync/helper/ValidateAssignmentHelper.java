@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.dto.UserAssignmentDTO;

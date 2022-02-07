@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.util.Log;
 
 import java.text.MessageFormat;

@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONML;
 import org.json.JSONObject;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.domain.form.FormSubmission;

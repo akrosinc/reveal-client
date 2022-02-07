@@ -1,7 +1,7 @@
 package org.smartregister.view.dialog;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.SmartRegisterClient;
 
 import static org.smartregister.AllConstants.OUT_OF_AREA;

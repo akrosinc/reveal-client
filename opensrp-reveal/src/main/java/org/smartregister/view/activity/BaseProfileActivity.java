@@ -11,7 +11,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.helper.ImageRenderHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseProfileContract;

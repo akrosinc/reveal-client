@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import com.google.common.base.Strings;
 
 import org.json.JSONObject;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.util.AssetHandler;

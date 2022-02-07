@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;

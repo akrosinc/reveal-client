@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import org.smartregister.Context;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.security.SecurityHelper;
 import org.smartregister.view.contract.BaseLoginContract;

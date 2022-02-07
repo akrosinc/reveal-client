@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountHelper;
@@ -79,7 +79,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             if (!isKeycloakConfigured) {
                 accountConfiguration = new AccountConfiguration();
                 accountConfiguration.setGrantTypesSupported(Arrays.asList(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD));
-                accountConfiguration.setTokenEndpoint(getOpenSRPContext().configuration().dristhiBaseURL() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
+                accountConfiguration.setTokenEndpoint(getOpenSRPContext().configuration().getAuthBaseUrl() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
                 accountConfiguration.setAuthorizationEndpoint("");
                 accountConfiguration.setIssuerEndpoint("");
             }

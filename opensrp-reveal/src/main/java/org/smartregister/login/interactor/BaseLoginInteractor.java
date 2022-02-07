@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;

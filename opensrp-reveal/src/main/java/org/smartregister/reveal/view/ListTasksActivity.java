@@ -889,13 +889,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         new Handler().postDelayed(() -> startedToastShown = false, SYNC_BACK_OFF_DELAY);
         boolean isNetworkAvailable = NetworkUtils.isNetworkAvailable();
         if (fetchStatus.equals(FetchStatus.fetchedFailed) && isNetworkAvailable) {
-            displayToast(org.smartregister.R.string.sync_failed);
+            displayToast(org.smartregister.reveal.R.string.sync_failed);
         } else if (fetchStatus.equals(FetchStatus.nothingFetched)) {
-            displayToast(org.smartregister.R.string.sync_complete);
+            displayToast(org.smartregister.reveal.R.string.sync_complete);
         } else if (fetchStatus.equals(FetchStatus.noConnection)) {
-            displayToast(org.smartregister.R.string.sync_failed_no_internet);
+            displayToast(org.smartregister.reveal.R.string.sync_failed_no_internet);
         } else if (fetchStatus.equals(FetchStatus.fetchedFailed) && !isNetworkAvailable) {
-            displayToast(org.smartregister.R.string.sync_failed_no_internet);
+            displayToast(org.smartregister.reveal.R.string.sync_failed_no_internet);
         }
         completedToastShown = true;
     }

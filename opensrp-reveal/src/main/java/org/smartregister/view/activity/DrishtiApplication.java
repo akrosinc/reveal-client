@@ -11,10 +11,10 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
-import org.smartregister.BuildConfig;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;

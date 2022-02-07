@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;

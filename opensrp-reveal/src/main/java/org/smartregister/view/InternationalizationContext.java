@@ -4,7 +4,7 @@ import android.content.res.Resources;
 
 import com.google.gson.Gson;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 import java.util.HashMap;
 import java.util.Map;

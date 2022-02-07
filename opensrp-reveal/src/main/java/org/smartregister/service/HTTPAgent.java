@@ -985,9 +985,7 @@ public class HTTPAgent {
     }
 
     public AccountConfiguration fetchOAuthConfiguration() {
-
-        String baseUrl = configuration.dristhiBaseURL();
-
+        String baseUrl = configuration.getAuthBaseUrl();
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }

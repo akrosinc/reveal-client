@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.LibraryContract;
 
 public abstract class LibraryFragment extends Fragment implements LibraryContract.View {

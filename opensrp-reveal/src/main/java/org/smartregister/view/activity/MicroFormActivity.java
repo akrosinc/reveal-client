@@ -1,6 +1,6 @@
 package org.smartregister.view.activity;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 public class MicroFormActivity extends SecuredFormActivity {
     @Override

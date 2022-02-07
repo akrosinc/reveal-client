@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.view.contract.ECSmartRegisterClient;
 
 public class ClientGplsaView extends RelativeLayout {

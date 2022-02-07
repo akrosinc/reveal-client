@@ -16,7 +16,7 @@ import androidx.annotation.DrawableRes;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 import static android.util.DisplayMetrics.DENSITY_DEFAULT;
 

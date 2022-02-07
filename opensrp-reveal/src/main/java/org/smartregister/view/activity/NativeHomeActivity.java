@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.event.Listener;
 import org.smartregister.service.PendingFormSubmissionService;
 import org.smartregister.sync.SyncAfterFetchListener;

@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.adapter.PagerAdapter;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.helper.BottomNavigationHelper;

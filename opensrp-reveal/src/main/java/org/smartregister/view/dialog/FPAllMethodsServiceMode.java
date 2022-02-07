@@ -3,7 +3,7 @@ package org.smartregister.view.dialog;
 import android.view.View;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.AlertStatus;
 import org.smartregister.view.contract.FPAlertType;

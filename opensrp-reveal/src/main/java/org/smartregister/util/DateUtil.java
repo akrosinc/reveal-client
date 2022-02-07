@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Weeks;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

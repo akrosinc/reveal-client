@@ -34,7 +34,7 @@ import com.android.volley.toolbox.Volley;
 import org.apache.http.HttpResponse;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.repository.ImageRepository;

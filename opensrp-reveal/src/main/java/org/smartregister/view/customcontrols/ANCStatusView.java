@@ -7,11 +7,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.util.IntegerUtil;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 
-import static org.smartregister.R.color.alert_urgent_red;
+import static org.smartregister.reveal.R.color.alert_urgent_red;
 
 public class ANCStatusView extends RelativeLayout {
     private TextView txtEdd;

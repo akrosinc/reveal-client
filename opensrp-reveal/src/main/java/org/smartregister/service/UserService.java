@@ -9,7 +9,7 @@ import android.util.Base64;
 import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.BuildConfig;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.account.AccountHelper;

@@ -13,7 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.event.Event;
 import org.smartregister.event.Listener;
 import org.smartregister.util.Utils;

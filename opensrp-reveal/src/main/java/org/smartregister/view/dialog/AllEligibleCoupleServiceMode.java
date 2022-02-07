@@ -1,7 +1,7 @@
 package org.smartregister.view.dialog;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;

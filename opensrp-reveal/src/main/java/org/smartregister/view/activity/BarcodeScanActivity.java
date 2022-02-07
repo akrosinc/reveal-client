@@ -19,7 +19,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.smartregister.AllConstants;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.barcode.CameraSourcePreview;
 import org.smartregister.util.LangUtils;
 import org.smartregister.util.Utils;

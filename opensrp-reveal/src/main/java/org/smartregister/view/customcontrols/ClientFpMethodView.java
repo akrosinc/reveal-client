@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.view.contract.BaseFPSmartRegisterClient;
 

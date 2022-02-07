@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import org.smartregister.R;
+import org.smartregister.reveal.R;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-04-2020.
