@@ -199,68 +199,77 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
         }
     }
 
+
+
     public enum PlanStatus {
-
-        /**
-         * Draft
-         * <p>
-         * This resource is still under development and is not yet considered to be ready for normal
-         * use.
-         */
-        @SerializedName("draft")
-        DRAFT("draft"),
-
-        /**
-         * Active
-         * <p>
-         * This resource is ready for normal use.
-         */
-        @SerializedName("active")
-        ACTIVE("active"),
-
-        /**
-         * Retired
-         * <p>
-         * This resource has been withdrawn or superseded and should no longer be used.
-         */
-        @SerializedName("retired")
-        RETIRED("retired"),
-
-        /**
-         * Completed
-         * <p>
-         * This resource is completed for normal use.
-         */
-        @SerializedName("complete")
-        COMPLETED("complete"),
-
-        /**
-         * Unknown
-         * <p>
-         * The authoring system does not know which of the status values currently applies for this
-         * resource. Note: This concept is not to be used for "other" - one of the listed statuses
-         * is presumed to apply, it's just not known which one.
-         */
-        @SerializedName("unknown")
-        UNKNOWN("unknown");
-
-        private final String value;
-
-        PlanStatus(String value) {
-            this.value = value;
-        }
-
-        public String value() {
-            return value;
-        }
-
-        public static PlanStatus from(String value) {
-            for (PlanStatus c : PlanStatus.values()) {
-                if (c.value.equals(value)) {
-                    return c;
-                }
-            }
-            throw new IllegalArgumentException(value);
-        }
+        DRAFT,
+        ACTIVE,
+        RETIRED,
+        COMPLETED,
+        UNKNOWN
     }
+//    public enum PlanStatus {
+//
+//        /**
+//         * Draft
+//         * <p>
+//         * This resource is still under development and is not yet considered to be ready for normal
+//         * use.
+//         */
+//        @SerializedName("draft")
+//        DRAFT("draft"),
+//
+//        /**
+//         * Active
+//         * <p>
+//         * This resource is ready for normal use.
+//         */
+//        @SerializedName("active")
+//        ACTIVE("active"),
+//
+//        /**
+//         * Retired
+//         * <p>
+//         * This resource has been withdrawn or superseded and should no longer be used.
+//         */
+//        @SerializedName("retired")
+//        RETIRED("retired"),
+//
+//        /**
+//         * Completed
+//         * <p>
+//         * This resource is completed for normal use.
+//         */
+//        @SerializedName("complete")
+//        COMPLETED("complete"),
+//
+//        /**
+//         * Unknown
+//         * <p>
+//         * The authoring system does not know which of the status values currently applies for this
+//         * resource. Note: This concept is not to be used for "other" - one of the listed statuses
+//         * is presumed to apply, it's just not known which one.
+//         */
+//        @SerializedName("unknown")
+//        UNKNOWN("unknown");
+//
+//        private final String value;
+//
+//        PlanStatus(String value) {
+//            this.value = value;
+//        }
+//
+//        public String value() {
+//            return value;
+//        }
+//
+//        public static PlanStatus from(String value) {
+//            for (PlanStatus c : PlanStatus.values()) {
+//                if (c.value.equals(value)) {
+//                    return c;
+//                }
+//            }
+//            throw new IllegalArgumentException(value);
+//        }
+//    }
 }
