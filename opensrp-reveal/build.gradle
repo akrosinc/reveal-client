@@ -151,7 +151,7 @@ android {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke.akros.online/opensrp/"'
+            resValue "string", 'opensrp_base_url', '"http://localhost:8080/api/v1/"'
             resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
 
             buildConfigField "Integer", "DATABASE_VERSION", '14'
@@ -179,7 +179,7 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke-uat.akros.online/opensrp/"'
+            resValue "string", 'opensrp_base_url', '"http://10.0.2.2:8080/api/v1/"'
             resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
@@ -202,6 +202,9 @@ android {
             buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
             buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
 
+
+
+            manifestPlaceholders = [usesCleartextTraffic:"true"] //***Warning this should not get to production apk, only for local dev***
 
             testCoverageEnabled true
         }

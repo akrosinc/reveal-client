@@ -6,15 +6,20 @@ import org.smartregister.domain.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The person who actually entered or modified data into system. The
- * {@link User} before getting access to any service in system have to be
- * authenticated by system. A user may also be linked with a provider by
- * {@link BaseEntity}
- */
+import lombok.Getter;
+import lombok.Setter;
+
+
+
+@Getter
+@Setter
 public class User extends BaseEntity {
 
     private String username;
+
+    private String firstName;
+
+    private String lastName;
 
     private char[] password;
 
@@ -65,52 +70,6 @@ public class User extends BaseEntity {
         this.preferredName = preferredName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public char[] getPassword() {
-        return password;
-    }
-
-    public void setPassword(char[] password) {
-        this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    /**
-     * WARNING: Overrides all existing roles
-     *
-     * @param roles
-     * @return
-     */
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
     public void addRole(String role) {
         if (roles == null) {
             roles = new ArrayList<>();
@@ -132,19 +91,7 @@ public class User extends BaseEntity {
         return false;
     }
 
-    public List<String> getPermissions() {
-        return permissions;
-    }
 
-    /**
-     * WARNING: Overrides all existing permissions
-     *
-     * @param permissions
-     * @return
-     */
-    public void setPermissions(List<String> permissions) {
-        this.permissions = permissions;
-    }
 
     public void addPermission(String permission) {
         if (permissions == null) {
@@ -187,12 +134,7 @@ public class User extends BaseEntity {
         return this;
     }
 
-    /**
-     * WARNING: Overrides all existing roles
-     *
-     * @param roles
-     * @return
-     */
+
     public User withRoles(List<String> roles) {
         this.roles = roles;
         return this;
@@ -206,12 +148,7 @@ public class User extends BaseEntity {
         return this;
     }
 
-    /**
-     * WARNING: Overrides all existing permissions
-     *
-     * @param permissions
-     * @return
-     */
+
     public User withPermissions(List<String> permissions) {
         this.permissions = permissions;
         return this;
@@ -229,13 +166,4 @@ public class User extends BaseEntity {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
-    public String getPreferredName() {
-        return preferredName;
-    }
-
-    public void setPreferredName(String preferredName) {
-        this.preferredName = preferredName;
-    }
-
 }

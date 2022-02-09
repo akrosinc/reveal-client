@@ -864,7 +864,7 @@
     <string name="manual_sync_triggered">Manual Sync Triggered&#8230;</string>
     <string name="please_wait_message">Please Wait</string>
     <string name="remote_login_generic_error">Error occurred during Login in with server. Please try again...</string>
-    <string name="remote_login_base_url_missing_error">OpenSRP Base URL is missing. Please add it in Setting and try again</string>
+    <string name="remote_login_base_url_missing_error">Reveal Authorization URL is missing. Please add it in Setting and try again</string>
     <string name="currently_processing_transferred_records">Currently processing transferred records.</string>
     <string name="photo_captured">Photo Captured</string>
     <string name="invalid_url_massage">Please enter a valid url.</string>

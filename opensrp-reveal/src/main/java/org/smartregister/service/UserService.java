@@ -68,7 +68,7 @@ import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
-import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
+import static org.smartregister.AllConstants.REVEAL_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.ORGANIZATION_IDS;
@@ -344,7 +344,7 @@ public class UserService {
     public LoginResponse fetchUserDetails(String accessToken) {
         String requestURL;
 
-        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
+        requestURL = configuration.dristhiBaseURL() + REVEAL_AUTH_USER_URL_PATH;
 
         LoginResponse loginResponse = httpAgent.fetchUserDetails(requestURL, accessToken);
 
