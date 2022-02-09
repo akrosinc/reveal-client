@@ -455,8 +455,8 @@ public class UserService {
 
     public String getUserDefaultTeam(LoginResponseData userInfo) {
         try {
-            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
-                return userInfo.team.team.teamName;
+            if (userInfo != null && userInfo.teamAssignedToUser != null) {
+                return userInfo.teamAssignedToUser.getName();
             }
         } catch (Exception e) {
             Timber.e(e);
@@ -472,8 +472,8 @@ public class UserService {
 
     public String getUserDefaultTeamId(LoginResponseData userInfo) {
         try {
-            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
-                return userInfo.team.team.uuid;
+            if (userInfo != null && userInfo.teamAssignedToUser != null) {
+                return userInfo.teamAssignedToUser.getIdentifier().toString();
             }
         } catch (Exception e) {
             Timber.e(e);

@@ -78,8 +78,7 @@ public class CredentialsHelper {
         if (syncConfiguration.getEncryptionParam() != null) {
             SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
             if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
-//                encryptionParamValue = context.userService().getUserDefaultTeamId(userInfo).toCharArray();
-                  encryptionParamValue = password;
+                encryptionParamValue = context.userService().getUserDefaultTeamId(userInfo).toCharArray();
             } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
                 encryptionParamValue = context.userService().getUserLocationId(userInfo).toCharArray();
             } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
