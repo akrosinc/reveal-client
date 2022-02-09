@@ -162,7 +162,7 @@ public class LocationTaskIntentServiceTest extends BaseUnitTest {
         when(cache.get(anyString(), any())).thenReturn(operationalArea);
         ReflectionHelpers.setStaticField(Utils.class, "cache", cache);
 
-        tasks.get(4).setGroupIdentifier(operationalArea.getId());
+        tasks.get(4).setGroupIdentifier(operationalArea.getIdentifier());
 
         assertTrue(ReflectionHelpers.callInstanceMethod(intentService, "hasChangesInCurrentOperationalArea", parameters));
 

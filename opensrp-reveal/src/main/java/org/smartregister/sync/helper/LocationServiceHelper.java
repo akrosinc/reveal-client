@@ -39,6 +39,7 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +71,7 @@ import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 public class LocationServiceHelper extends BaseHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
+   public static final String REVEAL_LOCATION_SYNC_URL =  "/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
     public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
@@ -128,6 +130,72 @@ public class LocationServiceHelper extends BaseHelper {
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locationStructures.size()));
         sendSyncProgressBroadcast(syncProgress, context);
         return locationStructures;
+    }
+
+    protected List<Location> syncLocations(){
+        //new way
+        syncProgress = new SyncProgress();
+        syncProgress.setTotalRecords(totalRecords);
+        List<Location> locations = null;
+        try {
+            locations = batchSyncLocations(Collections.emptyList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords,locations.size()));
+        sendSyncProgressBroadcast(syncProgress, context);
+        return  locations;
+    }
+
+
+    private List<Location> batchSyncLocations(List<Location> batchLocationStructures) throws Exception {
+
+            String featureResponse = fetchLocationsFromServer();
+            List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
+            }.getType());
+
+            for (Location location : locations) {
+                try {
+                    location.setSyncStatus(BaseRepository.TYPE_Synced);
+                    locationRepository.addOrUpdate(location);
+                    location.setGeometry(null);
+                } catch (Exception e) {
+                    Timber.e(e, "EXCEPTION %s", e.toString());
+                }
+            }
+//            if (!Utils.isEmptyCollection(locations)) {
+//
+//                // retry fetch since there were items synced from the server
+//                locations.addAll(batchLocationStructures);
+//                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
+//                sendSyncProgressBroadcast(syncProgress, context);
+//                return batchSyncLocations(locations);
+//
+//            }
+//        return batchLocationStructures;
+        return locations;
+    }
+
+    private String fetchLocationsFromServer() throws Exception {
+
+        HTTPAgent httpAgent = getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(REVEAL_LOCATION_SYNC_URL + " http agent is null");
+        }
+
+        String baseUrl = getFormattedBaseUrl();
+
+        Response<String> resp;
+
+
+        String requestURL = baseUrl + REVEAL_LOCATION_SYNC_URL;
+
+        resp = httpAgent.fetch(requestURL);
+        if (resp.isFailure()) {
+            throw new NoHttpResponseException(REVEAL_LOCATION_SYNC_URL + " not returned data");
+        }
+
+        return resp.payload();
     }
 
     private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, List<Location> batchLocationStructures, boolean returnCount) {
@@ -246,6 +314,13 @@ public class LocationServiceHelper extends BaseHelper {
         return locations;
     }
 
+    public List<Location> fetchLocations(){
+        //New way of fetching Locations
+        //TODO: synching newly created, synching updated locations
+        List<Location> locations = syncLocations();
+        return locations;
+    }
+
     public void fetchLocationsByLevelAndTags() throws Exception {
 
         HTTPAgent httpAgent = getHttpAgent();
@@ -280,7 +355,7 @@ public class LocationServiceHelper extends BaseHelper {
 
         for (org.smartregister.domain.jsonmapping.Location openMrsLocation : receivedOpenMrsLocations) {
             Location location = new Location();
-            location.setId(openMrsLocation.getLocationId());
+            location.setIdentifier(openMrsLocation.getLocationId());
             LocationProperty property = new LocationProperty();
             property.setUid(openMrsLocation.getLocationId());
             property.setParentId(openMrsLocation.getParentLocation().getLocationId());
@@ -326,8 +401,8 @@ public class LocationServiceHelper extends BaseHelper {
                     unprocessedIds.addAll(Arrays.asList(response.payload().substring(LOCATIONS_NOT_PROCESSED.length()).split(",")));
                 }
                 for (Location location : locations) {
-                    if (!unprocessedIds.contains(location.getId()))
-                        structureRepository.markStructuresAsSynced(location.getId());
+                    if (!unprocessedIds.contains(location.getIdentifier()))
+                        structureRepository.markStructuresAsSynced(location.getIdentifier());
                 }
             }
         }
@@ -367,8 +442,8 @@ public class LocationServiceHelper extends BaseHelper {
                     unprocessedIds.addAll(Arrays.asList(response.payload().substring(LOCATIONS_NOT_PROCESSED.length()).split(",")));
                 }
                 for (Location location : locations) {
-                    if (!unprocessedIds.contains(location.getId()))
-                        locationRepository.markLocationsAsSynced(location.getId());
+                    if (!unprocessedIds.contains(location.getIdentifier()))
+                        locationRepository.markLocationsAsSynced(location.getIdentifier());
                 }
             }
         }
@@ -407,7 +482,7 @@ public class LocationServiceHelper extends BaseHelper {
             JSONObject actualLocation = actualLocations.getJSONObject(currentIndex);
             if (actualLocation.has(DISPLAY) && actualLocation.has(UUID)) {
                 Location location = new Location();
-                location.setId(actualLocation.getString(UUID));
+                location.setIdentifier(actualLocation.getString(UUID));
                 LocationProperty property = new LocationProperty();
                 property.setUid(actualLocation.getString(UUID));
                 property.setParentId(openMrsLocation.getJSONObject(TEAM).getJSONObject(LOCATION).getString(UUID));
@@ -417,7 +492,7 @@ public class LocationServiceHelper extends BaseHelper {
 
                 //Save tag with a special keyword for team members on the location tags table.
                 LocationTag locationTag = new LocationTag();
-                locationTag.setLocationId(location.getId());
+                locationTag.setLocationId(location.getIdentifier());
                 locationTag.setName(SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS);
                 locationTagRepository.addOrUpdate(locationTag);
             }
@@ -475,7 +550,7 @@ public class LocationServiceHelper extends BaseHelper {
 
                     for (LocationTag tag : location.getLocationTags()) {
                         LocationTag locationTag = new LocationTag();
-                        locationTag.setLocationId(location.getId());
+                        locationTag.setLocationId(location.getIdentifier());
                         locationTag.setName(tag.getName());
 
                         locationTagRepository.addOrUpdate(locationTag);

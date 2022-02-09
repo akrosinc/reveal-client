@@ -136,7 +136,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
 
     private Location structure = TestingUtils.gson.fromJson(TestingUtils.structureJSON, Location.class);
 
-    private Task task = TestingUtils.getTask(structure.getId());
+    private Task task = TestingUtils.getTask(structure.getIdentifier());
 
     @Before
     public void setUp() {
@@ -223,13 +223,13 @@ public class ListTaskInteractorTest extends BaseUnitTest {
     }
 
     private void setOperationArea(String plan) {
-        String operationAreaId = operationArea.getId();
+        String operationAreaId = operationArea.getIdentifier();
         PreferencesUtil.getInstance().setCurrentOperationalArea(operationAreaId);
         Cache<Location> cache = new Cache<>();
         cache.get(operationAreaId, () -> operationArea);
         Whitebox.setInternalState(Utils.class, "cache", cache);
         Map<String, Set<Task>> taskMap = new HashMap<>();
-        taskMap.put(structure.getId(), Collections.singleton(task));
+        taskMap.put(structure.getIdentifier(), Collections.singleton(task));
         when(taskRepository.getTasksByPlanAndGroup(plan, operationAreaId)).thenReturn(taskMap);
         when(structureRepository.getLocationsByParentId(operationAreaId)).thenReturn(Collections.singletonList(structure));
     }
@@ -238,7 +238,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
     public void testFetchLocations() {
         String groupNameQuery = "Select structure._id as _id , COALESCE(ec_family.first_name,structure_name,name,family_head_name) , group_concat(ec_family_member.first_name||' '||ec_family_member.last_name) FROM structure LEFT JOIN ec_family ON structure._id = ec_family.structure_id AND ec_family.date_removed IS NULL collate nocase  LEFT JOIN ec_family_member ON ec_family.base_entity_id = ec_family_member.relational_id AND ec_family_member.date_removed IS NULL collate nocase  LEFT JOIN sprayed_structures ON structure._id = sprayed_structures.id collate nocase  WHERE parent_id=?  GROUP BY structure._id";
         String plan = UUID.randomUUID().toString();
-        String operationAreaId = operationArea.getId();
+        String operationAreaId = operationArea.getIdentifier();
         setOperationArea(plan);
         doReturn(createStructureNameCursor()).when(database).rawQuery(groupNameQuery, new String[]{operationAreaId});
         listTaskInteractor.fetchLocations(plan, operationAreaId);
@@ -251,7 +251,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
         assertEquals("FeatureCollection", featureCollection.type());
         assertEquals(1, featureCollection.features().size());
         Feature feature = featureCollection.features().get(0);
-        assertEquals(structure.getId(), feature.id());
+        assertEquals(structure.getIdentifier(), feature.id());
         assertEquals(task.getIdentifier(), feature.getStringProperty(TASK_IDENTIFIER));
         assertEquals(task.getBusinessStatus(), feature.getStringProperty(Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS));
         assertEquals(task.getStatus().name(), feature.getStringProperty(Properties.TASK_STATUS));
@@ -265,7 +265,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
     @Test
     public void testGetIndexCaseStructure() {
         String plan = UUID.randomUUID().toString();
-        String operationAreaId = operationArea.getId();
+        String operationAreaId = operationArea.getIdentifier();
         setOperationArea(plan);
         PreferencesUtil.getInstance().setCurrentPlan(plan);
         PreferencesUtil.getInstance().setInterventionTypeForPlan(plan, "FI");
@@ -280,7 +280,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
         assertEquals("FeatureCollection", featureCollection.type());
         assertEquals(1, featureCollection.features().size());
         Feature feature = featureCollection.features().get(0);
-        assertEquals(structure.getId(), feature.id());
+        assertEquals(structure.getIdentifier(), feature.id());
         assertEquals(task.getIdentifier(), feature.getStringProperty(TASK_IDENTIFIER));
         assertEquals(task.getBusinessStatus(), feature.getStringProperty(Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS));
         assertEquals(task.getStatus().name(), feature.getStringProperty(Properties.TASK_STATUS));
@@ -481,7 +481,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
 
     private Cursor createIndexCaseCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[]{STRUCTURE_ID});
-        cursor.addRow(new Object[]{structure.getId()});
+        cursor.addRow(new Object[]{structure.getIdentifier()});
         return cursor;
     }
 
@@ -494,7 +494,7 @@ public class ListTaskInteractorTest extends BaseUnitTest {
 
     private Cursor createStructureNameCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[3]);
-        cursor.addRow(new Object[]{structure.getId(), "Harry House", "Harry Pin, Jerry Kin"});
+        cursor.addRow(new Object[]{structure.getIdentifier(), "Harry House", "Harry Pin, Jerry Kin"});
         return cursor;
     }
 

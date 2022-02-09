@@ -285,7 +285,7 @@ public class FamilyJsonFormUtilsTest extends BaseUnitTest {
         allSharedPreferences.saveDefaultTeamId("user1132", "2342fsdfds99");
         Cache<Location> cache = new Cache<>();
         cache.get("13k083-jhnf33", () -> location);
-        when(location.getId()).thenReturn("loc123");
+        when(location.getIdentifier()).thenReturn("loc123");
         Whitebox.setInternalState(Utils.class, "cache", cache);
         PreferencesUtil.getInstance().setCurrentOperationalArea("13k083-jhnf33");
         Event event = FamilyJsonFormUtils.createFamilyEvent(baseEntityId, updateFamilyEvent.getLocationId(), updateFamilyEvent.getDetails(), UPDATE_FAMILY_MEMBER_REGISTRATION);

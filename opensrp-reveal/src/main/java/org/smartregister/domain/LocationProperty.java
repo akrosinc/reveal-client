@@ -36,7 +36,8 @@ public class LocationProperty implements Serializable {
 
     private String name;
 
-    private int geographicLevel;
+
+    private String geographicLevel;
 
     private Date effectiveStartDate;
 
@@ -95,20 +96,21 @@ public class LocationProperty implements Serializable {
         this.name = name;
     }
 
-    public int getGeographicLevel() {
-        return geographicLevel;
-    }
-
-    public void setGeographicLevel(int geographicLevel) {
-        this.geographicLevel = geographicLevel;
-    }
-
     public Date getEffectiveStartDate() {
         return effectiveStartDate;
     }
 
     public void setEffectiveStartDate(Date effectiveStartDate) {
         this.effectiveStartDate = effectiveStartDate;
+    }
+
+
+    public String getGeographicLevel() {
+        return geographicLevel;
+    }
+
+    public void setGeographicLevel(String geographicLevel) {
+        this.geographicLevel = geographicLevel;
     }
 
     public Date getEffectiveEndDate() {

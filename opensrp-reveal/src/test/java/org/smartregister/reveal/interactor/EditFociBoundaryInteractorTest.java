@@ -59,7 +59,7 @@ public class EditFociBoundaryInteractorTest extends BaseUnitTest {
         verify(locationRepository, timeout(ASYNC_TIMEOUT)).addOrUpdate(locationArgumentCaptor.capture());
         Location actualLocation = locationArgumentCaptor.getValue();
         assertEquals(BaseRepository.TYPE_Unsynced,actualLocation.getSyncStatus());
-        assertEquals(expectedLocation.getId(), actualLocation.getId());
+        assertEquals(expectedLocation.getIdentifier(), actualLocation.getIdentifier());
         assertEquals(expectedLocation.getGeometry(), actualLocation.getGeometry());
         assertEquals(expectedLocation.getType(), actualLocation.getType());
         assertEquals("user1132", actualLocation.getProperties().getUsername());

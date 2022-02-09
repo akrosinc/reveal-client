@@ -86,7 +86,7 @@ public class TaskUtils {
         DateTime now = new DateTime();
         task.setIdentifier(UUID.randomUUID().toString());
         task.setPlanIdentifier(prefsUtil.getCurrentPlanId());
-        task.setGroupIdentifier(Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId());
+        task.setGroupIdentifier(Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier());
         task.setStatus(READY);
         task.setBusinessStatus(businessStatus);
         task.setPriority(Task.TaskPriority.ROUTINE);
@@ -162,7 +162,7 @@ public class TaskUtils {
         boolean taskResetSuccessful = false;
         try {
             Task task = taskRepository.getTaskByIdentifier(taskDetails.getTaskId());
-            String operationalAreaId = Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId();
+            String operationalAreaId = Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier();
 
             if (Intervention.CASE_CONFIRMATION.equals(taskDetails.getTaskCode())) {
                 task.setForEntity(operationalAreaId);

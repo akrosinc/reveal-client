@@ -92,7 +92,7 @@ public class LocationTaskIntentService extends IntentService {
         PlanIntentServiceHelper planServiceHelper = PlanIntentServiceHelper.getInstance();
 
 
-        List<Location> syncedStructures = locationServiceHelper.fetchLocationsStructures();
+        List<Location> syncedStructures = locationServiceHelper.fetchLocations();
 
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         planServiceHelper.syncPlans();
@@ -137,7 +137,7 @@ public class LocationTaskIntentService extends IntentService {
         if (operationalAreaLocation == null) {
             return false;
         } else {
-            operationalAreaLocationId = operationalAreaLocation.getId();
+            operationalAreaLocationId = operationalAreaLocation.getIdentifier();
         }
         if (syncedStructures != null) {
             for (Location structure : syncedStructures) {

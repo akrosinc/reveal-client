@@ -373,7 +373,7 @@ public class Utils {
 
     public static String getCurrentLocationId() {
         Location currentOperationalArea = getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
-        return currentOperationalArea == null ? null : currentOperationalArea.getId();
+        return currentOperationalArea == null ? null : currentOperationalArea.getIdentifier();
     }
 
     public static FormTag getFormTag() {

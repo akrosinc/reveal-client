@@ -54,7 +54,7 @@ public class GeoJsonUtils {
 
     public static String getGeoJsonFromStructuresAndTasks(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames) {
         for (Location structure : structures) {
-            Set<Task> taskSet = tasks.get(structure.getId());
+            Set<Task> taskSet = tasks.get(structure.getIdentifier());
             HashMap<String, String> taskProperties = new HashMap<>();
 
             StringBuilder interventionList = new StringBuilder();
@@ -84,7 +84,7 @@ public class GeoJsonUtils {
                 taskProperties.put(TASK_STATUS, task.getStatus().name());
                 taskProperties.put(TASK_CODE, task.getCode());
 
-                if (indexCase != null && structure.getId().equals(indexCase)) {
+                if (indexCase != null && structure.getIdentifier().equals(indexCase)) {
                     taskProperties.put(IS_INDEX_CASE, Boolean.TRUE.toString());
                 } else {
                     taskProperties.put(IS_INDEX_CASE, Boolean.FALSE.toString());
@@ -101,9 +101,9 @@ public class GeoJsonUtils {
             populateBusinessStatus(taskProperties, mdaStatusMap, state);
 
             taskProperties.put(TASK_CODE_LIST, interventionList.toString());
-            if (structureNames.get(structure.getId()) != null) {
-                taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getId()).getStructureName());
-                taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getId()).getFamilyMembersNames());
+            if (structureNames.get(structure.getIdentifier()) != null) {
+                taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getIdentifier()).getStructureName());
+                taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getIdentifier()).getFamilyMembersNames());
             }
             structure.getProperties().setCustomProperties(taskProperties);
 
@@ -217,9 +217,9 @@ public class GeoJsonUtils {
     }
 
     private static void handleFamilyRegDoneInOtherPlan(Map<String, StructureDetails> structureNames, HashMap<String, String> taskProperties, Location structure) {
-        if (structure.getType().equals(Constants.StructureType.RESIDENTIAL) && structureNames.get(structure.getId()) != null && StringUtils.isNotBlank(structureNames.get(structure.getId()).getStructureName())) {
-            taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getId()).getStructureName());
-            taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getId()).getFamilyMembersNames());
+        if (structure.getType().equals(Constants.StructureType.RESIDENTIAL) && structureNames.get(structure.getIdentifier()) != null && StringUtils.isNotBlank(structureNames.get(structure.getIdentifier()).getStructureName())) {
+            taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getIdentifier()).getStructureName());
+            taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getIdentifier()).getFamilyMembersNames());
             taskProperties.put(TASK_BUSINESS_STATUS, FAMILY_REGISTERED);
             structure.getProperties().setCustomProperties(taskProperties);
         }

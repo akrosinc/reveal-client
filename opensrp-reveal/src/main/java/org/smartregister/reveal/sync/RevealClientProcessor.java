@@ -8,7 +8,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
@@ -107,7 +106,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
 
         ArrayList<Client> clients = new ArrayList<>();
         Location operationalArea = Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
-        String operationalAreaLocationId = operationalArea == null ? null : operationalArea.getId();
+        String operationalAreaLocationId = operationalArea == null ? null : operationalArea.getIdentifier();
         boolean hasSyncedEventsInTarget = false;
         if (!eventClients.isEmpty()) {
             String operationalAreaId = null;

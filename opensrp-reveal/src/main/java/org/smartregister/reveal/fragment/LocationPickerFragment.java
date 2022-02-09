@@ -121,8 +121,8 @@ public class LocationPickerFragment extends Fragment implements LocationPickerFr
             for (Location location : locations) {
                 String locationTag = location.getLocationTags() != null && location.getLocationTags().iterator().hasNext()
                         ? location.getLocationTags().iterator().next().getName() : "";
-                if (locationTag.equals(ZONE) && !groupedLocations.containsKey(location.getId())) {
-                    groupedLocations.put(location.getId(), new ArrayList<>());
+                if (locationTag.equals(ZONE) && !groupedLocations.containsKey(location.getIdentifier())) {
+                    groupedLocations.put(location.getIdentifier(), new ArrayList<>());
                 } else {
                     if (locationTag.equals(OPERATIONAL_AREA) && !groupedLocations.containsKey(location.getProperties().getParentId())) {
                         groupedLocations.put(location.getProperties().getParentId(), new ArrayList<>());
@@ -130,7 +130,7 @@ public class LocationPickerFragment extends Fragment implements LocationPickerFr
                         parentLocations.add(Pair.create(location.getProperties().getParentId(), parentLocationName.getName()));
                     }
                     LocationModel locationModel = new LocationModel();
-                    locationModel.setId(location.getId());
+                    locationModel.setId(location.getIdentifier());
                     locationModel.setName(location.getProperties().getName());
                     if (groupedLocations.get(location.getProperties().getParentId()) != null) {
                         groupedLocations.get(location.getProperties().getParentId()).add(locationModel);

@@ -1,16 +1,12 @@
 package org.smartregister.domain;
 
-import org.smartregister.domain.Geometry;
-import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.LocationTag;
-
 import java.io.Serializable;
 import java.util.Set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "identifier")
 @Data
 public class PhysicalLocation implements Serializable {
 
@@ -18,7 +14,7 @@ public class PhysicalLocation implements Serializable {
 
     private String type;
 
-    private String id;
+    private String identifier;
 
     private Geometry geometry;
 

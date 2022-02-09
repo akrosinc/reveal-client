@@ -80,7 +80,7 @@ public class StructureTasksPresenterTest extends BaseUnitTest {
         when(prefsUtil.getCurrentPlanId()).thenReturn(planId);
         when(prefsUtil.getCurrentOperationalArea()).thenReturn(jurisdictionId);
         Location jurisdiction = new Location();
-        jurisdiction.setId(jurisdictionId);
+        jurisdiction.setIdentifier(jurisdictionId);
         Cache<Location> cache = mock(Cache.class);
         when(cache.get(anyString(), any())).thenReturn(jurisdiction);
         Whitebox.setInternalState(Utils.class, cache);
@@ -103,7 +103,7 @@ public class StructureTasksPresenterTest extends BaseUnitTest {
         when(prefsUtil.getCurrentPlanId()).thenReturn(planId);
         when(prefsUtil.getCurrentOperationalArea()).thenReturn(jurisdictionId);
         Location jurisdiction = new Location();
-        jurisdiction.setId(jurisdictionId);
+        jurisdiction.setIdentifier(jurisdictionId);
         Cache<Location> cache = mock(Cache.class);
         when(cache.get(anyString(), any())).thenReturn(jurisdiction);
         Whitebox.setInternalState(Utils.class, cache);
@@ -272,7 +272,7 @@ public class StructureTasksPresenterTest extends BaseUnitTest {
         when(prefsUtil.getCurrentOperationalArea()).thenReturn(jurisdictionId);
 
         Location jurisdiction = new Location();
-        jurisdiction.setId(jurisdictionId);
+        jurisdiction.setIdentifier(jurisdictionId);
         Cache<Location> cache = mock(Cache.class);
         when(cache.get(anyString(), any())).thenReturn(jurisdiction);
         Whitebox.setInternalState(Utils.class, cache);

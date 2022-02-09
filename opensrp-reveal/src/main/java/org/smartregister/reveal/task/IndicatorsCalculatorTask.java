@@ -1,7 +1,6 @@
 package org.smartregister.reveal.task;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -78,7 +77,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateSprayIndicators(this.activity, indicatorDetails));
         } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
             Location operationalArea = Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea());
-            indicatorDetails = IndicatorUtils.getNamibiaIndicators(operationalArea.getId(), prefsUtil.getCurrentPlanId(), sqLiteDatabase);
+            indicatorDetails = IndicatorUtils.getNamibiaIndicators(operationalArea.getIdentifier(), prefsUtil.getCurrentPlanId(), sqLiteDatabase);
             indicatorDetails.setTarget(calculateTarget());
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNamibiaSprayIndicators(this.activity, indicatorDetails));
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){

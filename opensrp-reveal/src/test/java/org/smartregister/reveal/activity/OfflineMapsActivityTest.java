@@ -105,7 +105,7 @@ public class OfflineMapsActivityTest extends BaseUnitTest {
 
         OfflineMapModel actualOfflineMapModel = offlineMapModelArgumentCaptor.getValue();
         assertNotNull(actualOfflineMapModel);
-        assertEquals(expectedOfflineMapModel.getLocation().getId(), actualOfflineMapModel.getLocation().getId());
+        assertEquals(expectedOfflineMapModel.getLocation().getIdentifier(), actualOfflineMapModel.getLocation().getIdentifier());
     }
 
     @Test

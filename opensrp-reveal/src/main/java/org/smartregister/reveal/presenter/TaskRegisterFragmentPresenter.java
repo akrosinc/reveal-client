@@ -163,7 +163,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
                 Constants.DatabaseKeys.TASK_TABLE, Constants.DatabaseKeys.STATUS,
                 TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")));
         return new Pair<>(whereClause, ArrayUtils.addAll(new String[]{operationalArea == null ?
-                null : operationalArea.getId(), prefsUtil.getCurrentPlanId()}, INACTIVE_TASK_STATUS));
+                null : operationalArea.getIdentifier(), prefsUtil.getCurrentPlanId()}, INACTIVE_TASK_STATUS));
     }
 
     @Override
@@ -234,7 +234,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
             boolean hasSingleGroupedTask = (BEDNET_DISTRIBUTION.equals(details.getTaskCode()) || BLOOD_SCREENING.equals(details.getTaskCode())) && details.getTaskCount() == 1;
             if (CASE_CONFIRMATION.equals(details.getTaskCode())) {
                 interactor.getIndexCaseDetails(details.getStructureId(),
-                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId(), details.getReasonReference());
+                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier(), details.getReasonReference());
             } else if (Task.TaskStatus.COMPLETED.name().equals(details.getTaskStatus())
                     &&
                     (BLOOD_SCREENING.equals(details.getTaskCode()) ||

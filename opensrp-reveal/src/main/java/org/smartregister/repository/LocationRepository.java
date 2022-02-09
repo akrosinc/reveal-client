@@ -64,10 +64,10 @@ public class LocationRepository extends BaseRepository {
     }
 
     public void addOrUpdate(Location location) {
-        if (StringUtils.isBlank(location.getId()))
+        if (StringUtils.isBlank(location.getIdentifier()))
             throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, location.getId());
+        contentValues.put(ID, location.getIdentifier());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());

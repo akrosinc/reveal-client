@@ -67,7 +67,7 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
     public void findTasks(String structureId) {
         this.structureId = structureId;
         interactor.findTasks(structureId, prefsUtil.getCurrentPlanId(),
-                Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId());
+                Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier());
     }
 
     @Override

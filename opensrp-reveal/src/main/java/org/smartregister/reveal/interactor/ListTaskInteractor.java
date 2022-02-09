@@ -281,9 +281,9 @@ public class ListTaskInteractor extends BaseInteractor {
                 try {
                     featureCollection = createFeatureCollection();
                     if (operationalAreaLocation != null) {
-                        Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
-                        List<Location> structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
-                        Map<String, StructureDetails> structureNames = getStructureName(operationalAreaLocation.getId());
+                        Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(plan, operationalAreaLocation.getIdentifier());
+                        List<Location> structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getIdentifier());
+                        Map<String, StructureDetails> structureNames = getStructureName(operationalAreaLocation.getIdentifier());
                         taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
                         String indexCase = null;
                         if (getInterventionLabel() == R.string.focus_investigation)
@@ -301,7 +301,7 @@ public class ListTaskInteractor extends BaseInteractor {
                     @Override
                     public void run() {
                         if (operationalAreaLocation != null) {
-                            operationalAreaId = operationalAreaLocation.getId();
+                            operationalAreaId = operationalAreaLocation.getIdentifier();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
                             if (locationComponentActive != null) {
                                 getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList, point, locationComponentActive);
@@ -406,7 +406,7 @@ public class ListTaskInteractor extends BaseInteractor {
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         Location currentOperationalArea = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
         if(currentOperationalArea != null) {
-            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getId());
+            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getIdentifier());
             this.setTaskDetails(IndicatorUtils.processTaskDetails(tasks));
         }
 

@@ -342,7 +342,7 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
         operationalAreaLocation.getGeometry().setCoordinates(updatedCoordsJsonArray);
 
         //update location tags
-        Location dbLocation = Utils.getLocationById(operationalAreaLocation.getId());
+        Location dbLocation = Utils.getLocationById(operationalAreaLocation.getIdentifier());
         if (dbLocation != null && dbLocation.getLocationTags() != null) {
             operationalAreaLocation.setLocationTags(dbLocation.getLocationTags());
         }

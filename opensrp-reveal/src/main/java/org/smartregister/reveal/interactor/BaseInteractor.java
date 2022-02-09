@@ -7,7 +7,6 @@ import androidx.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 
 import net.sqlcipher.Cursor;
@@ -381,7 +380,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     com.cocoahero.android.geojson.Feature feature = new com.cocoahero.android.geojson.Feature(new JSONObject(event.findObs(null, false, "structure").getValue().toString()));
                     Date now = new Date();
                     Location structure = new Location();
-                    structure.setId(event.getBaseEntityId());
+                    structure.setIdentifier(event.getBaseEntityId());
                     structure.setType(feature.getType());
                     org.smartregister.domain.Geometry geometry = new org.smartregister.domain.Geometry();
                     geometry.setType(org.smartregister.domain.Geometry.GeometryType.valueOf(feature.getGeometry().getType().toUpperCase()));
@@ -418,19 +417,19 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     Context applicationContext = revealApplication.getApplicationContext();
                     Task task = null;
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
-                        task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
+                        task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getIdentifier());
                     } else {
                         if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
+                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);
                         } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
+                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
                                     BusinessStatus.NOT_VISITED, Intervention.MOSQUITO_COLLECTION, R.string.mosquito_collection_task_description);
                         } else if (StructureType.LARVAL_BREEDING_SITE.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
+                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
                                     BusinessStatus.NOT_VISITED, Intervention.LARVAL_DIPPING, R.string.larval_dipping_task_description);
                         } else if (StructureType.POTENTIAL_AREA_OF_TRANSMISSION.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
+                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
                                     BusinessStatus.NOT_VISITED, PAOT, R.string.poat_task_description);
                         }
                     }
@@ -516,7 +515,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 taskRepository.addOrUpdate(task);
                 Set<Task> removedTasks = new HashSet<>();
                 for (Task bloodScreeningTask : taskRepository.getTasksByEntityAndCode(prefsUtil.getCurrentPlanId(),
-                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId(), baseEntityId, BLOOD_SCREENING)) {
+                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier(), baseEntityId, BLOOD_SCREENING)) {
                     bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
                     bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
                     taskRepository.addOrUpdate(bloodScreeningTask);

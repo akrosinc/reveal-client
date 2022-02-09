@@ -150,7 +150,7 @@ public class RevealJsonFormUtils {
         int structureVersion = 0;
         String structureType = "";
         if (structure != null) {
-            structureId = structure.getId();
+            structureId = structure.getIdentifier();
             structureUUID = structure.getProperties().getUid();
             structureVersion = structure.getProperties().getVersion();
             structureType = structure.getProperties().getType();
@@ -846,7 +846,7 @@ public class RevealJsonFormUtils {
         JSONObject option;
         JSONObject property;
         JSONArray options = new JSONArray();
-        String locationId  = currentOperationalArea.getId();
+        String locationId  = currentOperationalArea.getIdentifier();
         String query = String.format("SELECT %s,%s FROM %s WHERE %s IS NOT NULL AND %s IN (SELECT %s FROM %s WHERE %s = ? ) ORDER BY %s DESC",Constants.DatabaseKeys.ID,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.Tables.SPRAYED_STRUCTURES,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.DatabaseKeys.BASE_ENTITY_ID,Constants.DatabaseKeys.ID_,Constants.DatabaseKeys.STRUCTURES_TABLE,Constants.DatabaseKeys.PARENT_ID,Constants.DatabaseKeys.SPRAY_DATE);
         try(Cursor cursor = database.rawQuery(query,new String[]{locationId})){
             while (cursor.moveToNext()) {
@@ -884,7 +884,7 @@ public class RevealJsonFormUtils {
             List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
             locationNames = operationalAreaNames.stream()
                     .map(name -> locationRepository.getLocationByName(name))
-                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
+                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getIdentifier())).flatMap(Collection::stream)
                     .map(childLocation -> childLocation.getProperties().getName()).filter(name -> !name.isEmpty()).collect(Collectors.toList());
         } else {
             final String currentFacility = PreferencesUtil.getInstance().getCurrentFacility();

@@ -310,7 +310,7 @@ public class TaskRegisterFragmentInteractorTest extends BaseUnitTest {
         TaskDetails taskDetails = TestingUtils.getTaskDetails();
         taskDetails.setStructureId(UUID.randomUUID().toString());
         org.smartregister.domain.Location structure = new org.smartregister.domain.Location();
-        structure.setId(UUID.randomUUID().toString());
+        structure.setIdentifier(UUID.randomUUID().toString());
         when(structureRepository.getLocationById(taskDetails.getStructureId())).thenReturn(structure);
         interactor.getStructure(taskDetails);
         verify(presenter, timeout(ASYNC_TIMEOUT)).onStructureFound(structure, taskDetails);

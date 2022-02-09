@@ -180,7 +180,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         verify(view).showProgressView();
         verify(interactor).findTasks(mainConditionCaptor.capture(), myLocationCaptor.capture(), operationalAreaCenterCaptor.capture(), labelCaptor.capture());
         assertEquals(mainCondition, mainConditionCaptor.getValue().first);
-        assertEquals(operationalArea.getId(), mainConditionCaptor.getValue().second[0]);
+        assertEquals(operationalArea.getIdentifier(), mainConditionCaptor.getValue().second[0]);
         assertEquals(campaignId, mainConditionCaptor.getValue().second[1]);
 
         assertEquals(location, myLocationCaptor.getValue());
@@ -292,7 +292,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         verify(view).showProgressDialog(R.string.fetching_structures_title, R.string.fetching_structures_message);
         verify(interactor).findTasks(mainConditionCaptor.capture(), myLocationCaptor.capture(), operationalAreaCenterCaptor.capture(), labelCaptor.capture());
         assertEquals("task.group_id = ? AND task.plan_id = ? AND task.status NOT IN (?,?)", mainConditionCaptor.getValue().first);
-        assertEquals(operationalArea.getId(), mainConditionCaptor.getValue().second[0]);
+        assertEquals(operationalArea.getIdentifier(), mainConditionCaptor.getValue().second[0]);
         assertEquals(campaignId, mainConditionCaptor.getValue().second[1]);
 
         assertEquals(location, myLocationCaptor.getValue());
@@ -439,7 +439,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         taskDetails.setReasonReference(eventId);
         presenter.onTaskSelected(taskDetails, true);
         verify(view).getContext();
-        verify(interactor).getIndexCaseDetails(taskDetails.getStructureId(), operationalArea.getId(), eventId);
+        verify(interactor).getIndexCaseDetails(taskDetails.getStructureId(), operationalArea.getIdentifier(), eventId);
         verifyNoMoreInteractions(view);
         verifyNoMoreInteractions(interactor);
     }

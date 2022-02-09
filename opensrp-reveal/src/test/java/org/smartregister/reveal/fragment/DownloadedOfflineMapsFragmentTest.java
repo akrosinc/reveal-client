@@ -127,7 +127,7 @@ public class DownloadedOfflineMapsFragmentTest extends BaseUnitTest {
         assertNotNull(updatedOfflineMapsTodelete);
         assertFalse(updatedOfflineMapsTodelete.isEmpty());
         assertEquals(1, updatedOfflineMapsTodelete.size());
-        assertEquals(expectedLocation.getId(), updatedOfflineMapsTodelete.get(0).getLocation().getId());
+        assertEquals(expectedLocation.getIdentifier(), updatedOfflineMapsTodelete.get(0).getLocation().getIdentifier());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class DownloadedOfflineMapsFragmentTest extends BaseUnitTest {
         List<OfflineMapModel> actualOfflineMapModels = offlineMapModelListCaptor.getValue();
         assertFalse(actualOfflineMapModels.isEmpty());
         assertEquals(expectedOfflineMapModels.get(0).getOfflineMapStatus(), actualOfflineMapModels.get(0).getOfflineMapStatus());
-        assertEquals(expectedOfflineMapModels.get(0).getLocation().getId(), actualOfflineMapModels.get(0).getLocation().getId());
+        assertEquals(expectedOfflineMapModels.get(0).getLocation().getIdentifier(), actualOfflineMapModels.get(0).getLocation().getIdentifier());
 
     }
 
@@ -160,7 +160,7 @@ public class DownloadedOfflineMapsFragmentTest extends BaseUnitTest {
         List<OfflineMapModel> updatedOfflineMapModelList = (Whitebox.getInternalState(fragment, "downloadedOfflineMapModelList"));
         assertFalse(originalDownloadedOfflineMapModelList.isEmpty());
         assertEquals(1, updatedOfflineMapModelList.size());
-        assertEquals(expectedOfflineMapModel.getLocation().getId(), updatedOfflineMapModelList.get(0).getLocation().getId());
+        assertEquals(expectedOfflineMapModel.getLocation().getIdentifier(), updatedOfflineMapModelList.get(0).getLocation().getIdentifier());
     }
 
     @Test
@@ -174,7 +174,7 @@ public class DownloadedOfflineMapsFragmentTest extends BaseUnitTest {
         List<OfflineMapModel> originalDownloadedOfflineMapModelList = Whitebox.getInternalState(fragment, "downloadedOfflineMapModelList");
         assertNotNull(originalDownloadedOfflineMapModelList);
         assertEquals(1, originalDownloadedOfflineMapModelList.size());
-        assertEquals(expectedOfflineMapModel.getLocation().getId(), originalDownloadedOfflineMapModelList.get(0).getLocation().getId());
+        assertEquals(expectedOfflineMapModel.getLocation().getIdentifier(), originalDownloadedOfflineMapModelList.get(0).getLocation().getIdentifier());
         assertEquals(DOWNLOADED, originalDownloadedOfflineMapModelList.get(0).getOfflineMapStatus());
 
         fragment.mapDeletedSuccessfully(expectedOfflineMapModel.getDownloadAreaId());

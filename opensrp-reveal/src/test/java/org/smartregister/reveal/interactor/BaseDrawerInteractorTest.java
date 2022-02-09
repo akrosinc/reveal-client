@@ -82,7 +82,7 @@ public class BaseDrawerInteractorTest extends BaseUnitTest {
     @Before
     public void setUp() {
         interactor = new BaseDrawerInteractor(presenter);
-        when(location.getId()).thenReturn(operationalArea);
+        when(location.getIdentifier()).thenReturn(operationalArea);
         Cache<Location> cache = new Cache<>();
         cache.get(operationalArea, () -> location);
         Whitebox.setInternalState(Utils.class, "cache", cache);

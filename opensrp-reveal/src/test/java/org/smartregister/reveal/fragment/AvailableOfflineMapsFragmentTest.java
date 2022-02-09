@@ -107,7 +107,7 @@ public class AvailableOfflineMapsFragmentTest extends BaseUnitTest {
         List<OfflineMapModel> actualOfflineMapModels = offlineMapModelListCaptor.getValue();
         assertFalse(actualOfflineMapModels.isEmpty());
         assertEquals(expectedOfflineMapModels.get(0).getOfflineMapStatus(), actualOfflineMapModels.get(0).getOfflineMapStatus());
-        assertEquals(expectedOfflineMapModels.get(0).getLocation().getId(), actualOfflineMapModels.get(0).getLocation().getId());
+        assertEquals(expectedOfflineMapModels.get(0).getLocation().getIdentifier(), actualOfflineMapModels.get(0).getLocation().getIdentifier());
 
     }
 
@@ -130,7 +130,7 @@ public class AvailableOfflineMapsFragmentTest extends BaseUnitTest {
         assertNotNull(updatedOperationalAreasToDownload);
         assertFalse(updatedOperationalAreasToDownload.isEmpty());
         assertEquals(1, updatedOperationalAreasToDownload.size());
-        assertEquals(expectedLocation.getId(), updatedOperationalAreasToDownload.get(0).getId());
+        assertEquals(expectedLocation.getIdentifier(), updatedOperationalAreasToDownload.get(0).getIdentifier());
     }
 
     @Test
@@ -236,7 +236,7 @@ public class AvailableOfflineMapsFragmentTest extends BaseUnitTest {
         List<OfflineMapModel> updatedOfflineMapModelList = (Whitebox.getInternalState(fragment, "offlineMapModelList"));
         assertFalse(originalOfflineMapModelList.isEmpty());
         assertEquals(1, updatedOfflineMapModelList.size());
-        assertEquals(expectedOfflineMapModel.getLocation().getId(), updatedOfflineMapModelList.get(0).getLocation().getId());
+        assertEquals(expectedOfflineMapModel.getLocation().getIdentifier(), updatedOfflineMapModelList.get(0).getLocation().getIdentifier());
     }
 
     @Test
@@ -273,7 +273,7 @@ public class AvailableOfflineMapsFragmentTest extends BaseUnitTest {
 
         String updatedCurrentMapDownload = Whitebox.getInternalState(fragment, "currentMapDownload");
         assertNotNull(updatedCurrentMapDownload);
-        assertEquals(opAreasToDownload.get(0).getId(), updatedCurrentMapDownload);
+        assertEquals(opAreasToDownload.get(0).getIdentifier(), updatedCurrentMapDownload);
 
     }
 
@@ -296,7 +296,7 @@ public class AvailableOfflineMapsFragmentTest extends BaseUnitTest {
         List<Location> originalOperationalAreasToDownload = (Whitebox.getInternalState(fragment, "operationalAreasToDownload"));
         assertFalse(originalOperationalAreasToDownload.isEmpty());
 
-        fragment.removeOperationalAreaToDownload(originalOperationalAreasToDownload.get(0).getId());
+        fragment.removeOperationalAreaToDownload(originalOperationalAreasToDownload.get(0).getIdentifier());
         List<Location> updatedOperationalAreasToDownload = (Whitebox.getInternalState(fragment, "operationalAreasToDownload"));
         assertTrue(updatedOperationalAreasToDownload.isEmpty());
     }

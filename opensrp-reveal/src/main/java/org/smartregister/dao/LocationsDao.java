@@ -27,7 +27,7 @@ public class LocationsDao extends AbstractDao {
 
         DataMap<Location> dataMap = cursor -> {
             Location location = new Location();
-            location.setId(getCursorValue(cursor, UUID));
+            location.setIdentifier(getCursorValue(cursor, UUID));
             LocationProperty property = new LocationProperty();
             property.setUid(getCursorValue(cursor, UUID));
             property.setParentId(getCursorValue(cursor, PARENT_ID));

@@ -362,7 +362,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> {
             String parentId = locationRepository.getLocationById(operationalAreaFeature.id()).getProperties().getParentId();
             for (Location location : locationRepository.getAllLocations()) {
-                if (!location.getId().equals(operationalAreaFeature.id())) {
+                if (!location.getIdentifier().equals(operationalAreaFeature.id())) {
                     com.mapbox.geojson.Feature feature = convertFromLocation(location);
                     if (feature != null) {
                         if (location.getProperties().getParentId().equals(parentId) && location.getProperties().getName().toLowerCase().contains(OTHER)) {
@@ -391,7 +391,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         try {
             return com.mapbox.geojson.Feature.fromJson(gson.toJson(location));
         } catch (Exception e) {
-            Timber.e(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getId());
+            Timber.e(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getIdentifier());
         }
         return null;
     }
