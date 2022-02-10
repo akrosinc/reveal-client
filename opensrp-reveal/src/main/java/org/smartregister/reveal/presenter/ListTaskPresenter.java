@@ -273,6 +273,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     public void onMapReady() {
+
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
         String operationalArea = PreferencesUtil.getInstance().getCurrentOperationalArea();
         if (StringUtils.isNotBlank(planId) &&
@@ -280,8 +281,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchLocations(planId, operationalArea);
         } else {
             listTaskView.displayNotification(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
-            drawerPresenter.getView().lockNavigationDrawerForSelection();
+            //TODO: decide on this
+
+            // drawerPresenter.getView().lockNavigationDrawerForSelection();
         }
+
+        //test..
+        listTaskInteractor.fetchLocations(null, null);
+
     }
 
     public void onMapClicked(MapboxMap mapboxMap, LatLng point, boolean isLongclick) {

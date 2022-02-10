@@ -135,6 +135,7 @@ public class LocationServiceHelper extends BaseHelper {
     protected List<Location> syncLocations(){
         //new way
         syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.LOCATIONS);
         syncProgress.setTotalRecords(totalRecords);
         List<Location> locations = null;
         try {

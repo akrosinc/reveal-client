@@ -629,8 +629,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, boolean isChangeMapPosition) {
         if (geoJsonSource != null) {
             geoJsonSource.setGeoJson(featureCollection);
+
             if (operationalArea != null) {
-                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
+                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());  //TODO: setting up this camera view
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation) {
                     Feature indexCase = revealMapHelper.getIndexCase(featureCollection);
                     if (indexCase != null) {

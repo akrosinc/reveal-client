@@ -109,11 +109,12 @@ public class LocationTaskIntentService extends IntentService {
             Intent intent = new Intent(STRUCTURE_TASK_SYNCED);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
         }
+//TODO: why was this done, we may remove this
 
-        if (!org.smartregister.util.Utils.isEmptyCollection(syncedStructures)
-                || !org.smartregister.util.Utils.isEmptyCollection(synchedTasks)) {
-            doSync();
-        }
+//        if (!org.smartregister.util.Utils.isEmptyCollection(syncedStructures)
+//                || !org.smartregister.util.Utils.isEmptyCollection(synchedTasks)) {
+//            doSync();
+//        }
 
         new AppExecutors().mainThread().execute(new Runnable() {
             @Override

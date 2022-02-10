@@ -75,9 +75,10 @@ public class PlanDefinitionRepository extends BaseRepository {
 
             contentValues.put(STATUS, planDefinition.getStatus().name());
 
-            for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
-                searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
-            }
+            //TODO: handling of search table and use of jurisdiction
+//            for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
+//                searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
+//            }
             planDefinition.setJurisdiction(new ArrayList<>());
             contentValues.put(JSON, gson.toJson(planDefinition));
             getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);

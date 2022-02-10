@@ -52,6 +52,10 @@ public class GeoJsonUtils {
 
     private static final String MDA_DISPENSE_TASK_COUNT = "mda_dispense_task_count";
 
+    public static String getGeoJsonFromLocations(List<Location> locations){
+        return gson.toJson(locations);
+    }
+
     public static String getGeoJsonFromStructuresAndTasks(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames) {
         for (Location structure : structures) {
             Set<Task> taskSet = tasks.get(structure.getIdentifier());

@@ -128,8 +128,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
                 sendSyncProgressBroadcast(syncProgress, context);
 
-                // retry fetch since there were items synced from the server
-                batchFetchPlansFromServer(false);
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());

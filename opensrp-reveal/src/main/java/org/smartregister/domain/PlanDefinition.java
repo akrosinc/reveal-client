@@ -3,6 +3,7 @@ package org.smartregister.domain;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import org.joda.time.LocalDate;
 
@@ -58,6 +59,9 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
 
     @JsonProperty
     private boolean experimental;
+
+    @JsonProperty
+    private InterventionType interventionType;
 
     public String getIdentifier() {
         return identifier;
@@ -171,6 +175,14 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
         this.description = description;
     }
 
+    public InterventionType getInterventionType() {
+        return interventionType;
+    }
+
+    public void setInterventionType(InterventionType interventionType) {
+        this.interventionType = interventionType;
+    }
+
     @Override
     public int compareTo(PlanDefinition o) {
         return getName().equals(o.getName()) ? getName().compareTo(o.getIdentifier()) : getName().compareTo(o.getName());
@@ -199,6 +211,35 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
         }
     }
 
+    public static  class InterventionType implements Serializable {
+        private UUID identifier;
+        private String name;
+        private String code;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public UUID getIdentifier() {
+            return identifier;
+        }
+
+        public void setIdentifier(UUID identifier) {
+            this.identifier = identifier;
+        }
+    }
 
 
     public enum PlanStatus {
