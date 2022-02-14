@@ -6,6 +6,7 @@ import com.mapbox.geojson.Feature;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.domain.Location;
@@ -27,17 +28,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.smartregister.domain.Task.TaskStatus;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.DRUG_RECON_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ADHERENCE_VISIT_DONE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BEDNET_DISTRIBUTED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BLOOD_SCREENING_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.FAMILY_REGISTERED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.SMC_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.FULLY_RECEIVED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.INELIGIBLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NONE_RECEIVED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.TASKS_INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_RECEIVED;
 import static org.smartregister.reveal.util.Constants.GeoJSON.IS_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
@@ -50,6 +51,8 @@ import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
+import static org.smartregister.reveal.util.Constants.Properties.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 
@@ -357,10 +360,10 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task familyRegTask = initTestTask(REGISTER_FAMILY, COMPLETE);
         taskSet.add(familyRegTask);
 
-        Task mdaDispenseTask1 = initTestTask(MDA_DISPENSE, SMC_COMPLETE);
+        Task mdaDispenseTask1 = initTestTask(MDA_DISPENSE, FULLY_RECEIVED);
         taskSet.add(mdaDispenseTask1);
 
-        Task mdaDispenseTask2 = initTestTask(MDA_DISPENSE, SMC_COMPLETE);
+        Task mdaDispenseTask2 = initTestTask(MDA_DISPENSE, FULLY_RECEIVED);
         taskSet.add(mdaDispenseTask2);
 
         tasks.put(structure.getId(), taskSet);
@@ -371,7 +374,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
         Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
 
-        assertEquals(SMC_COMPLETE, feature.getStringProperty(TASK_BUSINESS_STATUS));
+        assertEquals(FULLY_RECEIVED, feature.getStringProperty(TASK_BUSINESS_STATUS));
 
     }
 
@@ -391,10 +394,10 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task familyRegTask = initTestTask(REGISTER_FAMILY, COMPLETE);
         taskSet.add(familyRegTask);
 
-        Task fullyDispensedTask = initTestTask(MDA_DISPENSE, SMC_COMPLETE);
+        Task fullyDispensedTask = initTestTask(MDA_DISPENSE, FULLY_RECEIVED);
         taskSet.add(fullyDispensedTask);
 
-        Task noneReceivedTask = initTestTask(MDA_DISPENSE, INELIGIBLE);
+        Task noneReceivedTask = initTestTask(MDA_DISPENSE, NONE_RECEIVED);
         taskSet.add(noneReceivedTask);
 
         Task notElligibleTask = initTestTask(MDA_DISPENSE, NOT_ELIGIBLE);
@@ -408,7 +411,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
         Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
 
-        assertEquals(TASKS_INCOMPLETE, feature.getStringProperty(TASK_BUSINESS_STATUS));
+        assertEquals(PARTIALLY_RECEIVED, feature.getStringProperty(TASK_BUSINESS_STATUS));
 
     }
 
@@ -428,10 +431,10 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task familyRegTask = initTestTask(REGISTER_FAMILY, COMPLETE);
         taskSet.add(familyRegTask);
 
-        Task noneReceivedTask = initTestTask(MDA_DISPENSE, INELIGIBLE);
+        Task noneReceivedTask = initTestTask(MDA_DISPENSE, NONE_RECEIVED);
         taskSet.add(noneReceivedTask);
 
-        Task noneReceivedTask1 = initTestTask(MDA_DISPENSE, INELIGIBLE);
+        Task noneReceivedTask1 = initTestTask(MDA_DISPENSE, NONE_RECEIVED);
         taskSet.add(noneReceivedTask1);
 
         tasks.put(structure.getId(), taskSet);
@@ -442,7 +445,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
         Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
 
-        assertEquals(INELIGIBLE, feature.getStringProperty(TASK_BUSINESS_STATUS));
+        assertEquals(NONE_RECEIVED, feature.getStringProperty(TASK_BUSINESS_STATUS));
 
     }
 
@@ -499,10 +502,10 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task notElligibleTask = initTestTask(MDA_DISPENSE, NOT_ELIGIBLE);
         taskSet.add(notElligibleTask);
 
-        Task fullyReceivedTask = initTestTask(MDA_DISPENSE, SMC_COMPLETE);
+        Task fullyReceivedTask = initTestTask(MDA_DISPENSE, FULLY_RECEIVED);
         taskSet.add(fullyReceivedTask);
 
-        Task nonReceivedTask = initTestTask(MDA_DISPENSE, INELIGIBLE);
+        Task nonReceivedTask = initTestTask(MDA_DISPENSE, NONE_RECEIVED);
         taskSet.add(nonReceivedTask);
 
         Task adherenceTask = initTestTask(MDA_ADHERENCE, COMPLETE);
@@ -516,7 +519,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
         Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
 
-        assertEquals(DRUG_RECON_COMPLETE, feature.getStringProperty(TASK_BUSINESS_STATUS));
+        assertEquals(ADHERENCE_VISIT_DONE, feature.getStringProperty(TASK_BUSINESS_STATUS));
 
     }
 
@@ -718,6 +721,87 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
     }
 
+    // Single task use-case tests
+
+    @Test
+    public void testCorrectTaskBusinessStatusIsSetForSingleTaskBednetDistributionCompleteColorCoding() throws Exception {
+
+        Location structure = initTestStructure();
+
+        ArrayList<Location> structures = new ArrayList<Location>();
+        structures.add(structure);
+
+        Map<String, Set<Task>> tasks = new HashMap<>();
+
+        Set<Task> taskSet = new HashSet<>();
+        Task familyRegTask = initTestTask(REGISTER_FAMILY, COMPLETE);
+        taskSet.add(familyRegTask);
+
+        Task bednetDistributionTask = initTestTask(BEDNET_DISTRIBUTION, COMPLETE);
+        taskSet.add(bednetDistributionTask);
+
+        tasks.put(structure.getId(), taskSet);
+
+        String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
+
+        JSONArray featuresJsonArray = new JSONArray(geoJsonString);
+
+        Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
+
+        assertEquals(BEDNET_DISTRIBUTED, feature.getStringProperty(TASK_BUSINESS_STATUS));
+
+    }
+
+    @Test
+    public void testCorrectTaskBusinessStatusIsSetForSingleTaskBloodScreeningCompleteColorCoding() throws Exception {
+
+        Location structure = initTestStructure();
+
+        ArrayList<Location> structures = new ArrayList<Location>();
+        structures.add(structure);
+
+        Map<String, Set<Task>> tasks = new HashMap<>();
+
+        Set<Task> taskSet = new HashSet<>();
+        Task familyRegTask = initTestTask(REGISTER_FAMILY, COMPLETE);
+        taskSet.add(familyRegTask);
+
+        Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, COMPLETE);
+        taskSet.add(bloodScreeningTask);
+
+        tasks.put(structure.getId(), taskSet);
+
+        String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
+
+        JSONArray featuresJsonArray = new JSONArray(geoJsonString);
+
+        Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
+
+        assertEquals(BLOOD_SCREENING_COMPLETE, feature.getStringProperty(TASK_BUSINESS_STATUS));
+
+    }
+
+    @Test
+    public void testHandleFamilyRegDoneInOtherPlan() throws JSONException {
+        Location structure = initTestStructure();
+        ArrayList<Location> structures = new ArrayList<Location>();
+        structures.add(structure);
+        StructureDetails structureDetails = new StructureDetails("John House", "John");
+        structureNames.put(structure.getId(), structureDetails);
+        Map<String, Set<Task>> tasks = new HashMap<>();
+
+        String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, null, structureNames);
+
+        JSONArray featuresJsonArray = new JSONArray(geoJsonString);
+
+        Feature feature = Feature.fromJson(featuresJsonArray.get(0).toString());
+
+        assertEquals(FAMILY_REGISTERED, feature.getStringProperty(TASK_BUSINESS_STATUS));
+        assertEquals("John", feature.getStringProperty(FAMILY_MEMBER_NAMES));
+        assertEquals("John House", feature.getStringProperty(STRUCTURE_NAME));
+    }
+
+
     private Task initTestTask(String taskCode, String businessStatus) {
         Task task = new Task();
         task.setIdentifier("ARCHIVE_2019-04");
@@ -734,6 +818,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
                 .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
 
         Location structure = gson.fromJson(locationJSon, Location.class);
+        structure.setType(Constants.StructureType.RESIDENTIAL);
         LocationProperty locationProperty = new LocationProperty();
         locationProperty.setUid("uniquiid");
         locationProperty.setVersion(1);

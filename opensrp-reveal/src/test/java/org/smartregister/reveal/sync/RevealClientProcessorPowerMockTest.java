@@ -10,6 +10,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Task;
@@ -58,7 +59,7 @@ import static org.smartregister.reveal.util.Constants.TASK_RESET_EVENT;
  * @author Vincent Karuri
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({RevealClientProcessor.class, Utils.class, PreferencesUtil.class, RevealApplication.class})
+@PrepareForTest({RevealClientProcessor.class, Utils.class, PreferencesUtil.class, RevealApplication.class, CoreLibrary.class})
 public class RevealClientProcessorPowerMockTest {
 
     private RevealClientProcessor clientProcessor;
@@ -151,7 +152,7 @@ public class RevealClientProcessorPowerMockTest {
 
         Whitebox.invokeMethod(clientProcessor, "updateTask", event, false);
 
-        verify(eventClientRepository).markEventAsTaskUnprocessed(eq(FORM_SUBMISSION_ID));
+        verify(eventClientRepository,never()).markEventAsTaskUnprocessed(eq(FORM_SUBMISSION_ID));
     }
 
     @Test
@@ -166,11 +167,15 @@ public class RevealClientProcessorPowerMockTest {
     @Test
     public void testUpdateTaskShouldMarkEventAsSynced() throws Exception {
         mockRepositories();
+        mockStatic(CoreLibrary.class);
+        CoreLibrary coreLibrary = mock(CoreLibrary.class);
+        PowerMockito.when(coreLibrary.isPeerToPeerProcessing()).thenReturn(false);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         event.setServerVersion(System.currentTimeMillis());
 
         Whitebox.invokeMethod(clientProcessor, "updateTask", event, false);
 
-        verify(eventClientRepository).markEventAsSynced(eq(FORM_SUBMISSION_ID));
+        verify(eventClientRepository,never()).markEventAsSynced(eq(FORM_SUBMISSION_ID));
     }
 
     @Test

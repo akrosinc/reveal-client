@@ -8,6 +8,14 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.LocationProperty.PropertyStatus;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.Task;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty.PropertyStatus;
 import org.smartregister.domain.Task;
@@ -41,6 +49,18 @@ import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_TASK_SYNC
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
+import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
+import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
+import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.Properties.LOCATION_PARENT;
+import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
+import static org.smartregister.reveal.util.Constants.Properties.PLAN_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
@@ -51,6 +71,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.TASK_RESET_EVENT;
+import static org.smartregister.reveal.util.Constants.UNDERSCRORE;
 import static org.smartregister.reveal.util.FamilyConstants.EventType.UPDATE_FAMILY_REGISTRATION;
 import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
@@ -68,12 +89,15 @@ public class RevealClientProcessor extends ClientProcessorForJava {
 
     private RevealApplication revealApplication;
 
+    private SprayEventProcessor sprayEventProcessor;
+
     public RevealClientProcessor(Context context) {
         super(context);
         revealApplication = RevealApplication.getInstance();
         eventClientRepository = revealApplication.getContext().getEventClientRepository();
         taskRepository = revealApplication.getTaskRepository();
         structureRepository = revealApplication.getStructureRepository();
+        sprayEventProcessor = new SprayEventProcessor();
     }
 
 
@@ -115,7 +139,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 }
 
                 String eventType = event.getEventType();
-                if (eventType.equals(SPRAY_EVENT)) {
+                if (eventType.equals(SPRAY_EVENT) || eventType.equals(IRS_LITE_VERIFICATION) || CDD_SUPERVISOR_DAILY_SUMMARY.equals(eventType) || CELL_COORDINATOR_DAILY_SUMMARY.equals(eventType)) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents, JsonForm.STRUCTURE_TYPE);
                 } else if (eventType.equals(MOSQUITO_COLLECTION_EVENT) || eventType.equals(LARVAL_DIPPING_EVENT)
                         || eventType.equals(BEDNET_DISTRIBUTION_EVENT) ||
@@ -126,25 +150,21 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                     operationalAreaId = processRegisterStructureEvent(event, clientClassification);
                 } else if (eventType.equals(UPDATE_FAMILY_REGISTRATION)) {
                     processUpdateFamilyRegistrationEvent(event, eventClient.getClient(), clientClassification, localEvents);
-                } else if (eventType.equals(Constants.EventType.PAOT_EVENT)) {
+                } else if (eventType.equals(PAOT_EVENT)) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents, JsonForm.PAOT_STATUS);
                 } else if (eventType.equals(TASK_RESET_EVENT)) {
                     continue;
+                } else if (SUMMARY_EVENT_TYPES.contains(event.getEventType())) {
+                    processSummaryFormEvent(event, clientClassification);
                 } else {
                     Client client = eventClient.getClient();
-
-                    if (event.getDetails() != null && event.getDetails().containsKey(TASK_IDENTIFIER)) {
-                        if (event.getDetails().get(TASK_IDENTIFIER) != null) {
-                            updateTask(event, localEvents);
-                        }
-                        if (client == null) {
-                            client = new Client(event.getBaseEntityId());
-                        }
-                    }
 
                     if (client != null) {
                         clients.add(client);
                         try {
+                            if (event.getDetails() != null && event.getDetails().get(TASK_IDENTIFIER) != null) {
+                                updateTask(event, localEvents);
+                            }
                             processEvent(event, client, clientClassification);
                         } catch (Exception e) {
                             Timber.e(e);
@@ -187,7 +207,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
             if (localEvents) {
                 Location structure = null;
                 if (event.getDetails() != null) {
-                    structure = structureRepository.getLocationById(event.getDetails().get(LOCATION_ID));
+                    structure = structureRepository.getLocationById(event.getDetails().get(LOCATION_UUID));
                 }
 
                 if (structure != null && client.getAddresses() != null && !client.getAddresses().isEmpty()) {
@@ -232,8 +252,12 @@ public class RevealClientProcessor extends ClientProcessorForJava {
             }
 
             try {
-                Client client = new Client(event.getBaseEntityId());
-                processEvent(event, client, clientClassification);
+                if (SPRAY_EVENT.equals(event.getEventType())) {
+                    sprayEventProcessor.processSprayEvent(this, clientClassification, event, localEvents);
+                } else {
+                    Client client = new Client(event.getBaseEntityId());
+                    processEvent(event, client, clientClassification);
+                }
             } catch (Exception e) {
                 Timber.e(e, "Error processing %s event", event.getEventType());
             }
@@ -257,6 +281,14 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         return operationalAreaId;
     }
 
+    private void processSummaryFormEvent(Event event, ClientClassification clientClassification) {
+        try {
+            processEvent(event, new Client(event.getBaseEntityId()), clientClassification);
+        } catch (Exception e) {
+            Timber.e(e, "Error processing register structure event");
+        }
+    }
+
     private String updateTask(Event event, boolean localEvents) {
         String taskIdentifier = event.getDetails().get(TASK_IDENTIFIER);
         Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
@@ -270,20 +302,15 @@ public class RevealClientProcessor extends ClientProcessorForJava {
             if (localEvents && BaseRepository.TYPE_Synced.equals(task.getSyncStatus())) {
                 task.setSyncStatus(BaseRepository.TYPE_Unsynced);
                 revealApplication.setSynced(false);
-            } else if (!localEvents && event.getServerVersion() != 0) {
-                // for events synced from server and task exists mark events as being fully synced
-                eventClientRepository.markEventAsSynced(event.getFormSubmissionId());
             }
             taskRepository.addOrUpdate(task);
             operationalAreaId = task.getGroupIdentifier();
-        } else if (!localEvents) {
-            eventClientRepository.markEventAsTaskUnprocessed(event.getFormSubmissionId());
         }
         return operationalAreaId;
     }
 
     public String calculateBusinessStatus(Event event) {
-        if (EventType.FAMILY_REGISTRATION.equals(event.getEventType()) || EventType.FAMILY_MEMBER_REGISTRATION.equals(event.getEventType()) || EventType.UPDATE_FAMILY_MEMBER_REGISTRATION.equals(event.getEventType())) {
+        if (EventType.FAMILY_REGISTRATION.equals(event.getEventType()) || EventType.FAMILY_MEMBER_REGISTRATION.equals(event.getEventType())) {
             return BusinessStatus.COMPLETE;
         }
         Obs businessStatusObs = event.findObs(null, false, JsonForm.BUSINESS_STATUS);
@@ -304,5 +331,18 @@ public class RevealClientProcessor extends ClientProcessorForJava {
     @Override
     protected void updateRegisterCount(String entityId) {
         //do nothing. Save performance on unrequired functionality
+    }
+
+    @Override
+    protected String getBaseEntityId(Event event, Client client, String clientType) {
+        String baseEntityId = super.getBaseEntityId(event, client, clientType);
+
+        if (clientType.equals(SPRAYED_STRUCTURES)) {
+            String baseEntityIdPlanIdString = event.getDetails() != null ?
+                    baseEntityId.concat(UNDERSCRORE).concat(event.getDetails().get(PLAN_IDENTIFIER)) : baseEntityId;
+            return baseEntityIdPlanIdString;
+        } else {
+            return baseEntityId;
+        }
     }
 }

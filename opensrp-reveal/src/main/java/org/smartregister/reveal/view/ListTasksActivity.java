@@ -41,6 +41,8 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
@@ -53,10 +55,12 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.Task;
+import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.family.util.DBConstants;
 import org.smartregister.family.util.Utils;
 import org.smartregister.receiver.SyncProgressBroadcastReceiver;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -65,6 +69,7 @@ import org.smartregister.reveal.contract.ListTaskContract;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.FilterConfiguration;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
@@ -81,7 +86,11 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
@@ -91,12 +100,18 @@ import timber.log.Timber;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
@@ -111,13 +126,19 @@ import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTR
 import static org.smartregister.reveal.util.Utils.displayDistanceScale;
 import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
+import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.getSyncEntityString;
+import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
 /**
  * Created by samuelgithengi on 11/20/18.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class ListTasksActivity extends BaseMapActivity implements ListTaskContract.ListTaskView,
-        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener {
+        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener {
 
     private ListTaskPresenter listTaskPresenter;
 
@@ -172,6 +193,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private EditText searchView;
 
     private CardDetailsUtil cardDetailsUtil = new CardDetailsUtil();
+
+    private boolean formOpening;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,6 +289,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         findViewById(R.id.register_family).setOnClickListener(this);
 
+        if(BuildConfig.SELECT_JURISDICTION) {
+            findViewById(R.id.btn_add_structure).setVisibility(View.GONE);
+        }
+        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+            sprayCardView.findViewById(R.id.btn_undo_spray).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -321,10 +350,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                Style.Builder builder = new Style.Builder().fromUri(getString(R.string.reveal_satellite_style));
+                String satelliteStyle = BuildConfig. SELECT_JURISDICTION ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
                 mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
+
+                        enableCompass(mapboxMap);
 
                         geoJsonSource = style.getSourceAs(getString(R.string.reveal_datasource_name));
 
@@ -333,7 +365,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                         RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
 
-                        if (getBuildCountry() != Country.ZAMBIA || getBuildCountry() != Country.NIGERIA) {
+                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN) {
                             layerSwitcherFab.setVisibility(View.GONE);
                         }
 
@@ -375,6 +407,16 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     }
 
+    protected void enableCompass(MapboxMap mapboxMap) {
+        UiSettings uiSettings = mapboxMap.getUiSettings();
+
+        uiSettings.setCompassGravity(Gravity.START | Gravity.TOP);
+        uiSettings.setCompassMargins(getResources().getDimensionPixelSize(R.dimen.compass_left_margin),
+                getResources().getDimensionPixelSize(R.dimen.compass_top_margin), 0, 0);
+        uiSettings.setCompassFadeFacingNorth(false);
+        uiSettings.setCompassEnabled(true);
+    }
+
     protected void initializeScaleBarPlugin(MapboxMap mapboxMap) {
         if (displayDistanceScale()) {
             ScaleBarPlugin scaleBarPlugin = new ScaleBarPlugin(kujakuMapView, mapboxMap);
@@ -400,12 +442,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
-        if (getBuildCountry() != Country.ZAMBIA  && getBuildCountry() != Country.NIGERIA) {
+        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
+                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
             int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
 
-            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda ) ? progressHeight + 40 : 40;
+            int bottomMargin = org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs ? progressHeight + 40 : 40;
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
 
             if (layerSwitcherFab != null) {
@@ -433,6 +476,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private void initializeToolbar() {
         searchView = findViewById(R.id.edt_search);
+        searchView.setSingleLine();
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { //do nothing
@@ -444,7 +488,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
             @Override
             public void afterTextChanged(Editable s) {
-                listTaskPresenter.searchTasks(s.toString());
+                listTaskPresenter.searchTasks(s.toString().trim());
             }
         });
         filterTasksFab = findViewById(R.id.filter_tasks_fab);
@@ -462,7 +506,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         } else if (v.getId() == R.id.change_spray_status) {
             listTaskPresenter.onChangeInterventionStatus(IRS);
         } else if (v.getId() == R.id.btn_undo_spray) {
-            displayResetInterventionTaskDialog(IRS);
+            if(isZambiaIRSLite()) {
+                displayResetInterventionTaskDialog(IRS_VERIFICATION);
+            } else {
+                displayResetInterventionTaskDialog(IRS);
+            }
+
         } else if (v.getId() == R.id.btn_record_mosquito_collection) {
             listTaskPresenter.onChangeInterventionStatus(MOSQUITO_COLLECTION);
         } else if (v.getId() == R.id.btn_undo_mosquito_collection) {
@@ -502,6 +551,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void openFilterTaskActivity(TaskFilterParams filterParams) {
         Intent intent = new Intent(getContext(), FilterTasksActivity.class);
         intent.putExtra(FILTER_SORT_PARAMS, filterParams);
+        FilterConfiguration.FilterConfigurationBuilder builder = FilterConfiguration.builder();
+        if (BuildConfig.BUILD_COUNTRY.equals(Country.NAMIBIA)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
+                    .sortOptions(R.array.task_sort_options_namibia);
+        }
+        intent.putExtra(FILTER_CONFIGURATION, builder.build());
         startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
     }
 
@@ -520,7 +577,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             filterParams.setSearchPhrase(searchView.getText().toString());
             intent.putExtra(FILTER_SORT_PARAMS, filterParams);
         } else if (StringUtils.isNotBlank(searchView.getText())) {
-            intent.putExtra(FILTER_SORT_PARAMS, new TaskFilterParams(searchView.getText().toString()));
+            intent.putExtra(FILTER_SORT_PARAMS, TaskFilterParams.builder().searchPhrase(searchView.getText().toString()).build());
         }
         startActivityForResult(intent, REQUEST_CODE_TASK_LISTS);
     }
@@ -609,11 +666,42 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     }
                 }
 
+                Map<String, String> featureToLayerMapping = new HashMap<>();
+
+                if (BuildConfig.SELECT_JURISDICTION ) {
+                    RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
+                        for (Feature feature : featureCollection.features()) {
+                            BoundaryLayer boundaryLayer = createIRSLiteOABoundaryLayer(feature);
+                            kujakuMapView.addLayer(boundaryLayer);
+                            featureToLayerMapping.put(boundaryLayer.getLayerIds()[0],feature.id());
+                        }
+                    });
+                }
+
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation && revealMapHelper.getIndexCaseLineLayer() == null) {
                     revealMapHelper.addIndexCaseLayers(mMapboxMap, getContext(), featureCollection);
                 } else {
                     revealMapHelper.updateIndexCaseLayers(mMapboxMap, featureCollection, this);
                 }
+                mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                    @Override
+                    public void onCameraMove() {
+                        final FeatureCollection lambdaFeatureCollection = featureCollection;
+                        final Map<String,String> lambdaFeatureToLayersMapping = featureToLayerMapping;
+                       if(mMapboxMap.getCameraPosition().zoom  > getMaxZoomLevel()){
+                          mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+
+                                Optional<Feature> feature = lambdaFeatureCollection.features().stream().filter(f-> f.id().equals(lambdaFeatureToLayersMapping.get(layer.getId()))).findAny();
+                                if(feature.isPresent()){
+                                      layer.setProperties(PropertyFactory.textField(feature.get().getStringProperty("name")));
+                                }
+                            });
+                       } else {
+                           mMapboxMap.getStyle().getLayers().stream().filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId())).forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+                       }
+
+                    }
+                });
             }
         }
     }
@@ -621,10 +709,16 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
                 .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
-                .setLabelTextSize(getResources().getDimension(R.dimen.operational_area_boundary_text_size))
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.WHITE)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+    }
+
+    private BoundaryLayer createIRSLiteOABoundaryLayer(Feature operationalArea) {
+         return   new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+                    .setLabelTextSize(getResources().getDimension(R.dimen.operational_area_boundary_text_size))
+                    .setLabelColorInt(Color.WHITE)
+                    .setBoundaryWidth(getResources().getDimension(R.dimen.irs_lite_operational_area_boundary_width)).build();
     }
 
     @Override
@@ -654,7 +748,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void startJsonForm(JSONObject form) {
-        jsonFormUtils.startJsonForm(form, this);
+        if (!formOpening) {
+            jsonFormUtils.startJsonForm(form, this);
+            formOpening = true;
+        }
     }
 
     @Override
@@ -666,7 +763,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void displaySelectedFeature(Feature feature, LatLng clickedPoint, double zoomlevel) {
         adjustFocusPoint(clickedPoint);
         kujakuMapView.centerMap(clickedPoint, ANIMATE_TO_LOCATION_DURATION, zoomlevel);
-        if (selectedGeoJsonSource != null) {
+        if (selectedGeoJsonSource != null && !BuildConfig.SELECT_JURISDICTION) {
             selectedGeoJsonSource.setGeoJson(FeatureCollection.fromFeature(feature));
         }
     }
@@ -726,6 +823,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         progressDialog.setTitle(R.string.fetching_structures_title);
         progressDialog.setMessage(getString(R.string.fetching_structures_message));
     }
+
 
     @Override
     public void showProgressDialog(@StringRes int title, @StringRes int message) {
@@ -817,7 +915,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     @Override
     public void onResume() {
         super.onResume();
+        formOpening = false;
         SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+        ValidateAssignmentReceiver.getInstance().addListener(this);
         IntentFilter filter = new IntentFilter(Action.STRUCTURE_TASK_SYNCED);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(refreshGeowidgetReceiver, filter);
         IntentFilter syncProgressFilter = new IntentFilter(AllConstants.SyncProgressConstants.ACTION_SYNC_PROGRESS);
@@ -833,6 +933,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     @Override
     public void onPause() {
         SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
+        ValidateAssignmentReceiver.getInstance().removeLister(this);
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(refreshGeowidgetReceiver);
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(syncProgressBroadcastReceiver);
         RevealApplication.getInstance().setMyLocationComponentEnabled(revealMapHelper.isMyLocationComponentActive(this, myLocationButton));
@@ -878,6 +979,22 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     @Override
+    public void displayEditCDDTaskCompleteDialog() {
+        AlertDialogUtils.displayNotificationWithCallback(this, R.string.edit_cdd_task_complete_status,
+                R.string.confirm_edit_cdd_task_complete_status, R.string.complete, R.string.incomplete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == BUTTON_POSITIVE) {
+                            listTaskPresenter.onEditCDDTaskCompleteStatusConfirmed(true);
+                        } else  {
+                            listTaskPresenter.onEditCDDTaskCompleteStatusConfirmed(false);
+                        }
+                        dialog.dismiss();
+                    }
+                });
+    }
+
+    @Override
     public void setNumberOfFilters(int numberOfFilters) {
         if (numberOfFilters > 0) {
             filterTasksFab.setVisibility(View.GONE);
@@ -901,14 +1018,24 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     @Override
+    public void setOperationalArea(String operationalArea) {
+        drawerView.setOperationalArea(operationalArea);
+    }
+
+    @Override
     public void onSyncProgress(SyncProgress syncProgress) {
         int progress = syncProgress.getPercentageSynced();
-        String entity = syncProgress.getSyncEntity().toString();
+        String entity = getSyncEntityString(syncProgress.getSyncEntity());
         ProgressBar syncProgressBar = findViewById(R.id.sync_progress_bar);
         TextView syncProgressBarLabel = findViewById(R.id.sync_progress_bar_label);
         String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
         syncProgressBar.setProgress(progress);
         syncProgressBarLabel.setText(labelText);
+    }
+
+    @Override
+    public void onUserAssignmentRevoked(UserAssignmentDTO userAssignmentDTO) {
+        drawerView.onResume();
     }
 
     private class RefreshGeowidgetReceiver extends BroadcastReceiver {

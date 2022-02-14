@@ -1,7 +1,9 @@
 package org.smartregister.reveal.presenter;
 
+import android.content.Intent;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.location.Location;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -9,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.gson.JsonPrimitive;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -25,11 +28,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.reveal.BaseUnitTest;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -40,33 +46,44 @@ import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Constants.InterventionType;
+import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.TestingUtils;
+import org.smartregister.reveal.view.EditFociBoundaryActivity;
+import org.smartregister.reveal.view.ListTasksActivity;
+import org.smartregister.util.JsonFormUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.ACTIVE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.domain.Task.TaskStatus.IN_PROGRESS;
@@ -78,10 +95,14 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_FORM_ZAMBIA;
+import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_STATUS;
@@ -127,6 +148,9 @@ public class ListTaskPresenterTest extends BaseUnitTest {
     @Mock
     private RevealJsonFormUtils jsonFormUtils;
 
+    @Mock
+    private ValidateUserLocationPresenter locationPresenter;
+
     @Captor
     private ArgumentCaptor<FeatureCollection> featureCollectionArgumentCaptor;
 
@@ -144,6 +168,9 @@ public class ListTaskPresenterTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<CommonPersonObjectClient> commonPersonObjectClientArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<JSONObject> jsonArgumentCaptor;
 
     private PreferencesUtil prefsUtil = PreferencesUtil.getInstance();
 
@@ -163,6 +190,8 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         prefsUtil.setCurrentPlanId(planId);
         prefsUtil.setCurrentOperationalArea(operationalArea);
         when(listTaskView.getContext()).thenReturn(RuntimeEnvironment.application);
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, Country.THAILAND);
+        Whitebox.setInternalState(listTaskPresenter, "locationPresenter",locationPresenter);
     }
 
     @Test
@@ -271,7 +300,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
 
     @Test
     public void setTaskFilterParams() {
-        TaskFilterParams params = new TaskFilterParams("Doe");
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("Doe").build();
         listTaskPresenter.setTaskFilterParams(params);
         verify(listTaskView).setSearchPhrase(params.getSearchPhrase());
     }
@@ -316,7 +345,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
 
     @Test
     public void testFilterTasksWithNullParams() {
-        listTaskPresenter.filterTasks(new TaskFilterParams(""));
+        listTaskPresenter.filterTasks(TaskFilterParams.builder().searchPhrase("").build());
         verify(listTaskView).setNumberOfFilters(0);
         assertFalse(Whitebox.getInternalState(listTaskPresenter, "isTasksFiltered"));
     }
@@ -324,7 +353,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
     @Test
     public void testFilterTasksBusinessStatus() {
         Feature structure = TestingUtils.getStructure();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(NOT_VISITED));
         Whitebox.setInternalState(listTaskPresenter, "featureCollection", FeatureCollection.fromFeature(structure));
         //match is filter for business status works no feature is returned
@@ -347,7 +376,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
     @Test
     public void testFilterWithAllFilters() {
         Feature structure = TestingUtils.getStructure();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(NOT_VISITED));
         params.getCheckedFilters().put(Filter.CODE, Collections.singleton(Intervention.IRS));
         Whitebox.setInternalState(listTaskPresenter, "featureCollection", FeatureCollection.fromFeature(structure));
@@ -530,6 +559,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
 
         assertFalse(Whitebox.getInternalState(listTaskPresenter, "markStructureIneligibleConfirmed"));
         assertEquals("eligible", Whitebox.getInternalState(listTaskPresenter, "reasonUnEligible"));
+        listTaskPresenter = spy(listTaskPresenter);
         listTaskPresenter.displayMarkStructureIneligibleDialog();
 
         AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
@@ -541,7 +571,9 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         alertDialog.getButton(BUTTON_NEGATIVE).performClick();
         assertFalse(alertDialog.isShowing());
 
-        assertTrue(Whitebox.getInternalState(listTaskPresenter, "markStructureIneligibleConfirmed"));
+        verify(listTaskPresenter).onMarkStructureIneligibleConfirmed();
+
+        assertFalse(Whitebox.getInternalState(listTaskPresenter, "markStructureIneligibleConfirmed"));
         assertEquals(listTaskView.getContext().getString(R.string.not_eligible_unoccupied),
                 Whitebox.getInternalState(listTaskPresenter, "reasonUnEligible"));
 
@@ -568,15 +600,25 @@ public class ListTaskPresenterTest extends BaseUnitTest {
 
     @Test
     public void testSaveJsonForm() {
-        String jsonString = "{\"name\":\"trever\"}";
+        String jsonString = "{\"name\":\"trever\",\"encounter_type\":\"custom\"}";
 
         listTaskPresenter.saveJsonForm(jsonString);
         verify(listTaskView).showProgressDialog(R.string.saving_title, R.string.saving_message);
         verify(listTaskInteractor).saveJsonForm(jsonString);
     }
 
+
     @Test
-    public void testOnFormSaved() throws Exception{
+    public void testSaveJsonFormForRegisterStructureShouldFetchLocations() {
+        String jsonString = "{\"name\":\"trever\",\"encounter_type\":\"Register_Structure\",\"step1\":{\"fields\":[{\"key\":\"valid_operational_area\",\"type\":\"hidden\",\"value\":\"3244354-345435434\"},{\"key\":\"my_location_active\",\"type\":\"hidden\",\"value\":\"true\"},{\"key\":\"structure\",\"type\":\"geowidget\",\"v_zoom_max\":{\"value\":\"16.5\",\"err\":\"Please zoom in to add a point\"},\"value\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[28.740448054710495,-9.311798364364043,0]},\"properties\":null}}]}}";
+        listTaskPresenter.saveJsonForm(jsonString);
+        String name = JsonFormUtils.getFieldValue(jsonString, JsonForm.VALID_OPERATIONAL_AREA);
+        verify(listTaskView).showProgressDialog(R.string.opening_form_title, R.string.add_structure_form_redirecting, name);
+        verify(listTaskInteractor).fetchLocations(planId, name, JsonFormUtils.getFieldValue(jsonString, STRUCTURE), Boolean.valueOf(JsonFormUtils.getFieldValue(jsonString, LOCATION_COMPONENT_ACTIVE)));
+    }
+
+    @Test
+    public void testOnFormSaved() throws Exception {
         String structureId = "id1";
         String taskId = "taskId";
 
@@ -711,6 +753,19 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         assertEquals("Mark", actualCardDetails.getFamilyHead());
         assertEquals("Available", actualCardDetails.getReason());
 
+    }
+
+    @Test
+    public void testOnSprayCardDetailsFetchedWithWrongFormat() {
+        SprayCardDetails expectedCardDetails = new SprayCardDetails(NOT_SPRAYED, "Residential", "2014-07-04T12:08:56.235", "gideon", "Mark", "Available");
+        listTaskPresenter.onCardDetailsFetched(expectedCardDetails);
+        verify(listTaskView).openCardView(cardDetailsArgumentCaptor.capture());
+        SprayCardDetails actualCardDetails = (SprayCardDetails) cardDetailsArgumentCaptor.getValue();
+        assertEquals(NOT_SPRAYED, actualCardDetails.getStatus());
+        assertEquals("Residential", actualCardDetails.getPropertyType());
+        assertEquals("gideon", actualCardDetails.getSprayOperator());
+        assertEquals("Mark", actualCardDetails.getFamilyHead());
+        assertEquals("Available", actualCardDetails.getReason());
     }
 
     @Test
@@ -854,7 +909,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         Feature feature = initTestFeature("id1");
         feature.addStringProperty(LOCATION_STATUS, INACTIVE.name());
 
-        Whitebox.invokeMethod(listTaskPresenter,"onFeatureSelectedByLongClick", feature);
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByLongClick", feature);
         verify(listTaskView).displayToast(R.string.structure_is_inactive);
     }
 
@@ -865,7 +920,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         feature.addStringProperty(LOCATION_STATUS, ACTIVE.name());
         feature.removeProperty(TASK_IDENTIFIER);
 
-        Whitebox.invokeMethod(listTaskPresenter,"onFeatureSelectedByLongClick", feature);
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByLongClick", feature);
         verify(listTaskView).displayMarkStructureInactiveDialog();
     }
 
@@ -877,7 +932,7 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         feature.addStringProperty(TASK_BUSINESS_STATUS, NOT_VISITED);
         feature.addStringProperty(TASK_IDENTIFIER, "task-1");
 
-        Whitebox.invokeMethod(listTaskPresenter,"onFeatureSelectedByLongClick", feature);
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByLongClick", feature);
         verify(listTaskView).displayMarkStructureInactiveDialog();
     }
 
@@ -889,8 +944,187 @@ public class ListTaskPresenterTest extends BaseUnitTest {
         feature.addStringProperty(TASK_BUSINESS_STATUS, SPRAYED);
         feature.addStringProperty(TASK_IDENTIFIER, "task-1");
 
-        Whitebox.invokeMethod(listTaskPresenter,"onFeatureSelectedByLongClick", feature);
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByLongClick", feature);
         verify(listTaskView).displayToast(R.string.cannot_make_structure_inactive);
+    }
+
+
+    @Test
+    public void testStartFormShouldPopulateFormData() throws Exception {
+        when(jsonFormUtils.getFormName(null, IRS)).thenReturn(SPRAY_FORM_ZAMBIA);
+        when(jsonFormUtils.getFormJSON(listTaskView.getContext(), SPRAY_FORM_ZAMBIA, feature, null, null)).thenReturn(new JSONObject(TestingUtils.DUMMY_JSON_FORM_STRING));
+        listTaskPresenter.startForm(feature, null, IRS);
+        verify(jsonFormUtils).populateForm(any(), any());
+        verify(jsonFormUtils, atLeastOnce()).populateServerOptions(any(), any(), any(), any());
+        verify(jsonFormUtils, atLeastOnce()).populateField(any(), anyString(), anyString(), anyString());
+        verify(listTaskView).startJsonForm(any());
+    }
+
+    @Test
+    public void testOnAddStructureClickedShouldPopulateFormAndOpenIt() throws JSONException {
+        Point point = Point.fromLngLat(28.740448054710495, -9.311798364364043);
+        when(jsonFormUtils.getFormName(REGISTER_STRUCTURE_EVENT)).thenReturn(JsonForm.ADD_STRUCTURE_FORM);
+        when(jsonFormUtils.getFormString(listTaskView.getContext(), JsonForm.ADD_STRUCTURE_FORM, null)).thenReturn(TestingUtils.AddStructureFormJson);
+        Whitebox.setInternalState(listTaskPresenter, "operationalArea", feature);
+        listTaskPresenter.onAddStructureClicked(true, point.toJson());
+        verify(listTaskView).startJsonForm(jsonArgumentCaptor.capture());
+        JSONObject formJson = jsonArgumentCaptor.getValue();
+        assertEquals("true", jsonArgumentCaptor.getValue().getString(LOCATION_COMPONENT_ACTIVE));
+        verify(jsonFormUtils).populateField(formJson, JsonForm.SELECTED_OPERATIONAL_AREA_NAME, prefsUtil.getCurrentOperationalArea(), TEXT);
+        verify(jsonFormUtils).populateField(formJson, STRUCTURE, point.toJson(), VALUE);
+    }
+
+    @Test
+    public void testOnStructuresFetchedWithLocationComponentActive() throws JSONException {
+        String point = "point";
+        boolean locatinComponentActive = true;
+        FeatureCollection featureCollection = FeatureCollection.fromFeature(TestingUtils.getStructure());
+        listTaskPresenter = spy(listTaskPresenter);
+        JSONObject structuresGeoJson = new JSONObject(featureCollection.toJson());
+        List<TaskDetails> taskDetailsList = Collections.singletonList(TestingUtils.getTaskDetails());
+        listTaskPresenter.onStructuresFetched(structuresGeoJson, feature, taskDetailsList, point, locatinComponentActive);
+        verify(listTaskView).setOperationalArea(anyString());
+        verify(listTaskPresenter).onStructuresFetched(structuresGeoJson, feature, taskDetailsList);
+        verify(listTaskPresenter).onAddStructureClicked(locatinComponentActive, point);
+    }
+
+    @Test
+    public void testRefreshStructuresSetToFalse() {
+        listTaskPresenter = spy(listTaskPresenter);
+        listTaskPresenter.refreshStructures(false);
+
+        verify(listTaskPresenter).setChangeMapPosition(true);
+        verify(listTaskView).showProgressDialog(R.string.fetching_structures_title,R.string.fetching_structures_message );
+    }
+
+    @Test
+    public void testValidateUserLocation() {
+
+        Location location = new Location("test-location");
+        location.setLatitude(12.1212);
+        location.setLongitude(67.2232);
+        when(listTaskView.getUserCurrentLocation()).thenReturn(location);
+        listTaskPresenter.validateUserLocation();
+        verify(locationPresenter).onGetUserLocation(location);
+
+    }
+
+    @Test
+    public void testValidateUserLocationWhenCurrentLocationIsNull() {
+
+        when(listTaskView.getUserCurrentLocation()).thenReturn(null);
+        listTaskPresenter.validateUserLocation();
+        verify(locationPresenter).requestUserLocation();
+
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForIRSCode() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, IRS);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, NOT_SPRAYED);
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(IRS, "id1", false);
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForCompleteMosquitoCollection() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, MOSQUITO_COLLECTION);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, COMPLETE);
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(MOSQUITO_COLLECTION, "id1", false);
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForNotElligibleFamilyReg() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, REGISTER_FAMILY);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, NOT_ELIGIBLE);
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(REGISTER_FAMILY, "id1", false);
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForCompletePAOT() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, PAOT);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, COMPLETE);
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(PAOT, "id1", false);
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForCompleteIRSVerification() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, IRS_VERIFICATION);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, COMPLETE);
+        prefsUtil.setCurrentPlan("IRS_1");
+        prefsUtil.setInterventionTypeForPlan("IRS_1", "IRS");
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(IRS_VERIFICATION, "id1", false);
+    }
+
+    @Test
+    public void testOnFeatureSelectedByNormalClickForIRSLiteVerification() throws Exception {
+
+        Feature feature = initTestFeature("id1");
+        feature.addStringProperty(TASK_IDENTIFIER, "task-1");
+        feature.addStringProperty(TASK_CODE, IRS_VERIFICATION);
+        feature.addStringProperty(FEATURE_SELECT_TASK_BUSINESS_STATUS, COMPLETE);
+        Country buildcountry = BuildConfig.BUILD_COUNTRY;
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, Country.ZAMBIA);
+        Whitebox.setInternalState(BuildConfig.class, "SELECT_JURISDICTION", true);
+        prefsUtil.setCurrentPlan("IRS_1");
+        prefsUtil.setInterventionTypeForPlan("IRS_1", "IRS");
+
+        Whitebox.invokeMethod(listTaskPresenter, "onFeatureSelectedByNormalClick", feature);
+        verify(listTaskInteractor).fetchInterventionDetails(IRS, "id1", false);
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, buildcountry);
+    }
+
+    @Test
+    public void testOnEventFound() throws JSONException {
+        Event event = new Event();
+        Feature mapboxFeature = initTestFeature("id1");
+        Whitebox.setInternalState(listTaskPresenter, "selectedFeature", mapboxFeature);
+        FamilyCardDetails expectedCardDetails = new FamilyCardDetails(COMPLETE, "12-2-2020", "nifi-user");
+        Whitebox.setInternalState(listTaskPresenter, "cardDetails", expectedCardDetails);
+        Whitebox.setInternalState(listTaskPresenter, "selectedFeatureInterventionType", REGISTER_FAMILY);
+
+        listTaskPresenter = spy(listTaskPresenter);
+        listTaskPresenter.onEventFound(event);
+        verify(listTaskPresenter).startForm(mapboxFeature, expectedCardDetails, REGISTER_FAMILY, event);
+    }
+
+    @Test
+    public void testFindLastEvent() {
+        listTaskPresenter.findLastEvent("id-1", REGISTER_FAMILY);
+        verify(listTaskInteractor).findLastEvent("id-1", REGISTER_FAMILY);
+    }
+
+    @Test
+    public void testOnFociBoundaryClicked() {
+        ListTasksActivity listTasksActivity = Robolectric.buildActivity(ListTasksActivity.class).create().get();
+        when(listTaskView.getActivity()).thenReturn(listTasksActivity);
+        listTaskPresenter.onFociBoundaryLongClicked();
+        Intent startedIntent = shadowOf(listTaskView.getActivity()).getNextStartedActivity();
+        assertEquals(EditFociBoundaryActivity.class, shadowOf(startedIntent).getIntentClass());
     }
 
     private Feature initTestFeature(String identifier) throws JSONException {

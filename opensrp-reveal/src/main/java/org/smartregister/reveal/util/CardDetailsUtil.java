@@ -25,15 +25,12 @@ import timber.log.Timber;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_DISPENSED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYABLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_RECEIVED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.TASKS_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
@@ -41,30 +38,26 @@ import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 /**
  * Created by samuelgithengi on 3/22/19.
  */
+//TODO: Conflicts still to bring in Nigeria
+
 public class CardDetailsUtil {
 
     public static void formatCardDetails(CardDetails cardDetails) {
         if (cardDetails == null || cardDetails.getStatus() == null)
             return;
         // extract status color
-        String status = cardDetails.getStatus();
+        String status = getBaseBusinessStatus(cardDetails.getStatus());
         switch (status) {
-            case BusinessStatus.INELIGIBLE:
-            case BusinessStatus.FAMILY_NO_TASK_REGISTERED:
-                cardDetails.setStatusColor(R.color.family_no_task_registered);
-                cardDetails.setStatusMessage(R.string.family_member_registered);
-                break;
             case BusinessStatus.NOT_SPRAYED:
-            case BusinessStatus.NOT_DISPENSED:
+            case BusinessStatus.INCOMPLETE:
             case BusinessStatus.IN_PROGRESS:
+            case BusinessStatus.NONE_RECEIVED:
                 cardDetails.setStatusColor(R.color.unsprayed);
                 cardDetails.setStatusMessage(R.string.details_not_sprayed);
                 break;
             case BusinessStatus.SPRAYED:
-            case BusinessStatus.SMC_COMPLETE:
-            case BusinessStatus.SPAQ_COMPLETE:
-            case BusinessStatus.ALL_TASKS_COMPLETE:
             case BusinessStatus.COMPLETE:
+            case BusinessStatus.FULLY_RECEIVED:
                 formatCardDetailsForCompletedTasks(cardDetails);
                 break;
             case BusinessStatus.NOT_SPRAYABLE:
@@ -73,13 +66,8 @@ public class CardDetailsUtil {
                 cardDetails.setStatusMessage(R.string.details_not_sprayable);
                 cardDetails.setReason(null);
                 break;
-            case BusinessStatus.INCOMPLETE:
-            case BusinessStatus.TASKS_INCOMPLETE:
-            case PARTIALLY_RECEIVED:
-                cardDetails.setStatusColor(R.color.partially_sprayed);
-                break;
             case PARTIALLY_SPRAYED:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
                     formatCardDetailsForCompletedTasks(cardDetails);
                 } else {
                     cardDetails.setStatusColor(R.color.partially_sprayed);
@@ -242,7 +230,7 @@ public class CardDetailsUtil {
      * @return status Translated status according to locale set
      */
     public static String getTranslatedBusinessStatus(String businessStatus) {
-        Context context = RevealApplication.getInstance().getApplicationContext();
+        Context context =  RevealApplication.getInstance().getContext().applicationContext();
 
         if (businessStatus == null)
             return context.getString(R.string.not_eligible);
@@ -259,16 +247,12 @@ public class CardDetailsUtil {
                 return context.getString(R.string.complete);
             case INCOMPLETE:
                 return context.getString(R.string.incomplete);
-            case TASKS_INCOMPLETE:
-                return context.getString(R.string.tasks_incomplete);
             case NOT_ELIGIBLE:
                 return context.getString(R.string.not_eligible);
             case IN_PROGRESS:
                 return context.getString(R.string.in_progress);
-            case NOT_DISPENSED:
-                return context.getString(R.string.not_dispensed);
             case PARTIALLY_SPRAYED:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
                     return context.getString(R.string.sprayed);
                 } else {
                     return context.getString(R.string.partially_sprayed);
@@ -304,6 +288,32 @@ public class CardDetailsUtil {
         }
 
 
+    }
+
+    public static String getBaseBusinessStatus(String businessStatus){
+        Context context =  RevealApplication.getInstance().getContext().applicationContext();
+        if(context.getString(R.string.not_visited).equals(businessStatus)){
+            return NOT_VISITED;
+        } else if (context.getString(R.string.not_sprayed).equals(businessStatus)){
+            return NOT_SPRAYED;
+        } else if (context.getString(R.string.sprayed).equals(businessStatus)){
+            return SPRAYED;
+        } else if (context.getString(R.string.not_sprayable).equals(businessStatus)){
+            return NOT_SPRAYABLE;
+        } else if (context.getString(R.string.complete).equals(businessStatus)){
+            return COMPLETE;
+        } else if (context.getString(R.string.incomplete).equals(businessStatus)){
+            return INCOMPLETE;
+        } else if (context.getString(R.string.not_eligible).equals(businessStatus)){
+            return NOT_ELIGIBLE;
+        } else if (context.getString(R.string.in_progress).equals(businessStatus)){
+            return IN_PROGRESS;
+        } else if (context.getString(R.string.sprayed).equals(businessStatus) && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)){
+            return PARTIALLY_SPRAYED;
+        } else if( context.getString(R.string.partially_sprayed).equals(businessStatus)){
+            return PARTIALLY_SPRAYED;
+        }
+        return businessStatus;
     }
 
 

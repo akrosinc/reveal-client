@@ -44,6 +44,7 @@
 
     <dimen name="operational_area_boundary_text_size">10sp</dimen>
     <dimen name="operational_area_boundary_width">1dp</dimen>
+    <dimen name="irs_lite_operational_area_boundary_width">0dp</dimen>
     <dimen name="task_action_text">18sp</dimen>
     <dimen name="case_section_margin">16dp</dimen>
     <dimen name="case_details_margin">8dp</dimen>
@@ -61,6 +62,12 @@
     <dimen name="reveal_logo_margin_start">5dp</dimen>
     <dimen name="partner_logo_height">80dp</dimen>
     <dimen name="partner_logo_margin_top">20dp</dimen>
+    <dimen name="event_register_list_title_size">16sp</dimen>
+    <dimen name="event_register_row_title_size">15sp</dimen>
+
+    <dimen name="compass_top_margin">35dp</dimen>
+    <dimen name="compass_left_margin">8dp</dimen>
+    <dimen name="map_status_label">20sp</dimen>
 
 </resources>
 

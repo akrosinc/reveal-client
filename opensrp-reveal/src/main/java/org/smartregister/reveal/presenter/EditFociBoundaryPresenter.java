@@ -17,6 +17,7 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 /**
  * Created by Richard Kareko on 6/7/20.
  */
+//TODO: Conflicts still to bring in Nigeria
 
 public class EditFociBoundaryPresenter implements EditFociboundaryContract.Presenter {
 
@@ -79,7 +80,7 @@ public class EditFociBoundaryPresenter implements EditFociboundaryContract.Prese
     @Override
     public void displayDiscardChangesDialog() {
         AlertDialogUtils.displayNotificationWithCallback(editFociBoundaryView.getContext(), R.string.discard_changes_title,
-                R.string.discard_changes_msg, R.string.discard, R.string.cancel, new DialogInterface.OnClickListener() {
+                R.string.discard_changes_msg, R.string.discard, R.string.cancel_no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == BUTTON_POSITIVE) {

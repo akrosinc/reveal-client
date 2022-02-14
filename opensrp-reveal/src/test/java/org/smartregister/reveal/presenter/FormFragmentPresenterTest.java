@@ -15,10 +15,12 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
+import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Location;
 import org.smartregister.reveal.BaseUnitTest;
 import org.smartregister.reveal.R;
@@ -38,7 +40,9 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -101,7 +105,7 @@ public class FormFragmentPresenterTest extends BaseUnitTest {
         taskDetails.setTaskCode(Constants.Intervention.BLOOD_SCREENING);
         when(jsonFormUtils.getFormName(null, taskDetails.getTaskCode())).thenReturn(Constants.JsonForm.BLOOD_SCREENING_FORM);
         presenter.onPasswordVerified();
-        verify(view).startForm(null, false);
+        verify(view).startForm(null);
 
     }
 
@@ -127,7 +131,7 @@ public class FormFragmentPresenterTest extends BaseUnitTest {
         taskDetails.setTaskCode(Constants.Intervention.BEDNET_DISTRIBUTION);
         when(jsonFormUtils.getFormName(null, taskDetails.getTaskCode())).thenReturn(Constants.JsonForm.BEDNET_DISTRIBUTION_FORM);
         presenter.onLocationValidated();
-        verify(view, never()).startForm(null, false);
+        verify(view, never()).startForm(null);
         verify(interactor).findNumberOfMembers(taskDetails.getTaskEntity(), null);
     }
 
@@ -135,10 +139,31 @@ public class FormFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void testOnFoundMembersCount() throws JSONException {
         presenter.onFetchedMembersCount(new Pair<>(3, 1), new JSONObject("{\"members\": \"[num_fam_members]\", \"sleep_outdoors\":\"[num_sleeps_outdoors]\"}"));
-        verify(view).startForm(jsonArgumentCaptor.capture(), false);
+        verify(view).startForm(jsonArgumentCaptor.capture());
         verify(view).hideProgressDialog();
         assertEquals(3, jsonArgumentCaptor.getValue().getInt("members"));
         assertEquals(1, jsonArgumentCaptor.getValue().getInt("sleep_outdoors"));
+    }
+
+    @Test
+    public void testOnFoundMembersCountExceptionHandling() {
+        JSONObject mockedForm = Mockito.mock(JSONObject.class);
+        doAnswer(invocation -> {
+            throw new JSONException("Hey! I crash!");
+        }).when(mockedForm).toString();
+        presenter.onFetchedMembersCount(new Pair<>(3, 1), mockedForm);
+        verify(view).startForm(jsonArgumentCaptor.capture());
+        verify(view).hideProgressDialog();
+    }
+
+    @Test
+    public void testShowBasicForm() {
+        Whitebox.setInternalState(presenter, "jsonFormUtils", jsonFormUtils);
+        JSONObject expectedJson = new JSONObject();
+        when(jsonFormUtils.getFormJSON(any(), anyString(), any(), any())).thenReturn(expectedJson);
+        presenter.showBasicForm("form");
+        verify(view).startForm(jsonArgumentCaptor.capture());
+        assertEquals(expectedJson, jsonArgumentCaptor.getValue());
     }
 
     @Test
@@ -158,7 +183,7 @@ public class FormFragmentPresenterTest extends BaseUnitTest {
         familyMembers.put(new JSONObject("{\"key\":\"35rfdsfdsf-sdfdsm\"}"));
         JSONObject formJSON = new JSONObject(AssetHandler.readFileFromAssetsFolder(CASE_CONFIRMATION_FORM, context));
         presenter.onFetchedFamilyMembers(familyMembers, formJSON);
-        verify(view).startForm(jsonArgumentCaptor.capture(), false);
+        verify(view).startForm(jsonArgumentCaptor.capture());
         assertEquals(familyMembers, JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(jsonArgumentCaptor.getValue()), Constants.JsonForm.FAMILY_MEMBER).getJSONArray(OPTIONS));
 
     }
@@ -209,6 +234,16 @@ public class FormFragmentPresenterTest extends BaseUnitTest {
         verify(view).displayError(R.string.opening_form_title, R.string.form_not_found);
         verify(view).hideProgressDialog();
 
+    }
+
+    @Test
+    public void testOnFetchedSprayDetails() {
+        JSONObject form = new JSONObject();
+        CommonPersonObject commonPersonObject = new CommonPersonObject("case-id",
+                "relation-id", null, "IRS");
+        presenter.onFetchedSprayDetails(commonPersonObject, form);
+        verify(jsonFormUtils).populateSprayForm(commonPersonObject, form);
+        verify(view).startForm(form);
     }
 
 

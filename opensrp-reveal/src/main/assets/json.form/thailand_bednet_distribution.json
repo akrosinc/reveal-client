@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "การกระจายสุทธิ",
+    "title": "การสำรวจ/ชุบ/แจกมุ้ง",
     "display_back_button": "true",
     "fields": [
       {
@@ -56,7 +56,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
+        "type": "hidden",
         "label": "Is this structure eligible for net survey/distribution?",
         "options": [
           {

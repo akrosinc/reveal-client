@@ -1,7 +1,11 @@
 package org.smartregister.reveal.view;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
 /**
@@ -59,5 +63,19 @@ public abstract class BaseMapActivity extends MultiLanguageActivity {
         super.onDestroy();
         if (kujakuMapView != null)
             kujakuMapView.onDestroy();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            LangUtils.saveLanguage(base.getApplicationContext(), "th");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+            LangUtils.saveLanguage(base.getApplicationContext(),"fr");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+            LangUtils.saveLanguage(base.getApplicationContext(),"rw");
+        } else {
+            LangUtils.saveLanguage(base.getApplicationContext(), "en");
+        }
+        super.attachBaseContext(base);
     }
 }

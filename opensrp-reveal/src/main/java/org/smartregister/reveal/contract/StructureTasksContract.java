@@ -2,10 +2,8 @@ package org.smartregister.reveal.contract;
 
 import android.content.Context;
 
-import org.json.JSONObject;
-import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
-import org.smartregister.reveal.model.FamilySummaryModel;
+import org.smartregister.domain.Event;
 import org.smartregister.reveal.model.StructureTaskDetails;
 
 import java.util.List;
@@ -14,6 +12,8 @@ import java.util.Set;
 /**
  * Created by samuelgithengi on 4/12/19.
  */
+//TODO: Conflicts still to bring in Nigeria
+
 public interface StructureTasksContract {
 
     interface Presenter extends BaseContract.BasePresenter, BaseFormFragmentContract.Presenter {
@@ -37,11 +37,6 @@ public interface StructureTasksContract {
         void resetTaskInfo(StructureTaskDetails taskDetails);
 
         void onTaskInfoReset(String structureId);
-
-        void onFetchedMembersCount(FamilySummaryModel summary);
-//        void onFetchedMembersCount(Pair<Integer, Integer> finalNumberOfMembers);
-
-        void onTotalSMCDosageCountsFound(StructureTaskDetails taskDetails, JSONObject formJSON);
     }
 
     interface Interactor extends BaseContract.BaseInteractor {
@@ -53,13 +48,6 @@ public interface StructureTasksContract {
         void findLastEvent(StructureTaskDetails taskDetails);
 
         void resetTaskInfo(Context context, StructureTaskDetails taskDetails);
-
-        void findCompletedDispenseTasks(StructureTaskDetails taskDetails, List<StructureTaskDetails> taskDetailsList);
-
-//        void findCompletedAdherenceTasks(StructureTaskDetails taskDetails);
-
-        void findTotalSMCDosageCounts(StructureTaskDetails taskDetails, JSONObject formJSON);
-
     }
 
     interface View extends UserLocationContract.UserLocationView, BaseFormFragmentContract.View {
@@ -75,8 +63,6 @@ public interface StructureTasksContract {
         Context getContext();
 
         void setTaskDetailsList(List<StructureTaskDetails> taskDetailsList);
-
-        List<StructureTaskDetails> getTaskDetailsList();
 
         void updateTask(String taskID, Task.TaskStatus taskStatus, String businessStatus);
 

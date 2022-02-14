@@ -43,7 +43,6 @@ import org.smartregister.util.Cache;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +54,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -251,7 +251,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         List<TaskDetails> detailsList = new ArrayList<>();
         detailsList.add(TestingUtils.getTaskDetails());
         Whitebox.setInternalState(presenter, "applyFilterOnTasksFound", true);
-        Whitebox.setInternalState(presenter, "filterParams", new TaskFilterParams("search"));
+        Whitebox.setInternalState(presenter, "filterParams", TaskFilterParams.builder().searchPhrase("search").build());
         presenter.onTasksFound(detailsList, 1);
         verify(view).setTotalTasks(1);
         verify(view).clearFilter();
@@ -335,6 +335,8 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     public void testOnStructureFound() {
         when(view.getJsonFormUtils()).thenReturn(mock(RevealJsonFormUtils.class));
         TaskDetails taskDetails = TestingUtils.getTaskDetails();
+        presenter = spy(presenter);
+        when(presenter.validateFarStructures()).thenReturn(true);
         presenter.onStructureFound(null, taskDetails);
         verify(view).getContext();
         verify(view).requestUserLocation();
@@ -351,7 +353,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         presenter = spy(presenter);
         doReturn(false).when(presenter).validateFarStructures();
         presenter.onStructureFound(new org.smartregister.domain.Location(), taskDetails);
-        verify(view, timeout(ASYNC_TIMEOUT)).startForm(any(), false);
+        verify(view, timeout(ASYNC_TIMEOUT)).startForm(any());
         verify(view).hideProgressDialog();
     }
 
@@ -608,7 +610,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTasksWithBusinessStatus() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(BusinessStatus.BLOOD_SCREENING_COMPLETE));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(taskDetailsArgumentCaptor.capture());
@@ -616,7 +618,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         assertEquals(task2, taskDetailsArgumentCaptor.getValue().get(0));
 
 
-        params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(BusinessStatus.SMC_COMPLETE));
+        params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(BusinessStatus.FULLY_RECEIVED));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(new ArrayList<>());
         verify(view).setTotalTasks(0);
@@ -627,7 +629,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTasksWithTaskCode() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.CODE, Collections.singleton(Intervention.IRS));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(taskDetailsArgumentCaptor.capture());
@@ -636,7 +638,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
         verify(view).setNumberOfFilters(1);
 
 
-        params.getCheckedFilters().put(Filter.CODE, Collections.singleton(BusinessStatus.SMC_COMPLETE));
+        params.getCheckedFilters().put(Filter.CODE, Collections.singleton(BusinessStatus.FULLY_RECEIVED));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(new ArrayList<>());
         verify(view, times(2)).setTotalTasks(0);
@@ -647,7 +649,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTasksWithStructureInterventionType() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.INTERVENTION_UNIT, Collections.singleton(InterventionType.STRUCTURE));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(taskDetailsArgumentCaptor.capture());
@@ -661,7 +663,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTasksWithPersonInterventionType() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("").build();
         params.getCheckedFilters().put(Filter.INTERVENTION_UNIT, Collections.singleton(InterventionType.PERSON));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(taskDetailsArgumentCaptor.capture());
@@ -675,7 +677,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTasksWithMissingInterventionType() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().build();
         params.getCheckedFilters().put(Filter.INTERVENTION_UNIT, Collections.singleton(InterventionType.OPERATIONAL_AREA));
         presenter.filterTasks(params);
         verify(view).setTaskDetails(new ArrayList<>());
@@ -688,7 +690,7 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
     @Test
     public void filterTaskWithAllParams() {
         initFilterSearchTasks();
-        TaskFilterParams params = new TaskFilterParams("Status", new HashMap<>());
+        TaskFilterParams params = TaskFilterParams.builder().sortBy("Status").build();
         params.getCheckedFilters().put(Filter.STATUS, Collections.singleton(BusinessStatus.BLOOD_SCREENING_COMPLETE));
         params.getCheckedFilters().put(Filter.CODE, Collections.singleton(Intervention.BLOOD_SCREENING));
         params.getCheckedFilters().put(Filter.INTERVENTION_UNIT, Collections.singleton(InterventionType.PERSON));
@@ -747,5 +749,11 @@ public class TaskRegisterFragmentPresenterTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testOnTaskInfoReset() {
+        presenter.onTaskInfoReset();
+        verify(view).showProgressView();
+        verify(interactor).findTasks(any(), any(), any(), anyString());
+    }
 
 }

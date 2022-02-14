@@ -34,6 +34,7 @@
 
     <string name="select_campaign_operational_area_title">มีการกำหนดแผนงานและพื้นที่ปฏิบัติงานเรียบร้อยแล้ว</string>
     <string name="select_campaign_operational_area">ยังไม่ได้กำหนดแผนงานและพื้นที่ปฏิบัติงาน ให้เลือกจากเมนูหลัก-เมนูแฮมเบอเกอร์</string>
+    <string name="revoked_plan_operational_area">โปรดเลือกพื้นที่ปฏิบัติงานและแผนปฏิบัติงานจากเมนูแฮมเบอร์เกอร์</string>
 
     <string name="task_not_found">ไม่มีการกำหนดงานใดๆ บริเวณสิ่งปลูกสร้างนี้ในแผนงาน %1s</string>
 
@@ -92,6 +93,10 @@
     <string name="list">บัญชีรายการ</string>
     <string name="map">แผนที่</string>
     <string name="hamburger_menu">เมนูหลัก-เมนูแฮมเบอร์เกอร์</string>
+    <string name="focus_investigation">บัญชีรายการ</string>
+    <string name="irs">IRS การพ่นเคมีชนิดมีฤทธิ์ตกค้าง</string>
+    <string name="mda">MDA</string>
+    <string name="mda_lite">MDA-Lite</string>
     <string name="focus_investigation">การสอบสวนแหล่งแพร่เชื้อ Focus</string>
     <string name="irs">IRS การพ่นเคมีชนิดมีฤทธิ์ตกค้าง</string>
     <string name="task_icon">ไอคอนงาน</string>
@@ -99,6 +104,9 @@
     <string name="distance_from_center">%1.0f ม. จากใจกลาง %2s </string>
 
     <string name="mosquito_collection_point">สถานที่ทำการเก็บตัวอย่างยุง</string>
+    <string name="record_mosquito_collection">จับยุง</string>
+    <string name="larval_breeding_site">แหล่งเพาะพันธุ์ตัวอ่อนยุง</string>
+    <string name="record_larvacide">ตักลูกน้ำ</string>
     <string name="record_mosquito_collection">บันทึก\nCollection</string>
     <string name="larval_breeding_site">แหล่งเพาะพันธุ์ตัวอ่อนยุง</string>
     <string name="record_larvacide">บันทึก\nDipping</string>
@@ -115,6 +123,7 @@
     </plurals>
 
     <string name="card_view_record_mosquito_collection">แก้ไขข้อมูล</string>
+    <string name="record_larval_dipping">แก้ไขข้อมูล</string>
     <string name="record_larval_dipping">บแก้ไขข้อมูล</string>
     <string name="card_view_mosquito_collection_point">ตำแหน่งที่ทำการเก็บตัวอย่างยุง</string>
     <string name="mosquito_breeding_site">แหล่งเพาะพันธุ์ยุง</string>
@@ -129,6 +138,9 @@
     <string name="mosquito_collection_trap_set_date">กำหนดวันที่:&#160;</string>
     <string name="mosquito_collection_trap_follow_up_date">วันที่ติดตาม:&#160;</string>
 
+    <string name="paot_last_updated_date_test_text">กรุณาระบุวันที่:&#160;</string>
+    <string name="card_view_edit_paot_details">แก้ไขข้อมูล</string>
+    <string name="card_view_paot">พื้นที่เสี่ยงต่อการแพร่เชื้อ</string>
     <string name="paot_last_updated_date_test_text">อัพเดทล่าสุด:&#160;</string>
     <string name="card_view_edit_paot_details">บแก้ไขข้อมูล</string>
     <string name="card_view_paot">ศักยภาพของการส่งสัญญาณ</string>
@@ -187,6 +199,7 @@
     <string name="plans_download_on_progress_title">ดาวน์โหลดกำลังดำเนินการ</string>
     <string name="plans_download_on_progress">กำลังดาวน์โหลดแผนอยู่ในระหว่างดำเนินการ โปรดรอสักครู่</string>
 
+    <string name="view_tasks">ดูรายงาน</string>
     <string name="view_tasks">ดูรายการงาน</string>
     <string name="tasks_complete">งานเสร็จสมบูรณ์</string>
     <string name="numero_sign">เลขที่</string>
@@ -194,6 +207,7 @@
     <string name="register_outside_boundary_title">Register structure outside area boundary?</string>
     <string name="register_outside_boundary_warning">Warning: this location is beyond the boundaries of the selected operational area. If you continue, the structure may be added to an incorrect area</string>
     <string name="register">Register</string>
+    <string name="cancel">ยกเลิก</string>
     <string name="cancel">Cancel</string>
     <string name="partially_sprayed">Partially Sprayed</string>
 
@@ -202,6 +216,8 @@
     <!-- form -->
     <string name="add_fam">ทะเบียนครัวเรือน</string>
 
+    <string name="tested">เจาะเลือด</string>
+    <string name="not_tested">ไม่เจาะเลือด</string>
     <string name="tested">Tested</string>
     <string name="not_tested">Not Tested</string>
 
@@ -213,6 +229,9 @@
     <string name="circle_not_clicked">Circle not clicked</string>
     <string name="start_drawing">เริ่มวาด</string>
     <string name="edit_boundary">แก้ไขขอบเขตกลุ่มบ้าน</string>
+    <string name="discard">ใช่</string>
+    <string name="delete_point_title">ลบจุดนี้??</string>
+    <string name="delete_point_msg">คุณต้องการยกเลิกสิ่งที่ได้แก้ไขไปใช่หรือไม่?</string>
     <string name="discard">ยกเลิก</string>
     <string name="delete_point_title">ลบจุดนี้??</string>
     <string name="delete_point_msg">นี่จะเป็นการลบจุดออกจากขอบเขตกลุ่มบ้าน</string>
@@ -220,4 +239,91 @@
     <string name="discard_changes_msg">การดำเนินการนี้จะยกเลิกการแก้ไขที่ไม่ได้บันทึกที่คุณทำไว้ในขอบเขตกลุ่มบ้าน</string>
     <string name="tap_point_msg">แตะจุดดำเพื่อย้ายหรือลบ</string>
     <string name="drag_selected_point_msg">ลากจุดที่เลือกเพื่อเปลี่ยนขอบเขต</string>
+    <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
+    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
+    <string name="menu">เมนู</string>
+    <string name="offline_maps">แผนที่แบบออฟไลน์</string>
+    <string name="device_data_synced">ซิงค์ข้อมูลในอุปกรณ์แล้ว</string>
+    <string name="device_data_not_synced">ยังไม่ได้ซิงค ์ข้อมูล</string>
+    <string name="available">ทั้งหมด</string>
+    <string name="downloaded">ดาวน์โหลดแล้ว</string>
+    <string name="download">ดาวน์โหลด</string>
+    <string name="delete">ลบจุด</string>
+    <string name="delete_caps">ลบ</string>
+    <string name="clear">ล้างตัวกรอง</string>
+    <string name="sort_by">จัดเรียงตาม</string>
+    <string name="status">สถานะ</string>
+    <string name="structure">สิ่งปลูกสร้าง</string>
+    <string name="person">บุคคล</string>
+    <string name="family">ครัวเรือน</string>
+    <string name="task_type">ประเภทกิจกรรม</string>
+    <string name="intervention_unit">ระดับการปฏิบัติงาน</string>
+    <string name="apply_filters">ตกลง</string>
+    <string name="apply_filters_formatter">ตกลง (%1$d)</string>
+    <string name="bcc_code">BCC</string>
+    <string name="mosquito_collection">จับยุง</string>
+    <string name="larval_dipping">ตักลูกน้ำ</string>
+    <string name="bednet_distribution">การสำรวจ/ชุบ/แจกมุ้ง</string>
+    <string name="blood_screening">เจาะเลือด</string>
+    <string name="case_confirmation">ยืนยันบ้านผู้ป่วย</string>
+    <string name="paot">ตำแหน่งที่คาดว่าเป็นแหล่งแพร่เชื้อ</string>
+    <string name="family_registered">ลงทะเบียนครัวเรือนแล้ว</string>
+    <string name="bednet_distributed">บันทึกข้อมูลมุ้งแล้ว</string>
+    <string name="blood_screening_complete">บันทึกการเจาะเลือดแล้ว</string>
+
+    <string-array name="task_sort_options">
+        <item>ระยะทาง(ที่ใกล้ที่สุดก่อน)</item>
+        <item>สถานะ</item>
+        <item>ประเภทกิจกรรม</item>
+    </string-array>
+
+    <string name="archive_family">ลบข้อมูลครัวเรือน</string>
+    <string name="confirm_archive_family">ยืนยันการลบข้อมูล ครัวเรือน</string>
+    <string name="confirm_archive_family_message">ยืนยันการลบข้อมูลครัวเรือนโปรดยืนยันว่าคุณต้องการลบข้อมูลครัวเรือนของบ้านหลังนี้ หากยืนยัน ข้อมูลจะถูกลบและไม่สามารถเรียกคืนได้</string>
+    <string name="confirm">ตกลง</string>
+    <string name="archive_member">ลบข้อมูลบุคคลนี้</string>
+    <string name="confirm_archive_member">โปรดยืนยันว่าคุณต้องการลบข้อมูลบุคคลนี้ หากยืนยัน ข้อมูลและกิจกรรมที่ถูกบันทึกภายใต้บุคคลนี้จะถูกลบและไม่สามารถเรียกคืนได้</string>
+
+    <string name="mark_location_inactive">ทำเครื่องหมายว่าตำแหน่งนี้ไม่ใช้งาน</string>
+    <string name="confirm_mark_location_inactive">โปรดยืนยันว่าตำแหน่งนี้ควรทำเครื่องหมายว่าไม่ใช้งาน</string>
+    <string name="undo_task_title">แน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมดในเหตุการณ์นี้</string>
+    <string name="undo_task_msg">คุณจะไม่สามารถกู้คืนข้อมูลนี้ได้และงานนี้จะถูกทำเครื่องหมายว่าไม่สมบูรณ์</string>
+    <string name="index_case_confirmed">ยืนยัน index case</string>
+    <string name="progressBarLabel">กำลังซิงค์ %s : %d%% </string>
+    <string name="events">เหตุการณ์</string>
+    <string name="locations">สถานที่</string>
+    <string name="plans">แผน</string>
+    <string name="structures">สิ่งปลูกสร้าง</string>
+    <string name="tasks_text">งาน</string>
+    <string name="undo">ยกเลิก</string>
+
+    <string name="registration_info">แก้ไขข้อมูล</string>
+    <string name="yes">ใช่</string>
+    <string name="select_task_action">คุณต้องการแก้ไขหรือล้างค่าที่เคยบันทึกของกิจกรรมนี้ใช่หรือไม่?</string>
+    <string name="view_details">แก้ไข</string>
+    <string name="choose_action">โปรดเลือก</string>
+    <string name="search_hint">ใส่ชื่อบุคคลหรือบ้านเลขที่เพื่อค้นหา</string>
+    <string name="x_years">%1$dปี</string>
+    <string name="case_confirmation_description">ยืนยันบ้านผู้ป่วย</string>
+    <string name="last_edited">แก้ไขวันที่ %1s</string>
+    <string name="ok">ตกลง</string>
+    <string name="cancel_no">ไม่ใช่</string>
+    <string name="done">ตกลง</string>
+    <string name="view_paot_details">เปลี่ยนคำเป็น “แก้ไข”</string>
+    <string name="downloading">กำลังดาวน์โหลด</string>
+    <string name="map_download_progress">กำลังดาวน์โหลด: %,.2f %%</string>
+    <string name="sync_started">เริ่มการซิงค์แล้ว</string>
+    <string name="click_to_show_indicators">Click Here to show Indicators</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="account_disabled">Account Disabled</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="loading_client_settings">Loading client settings…</string>
+    <string name="syncing">Syncing...</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="summary_forms">Other Forms</string>
+    <string name="fpp_form_name">FPP Form</string>
+    <string name="tablet_accountability_form">Tablet Accountability Form</string>
+
+
 </resources>

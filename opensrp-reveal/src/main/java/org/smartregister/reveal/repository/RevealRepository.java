@@ -12,7 +12,10 @@ import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ClientFormRepository;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.EventClientRepository.client_column;
+import org.smartregister.repository.EventClientRepository.event_column;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -34,6 +37,7 @@ import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.RecreateECUtil;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
@@ -54,6 +58,11 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
+import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
+import static org.smartregister.reveal.util.Constants.STRUCTURE;
+import static org.smartregister.reveal.util.Constants.StructureType.RESIDENTIAL;
+import static org.smartregister.reveal.util.Constants.Tables.CLIENT_TABLE;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.STRUCTURE;
 import static org.smartregister.reveal.util.Constants.StructureType.RESIDENTIAL;
@@ -61,6 +70,8 @@ import static org.smartregister.reveal.util.Constants.Tables.EVENT_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.LARVAL_DIPPINGS_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.MOSQUITO_COLLECTIONS_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.PAOT_TABLE;
+import static org.smartregister.reveal.util.Constants.Tables.STRUCTURE_TABLE;
+import static org.smartregister.reveal.util.Constants.Tables.TASK_TABLE;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 import static org.smartregister.util.DatabaseMigrationUtils.isColumnExists;
@@ -80,8 +91,8 @@ public class RevealRepository extends Repository {
     public void onCreate(SQLiteDatabase database) {
         super.onCreate(database);
         ConfigurableViewsRepository.createTable(database);
-        EventClientRepository.createTable(database, EventClientRepository.Table.client, EventClientRepository.client_column.values());
-        EventClientRepository.createTable(database, event, EventClientRepository.event_column.values());
+        EventClientRepository.createTable(database, EventClientRepository.Table.client, client_column.values());
+        EventClientRepository.createTable(database, event, event_column.values());
 
         CampaignRepository.createTable(database);
         TaskRepository.createTable(database);
@@ -122,6 +133,21 @@ public class RevealRepository extends Repository {
                     break;
                 case 9:
                     upgradeToVersion9(db);
+                    break;
+                case 10:
+                    upgradeToVersion10(db);
+                    break;
+                case 11:
+                    upgradeToVersion11(db);
+                    break;
+                case 12:
+                    upgradeToVersion12(db);
+                    break;
+                case 13:
+                    upgradeToVersion13(db);
+                    break;
+                case 14:
+                    upgradeToVersion14(db);
                     break;
                 default:
                     break;
@@ -230,31 +256,74 @@ public class RevealRepository extends Repository {
         if (!ManifestRepository.isVersionColumnExist(db)) {
             ManifestRepository.addVersionColumn(db);
         }
+
+        DatabaseMigrationUtils.createAddedECTables(db,
+                new HashSet<>(Arrays.asList(Constants.EventsRegister.TABLE_NAME)),
+                RevealApplication.createCommonFtsObject());
+
+        EventClientRepository.createTable(db,
+                EventClientRepository.Table.foreignEvent,
+                event_column.values());
+        EventClientRepository.createTable(db,
+                EventClientRepository.Table.foreignClient,
+                client_column.values());
     }
 
     private void upgradeToVersion9(SQLiteDatabase db) {
-        boolean columnAdded = false;
-        if (!isColumnExists(db, FAMILY_MEMBER, DatabaseKeys.ADMINISTERED_SPAQ)) {
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s VARCHAR", FAMILY_MEMBER, DatabaseKeys.ADMINISTERED_SPAQ));
-            columnAdded = true;
-        }
-        if (!isColumnExists(db, FAMILY_MEMBER, DatabaseKeys.NUMBER_OF_ADDITIONAL_DOSES)) {
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s VARCHAR", FAMILY_MEMBER, DatabaseKeys.NUMBER_OF_ADDITIONAL_DOSES));
-            columnAdded = true;
-        }
+        ClientRelationshipRepository.createTable(db);
+        EventClientRepository.createAdditionalColumns(db);
+        EventClientRepository.addEventLocationId(db);
+    }
 
-        if (columnAdded) {
-            //client prqocess family events after 5 seconds so that get calls to getDatabase return
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    EventClientRepository ecRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
-                    List<EventClient> eventClientList = ecRepository.fetchEventClientsByEventTypes(
-                            Arrays.asList(Constants.EventType.MDA_ADHERENCE, Constants.EventType.MDA_DISPENSE));
-                    RevealClientProcessor.getInstance(RevealApplication.getInstance().getApplicationContext()).processClient(eventClientList);
-                }
-            }, 5000);
+    private void upgradeToVersion10(SQLiteDatabase db) {
+        if (BuildConfig.BUILD_COUNTRY != Country.ZAMBIA
+                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL ||  BuildConfig.BUILD_COUNTRY != Country.SENEGAL_EN) {
+            return;
         }
+        db.delete(Constants.Tables.EC_EVENTS_TABLE, String.format(" %s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
+        db.delete(Constants.Tables.EC_EVENTS_SEARCH_TABLE, String.format("%s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
+
+        clientProcessEvents(Collections.singletonList(SPRAY_EVENT));
+
+    }
+
+    private void upgradeToVersion11(SQLiteDatabase db) {
+        if (BuildConfig.BUILD_COUNTRY != Country.NAMIBIA) {
+            return;
+        }
+        db.delete(SPRAYED_STRUCTURES, null, null);
+
+        clientProcessEvents(Arrays.asList(SPRAY_EVENT, REGISTER_STRUCTURE_EVENT));
+    }
+
+    private void upgradeToVersion12(SQLiteDatabase db) {
+        TaskRepository.updatePriorityToEnumAndAddRestrictions(db);
+    }
+
+    private void upgradeToVersion13(SQLiteDatabase db) {
+        db.execSQL(String.format("UPDATE %s set %s = ? WHERE %s=? ", EVENT_TABLE, DatabaseKeys.SYNC_STATUS, DatabaseKeys.SYNC_STATUS), new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Task_Unprocessed});
+    }
+
+
+    private void upgradeToVersion14(SQLiteDatabase db) {
+        db.execSQL(String.format("UPDATE %s set %s = ? WHERE %s IS NULL ", EVENT_TABLE, event_column.syncStatus, event_column.eventId), new String[]{BaseRepository.TYPE_Unsynced});
+        db.execSQL(String.format("UPDATE %s set %s = ? WHERE %s like ?  OR %s not like ?", CLIENT_TABLE, client_column.syncStatus, client_column.json, client_column.json), new String[]{BaseRepository.TYPE_Unsynced, "%serverVersion\":0%", "%serverVersion%"});
+        db.execSQL(String.format("UPDATE %s set %s = ? WHERE %s IS NULL OR %s = 0 ", TASK_TABLE, DatabaseKeys.TASK_SYNC_STATUS, DatabaseKeys.SERVER_VERSION, DatabaseKeys.SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
+        db.execSQL(String.format("UPDATE %s set %s = ? WHERE %s like ?  OR %s not like ?", STRUCTURE_TABLE, DatabaseKeys.TASK_SYNC_STATUS, DatabaseKeys.GEOJSON, DatabaseKeys.GEOJSON), new String[]{BaseRepository.TYPE_Created, "%serverVersion\":0%", "%serverVersion%"});
+    }
+
+    private void clientProcessEvents(List<String> eventTypes) {
+        //client process events after 5 seconds so that get calls to getDatabase return
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                EventClientRepository ecRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
+                List<EventClient> eventClientList = ecRepository.fetchEventClientsByEventTypes(
+                        eventTypes);
+                RevealClientProcessor.getInstance(RevealApplication.getInstance().getApplicationContext()).processClient(eventClientList);
+            }
+        }, 5000);
+
     }
 
     @Override

@@ -33,6 +33,11 @@
             android:name="io.fabric.ApiKey"
             android:value="3f94f9c3caeff331b3a2bd8c2182b663ad6a955a" />
 
+            <meta-data
+                android:name="firebase_performance_logcat_enabled"
+                android:value="true" />
+
+
         <activity
             android:name=".activity.LoginActivity"
             android:screenOrientation="portrait"
@@ -73,7 +78,6 @@
         </activity>
         <activity android:name="org.smartregister.family.activity.FamilyWizardFormActivity" />
         <activity android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity" />
-        <activity android:name="org.smartregister.reveal.activity.ReadableJsonWizardFormActivity" />
         <activity
             android:name=".view.FamilyOtherMemberProfileActivity"
             android:parentActivityName=".view.FamilyProfileActivity"
@@ -113,6 +117,16 @@
 
         <activity
             android:name=".view.EditFociBoundaryActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".view.EventRegisterActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".view.LocationPickerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

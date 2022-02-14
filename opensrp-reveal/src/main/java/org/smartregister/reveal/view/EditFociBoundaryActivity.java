@@ -30,6 +30,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.smartregister.domain.Location;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.EditFociboundaryContract;
@@ -37,6 +38,7 @@ import org.smartregister.reveal.presenter.EditFociBoundaryPresenter;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.EditBoundaryState;
 import org.smartregister.reveal.util.RevealMapHelper;
+import org.smartregister.reveal.util.Utils;
 import org.smartregister.sync.helper.LocationServiceHelper;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
@@ -102,7 +104,8 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                Style.Builder builder = new Style.Builder().fromUri(getString(R.string.reveal_satellite_style));
+                String satelliteStyle = BuildConfig.SELECT_JURISDICTION ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
                 mapboxMap.setStyle(builder,  new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
@@ -214,7 +217,7 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
         boundaryLayer.disableLayerOnMap(mapboxMap);
         if (drawingManager != null) {
             if (!drawingManager.isDrawingEnabled()) {
-                if (drawingManager.startDrawing( boundaryLayer)) {
+                if (drawingManager.editBoundary( boundaryLayer)) {
                     savePointBtn.setText(R.string.save_point);
                 }
             } else {
@@ -325,18 +328,24 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
     }
 
     protected void saveBoundary() {
-        Geometry geometry = boundaryLayer.getFeatureCollection().features().get(0).geometry();
-        if ( geometry instanceof  MultiPolygon) {
+        Geometry updatedGeometry = boundaryLayer.getFeatureCollection().features().get(0).geometry();
+        if ( updatedGeometry instanceof  MultiPolygon) {
             // boundary has not been edited
             exitEditBoundaryActivity();
             return;
         }
 
-        JSONArray updatedCoords = getCoordsFromGeometry(geometry);
+        JSONArray updatedCoords = getCoordsFromGeometry(updatedGeometry, revealApplication.getOperationalArea().geometry());
 
         Location operationalAreaLocation = LocationServiceHelper.locationGson.fromJson(revealApplication.getOperationalArea().toJson(), Location.class);
         JsonArray updatedCoordsJsonArray = LocationServiceHelper.locationGson.fromJson(updatedCoords.toString(), JsonArray.class);
         operationalAreaLocation.getGeometry().setCoordinates(updatedCoordsJsonArray);
+
+        //update location tags
+        Location dbLocation = Utils.getLocationById(operationalAreaLocation.getId());
+        if (dbLocation != null && dbLocation.getLocationTags() != null) {
+            operationalAreaLocation.setLocationTags(dbLocation.getLocationTags());
+        }
         presenter.onSaveEditedBoundary(operationalAreaLocation);
     }
 }

@@ -4,6 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.widget.ImageButton;
+
+import androidx.annotation.NonNull;
+
 import androidx.annotation.NonNull;
 import android.widget.ImageButton;
 
@@ -261,6 +265,7 @@ public class RevealMapHelper {
         MapBoxLayer mapBoxLayer = new MapBoxLayer();
         baseLayerSwitcherPlugin.addBaseLayer(mapBoxLayer, true);
         kujakuMapView.getMbTilesHelper().setMBTileLayers(context, baseLayerSwitcherPlugin);
+
         baseLayerSwitcherPlugin.show();
     }
 

@@ -1,25 +1,31 @@
 package org.smartregister.reveal.util;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.util.Pair;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.util.Pair;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.MultiPolygon;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -30,6 +36,8 @@ import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.job.DocumentConfigurationServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
@@ -49,9 +57,10 @@ import org.smartregister.util.RecreateECUtil;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,21 +68,28 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.util.Constants.ADMIN_PASSWORD_REQUIRED;
+import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LATITUDE_AT_EQUITOR;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LONGITUDE_AT_EQUITOR;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.METERS_PER_KILOMETER;
 import static org.smartregister.reveal.util.Constants.DateFormat.CARD_VIEW_DATE_FORMAT;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_FI;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_IRS;
-import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_MDA;
 import static org.smartregister.reveal.util.Constants.Intervention.FI;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MDA;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_LITE;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
-import static org.smartregister.reveal.util.Constants.Intervention.SMC;
-import static org.smartregister.reveal.util.Constants.Tags.LGA;
+import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
+import static org.smartregister.reveal.util.Constants.Map.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.USER_NAME;
 
 public class Utils {
 
@@ -135,10 +151,19 @@ public class Utils {
 
 
     public static Location getOperationalAreaLocation(String operationalArea) {
-       return cache.get(operationalArea, new CacheableData<Location>() {
+        return cache.get(operationalArea, new CacheableData<Location>() {
             @Override
             public Location fetch() {
                 return RevealApplication.getInstance().getLocationRepository().getLocationByName(operationalArea);
+            }
+        });
+    }
+
+    public static Location getLocationById(String locationId) {
+        return cache.get(locationId, new CacheableData<Location>() {
+            @Override
+            public Location fetch() {
+                return RevealApplication.getInstance().getLocationRepository().getLocationById(locationId);
             }
         });
     }
@@ -176,6 +201,18 @@ public class Utils {
         return Float.valueOf(getGlobalConfig(CONFIGURATION.LOCATION_BUFFER_RADIUS_IN_METRES, BuildConfig.MY_LOCATION_BUFFER + ""));
     }
 
+    public static long getSyncInterval() {
+        return Long.parseLong(getGlobalConfig(CONFIGURATION.SYNC_INTERVAL_IN_MINUTES, getDefaultSyncInterval()));
+    }
+
+    private static String getDefaultSyncInterval() {
+        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+            return Constants.THAILAND_SYNC_INTERVAL;
+        } else {
+            return BuildConfig.SYNC_INTERVAL_IN_MINUTES + "";
+        }
+    }
+
 
     public static Float getPixelsPerDPI(Resources resources) {
         return TypedValue.applyDimension(
@@ -194,6 +231,10 @@ public class Utils {
             return R.string.irs;
         else if (interventionType.equals(MDA) || interventionType.equals(DYNAMIC_MDA))
             return R.string.mda;
+        else if (interventionType.equals(MDA) || interventionType.equals(MDA))
+            return R.string.mda;
+        else if (interventionType.equals(MDA_LITE))
+            return R.string.mda_lite;
         else
             return R.string.irs;
     }
@@ -419,24 +460,164 @@ public class Utils {
 
     /**
      * This method takes in a geometry object and returns a JSONArray representation of the coordinates
-     * @param geometry
+     *
+     * @param updatedGeometry  The geometry of the updated feature
+     * @param originalGeometry The geometry of the original feature used to determine whether
+     *                         it was a MultiPolygon or a Polygon
      * @return
      */
-    public static JSONArray getCoordsFromGeometry(Geometry geometry) {
-        MultiPolygon multiPolygon = MultiPolygon.fromPolygons(Collections.singletonList((Polygon) geometry));
-        JSONObject multiPolygonJson;
-        JSONArray multiPolygonCoords = null;
+    public static JSONArray getCoordsFromGeometry(Geometry updatedGeometry, Geometry originalGeometry) {
+        JSONObject editedGeometryJson;
+        JSONArray updatedCoords = null;
         try {
-            multiPolygonJson = new JSONObject(multiPolygon.toJson());
-            multiPolygonCoords = (JSONArray) multiPolygonJson.get("coordinates");
+            if (originalGeometry instanceof MultiPolygon) {
+                MultiPolygon editedGeometryMultiPolygon = MultiPolygon.fromPolygon((Polygon) updatedGeometry);
+                editedGeometryJson = new JSONObject(editedGeometryMultiPolygon.toJson());
+            } else {
+                editedGeometryJson = new JSONObject(updatedGeometry.toJson());
+            }
+            updatedCoords = editedGeometryJson.getJSONArray("coordinates");
         } catch (JSONException e) {
             Timber.e(e);
         }
-        return multiPolygonCoords;
+        return updatedCoords;
     }
 
-    public static boolean isCountryBuild(Country country){
-        return BuildConfig.BUILD_COUNTRY == country;
+    public static String getSyncEntityString(SyncEntity syncEntity) {
+        Context context = RevealApplication.getInstance().getContext().applicationContext();
+        switch (syncEntity) {
+            case EVENTS:
+                return context.getString(R.string.events);
+            case LOCATIONS:
+                return context.getString(R.string.locations);
+            case PLANS:
+                return context.getString(R.string.plans);
+            case STRUCTURES:
+                return context.getString(R.string.structures);
+            case TASKS:
+                return context.getString(R.string.tasks_text);
+            default:
+                throw new IllegalStateException("Invalid Sync Entity");
+        }
+    }
+    /**
+     * This method takes in a view and a predicate.
+     * Displays the view if predicate is true.
+     * Hides the view otherwise
+     * @param view The view to set visibility on
+     * @param shouldShow The boolean indicating whether to show the view or not
+     */
+    public static void showWhenTrue(View view, boolean shouldShow){
+        int visibility = shouldShow? View.VISIBLE: View.GONE;
+        view.setVisibility(visibility);
     }
 
+    /**
+     * Builds a map of repeating grp id and its contents
+     *
+     * @param jsonObject
+     * @param obs
+     * @return
+     */
+    public static LinkedHashMap<String, HashMap<String, String>> buildRepeatingGroup(@NonNull JSONObject jsonObject,
+                                                                                     List<Obs> obs) {
+        LinkedHashMap<String, HashMap<String, String>> repeatingGroupMap = new LinkedHashMap<>();
+        JSONArray jsonArray = jsonObject.optJSONArray(JsonFormConstants.VALUE);
+        List<String> keysArrayList = new ArrayList<>();
+
+        if (jsonArray != null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject valueField = jsonArray.optJSONObject(i);
+                String fieldKey = valueField.optString(JsonFormConstants.KEY);
+                keysArrayList.add(fieldKey);
+            }
+
+            for (int k = 0; k < obs.size(); k++) {
+                Obs valueField = obs.get(k);
+                String fieldKey = valueField.getFormSubmissionField();
+                List<Object> values = valueField.getValues();
+                if (values != null && !values.isEmpty() && fieldKey.contains("_")) {
+                    fieldKey = fieldKey.substring(0, fieldKey.lastIndexOf("_"));
+                    if (keysArrayList.contains(fieldKey)) {
+                        String fieldValue = (String) values.get(0);
+                        if (StringUtils.isNotBlank(fieldValue)) {
+                            String fieldKeyId = valueField.getFormSubmissionField().substring(fieldKey.length() + 1);
+                            HashMap<String, String> hashMap = repeatingGroupMap.get(fieldKeyId) == null ? new HashMap<>() : repeatingGroupMap.get(fieldKeyId);
+                            hashMap.put(fieldKey, fieldValue);
+                            hashMap.put(Constants.JsonForm.REPEATING_GROUP_UNIQUE_ID, fieldKeyId);
+                            repeatingGroupMap.put(fieldKeyId, hashMap);
+                        }
+                    }
+                }
+            }
+        }
+
+        return repeatingGroupMap;
+    }
+
+    /**
+     * Converts Map<String, HashMap<String, String>> to List<HashMap<String, String>>
+     *
+     * @param map
+     * @return
+     */
+    public static List<HashMap<String, String>> generateListMapOfRepeatingGrp(Map<String, HashMap<String, String>> map) {
+        List<HashMap<String, String>> mapList = new ArrayList<>();
+        for (Map.Entry<String, HashMap<String, String>> entry : map.entrySet()) {
+            mapList.add(entry.getValue());
+        }
+        return mapList;
+    }
+    public static boolean isZambiaIRSLite() {
+        return (BuildConfig.SELECT_JURISDICTION && Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY));
+    }
+
+    public static int getMaxZoomLevel() {
+        return BuildConfig.SELECT_JURISDICTION ? getSelectJurisdictionMaxSelectZoomLevel()  : getMaxSelectZoomLevel();
+    }
+
+
+    public static boolean isKenyaMDALite() {
+        return (BuildConfig.SELECT_JURISDICTION && Country.KENYA.equals(BuildConfig.BUILD_COUNTRY));
+
+    }
+
+    public static boolean isRwandaMDALite(){
+        return (BuildConfig.SELECT_JURISDICTION && (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN));
+    }
+
+    public static boolean isZambiaIRSFull(){
+        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && !BuildConfig.SELECT_JURISDICTION;
+    }
+    public static boolean isMDALite(){
+       return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN;
+    }
+    public static Integer getMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.MAX_SELECT_ZOOM_LEVEL,String.valueOf(MAX_SELECT_ZOOM_LEVEL)));
+    }
+    public static Integer getSelectJurisdictionMaxSelectZoomLevel(){
+        return Integer.valueOf(getGlobalConfig(CONFIGURATION.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL,String.valueOf(SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL)));
+    }
+    public static void logAdminPassRequiredEvent(android.location.Location location, boolean passwordEntered){
+        AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
+        sharedPreferences.savePreference(EVENT_LATITUDE,"");
+        sharedPreferences.savePreference(EVENT_LONGITUDE,"");
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,"");
+        sharedPreferences.savePreference(GPS_ACCURACY,"");
+        Bundle bundle = new Bundle();
+        bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+        Double latitude = location.getLatitude();
+        bundle.putDouble(EVENT_LATITUDE,latitude);
+        sharedPreferences.savePreference(EVENT_LATITUDE,latitude.toString());
+        Double longitude = location.getLongitude();
+        bundle.putDouble(EVENT_LONGITUDE,longitude);
+        sharedPreferences.savePreference(EVENT_LONGITUDE,longitude.toString());
+        Float accuracy = location.getAccuracy();
+        bundle.putFloat(GPS_ACCURACY,accuracy);
+        sharedPreferences.savePreference(GPS_ACCURACY,accuracy.toString());
+        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
+        bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
+        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
+    }
 }

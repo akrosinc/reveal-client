@@ -187,7 +187,7 @@ public class StructureTasksFragmentTest extends BaseUnitTest {
     public void testStartForm() {
         JSONObject form = new JSONObject();
         Whitebox.setInternalState(fragment, "jsonFormUtils", jsonFormUtils);
-        fragment.startForm(form, false);
+        fragment.startForm(form);
         verify(jsonFormUtils).startJsonForm(form, activity, REQUEST_CODE_GET_JSON_FRAGMENT);
     }
 
@@ -222,6 +222,13 @@ public class StructureTasksFragmentTest extends BaseUnitTest {
         Whitebox.setInternalState(fragment, "presenter", presenter);
         fragment.refreshTasks("121212");
         verify(presenter).findTasks("121212");
+    }
+
+    @Test
+    public void testOnResume() {
+        Whitebox.setInternalState(fragment, "presenter", presenter);
+        fragment.onResume();
+        verify(presenter).refreshTasks();
     }
 
     @Test

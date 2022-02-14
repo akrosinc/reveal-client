@@ -7,6 +7,9 @@ import java.util.Date;
 /**
  * Created by samuelgithengi on 4/11/19.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class StructureTaskDetails extends BaseTaskDetails {
 
     private String taskName;
@@ -18,10 +21,6 @@ public class StructureTaskDetails extends BaseTaskDetails {
     private Date lastEdited;
 
     private String personTested;
-
-    private int totalAdministeredSpaq;
-
-    private int totalNumberOfAdditionalDoses;
 
     public StructureTaskDetails(@NonNull String taskId) {
         super(taskId);
@@ -65,21 +64,5 @@ public class StructureTaskDetails extends BaseTaskDetails {
 
     public void setPersonTested(String personTested) {
         this.personTested = personTested;
-    }
-
-    public int getTotalAdministeredSpaq() {
-        return totalAdministeredSpaq;
-    }
-
-    public void setTotalAdministeredSpaq(int totalAdministeredSpaq) {
-        this.totalAdministeredSpaq = totalAdministeredSpaq;
-    }
-
-    public int getTotalNumberOfAdditionalDoses() {
-        return totalNumberOfAdditionalDoses;
-    }
-
-    public void setTotalNumberOfAdditionalDoses(int totalNumberOfAdditionalDoses) {
-        this.totalNumberOfAdditionalDoses = totalNumberOfAdditionalDoses;
     }
 }

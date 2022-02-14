@@ -1,0 +1,891 @@
+{
+  "count": "1",
+  "encounter_type": "cell_coordinator_daily_summary",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Umuhuzabikorwa w'akagari Ifishi y'incamake ya buri munsi",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Itariki yo gukusanya amakuru",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Nyamuneka uzuza neza itariki ukusanyirijeho amakuru"
+        }
+      },
+      {
+        "key": "health_education_5_to_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabantu bafite imyaka hagati ya 5-15 bahawe inyigisho zubuzima",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        }
+      },
+      {
+        "key": "health_education_above_16",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabantu bafite imyaka 16 nohejuru yayo bahawe inyigisho zubuzima",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        }
+      },
+      {
+        "key": "ntd_treated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Ni ubuhe buvuzi bwatanzwe?",
+        "options": [
+          {
+            "key": "Vitamin A",
+            "text": "Vitamin A"
+          },
+          {
+            "key": "ALB/MEB",
+            "text": "ALB/MEB"
+          },
+          {
+            "key": "PZQ",
+            "text": "PZQ"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Hitamo ubuvuzi"
+        }
+      },
+      {
+        "key": "treated_male_6_to_11_mos",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gabo bavuwe bafite amezi 6 kugeza 11",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_male_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gabo bavuwe bafite amezi 12 kugeza 59",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_male_5_to_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka hagati 5 na 15",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+        "rules-engine": {
+          "ex-rules": {
+            "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+          }
+        }
+      }
+     },
+      {
+        "key": "treated_male_above_16",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gabo bavuwe bafite imyaka 16 kuzamura harimo nabantu bakuru",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_males",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_males_label",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Igiteranyo cyumubare wabana bigitsina gabo bavuwe ni  {total_males}",
+        "text_color": "#000000",
+        "toaster_type": "info",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_female_6_to_11_mos",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gore bavuwe bafite amezi 6 kugeza 11",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_female_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gore bavuwe bafite amezi 12 kugeza 59",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_female_5_to_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka hagati 5 na 15",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "treated_female_above_16",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wabana bigitsina gore bavuwe bafite imyaka 16 kuzamura harimo nabantu bakuru",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_females_label",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Igiteranyo cyumubare wabana bigitsina gore bavuwe ni {total_female} ",
+        "text_color": "#000000",
+        "toaster_type": "info",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_males_and_females",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_treated_6_to_11_mos",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_treated_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_treated_above_16",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_treated_5_to_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "adverse",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wingaruka zibinini byatanzwe zagaragaye",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "v_relative_max": {
+          "value": "total_males_and_females",
+          "err": "Umubare wibibazo bikomeye byagaragajwe bigomba kuba bike ugereranije nabana bigitsina gabo bose Bavuwe + Abana Bose bigitsina gore"
+        }
+      },
+      {
+        "key": "drugs",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Ni uwuhe muti wakoreshejwe?",
+        "options": [
+          {
+            "key": "PZQ",
+            "text": "PZQ"
+          },
+          {
+            "key": "ALB",
+            "text": "ALB"
+          },
+          {
+            "key": "MEB",
+            "text": "MEB"
+          },
+          {
+            "key": "VITA",
+            "text": "Vitamin A"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Hitamo umuti wakoreshejwe mu kuvura"
+        }
+      },
+      {
+        "key": "pzq_drug_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "alb_meb_drug_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "vita_drug_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Umuti watoranijwe ntabwo uhuye nubuvuzi bwatangwa",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "received_when",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Wakiriye ibinini bya mbere uyumunsi, hari ibinini wongeweho cyangwa nta binini wabonye uyumunsi?",
+        "options": [
+          {
+            "key": "Initial balance",
+            "text": "Ibinini warusanganwe mububiko"
+          },
+          {
+            "key": "Top Up",
+            "text": "ibinini bindi wahawe"
+          },
+          {
+            "key": "None",
+            "text": "Nta binini hawe"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        }
+      },
+      {
+        "key": "received_number",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Wakiriye ibinini bingahe?",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_tablet_admin_max",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "total_tablet_less_administered_max",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "adminstered",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Ibinini Byose byatanzwe uyu munsi",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "Uyu mwanya wakazu ugomba kuba muto cyangwa ungana na 999999999"
+        },
+        "v_relative_max": {
+          "value": "total_tablet_admin_max",
+          "err": "Wahisemo Imiti warusanganwe yambere mububiko, kubwibyo ibyatanzwe byose uyumunsi bigomba kuba munsi cyangwa bingana ibinini byambere byakiriwe mububiko"
+        }
+      },
+      {
+        "key": "damaged",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Ibinini Byangiritse",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "v_relative_max": {
+          "value": "total_tablet_less_administered_max",
+          "err": "Wahisemo Impirimbanyi Yambere, kubwibyo ibyangiritse byose bigomba kuba munsi cyangwa bingana ibinini byambere byakiriwe mububiko hakuweho ibyatanzwe"
+        }
+      },
+      {
+        "key": "data_verification",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Ese aya makuru yagenzuwe hamwe nimpapuro zakopi zayo",
+        "options": [
+          {
+            "key": "verified",
+            "text": "Yego"
+          },
+          {
+            "key": "not verified",
+            "text": "Oya"
+          }
+        ],
+        "value": "not verified",
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        }
+      },
+      {
+        "key": "task_complete",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Ese MDA yaba yararangiye?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yego"
+          },
+          {
+            "key": "No",
+            "text": "Oya"
+          }
+        ],
+        "value": "No",
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-cell-coordinator-daily-summary-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "cell_coordinator",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      }
+    ]
+  }
+}

@@ -12,18 +12,15 @@ import org.smartregister.reveal.contract.TaskRegisterContract;
 import org.smartregister.reveal.interactor.TaskRegisterInteractor;
 import org.smartregister.view.contract.BaseRegisterContract;
 
-import java.util.List;
-
 /**
  * Created by samuelgithengi on 3/11/19.
  */
-public class TaskRegisterPresenter implements TaskRegisterContract.Presenter, BaseRegisterContract.Presenter {
-
-    private TaskRegisterInteractor taskRegisterInteractor;
+public class TaskRegisterPresenter extends BaseRegisterPresenter implements TaskRegisterContract.Presenter, BaseRegisterContract.Presenter {
 
     private BaseRegisterContract.View view;
 
     public TaskRegisterPresenter(BaseRegisterContract.View view) {
+        super(view);
         this.view = view;
         taskRegisterInteractor = new TaskRegisterInteractor(this);
     }

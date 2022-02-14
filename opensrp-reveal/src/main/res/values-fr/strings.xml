@@ -1,0 +1,466 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!-- Actions -->
+    <string name="action_logout">Se déconnecter</string>
+    <!-- General -->
+    <string name="reveal_app_name" translatable="false">Reveal</string>
+    <string name="app_name" translatable="false">@string/reveal_app_name</string>
+    <!--Temp -->
+    <string name="unauthorized">Merci de vérifier le nom d\'utilisateur et le mot de passe</string>
+    <string name="unauthorized_group">Votre groupe d\'utilisateur ne vous permet pas d\'accés</string>
+    <string name="unknown_response">Echec de la connexion, Essayer plutard</string>
+    <string name="no_internet_connectivity">Pas de connexion Internet. Merci de vérifier la connexion de données</string>
+    <string name="login_text">Se connecter </string>
+    <string name="show_password_text">Afficher mot de passe</string>
+    <string name="url_separator">/</string>
+
+    <string name="device_timezone_changed">"Le Time Zone de l'équipement a changé. Merci de vous reconnecter."</string>
+    <string name="device_time_changed">"L'heure de l'équipement à changé.Merci de vous reconnecter."</string>
+
+    <string name="prompt_password">Entrer le mot de passe </string>
+    <string name="prompt_username">Entrer le nom d\'utilisateur</string>
+    <string name="reveal">Reveal</string>
+    <string name="sync">Synchroniser</string>
+    <string name="campaign">Plan</string>
+    <string name="operational_area">Zone d\'Opération</string>
+
+    <string name="offline_maps">Cartes offline</string>
+    <string name="app_version">Version %1$s</string>
+    <string name="app_updated">Mise à jour %1$s</string>
+    <string name="district">District:</string>
+    <string name="facility">Localité:</string>
+    <string name="canton">Canton:</string>
+    <string name="operator">Utilisateur:</string>
+
+    <string name="fetch_location_and_structures_failed">Cette zone d’opération n’a pas été défini dans le systéme. Merci d’essayer de syncrhoniser votre tablette/smartphone. Merci de contacter l’administrateur du système si ça ne résous pas le probléme noté le le numéro de la zone d’opération%1$s.</string>
+    <string name="fetch_structures_title">Loading failed</string>
+    <string name="fetching_structures_title">Récupération de structures</string>
+    <string name="fetching_structures_message">Récupération de structures pour les zones d\'opération et plan sélectionnés</string>
+
+
+    <string name="select_campaign_operational_area_title">Le plan et la zone d\'opération n\'est pas configurer </string>
+    <string name="select_campaign_operational_area">Le plan et la zone d\'opération n\'est pas configuré.Sélectionner à partir du menu Hamburger</string>
+    <string name="revoked_plan_operational_area">Plan précédemment sélectionné et/ou domaine opérationnel révoqué. Choisissez dans le menu hamburgers</string>
+    <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
+    <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
+    <string name="reveal_streets_style" translatable="false">reveal-streets-style.json</string>
+    <string name="reveal_offline_map_download_style" translatable="false">map-download-style.json</string>
+    <string name="reveal_datasource_name" translatable="false">reveal-data-set</string>
+    <string name="reveal_layer_polygons" translatable="false">reveal-data-polygons</string>
+    <string name="reveal_layer_points" translatable="false">reveal-data-points</string>
+    <string name="base_map_feature_json" translatable="false">base_map_feature.json</string>
+
+
+    <string name="task_not_found">Aucune tache n\'est assigné pour le Plan  %1s</string>
+
+    <string name="error_fetching_location_hierarchy_title">Erreur dans le traitement de la hiérarchie</string>
+
+    <string name="error_fetching_location_hierarchy">Erreur dans le traitement de la hiérarchie. Déconnectez-vous pour télécharger la hiérarchie à nouveau</string>
+
+    <string name="selected_datasource_name">selectionnez-données</string>
+
+    <string name="irs_task_description"> Visiter la structure, enquéter et réaliser l\'aspersion.</string>
+    <string name="poat_task_description"> Mettre à jour les zones potentielles de transmission</string>
+    <string name="irs_verification_task_description"> Visiter toutes les structres de la zone d\'aspersion et vérifier le statut</string>
+
+    <string name="form_save_failure_title">Erreur de sauvegarde du formulaire</string>
+    <string name="spray_form_save_failure">Erreur de sauvegarde du formulaire d\'aspersion</string>
+    <string name="add_structure_form_save_failure">Erreur de sauvegarde du formulaire d\'aspersion et de structure</string>
+    <string name="zoom_in_to_select">Zoomer sur une structure sélectionner</string>
+
+
+    <string name="details_sprayed">Eligible, Traitée</string>
+    <string name="details_not_sprayed">Eligible, Non Traitée</string>
+    <string name="details_not_sprayable">Non Eligible</string>
+    <string name="no_structures_found">Il n\'existe pas de structure cartographiée pour cette zone d\'aspersion. Merci d\'ajouter le point pour débuter</string>
+    <string name="change_spray_status">Changer le statut d\'aspersion</string>
+    <string name="reveal_icon">Reveal Icon</string>
+
+    <string name="attribution_text">Powered by OpenSRP \nBuilt on mSpray and DiSARM</string>
+    <string name="thailand_attribution_text">Powered by Reveal</string>
+
+    <string name="request_password_title">Vous n\'êtes pas a côté de cette structure</string>
+    <string name="enter_admin_password">Saisissez le mot de passe administrateur</string>
+    <string name="wrong_admin_password">Mot de passe incorrect</string>
+
+    <string name="saving_title">Enregistrement</string>
+    <string name="saving_message">Enregistrement du formulaire en cours. Merci de patienter</string>
+
+    <string name="fetching_structure_title">Récupération des informations de la structure</string>
+    <string name="fetching_structure_message">Récupération des informations de la structure. Merci de patienter</string>
+
+    <string name="fetching_mosquito_collection_points_title">Fetching Mosquito Collection Point Details</string>
+    <string name="fetching_mosquito_collection_points_message">Fetching Mosquito Collection Point Details. Please wait</string>
+
+    <string name="fetching_larval_dipping_points_title">Fetching Larval Dipping Point Details</string>
+    <string name="fetching_larval_dipping_points_message">Fetching Larval Dipping Point Details. Please wait</string>
+
+    <string name="fetching_paot_title">Récupération des informations PAOT</string>
+    <string name="fetching_paot_message">Récupération des informations PAOT. Merci de patienter</string>
+
+    <string name="narrowing_location_title">Calcul de votre emplacement</string>
+    <string name="narrowing_location_message">Calcul de votre emplacement. Merci de patienter</string>
+
+    <string name="location_services_disabled">Services de localisation desactivés</string>
+    <string name="location_services_disabled_spray">Vous avez refusé d\'activer les services de localisation pour obtenir votre position actuelle. Vous devrez entrer le mot de passe administrateur pour pulvériser la structure</string>
+    <string name="location_services_disabled_add">Vous avez refusé d\'activer les services de localisation pour obtenir votre position actuelle. Vous devrez entrer le mot de passe administrateur pour ajouter la structure</string>
+    <string name="mosquito_collection_task_description">Configurer la zone de collecte de moustique et Enregistrer les resultats</string>
+    <string name="larval_dipping_task_description">Effectuer le trempage des larves, classer et intervenir</string>
+
+    <string name="register_family">Register Family</string>
+    <string name="list">Liste</string>
+    <string name="map">Carte</string>
+    <string name="hamburger_menu">Menu Hamburger </string>
+    <string name="focus_investigation">Focus Investigation</string>
+    <string name="summary_forms">Autres formulaires</string>
+    <string name="irs">IRS</string>
+    <string name="mda">MDA</string>
+    <string name="mda_lite">MDA-Lite</string>
+    <string name="task_icon">Task Icon</string>
+    <string name="distance_from_structure">%1.0f m away</string>
+    <string name="distance_from_center" formatted="false">%1.0f m from %2s center </string>
+
+    <string name="mosquito_collection_point">Mosquito collection point</string>
+    <string name="record_mosquito_collection">Record\nCollection</string>
+    <string name="larval_breeding_site">Larval breeding site</string>
+    <string name="record_larvacide">Record\nDipping</string>
+    <string name="bcc">Behaviour Change communication</string>
+    <string name="record_bcc">Record\nBCC</string>
+    <string name="record_status">Record\nStatus</string>
+    <string name="record_index">Record\nIndex</string>
+    <string name="opening_form_title">Ouverture du formulaire</string>
+    <string name="opening_form_message">Merci de patienter, ouverture du formulaire</string>
+    <string name="task_reason">Raison: %1s</string>
+
+    <plurals name="structures">
+        <item quantity="one">%1d structure avec %2.0f m (%3$d total)</item>
+        <item quantity="other">%1d structures avec%2.0f m (%3$d total)</item>
+    </plurals>
+
+    <string name="card_view_record_mosquito_collection">Record mosquito collection</string>
+    <string name="record_larval_dipping">Record larval dipping</string>
+    <string name="card_view_mosquito_collection_point">Mosquito Collection Point</string>
+    <string name="mosquito_breeding_site">Mosquito Breeding Site</string>
+
+    <string name="mosquito_collection_status_test_text">Status: Inactive</string>
+    <string name="mosquito_collection_trap_set_date_test_text">Date: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_follow_up_date_test_text">Date de suivi: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_collected_date_test_text">Date de collecte: DD/MM/YY</string>
+
+    <string name="larval_breeding_identified_date_test_text">Date indentifié:&#160;</string>
+    <string name="larval_breeding_larvacide_date_test_text">Date de larvicide:&#160;</string>
+    <string name="mosquito_collection_trap_set_date">Date :&#160;</string>
+    <string name="mosquito_collection_trap_follow_up_date">Date de suivi:&#160;</string>
+
+    <string name="paot_last_updated_date_test_text">Date de la derniére mise à jour:&#160;</string>
+    <string name="card_view_edit_paot_details">Edit PAOT Details</string>
+    <string name="card_view_paot">Potential Area of Transmission</string>
+
+    <string name="residents">RESIDENTS</string>
+    <string name="return_to_all_families">Return</string>
+    <string name="tasks">TACHES(%1$d)</string>
+    <string name="comma">,</string>
+    <string name="distribute_llin">Distribute Bednet</string>
+    <string name="record_llin">Record\nDistribution</string>
+    <string name="record_test">Record\nScreening</string>
+    <string name="detect_case">Detect\nCase</string>
+    <string name="fetch_family_failed">Fetch Family Failed</string>
+    <string name="failed_to_find_family">Failed to get Family Details</string>
+    <string name="family_registration">Family Registration</string>
+
+    <string name="blood_screening_description">Perform blood screening on the family member</string>
+    <string name="bednet_distribution_description">Visit the residential structure and provide nets</string>
+    <string name="register_family_description">Visit the residential structure and register each family member</string>
+    <string name="mda_dispense_desciption">Visit all residential structures (100%) dispense prophylaxis to each registered person</string>
+    <string name="mda_adherence_desciption">"Visit all residential structures (100%) and confirm adherence of each registered person</string>
+    <string name="case_confirmation_description">Case Confirmation</string>
+    <string name="house">Concession</string>
+
+    <string name="unenumerated_structure">Structure non enquété</string>
+    <string name="form_not_found">Formulaire non trouvé</string>
+    <string name="edit_member_form_title">Editer les membre de la famille</string>
+
+    <string name="view_tasks">Vue\n Taches</string>
+    <string name="tasks_complete">Taches complétées</string>
+    <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
+
+    <string name="classification_details">Détails de la classification</string>
+    <string name="view">Vue</string>
+    <string name="family_details">Détails de la famille</string>
+    <string name="family_name_format">Nom de la famille: %1s</string>
+    <string name="village_town_format">Village Ville: %1s</string>
+    <string name="quarter_clan_format">Carré/Clan: %1s</string>
+    <string name="street_format">Rue: %1s</string>
+    <string name="landmark_format">Point de repére: %1s</string>
+    <string name="family_member_data">Données de numéro de famille</string>
+    <string name="surname_format">Nom de famille: %1s</string>
+    <string name="first_name_format">Prénom: %1s</string>
+    <string name="middle_name_format">Autre(s) prénom(s): %1s</string>
+    <string name="dob_format">Date de naissance : %1s</string>
+    <string name="case_classification_data">Données de classification du cs</string>
+    <string name="case_number_format">Case Number: %1s</string>
+    <string name="case_classification_format">Case Classification: %1s</string>
+    <string name="focus_reason_format">Focus Reason: %1s</string>
+    <string name="focus_status_format">Focus Status: %1s</string>
+    <string name="return_to_register">Retour</string>
+    <string name="index_case_not_found">Index Case details not found</string>
+    <string name="detect_case_button">Detect Case</string>
+
+    <string name="not_visited">Non Visitées</string>
+    <string name="not_sprayed">Non Traitées</string>
+    <string name="sprayed">Traitées</string>
+    <string name="not_sprayable">Non éligible</string>
+    <string name="complete">Compléte</string>
+    <string name="incomplete">Incompléte</string>
+    <string name="in_progress">En cours</string>
+    <string name="not_eligible">Non Eligible</string>
+    <string name="plans_download_on_progress_title">Téléchargement en cours</string>
+    <string name="plans_download_on_progress">Téléchargement des plans en cours. Merci de patienter</string>
+    <string name="numero_sign">Non.</string>
+    <string name="register_outside_boundary_title">Enregistrer la structure en dehors des limites de la zone ?</string>
+    <string name="register_outside_boundary_warning">Attention : cet emplacement est au-delà des limites de la zone opérationnelle sélectionnée. Si vous continuez, la structure peut être ajoutée à une zone incorrecte</string>
+    <string name="register">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="partially_sprayed">Traitement partiel</string>
+    <string name="daily_summary">Renseigner le formualire de synthése journaliére</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
+    <string name="team_leader_dos">Enter Team Leader DOS Form</string>
+    <string name="cb_spray_area">Enter CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision">Renseigner le formulaire de décision IRS SA</string>
+    <string name="mobilization_form">Enter Mobilization Form</string>
+    <string name="irs_field_officer">Renseigner le formulaire AID d\'agent de terrain</string>
+    <string name="verification_form">Enter Verification Form</string>
+
+
+    <string name="last_edited">Edited %1s</string>
+    <string name="device_to_device_sync">P2P Sync</string>
+
+
+    <string name="found_coverage">Found Coverage</string>
+    <string name="spray_coverage">Taux d\'aspersion (Couverture)</string>
+    <string name="structures_remaining_90">Structures restantes 90%</string>
+    <string name="total_structures">Total structures</string>
+    <string name="structures_not_visited">Strutcures non visitées</string>
+    <string name="structures_visited_found">Structures visitées/trouvées</string>
+    <string name="structures_sprayed">Structures Sprayed</string>
+    <string name="structures_not_sprayed">Sttructures non traitées</string>
+    <string name="room_coverage">Room coverage of sprayed</string>
+    <string name="target_coverage">Target coverage</string>
+    <string name="structures_targeted">Structures targeted</string>
+    <string name="n_percent">%1$d%%</string>
+    <string name="indicator">Indicator</string>
+    <string name="value">Value</string>
+
+    <string name="spray_success_rate">Spray Success Rate</string>
+
+
+    <string name="do_not_edit_client_records_until_complete">Do not edit records until complete.</string>
+    <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit records until the process is complete.</string>
+
+    <string name="dispense_mda">Dispense MDA</string>
+    <string name="adhere_mda">Adhere MDA</string>
+
+    <string name="irs_verification">IRS Verification</string>
+    <string name="not_true_structure">Not True Structure</string>
+    <string name="structure_ineligible">Structure Ineligible</string>
+    <string name="reported_spray_status">Reported Spray Status</string>
+    <string name="chalk_spray_status">Chalk Spray Status</string>
+    <string name="sticker_spray_status">Sticker Spray Status</string>
+    <string name="card_spray_status">Card Spray Status</string>
+    <string name="structure_not_found_or_visited_during_campaign">Structure not found or visited during campaign</string>
+    <string name="other">Other</string>
+
+    <string name="synced_events">Synced events:</string>
+    <string name="unsynced_events">Unsynced events:</string>
+    <string name="synced_clients">Synced clients:</string>
+    <string name="unsynced_clients">Unsynced clients:</string>
+    <string name="validated_events">Validated events:</string>
+    <string name="validated_clients">Validated clients:</string>
+    <string name="task_unprocessed_events">Task unprocessed events:</string>
+
+    <string name="refresh">Refresh</string>
+    <string name="export_db_notification">Exporting Database</string>
+    <string name="operational_area_not_selected">Operational Area not selected</string>
+    <string name="archive_member">Archive Member</string>
+    <string name="confirm_archive_member">Are you sure you want archive family member? All tasks and events will be archived </string>
+    <string name="confirm">Confirm</string>
+    <string name="archive_member_failed" formatted="false">Archiving member %1s %2s failed</string>
+    <string name="archive_family">Archive Household</string>
+    <string name="confirm_archive_family">Confirm Household Archival</string>
+    <string name="confirm_archive_family_message">Please confirm that you want to archive this household. This will delete all information and can not be undone.</string>
+    <string name="archive_family_failed">Archiving family %1s failed</string>
+
+    <string name="mark_location_inactive">Mark Location Inactive</string>
+    <string name="confirm_mark_location_inactive">Please confirm that this location should be marked inactive</string>
+    <string name="cannot_make_structure_inactive">You can not make this structure inactive because tasks are completed against it</string>
+    <string name="mark_location_ineligible">Mark Location Ineligible</string>
+    <string name="is_structure_eligible_for_fam_reg">Is this location eligible to register a family?</string>
+    <string name="ineligible_location">Ineligible Location</string>
+    <string name="eligible">Eligible</string>
+    <string name="not_eligible_unoccupied">Not Eligible: Currently Unoccupied</string>
+    <string name="not_eligible_other">Not Eligible: Other</string>
+    <string name="available">available</string>
+    <string name="downloaded">Downloaded</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading</string>
+    <string name="delete">Delete</string>
+    <string name="delete_caps">DELETE</string>
+    <string name="select_offline_map_to_delete">Please select an offline map to delete</string>
+    <string name="select_offline_map_to_download">Please select an offline map to download</string>
+    <string name="offline_map_size">Size %1$s Downloaded %2$s </string>
+    <string name="download_finished_successfuly">Download finished successfuly</string>
+    <string name="map_download_progress">Downloading: %,.2f %%</string>
+
+    <string name="menu">Menu</string>
+    <string name="add_structure">Register Structure</string>
+    <string name="filter">Filter</string>
+    <string name="filters">Filters (%1$d)</string>
+    <string name="clear">Clear</string>
+    <string name="sort_by">Sort by</string>
+    <string name="status">Status</string>
+    <string name="structure">Structure</string>
+    <string name="person">Person</string>
+    <string name="family">Family</string>
+    <string name="task_type">Task type</string>
+    <string name="intervention_unit">Intervention Unit</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="apply_filters_formatter">Apply Filters (%1$d)</string>
+    <string name="bcc_code">BCC</string>
+    <string name="mosquito_collection">Mosquito Collection</string>
+    <string name="larval_dipping">Larval dipping</string>
+    <string name="bednet_distribution">Bednet Distribution</string>
+    <string name="blood_screening">Blood Screening</string>
+    <string name="case_confirmation">Case Confirmation</string>
+    <string name="paot">PAOT</string>
+    <string name="mda_dispense">MDA Dispense</string>
+    <string name="mda_adherence">MDA Adherence</string>
+    <string name="bednet_distributed">Bednet Distributed</string>
+    <string name="family_registered">Family Registered</string>
+    <string name="blood_screening_complete">Blood Screening Complete</string>
+
+    <!-- form -->
+    <string name="add_fam">Household Registration</string>
+
+    <string-array name="task_sort_options">
+        <item>Distance (nearest first)</item>
+        <item>Status</item>
+        <item>Type</item>
+    </string-array>
+
+    <string-array name="form_sort_options">
+        <item>Date (Recent)</item>
+        <item>Form Name</item>
+        <item>SOP</item>
+    </string-array>
+
+    <string-array name="task_sort_options_namibia">
+        <item>Distance (nearest first)</item>
+        <item>Status</item>
+    </string-array>
+
+    <string name="select_task_action">Select action to perform</string>
+    <string name="choose_action">Choose action</string>
+    <string name="view_details">View Details</string>
+    <string name="undo">Undo</string>
+    <string name="reseting_task_title">Resetting Task Information</string>
+    <string name="reseting_task_msg">Resetting Task Information. Please wait</string>
+    <string name="undo_task_title">Are you sure you want to clear all data associated with this event?</string>
+    <string name="undo_task_msg">You will not be able to recover this data and this task will be marked as incomplete</string>
+    <string name="localhost_url">http://localhost:%1$d/</string>
+    <string name="index_case_confirmed">Index Case Confirmed</string>
+
+    <string name="tested">Tested</string>
+    <string name="done">Done</string>
+    <string name="not_tested">Not Tested</string>
+    <string name="yes">Yes</string>
+
+    <string name="save_point">Save Point</string>
+    <string name="change_point">Change Point</string>
+    <string name="save_boundary">Save Boundary</string>
+    <string name="stop_drawing">Stop Drawing</string>
+    <string name="circle_clicked">Circle clicked</string>
+    <string name="circle_not_clicked">Circle not clicked</string>
+    <string name="start_drawing">Start Drawing</string>
+    <string name="edit_boundary">Edit Boundary</string>
+    <string name="discard">Discard</string>
+    <string name="delete_point_title">Delete Point?</string>
+    <string name="delete_point_msg">This will remove the point from the boundary</string>
+    <string name="discard_changes_title">Discard Changes?</string>
+    <string name="discard_changes_msg">This will undo any unsaved edits you have made on the boundary</string>
+    <string name="tap_point_msg">Tap black point to move or delete</string>
+    <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
+    <string name="progressBarLabel" formatted="false">Syncing %s : %d%% </string>
+    <string name="device_data_synced">Device data synced</string>
+    <string name="device_data_not_synced">Device data not synced</string>
+    <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
+
+    <string name="filled_forms">Formulaires renseignés</string>
+    <string name="event_date">Date</string>
+    <string name="form_name">Form Name</string>
+    <string name="sop">SOP</string>
+    <string name="hh_village_name">HH/ village Name</string>
+    <string name="daily_summary_status">%1$dF/%2$dS/%3$dNS</string>
+    <string name="search">Search</string>
+    <string name="hh_form">HH Form</string>
+    <string name="daily_summary_name">Daily Summary Form</string>
+    <string name="team_leader_dos_form">Team Leader DOS Form</string>
+    <string name="cb_spray_area_form">CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision_form">IRS SA Decision Form</string>
+    <string name="mobilization_form_name">Mobilization Form</string>
+    <string name="irs_field_officer_form">IRS Field Officer Form</string>
+    <string name="verification_form_name"> Verification Form</string>
+    <string name="irs_lite_verification_form_name">IRS Lite Verification Form</string>
+
+    <string name="total_structures_targeted">Total structures targeted</string>
+
+    <string name="households_not_visited">Registered households not visited</string>
+    <string name="structure_is_inactive">This structure is inactive</string>
+    <string name="filter_by_date">Filter By Date</string>
+
+    <string name="date_format">DD-MM-YYYY</string>
+    <string name="view_all_events">View All Events</string>
+    <string name="point_within_known_operational_area">This point falls within the boundaries of another operational area (%1$s). Would you like to add it to that operational area or undo</string>
+    <string name="add_point">Add Point</string>
+    <string name="add_structure_form_redirecting">Redirecting you to operational area (%1$s) so you can collect information against this point.</string>
+    <string name="error_occurred_saving_form">Error Occurred Saving form</string>
+    <string name="point_not_within_known_operational_area">This point falls outside of any operational area boundaries known at this time and will be added to an ‘other’ area (%1$s) for this HFCA.</string>
+    <string name="other_operational_area_not_defined">Operational area called ‘other’ for this HFCA does not exist. Please contact the system administrator noting operational area number %1$s.</string>
+    <string name="point_not_within_other_operational_area">This point falls outside of any operational area boundaries known. Add the point to current Operational area which is the ‘other’ area (%1$s) for this HFCA.</string>
+
+    <string name="p2p_locations">P2P Sync Locations</string>
+    <string name="start_p2p_syc">Start P2P Sync</string>
+
+    <string name="events">Events</string>
+    <string name="sync_started">Sync Started</string>
+    <string name="ok">Done</string>
+    <string name="locations">Locations</string>
+    <string name="plans">Plans</string>
+    <string name="structures">Structures</string>
+    <string name="tasks_text">Tasks</string>
+    <string name="registration_info">Registration info</string>
+    <string name="view_paot_details">View Details</string>
+    <string name="tablet_accountability_form">Enter Tablet Accountability Form</string>
+
+    <string name="edit_cdd_task_complete_status">Edit Task Complete Status</string>
+    <string name="confirm_edit_cdd_task_complete_status">Please confirm that the task is complete</string>
+    <string name="data_collection_date">Data Collected</string>
+    <string name="cancel_no">Cancel</string>
+    <string name="health_education_ages_5_to_15_years">Health education ages 5-15 yrs</string>
+    <string name="health_education_16_years_and_above">Health education 16 yrs above</string>
+    <string name="vitamina_total_6_to_11_months">Vitamin A total 6-11 month</string>
+    <string name="vitamina_total_12_to_59_months">Vitamin A total 12-59 months</string>
+    <string name="alb_meb_total_12_to_59_months">ALB/MEB total 12-59 months</string>
+    <string name="alb_meb_total_5_to_15_years">ALB/MEB total 5-15 years</string>
+    <string name="alb_meb_total_16_years_and_above">ALB/MEB total 16 years and above</string>
+    <string name="pzq_total_5_to_15_years">PZQ total 5-15 years</string>
+    <string name="pzq_total_16_years_and_above">PZQ total 16 years and above</string>
+    <string name="click_to_show_indicators">Click Here to show Indicators</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="search_hint">Find name or ID</string>
+    <string name="account_disabled">Account Disabled</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="loading_client_settings">Loading client settings…</string>
+    <string name="syncing">Syncing...</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="fpp_form_name">FPP Form</string>
+
+</resources>

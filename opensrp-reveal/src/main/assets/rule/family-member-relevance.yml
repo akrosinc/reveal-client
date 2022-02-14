@@ -40,3 +40,10 @@ priority: 1
 condition: "step1_age_unknown.contains('age_unknown')"
 actions:
  - "isRelevant = true"
+
+name: step1_occupation
+description: age relevance
+priority: 1
+condition: "step1_age >= 18"
+actions:
+  - "isRelevant = true"

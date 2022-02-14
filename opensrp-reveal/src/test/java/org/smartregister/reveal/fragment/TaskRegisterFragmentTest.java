@@ -154,7 +154,7 @@ public class TaskRegisterFragmentTest extends BaseUnitTest {
 
     @Test
     public void testStartMapActivity() {
-        TaskFilterParams params = new TaskFilterParams("Doe");
+        TaskFilterParams params =TaskFilterParams.builder().searchPhrase("Doe").build();
         fragment.startMapActivity(params);
         assertTrue(activity.isFinishing());
     }
@@ -244,7 +244,7 @@ public class TaskRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testStartForm() {
         JSONObject form = new JSONObject();
-        fragment.startForm(form, false);
+        fragment.startForm(form);
         Intent intent = shadowOf(activity).getNextStartedActivity();
         assertEquals(RevealJsonFormActivity.class, shadowOf(intent).getIntentClass());
         assertEquals(form.toString(), intent.getStringExtra(JSON_FORM_PARAM_JSON));
@@ -414,7 +414,7 @@ public class TaskRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testOnActivityResultFilterTasks() {
         Intent intent = new Intent();
-        TaskFilterParams params = new TaskFilterParams("");
+        TaskFilterParams params = TaskFilterParams.builder().build();
         intent.putExtra(FILTER_SORT_PARAMS, params);
         fragment.onActivityResult(REQUEST_CODE_FILTER_TASKS, RESULT_OK, intent);
         verify(presenter).filterTasks(params);

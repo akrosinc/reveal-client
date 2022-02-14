@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.customviews.TreeViewDialog;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ import org.smartregister.reveal.presenter.BaseDrawerPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants.Tags;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 
 import java.text.SimpleDateFormat;
@@ -157,12 +159,24 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
         planTextView.setOnClickListener(this);
 
-        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.NIGERIA) { // Enable P2P sync and other forms
+        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) { // Enable P2P sync and other forms
             p2pSyncTextView.setVisibility(View.VISIBLE);
             p2pSyncTextView.setOnClickListener(this);
 
             summaryFormsTextView.setVisibility(View.VISIBLE);
             summaryFormsTextView.setOnClickListener(this);
+
+            TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
+            filledForms.setVisibility(View.VISIBLE);
+            filledForms.setOnClickListener(this);
+
+        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA || BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+            summaryFormsTextView.setVisibility(View.VISIBLE);
+            summaryFormsTextView.setOnClickListener(this);
+
+            TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
+            filledForms.setVisibility(View.VISIBLE);
+            filledForms.setOnClickListener(this);
 
         }
 
@@ -237,6 +251,15 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
 
     }
+
+    @Override
+    public void lockNavigationDrawerForSelection(int title, int message) {
+        AlertDialogUtils.displayNotification(getContext(), title, message);
+        mDrawerLayout.openDrawer(GravityCompat.START);
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+
+    }
+
 
     @Override
     public void unlockNavigationDrawer() {
@@ -330,6 +353,8 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             startOtherFormsActivity();
         else if (v.getId() == R.id.btn_navMenu_offline_maps)
             presenter.onShowOfflineMaps();
+        else if (v.getId() == R.id.btn_navMenu_filled_forms)
+            presenter.onShowFilledForms();
         else if (v.getId() == R.id.sync_button) {
             toggleProgressBarView(true);
             org.smartregister.reveal.util.Utils.startImmediateSync();
@@ -348,7 +373,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     }
 
     private void startP2PActivity() {
-        getContext().startActivity(new Intent(getContext(), P2pModeSelectActivity.class));
+        getContext().startActivity(new Intent(getContext(), LocationPickerActivity.class));
     }
 
     @Override
@@ -370,7 +395,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         TextView syncBadge = this.activity.getActivity().findViewById(R.id.sync_label);
         if (progressBar == null || syncBadge == null)
             return;
-        if (syncing) {
+        if (syncing && NetworkUtils.isNetworkAvailable()) { //only hide the sync button when there is internet connection
             progressBar.setVisibility(View.VISIBLE);
             progressLabel.setVisibility(View.VISIBLE);
             syncButton.setVisibility(View.INVISIBLE);

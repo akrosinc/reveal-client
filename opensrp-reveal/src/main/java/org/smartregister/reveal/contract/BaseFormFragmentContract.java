@@ -23,10 +23,6 @@ public interface BaseFormFragmentContract {
         void onFetchedFamilyMembers(JSONArray familyMembers, JSONObject formJSON);
 
         void onFetchedSprayDetails(CommonPersonObject commonPersonObject, JSONObject formJSON);
-
-//        void onFetchedDispensedFamilyMembers(JSONArray numberOfDispensedMembers, JSONObject formJSON);
-//
-//        void onFetchedAdditionalDoseFamilyMembers(Pair<Integer, Integer> numberOfAdditionalDoses, JSONObject formJSON);
     }
 
     interface View extends UserLocationContract.UserLocationView {
@@ -34,7 +30,7 @@ public interface BaseFormFragmentContract {
 
         RevealJsonFormUtils getJsonFormUtils();
 
-        void startForm(JSONObject formJSON, boolean readOnly);
+        void startForm(JSONObject formJSON);
 
         void displayError(int title, int message);
     }

@@ -15,6 +15,7 @@ import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
@@ -33,14 +34,15 @@ import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.GeoJSON;
-import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.GeoJsonUtils;
 import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.InteractorUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ import static org.smartregister.family.util.Constants.KEY.FAMILY_HEAD_NAME;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.DBConstants.KEY.RELATIONAL_ID;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.AUTHORED_ON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASE_ENTITY_ID;
@@ -64,6 +67,7 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_STRU
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FIRST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_UPDATED_DATE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NAME;
@@ -101,6 +105,9 @@ import static org.smartregister.reveal.util.Utils.getPropertyValue;
 /**
  * Created by samuelgithengi on 11/27/18.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class ListTaskInteractor extends BaseInteractor {
 
     private CommonRepository commonRepository;
@@ -108,7 +115,7 @@ public class ListTaskInteractor extends BaseInteractor {
     private StructureRepository structureRepository;
     private TaskRepository taskRepository;
     private RevealApplication revealApplication;
-
+    private List<TaskDetails> taskDetails;
     public ListTaskInteractor(ListTaskContract.Presenter presenter) {
         super(presenter);
         commonRepository = RevealApplication.getInstance().getContext().commonrepository(SPRAYED_STRUCTURES);
@@ -116,6 +123,7 @@ public class ListTaskInteractor extends BaseInteractor {
         taskRepository = RevealApplication.getInstance().getTaskRepository();
         interactorUtils = new InteractorUtils(taskRepository, eventClientRepository, clientProcessor);
         revealApplication = RevealApplication.getInstance();
+        taskDetails = new ArrayList<>();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -260,6 +268,10 @@ public class ListTaskInteractor extends BaseInteractor {
     }
 
     public void fetchLocations(String plan, String operationalArea) {
+        fetchLocations(plan, operationalArea, null, null);
+    }
+
+    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
         Runnable runnable = new Runnable() {
 
             @Override
@@ -294,7 +306,11 @@ public class ListTaskInteractor extends BaseInteractor {
                         if (operationalAreaLocation != null) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
-                            getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList);
+                            if (locationComponentActive != null) {
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList, point, locationComponentActive);
+                            } else {
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList);
+                            }
                         } else {
                             getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
                         }
@@ -314,13 +330,13 @@ public class ListTaskInteractor extends BaseInteractor {
         SmartRegisterQueryBuilder queryBuilder = new SmartRegisterQueryBuilder();
         queryBuilder.selectInitiateMainTable(STRUCTURES_TABLE, new String[]{
                 String.format("COALESCE(%s.%s,%s,%s,%s)", FAMILY, FIRST_NAME, STRUCTURE_NAME, NAME, FAMILY_HEAD_NAME),
-                String.format("group_concat(%s.%s||' '||%s.%s)", FAMILY_MEMBER, FIRST_NAME, FAMILY_MEMBER, LAST_NAME)}, ID);
+                String.format("group_concat(%s.%s||' '||%s.%s)", FAMILY_MEMBER, FIRST_NAME, FAMILY_MEMBER, LAST_NAME)}, ID_);
         queryBuilder.customJoin(String.format("LEFT JOIN %s ON %s.%s = %s.%s AND %s.%s IS NULL collate nocase ",
-                FAMILY, STRUCTURES_TABLE, ID, FAMILY, STRUCTURE_ID, FAMILY, DATE_REMOVED));
+                FAMILY, STRUCTURES_TABLE, ID_, FAMILY, STRUCTURE_ID, FAMILY, DATE_REMOVED));
         queryBuilder.customJoin(String.format("LEFT JOIN %s ON %s.%s = %s.%s AND %s.%s IS NULL collate nocase ",
                 FAMILY_MEMBER, FAMILY, BASE_ENTITY_ID, FAMILY_MEMBER, RELATIONAL_ID, FAMILY_MEMBER, DATE_REMOVED));
         queryBuilder.customJoin(String.format("LEFT JOIN %s ON %s.%s = %s.%s collate nocase ",
-                SPRAYED_STRUCTURES, STRUCTURES_TABLE, ID, SPRAYED_STRUCTURES, BASE_ENTITY_ID));
+                SPRAYED_STRUCTURES, STRUCTURES_TABLE, ID_, SPRAYED_STRUCTURES, ID));
         return queryBuilder.mainCondition(mainCondition);
     }
 
@@ -329,7 +345,7 @@ public class ListTaskInteractor extends BaseInteractor {
         Map<String, StructureDetails> structureNames = new HashMap<>();
         try {
             String query = getStructureNamesSelect(String.format("%s=?",
-                    Constants.DatabaseKeys.PARENT_ID)).concat(String.format(" GROUP BY %s.%s", STRUCTURES_TABLE, ID));
+                    Constants.DatabaseKeys.PARENT_ID)).concat(String.format(" GROUP BY %s.%s", STRUCTURES_TABLE, ID_));
             Timber.d(query);
             cursor = getDatabase().rawQuery(query, new String[]{parentId});
             while (cursor.moveToNext()) {
@@ -383,12 +399,18 @@ public class ListTaskInteractor extends BaseInteractor {
             structure.getProperties().setStatus(INACTIVE);
             structureRepository.addOrUpdate(structure);
 
-
-            taskRepository.cancelTasksForEntity(feature.id());
+            String taskIdentifier = feature.getStringProperty(TASK_IDENTIFIER);
+            taskRepository.cancelTaskByIdentifier(taskIdentifier);
 
             revealApplication.setSynced(false);
         } catch (Exception e) {
             Timber.e(e);
+        }
+        LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
+        Location currentOperationalArea = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
+        if(currentOperationalArea != null) {
+            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getId());
+            this.setTaskDetails(IndicatorUtils.processTaskDetails(tasks));
         }
 
         appExecutors.mainThread().execute(new Runnable() {
@@ -410,20 +432,18 @@ public class ListTaskInteractor extends BaseInteractor {
             Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
             Map<String, String> details = new HashMap<>();
             details.put(TASK_IDENTIFIER, taskIdentifier);
+            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
+            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             details.put(Constants.Properties.LOCATION_ID, feature.id());
             details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            details.put(Constants.Properties.PLAN_IDENTIFIER,task.getPlanIdentifier());
             task.setBusinessStatus(NOT_ELIGIBLE);
             task.setStatus(Task.TaskStatus.COMPLETED);
             task.setLastModified(new DateTime());
-            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
-            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             taskRepository.addOrUpdate(task);
             revealApplication.setSynced(false);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details, FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
             event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible").withFieldType("formsubmissionField"));
             event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible").withFieldType("formsubmissionField"));
-            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS).withFieldType(JsonForm.BUSINESS_STATUS));
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
@@ -442,7 +462,7 @@ public class ListTaskInteractor extends BaseInteractor {
 
     private String[] getStructureColumns() {
         return new String[]{
-                TASK_TABLE + "." + ID,
+                TASK_TABLE + "." + ID_,
                 TASK_TABLE + "." + CODE,
                 TASK_TABLE + "." + FOR,
                 TASK_TABLE + "." + BUSINESS_STATUS,
@@ -453,7 +473,7 @@ public class ListTaskInteractor extends BaseInteractor {
 
     public String getTaskSelect(String mainCondition) {
         SmartRegisterQueryBuilder queryBuilder = new SmartRegisterQueryBuilder();
-        queryBuilder.selectInitiateMainTable(TASK_TABLE, getStructureColumns(), ID);
+        queryBuilder.selectInitiateMainTable(TASK_TABLE, getStructureColumns(), ID_);
         return queryBuilder.mainCondition(mainCondition);
     }
 
@@ -495,7 +515,7 @@ public class ListTaskInteractor extends BaseInteractor {
     }
 
     public StructureTaskDetails readTaskDetails(Cursor cursor) {
-        StructureTaskDetails task = new StructureTaskDetails(cursor.getString(cursor.getColumnIndex(ID)));
+        StructureTaskDetails task = new StructureTaskDetails(cursor.getString(cursor.getColumnIndex(ID_)));
         task.setTaskCode(cursor.getString(cursor.getColumnIndex(CODE)));
         task.setTaskEntity(cursor.getString(cursor.getColumnIndex(FOR)));
         task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
@@ -507,6 +527,39 @@ public class ListTaskInteractor extends BaseInteractor {
     @Override
     public void handleLasteventFound(org.smartregister.domain.Event event) {
         getPresenter().onEventFound(event);
+    }
+
+    public void editCDDTaskCompleteStatus(Feature feature, boolean isTaskComplete) {
+
+        String taskIdentifier = getPropertyValue(feature, TASK_IDENTIFIER);
+
+        Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
+        Map<String, String> details = new HashMap<>();
+        details.put(TASK_IDENTIFIER, taskIdentifier);
+        details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
+        details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
+        details.put(Constants.Properties.LOCATION_ID, feature.id());
+        details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+        String businessStatus = isTaskComplete ? COMPLETE : IN_PROGRESS;
+        task.setBusinessStatus(businessStatus);
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        task.setLastModified(new DateTime());
+        taskRepository.addOrUpdate(task);
+        revealApplication.setSynced(false);
+        appExecutors.mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                ((ListTaskPresenter) presenterCallBack).onCDDTaskCompleteStatusEdited(businessStatus);
+            }
+        });
+    }
+
+    public List<TaskDetails> getTaskDetails() {
+        return taskDetails;
+    }
+
+    public void setTaskDetails(List<TaskDetails> taskDetails) {
+        this.taskDetails = taskDetails;
     }
 
 }

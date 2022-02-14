@@ -3,6 +3,7 @@ package org.smartregister.reveal.server;
 import android.content.Context;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.util.Utils;
 
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ public class FileHTTPServer {
     public static final int PORT = 9783;
 
     private static final String DEFAULT_STYLE_JSON_FILE = "map-download-style.json";
+    private static final String DEFAULT_DG_ID_PLACEHOLDER = "DIGITAL_GLOBE_ID";
     private String styleJson;
 
     private final FileHTTPServer.ServerThread server;

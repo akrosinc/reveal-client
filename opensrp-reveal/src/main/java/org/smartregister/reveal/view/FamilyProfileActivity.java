@@ -27,12 +27,6 @@ import org.smartregister.reveal.fragment.StructureTasksFragment;
 import org.smartregister.reveal.model.FamilyProfileModel;
 import org.smartregister.reveal.model.FamilyRegisterModel;
 import org.smartregister.reveal.presenter.FamilyProfilePresenter;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.FamilyConstants;
-import org.smartregister.util.JsonFormUtils;
-
-import timber.log.Timber;
 
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;

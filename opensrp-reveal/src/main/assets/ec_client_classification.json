@@ -15,6 +15,15 @@
           },
           {
             "field": "eventType",
+            "field_value": "irs_lite_verification",
+            "creates_case": [
+              "sprayed_structures",
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
             "field_value": "Register_Structure",
             "creates_case": [
               "sprayed_structures"
@@ -117,16 +126,87 @@
           },
           {
             "field": "eventType",
-            "field_value": "mda_adherence",
+            "field_value": "daily_summary",
             "creates_case": [
-              "ec_family_member"
+              "ec_events"
             ]
           },
           {
             "field": "eventType",
-            "field_value": "mda_dispense",
+            "field_value": "team_leader_dos",
             "creates_case": [
-              "ec_family_member"
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "irs_sa_decision",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "mobilization",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "irs_field_officer",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "verification",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "cdd_supervisor_daily_summary",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "tablet_accountability",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "cell_coordinator_daily_summary",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "FPP",
+            "creates_case": [
+              "ec_events"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "comment": "ec_events: This rule maps to ec_events table used for filled forms",
+      "rule": {
+        "type": "event",
+        "fields": [
+          {
+            "field": "eventType",
+            "field_value": "Spray",
+            "creates_case": [
+              "ec_events"
             ]
           }
         ]

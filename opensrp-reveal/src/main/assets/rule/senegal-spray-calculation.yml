@@ -1,0 +1,66 @@
+---
+name: step1_sprayed_totalpop
+description: step1_sprayed_totalpop
+priority: 1
+condition: "true"
+actions:
+- "calculation = Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0))"
+---
+name: step1_sprayed_totalpop_toaster_info
+description: step1_sprayed_totalpop_toaster_info
+priority: 1
+condition: "true"
+actions:
+  - "calculation = ['sprayed_totalpop' : step1_sprayed_totalpop]"
+---
+name: step1_sprayed_totalpop_approve
+description: step1_sprayed_totalpop_approve
+priority: 1
+condition: "true"
+actions:
+  - "calculation = ['sprayed_totalpop' : step1_sprayed_totalpop]"
+---
+name: step1_business_status
+description: Task business status
+priority: 1
+condition: "true"
+actions:
+  - "calculation = (step1_eligibility.equals('notEligible')  || step1_nonresidential_type.equals('other') || step1_nonresidential_type.equals('notHabitable') || step1_nonresidential_type.equals('noStructure') || step1_nonresidential_type.equals('clinic') || step1_nonresidential_type.equals('hospital') || step1_nonresidential_type.equals('office') || step1_nonresidential_type.equals('shop') ||  step1_nonresidential_type.equals('lodge') || step1_nonresidential_type.equals('school') || step1_nonresidential_type.equals('foodStorage') || step1_nonresidential_type.equals('animalShelter') || step1_nonresidential_type.equals('kitchen') ) ? 'Not Eligible' : (step1_structure_sprayed.equals('no')) ? 'Not Sprayed' : ((step1_eligibility.equals('eligible') && step1_nonresidential_type.equals('toilet')) ||(Integer.valueOf(helper.ifNull(step1_rooms_eligible,0)) > 0 && Integer.valueOf(helper.ifNull(step1_rooms_eligible,0)) >= Integer.valueOf(helper.ifNull(step1_rooms_sprayed,0)))||(step1_eligibility.equals('eligible') && step1_nonresidential_type.equals('foodStorage'))) ? 'Complete' : 'Not Visited'"
+---
+name: step1_business_status_toaster
+description: step1_business_status_toaster
+priority: 1
+condition: "true"
+actions:
+  - "calculation = ['business_status' : step1_business_status]"
+---
+name: step1_sprayed_totalmale
+description: step1_sprayed_totalmale
+priority: 1
+condition: "true"
+actions:
+  - "calculation = step1_genderHoH=='male' ? 1:0"
+---
+name: step1_sprayed_totalfemale
+description: step1_sprayed_totalmale
+priority: 1
+condition: "true"
+actions:
+  - "calculation = step1_genderHoH=='female' ? 1:0"
+---
+name: step1_rooms_not_sprayed
+description: step1_rooms_not_sprayed
+priority: 1
+condition: "true"
+actions:
+  - "calculation = Integer.valueOf(helper.ifNull(step1_rooms_eligible,0)) - Integer.valueOf(helper.ifNull(step1_rooms_sprayed,0))"
+
+---
+name: step1_notsprayed_totalpop
+description: step1_notsprayed_totalpop
+priority: 1
+condition: "true"
+actions:
+  - "calculation = Integer.valueOf(helper.ifNull(step1_notsprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_notsprayed_females,0))"
+
+

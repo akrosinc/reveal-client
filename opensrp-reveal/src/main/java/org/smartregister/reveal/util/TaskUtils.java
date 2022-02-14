@@ -68,14 +68,18 @@ public class TaskUtils {
     }
 
     public void generateBloodScreeningTask(Context context, String entityId, String structureId) {
-        generateTask(context, entityId, structureId, BusinessStatus.NOT_VISITED, Intervention.BLOOD_SCREENING,
-                R.string.blood_screening_description);
+        if (planActionCodesContainIntervention(prefsUtil.getCurrentPlanId(), Intervention.BLOOD_SCREENING)) {
+            generateTask(context, entityId, structureId, BusinessStatus.NOT_VISITED, Intervention.BLOOD_SCREENING,
+                    R.string.blood_screening_description);
+        }
 
     }
 
     public void generateBedNetDistributionTask(Context context, String entityId) {
-        generateTask(context, entityId, entityId, BusinessStatus.NOT_VISITED, Intervention.BEDNET_DISTRIBUTION,
-                R.string.bednet_distribution_description);
+        if (planActionCodesContainIntervention(prefsUtil.getCurrentPlanId(), Intervention.BEDNET_DISTRIBUTION)) {
+            generateTask(context, entityId, entityId, BusinessStatus.NOT_VISITED, Intervention.BEDNET_DISTRIBUTION,
+                    R.string.bednet_distribution_description);
+        }
     }
 
     public Task generateTask(Context context, String entityId, String structureId, String businessStatus, String intervention, @StringRes int description) {
@@ -126,6 +130,9 @@ public class TaskUtils {
                 R.string.mda_dispense_desciption);
     }
 
+    public void generateMDAAdherenceTask(Context context, String entityId, String structureId) {
+        generateTask(context, entityId, structureId, BusinessStatus.NOT_VISITED, Intervention.MDA_ADHERENCE,
+                R.string.mda_adherence_desciption);
     // SPAQ Task
 
     public void generateMDAAdherenceTask(Context context, String entityId, String structureId, String admininistedSpaq) {
@@ -205,5 +212,9 @@ public class TaskUtils {
 
     }
 
+    public boolean planActionCodesContainIntervention(String planId, String intervention) {
+        List<String> actionCodes = prefsUtil.getActionCodesForPlan(planId);
+        return actionCodes.contains(intervention);
+    }
 
 }

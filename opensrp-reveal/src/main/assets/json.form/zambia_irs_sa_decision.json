@@ -1,6 +1,6 @@
 {
   "count": "1",
-  "encounter_type": "",
+  "encounter_type": "irs_sa_decision",
   "form_version": "0.0.1",
   "entity_id": "",
   "metadata": {
@@ -8,13 +8,13 @@
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "start",
-      "openmrs_entity_id": ""
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "end": {
       "openmrs_entity_parent": "",
       "openmrs_entity": "concept",
       "openmrs_data_type": "end",
-      "openmrs_entity_id": ""
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     },
     "today": {
       "openmrs_entity_parent": "",
@@ -52,13 +52,55 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "form_description_info",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Please fill this form out for any spray areas visited that has not reached 90% spray coverage",
+        "text_color": "#CF0800",
+        "toaster_type": "info"
+      },
+      {
         "key": "village",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Please write the name of the Village for this Spray Area",
-        "text_size": "8sp",
+        "text_size": "7sp",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Please enter a valid name"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "health_facility",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select Catchment name",
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "spray_areas",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "multi_select_list",
+        "buttonText": "Select Spray area name",
+        "dialogTitle": "Select Spray area name",
+        "searchHint": "Type Spray Area Name",
+        "source": "true",
+        "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -73,6 +115,7 @@
         "edit_type": "number",
         "hint": "How many structures are in this Spray Area? (structures on ground as listed on the Reveal dashboard)",
         "is_mandatory": true,
+        "text_size": "7sp",
         "v_required": {
           "value": true,
           "err": "This field is mandatory"
@@ -132,6 +175,7 @@
         "edit_type": "number",
         "hint": "How many structures were sprayed? (as listed on the Reveal dashboard)",
         "is_mandatory": true,
+        "text_size": "7sp",
         "v_required": {
           "value": true,
           "err": "This field is mandatory"
@@ -395,7 +439,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Please make sure the SUPs know where they can find all remaining structures that were missed.",
+        "text": "Please make sure the SOPs know where they can find all remaining structures that were missed.",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",
@@ -459,7 +503,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Please provide a valid reason for not returning to ensure this Spray Area is being Sprayed Effectively.",
-        "text_size": "8sp",
+        "text_size": "7sp",
         "v_required": {
           "value": "true",
           "err": "Required field"

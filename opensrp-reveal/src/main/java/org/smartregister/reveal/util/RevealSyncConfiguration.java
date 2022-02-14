@@ -1,6 +1,7 @@
 package org.smartregister.reveal.util;
 
 import android.text.TextUtils;
+import android.util.Pair;
 
 import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
@@ -11,6 +12,7 @@ import org.smartregister.reveal.activity.LoginActivity;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.view.activity.BaseLoginActivity;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,7 +39,7 @@ public class RevealSyncConfiguration extends SyncConfiguration {
 
     @Override
     public SyncFilter getSyncFilterParam() {
-            return SyncFilter.LOCATION;
+        return SyncFilter.LOCATION;
     }
 
     @Override
@@ -46,6 +48,7 @@ public class RevealSyncConfiguration extends SyncConfiguration {
             locationRepository = RevealApplication.getInstance().getLocationRepository();
         }
         return TextUtils.join(",", locationRepository.getAllLocationIds());
+
     }
 
     @Override
@@ -139,5 +142,15 @@ public class RevealSyncConfiguration extends SyncConfiguration {
     @Override
     public Class<? extends BaseLoginActivity> getAuthenticationActivity() {
         return LoginActivity.class;
+    }
+
+    @Override
+    public boolean firebasePerformanceMonitoringEnabled() {
+        return true;
+    }
+
+    @Override
+    public List<Pair<String, String>> getGlobalSettingsQueryParams() {
+        return Collections.singletonList(Pair.create("identifier", "global_configs"));
     }
 }

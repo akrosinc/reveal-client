@@ -1,6 +1,7 @@
 package org.smartregister.reveal.application;
 
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
@@ -10,6 +11,7 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
+import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -22,12 +24,14 @@ import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.configurableviews.ConfigurableViewsLibrary;
 import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.domain.Setting;
+import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.family.FamilyLibrary;
 import org.smartregister.family.activity.FamilyWizardFormActivity;
 import org.smartregister.family.domain.FamilyMetadata;
 import org.smartregister.family.util.DBConstants;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
@@ -39,13 +43,15 @@ import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.LoginActivity;
-import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
 import org.smartregister.reveal.job.RevealJobCreator;
 import org.smartregister.reveal.repository.RevealRepository;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.DatabaseKeys;
+import org.smartregister.reveal.util.Constants.EventsRegister;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealSyncConfiguration;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.FamilyProfileActivity;
@@ -75,7 +81,7 @@ import static org.smartregister.reveal.util.FamilyConstants.JSON_FORM;
 import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 
-public class RevealApplication extends DrishtiApplication implements TimeChangedBroadcastReceiver.OnTimeChangedListener {
+public class RevealApplication extends DrishtiApplication implements TimeChangedBroadcastReceiver.OnTimeChangedListener, ValidateAssignmentReceiver.UserAssignmentListener {
 
     private JsonSpecHelper jsonSpecHelper;
     private char[] password;
@@ -130,6 +136,12 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.REFAPP_EC_CLIENT_FIELDS);
+        } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
         } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
@@ -151,10 +163,17 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
 
         if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
             LangUtils.saveLanguage(getApplicationContext(), "th");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            LangUtils.saveLanguage(getApplicationContext(),"fr");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
+            LangUtils.saveLanguage(getApplicationContext(),"rw");
         } else {
             LangUtils.saveLanguage(getApplicationContext(), "en");
         }
         NativeFormLibrary.getInstance().setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());
+
+        ValidateAssignmentReceiver.init(this);
+        ValidateAssignmentReceiver.getInstance().addListener(this);
 
     }
 
@@ -213,6 +232,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         cleanUpSyncState();
         TimeChangedBroadcastReceiver.destroy(this);
         SyncStatusBroadcastReceiver.destroy(this);
+        ValidateAssignmentReceiver.destroy(this);
         super.onTerminate();
     }
 
@@ -285,7 +305,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             return metadata;
         }
 
-        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class, FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
+        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, JsonWizardFormActivity.class, FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
 
         if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
             metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
@@ -331,6 +351,9 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         } else if (tableName.equals(TABLE_NAME.FAMILY_MEMBER)) {
             return new String[]{DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.MIDDLE_NAME,
                     DBConstants.KEY.LAST_NAME, DBConstants.KEY.UNIQUE_ID};
+        } else if (tableName.equals(EventsRegister.TABLE_NAME)) {
+            return new String[]{DatabaseKeys.EVENT_DATE, DatabaseKeys.EVENT_TYPE, DatabaseKeys.SOP,
+                    DatabaseKeys.ENTITY, DatabaseKeys.STATUS};
         }
         return null;
     }
@@ -341,6 +364,9 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         } else if (tableName.equals(TABLE_NAME.FAMILY_MEMBER)) {
             return new String[]{DBConstants.KEY.DOB, DBConstants.KEY.DOD, DBConstants.KEY
                     .LAST_INTERACTED_WITH, DBConstants.KEY.DATE_REMOVED};
+        } else if (tableName.equals(EventsRegister.TABLE_NAME)) {
+            return new String[]{DatabaseKeys.PROVIDER_ID, DatabaseKeys.EVENT_DATE,
+                    DatabaseKeys.EVENT_TYPE, DatabaseKeys.STATUS, DatabaseKeys.SOP};
         }
         return null;
     }
@@ -415,5 +441,18 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
 
     public void setSynced(boolean synced) {
         this.synced = synced;
+    }
+
+    @Override
+    public void onUserAssignmentRevoked(UserAssignmentDTO userAssignmentDTO) {
+        PreferencesUtil preferencesUtil = PreferencesUtil.getInstance();
+        if (userAssignmentDTO.getJurisdictions().contains(preferencesUtil.getCurrentOperationalAreaId())) {
+            preferencesUtil.setCurrentOperationalArea(null);
+        }
+        if (userAssignmentDTO.getPlans().contains(preferencesUtil.getCurrentPlanId())) {
+            preferencesUtil.setCurrentPlan(null);
+            preferencesUtil.setCurrentPlanId(null);
+        }
+        getContext().anmLocationController().evict();
     }
 }

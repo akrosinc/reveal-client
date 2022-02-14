@@ -9,7 +9,7 @@ import org.smartregister.reveal.R;
 public class CardDetails {
     protected String status;
     private int statusMessage;
-    private int statusColor = R.color.family_no_task_registered;
+    private int statusColor = R.color.task_not_done;
     private String reason;
     private String comments;
     private String interventionType;

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.StringRes;
+import androidx.annotation.StringRes;
+import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -200,6 +202,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
         try {
 
             // get the event and the client from ec model
+
             JSONObject form = formUtils.getFormJson(formName);
             if (form != null) {
                 form.put(ENTITY_ID, client.getCaseId());
@@ -241,6 +244,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                     JSONObject oldFamNameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), DatabaseKeys.OLD_FAMILY_NAME);
                     oldFamNameField.put(VALUE,JsonFormUtils.getFieldValue(form.toString(),SURNAME));
                 }
+
                 return form;
             }
         } catch (Exception e) {
@@ -376,6 +380,13 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                 sameOptions.put(VALUE, false);
                 lookupField.put(VALUE, lookupName);
             }
+        JSONObject sameOptions = sameAsFamName.getJSONArray(JSON_FORM_KEY.OPTIONS).getJSONObject(0);
+        if (familyName.equals(lookupName)) {
+            sameOptions.put(VALUE, true);
+            lookupField.put(VALUE, "");
+        } else {
+            sameOptions.put(VALUE, false);
+            lookupField.put(VALUE, lookupName);
         }
     }
 

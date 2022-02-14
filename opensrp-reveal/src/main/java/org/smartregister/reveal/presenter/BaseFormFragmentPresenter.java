@@ -1,6 +1,10 @@
 package org.smartregister.reveal.presenter;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.util.Pair;
 import androidx.core.util.Pair;
 import androidx.appcompat.app.AlertDialog;
 
@@ -15,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Location;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -43,6 +48,17 @@ import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRI
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
 import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
+import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
+import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
 import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
@@ -99,6 +115,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         } else {
             locationPresenter.onGetUserLocation(location);
         }
+
     }
 
     @Override
@@ -120,14 +137,12 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
                 } else if (CASE_CONFIRMATION.equals(taskDetails.getTaskCode())) {
                     interactor.findMemberDetails(taskDetails.getStructureId(), formJSON);
                     return;
-                } else if (IRS.equals(taskDetails.getTaskCode()) && NAMIBIA.equals(BuildConfig.BUILD_COUNTRY)) {
-                    interactor.findSprayDetails(IRS, structure.getId(), formJSON);
-                } else if (MDA_DISPENSE.equals(taskDetails.getTaskCode()) || MDA_ADHERENCE.equals(taskDetails.getTaskCode()) || MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
-                    jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), formJSON, Constants.CONFIGURATION.MDA_CATCHMENT_AREAS, JsonForm.CATCHMENT_AREA, prefsUtil.getCurrentDistrict());
-
-                    getView().startForm(formJSON, false);
+                } else if (MDA_DISPENSE.equals(taskDetails.getTaskCode()) || MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
+                    jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), Constants.CONFIGURATION.MDA_CATCHMENT_AREAS, jsonFormUtils.getFields(formJSON).get(JsonForm.CATCHMENT_AREA), prefsUtil.getCurrentDistrict());
+                    getView().startForm(formJSON);
                 } else {
-                    getView().startForm(formJSON, false);
+                    jsonFormUtils.populateFormWithServerOptions(formName,formJSON,null);
+                    getView().startForm(formJSON);
                 }
             }
         }
@@ -136,55 +151,13 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
 
     public void showBasicForm(String formName) {
         JSONObject formJSON = getView().getJsonFormUtils().getFormJSON(context, formName, null, null);
-        switch (formName) {
-
-            case JsonForm.IRS_SA_DECISION_ZAMBIA:
-            case JsonForm.CB_SPRAY_AREA_ZAMBIA:
-            case JsonForm.MOBILIZATION_FORM_ZAMBIA:
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.SUPERVISORS, JsonForm.SUPERVISOR,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-                break;
-
-            case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.FIELD_OFFICERS, JsonForm.FIELD_OFFICER,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-                break;
-
-            case JsonForm.DAILY_SUMMARY_ZAMBIA:
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.TEAM_LEADERS, JsonForm.TEAM_LEADER,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-
-            case JsonForm.TEAM_LEADER_DOS_ZAMBIA:
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.SUPERVISORS, JsonForm.SUPERVISOR,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.DATA_COLLECTORS, JsonForm.DATA_COLLECTOR,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.DISTRICT_MANAGERS, JsonForm.DISTRICT_MANAGER,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-
-                break;
-
-            case JsonForm.VERIFICATION_FORM_ZAMBIA:
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.FIELD_OFFICERS, JsonForm.FIELD_OFFICER,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        formJSON, Constants.CONFIGURATION.DATA_COLLECTORS, JsonForm.DATA_COLLECTOR,
-                        PreferencesUtil.getInstance().getCurrentDistrict());
-
-                break;
-            default:
-                break;
-        }
-        getView().startForm(formJSON, false);
+        jsonFormUtils.populateFormWithServerOptions(formName, formJSON,null);
+        AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
+        sharedPreferences.savePreference(EVENT_LATITUDE,"");
+        sharedPreferences.savePreference(EVENT_LONGITUDE,"");
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,"");
+        sharedPreferences.savePreference(GPS_ACCURACY,"");
+        getView().startForm(formJSON);
     }
 
     @Override
@@ -216,7 +189,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         if (IRS.equals(details.getTaskCode()) || MOSQUITO_COLLECTION.equals(details.getTaskCode()) ||
                 LARVAL_DIPPING.equals(details.getTaskCode()) || REGISTER_FAMILY.equals(details.getTaskCode()) ||
                 BEDNET_DISTRIBUTION.equals(details.getTaskCode()) || CASE_CONFIRMATION.equals(details.getTaskCode()) ||
-                BLOOD_SCREENING.equals(details.getTaskCode())) {
+                BLOOD_SCREENING.equals(details.getTaskCode()) || IRS_VERIFICATION.equals(details.getTaskCode())) {
             if (validateFarStructures()) {
                 validateUserLocation();
             } else {
@@ -232,10 +205,10 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         try {
             String jsonStr = formJSON.toString().replace(JsonForm.NUMBER_OF_FAMILY_MEMBERS, numberOfMembers.first + "");
             jsonStr = jsonStr.replace(JsonForm.NUMBER_OF_FAMILY_MEMBERS_SLEEPING_OUTDOORS, numberOfMembers.second + "");
-            getView().startForm(new JSONObject(jsonStr), false);
+            getView().startForm(new JSONObject(jsonStr));
         } catch (JSONException e) {
             Timber.e(e, "Error updating Number of members");
-            getView().startForm(formJSON, false);
+            getView().startForm(formJSON);
         }
         getView().hideProgressDialog();
     }
@@ -248,13 +221,13 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         } catch (JSONException e) {
             Timber.e(e, "Error updating family members");
         }
-        getView().startForm(formJSON, false);
+        getView().startForm(formJSON);
     }
 
     @Override
     public void onFetchedSprayDetails(CommonPersonObject commonPersonObject, JSONObject formJSON) {
         getView().getJsonFormUtils().populateSprayForm(commonPersonObject, formJSON);
-        getView().startForm(formJSON, false);
+        getView().startForm(formJSON);
     }
 
     public BaseTaskDetails getTaskDetails() {
@@ -268,4 +241,8 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
     public Location getStructure() {
         return structure;
     }
+
+    public void onGetUserLocation(android.location.Location location){
+        //empty
+    };
 }

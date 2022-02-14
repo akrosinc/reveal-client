@@ -84,18 +84,13 @@
             "Not Sprayed",
             "Incomplete",
             "In Progress",
-            "Not Dispensed",
-            "No SPAQ - SICK",
-            "No SPAQ - ALLERGY/SAE",
-            "No SPAQ - REFUSED"
+            "None Received"
           ],
           "hsl(3, 71%, 54%)",
           [
             "Sprayed",
             "Complete",
-            "Fully Received",
-            "Drug Recon Complete",
-            "Adherence Visit Done"
+            "Fully Received"
           ],
           "hsl(89, 52%, 48%)",
           [
@@ -108,7 +103,8 @@
           ],
           "hsl(335, 100%, 79%)",
           [
-            "Bednet Distributed"
+            "Bednet Distributed",
+            "Adherence Visit Done"
           ],
           "hsl(199, 68%, 55%)",
           [
@@ -116,18 +112,10 @@
           ],
           "hsl(262, 100%, 68%)",
           [
-            "Tasks Incomplete",
-            "Partially Received",
-            "Adherence Visit Done",
-            "SMC Complete",
-            "SPAQ Complete"
+            "Partially Sprayed",
+            "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
-          [
-            "Family No Task Registered",
-            "Ineligible"
-          ],
-          "hsl(0, 0%, 78%)",
           "hsl(0, 0%, 78%)"
         ],
         "fill-opacity": [
@@ -197,18 +185,13 @@
             "Not Sprayed",
             "Incomplete",
             "In Progress",
-            "Not Dispensed",
-            "No SPAQ - SICK",
-            "No SPAQ - ALLERGY/SAE",
-            "No SPAQ - REFUSED"
+            "None Received"
           ],
           "hsl(3, 71%, 54%)",
           [
             "Sprayed",
             "Complete",
-            "Fully Received",
-            "Drug Recon Complete",
-            "All Tasks Complete"
+            "Fully Received"
           ],
           "hsl(89, 52%, 48%)",
           [
@@ -221,7 +204,8 @@
           ],
           "hsl(335, 100%, 79%)",
           [
-            "Bednet Distributed"
+            "Bednet Distributed",
+            "Adherence Visit Done"
           ],
           "hsl(199, 68%, 55%)",
           [
@@ -229,19 +213,10 @@
           ],
           "hsl(262, 100%, 68%)",
           [
-            "Tasks Incomplete",
-            "Partially Received",
-            "Adherence Visit Done",
-            "SMC Complete",
-            "SPAQ Complete",
-            "SPAQ No Additional Dose"
+            "Partially Sprayed",
+            "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
-          [
-            "Family No Task Registered",
-            "Ineligible"
-          ],
-          "hsl(0, 0%, 78%)",
           "hsl(0, 0%, 78%)"
         ],
         "circle-stroke-width": 1,

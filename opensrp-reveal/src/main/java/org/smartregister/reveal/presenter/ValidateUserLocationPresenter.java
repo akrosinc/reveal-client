@@ -5,6 +5,7 @@ import android.os.SystemClock;
 
 import com.mapbox.mapboxsdk.geometry.LatLng;
 
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.UserLocationContract;
@@ -18,6 +19,11 @@ import java.util.TimerTask;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
+import static org.smartregister.reveal.util.Utils.validateFarStructures;
+
+;
+
 /**
  * Created by samuelgithengi on 2/13/19.
  */
@@ -30,11 +36,12 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     private long resolutionStarted;
 
     private AppExecutors appExecutors;
-
+    private AllSharedPreferences sharedPreferences;
     protected ValidateUserLocationPresenter(UserLocationView locationView, UserLocationCallback callback) {
         this.locationView = locationView;
         this.callback = callback;
         appExecutors = RevealApplication.getInstance().getAppExecutors();
+        sharedPreferences = RevealApplication.getInstance().getContext().allSharedPreferences();
     }
 
     @Override
@@ -45,13 +52,14 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     @Override
     public void onGetUserLocation(Location location) {
         locationView.hideProgressDialog();
-        double offset = callback.getTargetCoordinates().distanceTo(
-                new LatLng(location.getLatitude(), location.getLongitude()));
-        if (offset > Utils.getLocationBuffer()) {
-            callback.requestUserPassword();
-        } else {
-            callback.onLocationValidated();
-        }
+            double offset = callback.getTargetCoordinates().distanceTo(
+                    new LatLng(location.getLatitude(), location.getLongitude()));
+         appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location,offset > Utils.getLocationBuffer() && validateFarStructures()));
+         if (offset > Utils.getLocationBuffer() && validateFarStructures()) {
+                callback.requestUserPassword();
+            } else {
+                callback.onLocationValidated();
+            }
     }
 
     @Override
@@ -89,6 +97,4 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
 
         }
     }
-
-
 }

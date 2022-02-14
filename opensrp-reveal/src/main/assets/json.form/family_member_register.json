@@ -80,10 +80,6 @@
           "value": "true",
           "err": "Please enter the first name"
         },
-        "v_regex": {
-          "value": "[A-Za-z\\s\\.\\-]*",
-          "err": "Please enter a valid name, not a number"
-        },
         "relevance": {
           "rules-engine": {
             "ex-rules": {
@@ -125,10 +121,6 @@
         "v_required": {
           "value": "true",
           "err": "Please enter the Surname"
-        },
-        "v_regex": {
-          "value": "[A-Za-z\\s\\.\\-]*",
-          "err": "Please enter a valid surname, not a number"
         },
         "relevance": {
           "rules-engine": {
@@ -204,28 +196,6 @@
         }
       },
       {
-        "key": "sex",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person",
-        "openmrs_entity_id": "gender",
-        "type": "native_radio",
-        "label": "Sex",
-        "options": [
-          {
-            "key": "Male",
-            "text": "Male"
-          },
-          {
-            "key": "Female",
-            "text": "Female"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the sex"
-        }
-      },
-      {
         "key": "dob",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",
@@ -298,68 +268,72 @@
         }
       },
       {
-        "key": "age_unknown",
+        "key": "sex",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",
-        "openmrs_entity_id": "birthdateApprox",
-        "type": "check_box",
-        "label": "",
+        "openmrs_entity_id": "gender",
+        "type": "native_radio",
+        "label": "Sex",
         "options": [
           {
-            "key": "age_unknown",
-            "text": "Age unknown?",
-            "text_size": "18px",
-            "value": "false"
+            "key": "Male",
+            "text": "Male"
+          },
+          {
+            "key": "Female",
+            "text": "Female"
           }
-        ]
-      },
-      {
-        "key": "job_aid_label",
-        "type": "label",
-        "text": "Job Aid Questions",
-        "has_bg": true,
-        "top_padding": "10dp",
-        "left_padding": "20dp",
-        "right_padding": "20dp",
-        "text_size": "10sp",
-        "text_color": "#000000",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "family-member-relevance.yml"
-            }
-          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the sex"
         }
       },
       {
-        "key": "job_aid",
+        "key": "phone_number",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "edit_text",
+        "hint": "Phone number",
+        "v_numeric": {
+          "value": "true",
+          "err": "Please enter a number"
+        },
+        "v_regex": {
+          "value": "^$|0[0-9]{8,9}",
+          "err": "Number must be 9-10 digits and must start with 0."
+        }
+      },
+      {
+        "key": "sleeps_outdoors",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "If age is unknown, please assess age based on the job aid as follows:",
-        "text_size": "8sp",
+        "label": "Does this person spend the night outdoors?",
         "options": [
           {
-            "key": "threeToTwelve",
-            "text": "3 < 12 months:\nCan hold head and neck steady when upright;\nCan grasp object in hand and bring to mouth;\nHas few lower teeth"
+            "key": "Yes",
+            "text": "Yes"
           },
           {
-            "key": "twelveToFiftyNine",
-            "text": "12 < 59 months:\nCan sit without help;\nCan stand or walk"
-          },
-          {
-            "key": "moreThanSixty",
-            "text": "> 60 months:\nCan stand on 1 foot for 10 seconds; \nCan jump on 1 foot;\nCan raise arm and touch opposite ear"
+            "key": "No",
+            "text": "No"
           }
         ],
         "v_required": {
-          "value": true,
-          "err": "Please enter the job aid question"
-        },
+          "value": "true",
+          "err": "Please select whether this person spends the night outdoors"
+        }
+      },
+      {
+        "key": "occupation",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Person's Occupation",
         "relevance": {
           "rules-engine": {
             "ex-rules": {
@@ -369,12 +343,54 @@
         }
       },
       {
-        "key": "business_status",
+        "key": "citizenship",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "hidden",
-        "value": "Complete"
+        "type": "native_radio",
+        "label": "Citizenship",
+        "options": [
+          {
+            "key": "Thai",
+            "text": "Thai"
+          },
+          {
+            "key": "Migrant-1",
+            "text": "Migrant 1"
+          },
+          {
+            "key": "Migrant-2",
+            "text": "Migrant 2"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify the Citizenship"
+        }
+      },
+      {
+        "key": "national_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "163084AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "label_info_text": "What is their national identity number or their voter registration number?",
+        "label_info_title": "National ID number",
+        "type": "edit_text",
+        "hint": "National ID number",
+        "v_numeric": {
+          "value": "true",
+          "err": "Please enter a number"
+        },
+        "v_regex": {
+          "value": "^$|[0-9]{13}",
+          "err": "Number must be 13 digits."
+        },
+        "relevance": {
+          "step1:citizenship": {
+            "type": "string",
+            "ex": "equalTo(., \"Thai\")"
+          }
+        }
       }
     ]
   }

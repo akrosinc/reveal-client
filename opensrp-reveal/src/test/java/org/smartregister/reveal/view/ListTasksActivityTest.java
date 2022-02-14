@@ -5,8 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AlertDialog;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -38,9 +40,10 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowConnectivityManager;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowProgressDialog;
 import org.robolectric.shadows.ShadowToast;
 import org.smartregister.Context;
@@ -49,12 +52,15 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.Task;
+import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.family.util.Constants.INTENT_KEY;
 import org.smartregister.reveal.BaseUnitTest;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
 import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.FilterConfiguration;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
@@ -64,6 +70,7 @@ import org.smartregister.reveal.presenter.ValidateUserLocationPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.reveal.util.TestingUtils;
@@ -74,6 +81,7 @@ import java.util.UUID;
 
 import io.ona.kujaku.interfaces.ILocationClient;
 import io.ona.kujaku.layers.BoundaryLayer;
+import io.ona.kujaku.layers.KujakuLayer;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static android.view.View.GONE;
@@ -101,8 +109,14 @@ import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATI
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FIRST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
+import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
+import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FAMILY_PROFILE;
@@ -120,12 +134,9 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
     private ListTasksActivity listTasksActivity;
 
+    private ImageButton myLocationButton;
 
-    private android.content.Context context = RuntimeEnvironment.application;
-
-    private ImageButton myLocationButton = new ImageButton(context);
-
-    private ImageButton layerSwitcherFab = new ImageButton(context);
+    private ImageButton layerSwitcherFab;
 
     @Mock
     private ListTaskPresenter listTaskPresenter;
@@ -170,10 +181,23 @@ public class ListTasksActivityTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<ScaleBarWidget> scaleBarWidgetArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<Intent> intentArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Integer> integerArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<KujakuLayer> kujakuLayerArgumentCaptor;
+
+
+
     @Before
     public void setUp() {
         Context.bindtypes = new ArrayList<>();
         listTasksActivity = Robolectric.buildActivity(ListTasksActivity.class).create().get();
+        myLocationButton = new ImageButton(listTasksActivity);
+        layerSwitcherFab = new ImageButton(listTasksActivity);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.topMargin = 30;
         myLocationButton.setLayoutParams(params);
@@ -256,7 +280,9 @@ public class ListTasksActivityTest extends BaseUnitTest {
     }
 
     @Test
-    public void testPositionMyLocation() {
+    public void testPositionMyLocationThailand() {
+        listTasksActivity = spy(listTasksActivity);
+        when(listTasksActivity.getBuildCountry()).thenReturn(Country.THAILAND);
         listTasksActivity.positionMyLocationAndLayerSwitcher();
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         assertEquals(0, layoutParams.topMargin);
@@ -266,13 +292,14 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
     @Test
     public void testPositionMyLocationZambia() {
+        setInterventionTypeForPlan(IRS);
         listTasksActivity = spy(listTasksActivity);
         when(listTasksActivity.getBuildCountry()).thenReturn(Country.ZAMBIA);
         Whitebox.setInternalState(listTasksActivity, "myLocationButton", myLocationButton);
         listTasksActivity.positionMyLocationAndLayerSwitcher();
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         assertEquals(0, layoutParams.topMargin);
-        int progressHeight = context.getResources().getDimensionPixelSize(R.dimen.progress_height);
+        int progressHeight = listTasksActivity.getResources().getDimensionPixelSize(R.dimen.progress_height);
         assertEquals(progressHeight + 40, layoutParams.bottomMargin);
         assertEquals(Gravity.BOTTOM | Gravity.END, layoutParams.gravity);
     }
@@ -280,6 +307,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
     @Test
     public void testPositionLayerSwitcher() {
+        setInterventionTypeForPlan(IRS);
         listTasksActivity = spy(listTasksActivity);
         when(listTasksActivity.getBuildCountry()).thenReturn(Country.ZAMBIA);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -288,7 +316,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
         listTasksActivity.positionMyLocationAndLayerSwitcher();
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) layerSwitcherFab.getLayoutParams();
         assertEquals(0, layoutParams.topMargin);
-        int progressHeight = context.getResources().getDimensionPixelSize(R.dimen.progress_height);
+        int progressHeight = listTasksActivity.getResources().getDimensionPixelSize(R.dimen.progress_height);
         assertEquals(progressHeight + 80, layoutParams.bottomMargin);
         assertEquals(myLocationButton.getMeasuredHeight(), layoutParams.height);
         assertEquals(myLocationButton.getMeasuredWidth(), layoutParams.width);
@@ -495,7 +523,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
         AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
         assertTrue(alertDialog.isShowing());
         TextView tv = alertDialog.findViewById(android.R.id.message);
-        assertEquals("Confirm Household Archival", tv.getText());
+        assertEquals(listTasksActivity.getString(R.string.confirm_archive_family), tv.getText());
 
     }
 
@@ -546,11 +574,13 @@ public class ListTasksActivityTest extends BaseUnitTest {
         Whitebox.setInternalState(listTasksActivity, "kujakuMapView", kujakuMapView);
         Whitebox.setInternalState(listTasksActivity, "selectedGeoJsonSource", geoJsonSource);
         Whitebox.setInternalState(listTasksActivity, "mMapboxMap", mMapboxMap);
+        Whitebox.setInternalState(BuildConfig.class, "SELECT_JURISDICTION", Boolean.FALSE);
         LatLng latLng = new LatLng();
         when(mMapboxMap.getCameraPosition()).thenReturn(new CameraPosition.Builder().zoom(18).build());
         listTasksActivity.displaySelectedFeature(feature, latLng);
         verify(kujakuMapView).centerMap(latLng, ANIMATE_TO_LOCATION_DURATION, 18);
         verify(geoJsonSource).setGeoJson(FeatureCollection.fromFeature(feature));
+
     }
 
     @Test
@@ -606,7 +636,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
     @Test
     public void testOnActivityResultFilterFeatures() {
         Whitebox.setInternalState(listTasksActivity, "listTaskPresenter", listTaskPresenter);
-        TaskFilterParams params = new TaskFilterParams("Doe");
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("Doe").build();
         Intent intent = new Intent();
         intent.putExtra(FILTER_SORT_PARAMS, params);
         listTasksActivity.onActivityResult(REQUEST_CODE_FILTER_TASKS, Activity.RESULT_OK, intent);
@@ -617,7 +647,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
     @Test
     public void testOnActivityResultInializeFilterParams() {
         Whitebox.setInternalState(listTasksActivity, "listTaskPresenter", listTaskPresenter);
-        TaskFilterParams params = new TaskFilterParams("Doe");
+        TaskFilterParams params = TaskFilterParams.builder().searchPhrase("Doe").build();
         Intent intent = new Intent();
         intent.putExtra(FILTER_SORT_PARAMS, params);
         listTasksActivity.onActivityResult(REQUEST_CODE_TASK_LISTS, Activity.RESULT_OK, intent);
@@ -630,7 +660,16 @@ public class ListTasksActivityTest extends BaseUnitTest {
         ProgressDialog progressDialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
         assertNotNull(progressDialog);
         assertTrue(progressDialog.isShowing());
-        assertEquals(context.getString(R.string.saving_title), ShadowApplication.getInstance().getLatestDialog().getTitle());
+        assertEquals(listTasksActivity.getString(R.string.saving_title), ShadowApplication.getInstance().getLatestDialog().getTitle());
+    }
+
+    @Test
+    public void testShowProgressDialogWithFormatArgs() {
+        listTasksActivity.showProgressDialog(R.string.saving_title, R.string.family_name_format, "Name");
+        ProgressDialog progressDialog = (ProgressDialog) ShadowProgressDialog.getLatestDialog();
+        assertNotNull(progressDialog);
+        assertTrue(progressDialog.isShowing());
+        assertEquals(listTasksActivity.getString(R.string.saving_title), ShadowApplication.getInstance().getLatestDialog().getTitle());
     }
 
     @Test
@@ -660,7 +699,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
     public void testRequestUserLocation() {
         Whitebox.setInternalState(listTasksActivity, "kujakuMapView", kujakuMapView);
         listTasksActivity.requestUserLocation();
-        verify(kujakuMapView).setWarmGps(true, getString(R.string.location_service_disabled), getString(R.string.location_services_disabled_spray));
+        verify(kujakuMapView).setWarmGps(true, listTasksActivity.getString(R.string.location_service_disabled), listTasksActivity.getString(R.string.location_services_disabled_spray));
         assertTrue(Whitebox.getInternalState(listTasksActivity, "hasRequestedLocation"));
     }
 
@@ -674,69 +713,80 @@ public class ListTasksActivityTest extends BaseUnitTest {
     @Test
     public void testDisplayToast() {
         listTasksActivity.displayToast(R.string.sync_complete);
-        assertEquals(getString(R.string.sync_complete), ShadowToast.getTextOfLatestToast());
+        assertEquals(listTasksActivity.getString(R.string.sync_complete), ShadowToast.getTextOfLatestToast());
     }
 
     @Test
     public void testOnSyncStart() {
-        init(context);
+        init(listTasksActivity);
         Whitebox.setInternalState(getInstance(), "isSyncing", true);
         listTasksActivity = spy(listTasksActivity);
         doNothing().when(listTasksActivity).toggleProgressBarView(true);
         listTasksActivity.onSyncStart();
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertTrue(snackbar.isShown());
+        assertEquals(listTasksActivity.getString(R.string.sync_started), ShadowToast.getTextOfLatestToast());
     }
 
 
     @Test
-    public void testOnSyncInProgressFetchedDataSnackBarIsStillShown() {
-        init(context);
+    public void testOnSyncInProgressFetchedDataToastIsNotShown() {
+        init(listTasksActivity);
         listTasksActivity.onSyncInProgress(FetchStatus.fetched);
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertTrue(snackbar.isShown());
-    }
-
-
-    @Test
-    public void testOnSyncInProgressFetchFailedSnackBarIsDismissed() {
-        init(context);
-        listTasksActivity.onSyncInProgress(FetchStatus.fetchedFailed);
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertFalse(snackbar.isShown());
-
-
+        assertEquals(0, ShadowToast.shownToastCount());
     }
 
     @Test
-    public void testOnSyncInProgressNothingFetchedSnackBarIsDismissed() {
-        init(context);
+    public void testOnConsecutiveSyncCompletedToastIsShownOnce() {
+        init(listTasksActivity);
+        Whitebox.setInternalState(listTasksActivity, "startedToastShown", true);
         listTasksActivity.onSyncInProgress(FetchStatus.nothingFetched);
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertFalse(snackbar.isShown());
+        listTasksActivity.onSyncInProgress(FetchStatus.nothingFetched);
+        assertEquals(1, ShadowToast.shownToastCount());
     }
 
     @Test
-    public void testOnSyncInProgressNoConnectionSnackBarIsDismissed() {
-        init(context);
+    public void testOnSyncInProgressFetchFailedToastWithFailedIsShown() {
+        init(listTasksActivity);
+        listTasksActivity.onSyncInProgress(FetchStatus.fetchedFailed);
+        assertEquals(listTasksActivity.getString(R.string.sync_failed), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testOnSyncInProgressFetchFailedWithNoNetwork() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)listTasksActivity.getSystemService("connectivity");
+        ShadowConnectivityManager shadowConnectivityManager = shadowOf(connectivityManager);
+        NetworkInfo networkInfo =  ShadowNetworkInfo.newInstance(NetworkInfo.DetailedState.DISCONNECTED, ConnectivityManager.TYPE_WIFI, 0, true, NetworkInfo.State.DISCONNECTED);
+        shadowConnectivityManager.setActiveNetworkInfo(networkInfo);
+        init(listTasksActivity);
+        listTasksActivity.onSyncInProgress(FetchStatus.fetchedFailed);
+        assertEquals(listTasksActivity.getString(R.string.sync_failed_no_internet), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testOnSyncInProgressNothingFetchedSyncCompletedIsShown() {
+        init(listTasksActivity);
+        listTasksActivity.onSyncInProgress(FetchStatus.nothingFetched);
+        assertEquals(listTasksActivity.getString(R.string.sync_complete), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testOnSyncInProgressNoConnectionCheckConnectionIsShown() {
+        init(listTasksActivity);
         listTasksActivity.onSyncInProgress(FetchStatus.noConnection);
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertFalse(snackbar.isShown());
+        assertEquals(listTasksActivity.getString(R.string.sync_failed_no_internet), ShadowToast.getTextOfLatestToast());
     }
 
     @Test
-    public void testOnSyncCompleteSnackBarIsDismissed() {
-        init(context);
+    public void testOnSyncCompleteToastCompleteIsShown() {
+        init(listTasksActivity);
         listTasksActivity = spy(listTasksActivity);
         doNothing().when(listTasksActivity).toggleProgressBarView(false);
         listTasksActivity.onSyncComplete(FetchStatus.nothingFetched);
-        Snackbar snackbar = Whitebox.getInternalState(listTasksActivity, "syncProgressSnackbar");
-        assertFalse(snackbar.isShown());
+        assertEquals(listTasksActivity.getString(R.string.sync_complete), ShadowToast.getTextOfLatestToast());
     }
 
     @Test
     public void testOnResume() {
-        init(context);
+        init(listTasksActivity);
         Whitebox.setInternalState(listTasksActivity, "drawerView", drawerView);
         Whitebox.setInternalState(listTasksActivity, "listTaskPresenter", listTaskPresenter);
         listTasksActivity.onResume();
@@ -747,7 +797,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
     @Test
     public void testOnPause() {
-        init(context);
+        init(listTasksActivity);
         Whitebox.setInternalState(listTasksActivity, "revealMapHelper", revealMapHelper);
         getInstance().addSyncStatusListener(listTasksActivity);
         listTasksActivity.onPause();
@@ -761,6 +811,20 @@ public class ListTasksActivityTest extends BaseUnitTest {
         Whitebox.setInternalState(listTasksActivity, "listTaskPresenter", listTaskPresenter);
         listTasksActivity.onDrawerClosed();
         verify(listTaskPresenter).onDrawerClosed();
+    }
+
+    @Test
+    public void testToggleProgressBarView() {
+        Whitebox.setInternalState(listTasksActivity, "drawerView", drawerView);
+        listTasksActivity.toggleProgressBarView(true);
+        verify(drawerView).toggleProgressBarView(true);
+    }
+
+    @Test
+    public void testSetOperationalArea() {
+        Whitebox.setInternalState(listTasksActivity, "drawerView", drawerView);
+        listTasksActivity.setOperationalArea("");
+        verify(drawerView).setOperationalArea("");
     }
 
     @Test
@@ -784,7 +848,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
         AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
         assertTrue(alertDialog.isShowing());
         TextView tv = alertDialog.findViewById(android.R.id.message);
-        assertEquals(getString(R.string.confirm_mark_location_inactive), tv.getText());
+        assertEquals(listTasksActivity.getString(R.string.confirm_mark_location_inactive), tv.getText());
 
         alertDialog.getButton(BUTTON_POSITIVE).performClick();
         verify(listTaskPresenter).onMarkStructureInactiveConfirmed();
@@ -826,7 +890,7 @@ public class ListTasksActivityTest extends BaseUnitTest {
         assertTrue(alertDialog.isShowing());
 
         TextView tv = alertDialog.findViewById(android.R.id.message);
-        assertEquals(getString(R.string.undo_task_msg), tv.getText());
+        assertEquals(listTasksActivity.getString(R.string.undo_task_msg), tv.getText());
 
         alertDialog.getButton(BUTTON_POSITIVE).performClick();
         verify(listTaskPresenter).onUndoInterventionStatus(eq(BEDNET_DISTRIBUTION));
@@ -851,21 +915,21 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
     @Test
     public void testDisplayNotificationWithSingleParam() {
-        listTasksActivity.displayNotification(context.getString(R.string.confirm_archive_family));
+        listTasksActivity.displayNotification(listTasksActivity.getString(R.string.confirm_archive_family));
         AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
         assertTrue(alertDialog.isShowing());
         TextView tv = alertDialog.findViewById(android.R.id.message);
-        assertEquals("Confirm Household Archival", tv.getText());
+        assertEquals(listTasksActivity.getString(R.string.confirm_archive_family), tv.getText());
     }
 
     @Test
     public void testOnSyncProgress() {
-        ProgressBar progress = new ProgressBar(context);
-        TextView  progressLabel = new TextView(context);
+        ProgressBar progress = new ProgressBar(listTasksActivity);
+        TextView progressLabel = new TextView(listTasksActivity);
         SyncProgress mockSyncProgress = mock(SyncProgress.class);
         SyncEntity mockSyncEntity = mock(SyncEntity.class);
         ListTasksActivity spyListTasksActivity = spy(listTasksActivity);
-        doReturn(50 ).when(mockSyncProgress).getPercentageSynced();
+        doReturn(50).when(mockSyncProgress).getPercentageSynced();
         doReturn(mockSyncEntity).when(mockSyncProgress).getSyncEntity();
         doReturn("Tasks").when(mockSyncEntity).toString();
         doReturn(progress).when(spyListTasksActivity).findViewById(eq(R.id.sync_progress_bar));
@@ -873,8 +937,133 @@ public class ListTasksActivityTest extends BaseUnitTest {
 
         spyListTasksActivity.onSyncProgress(mockSyncProgress);
 
-        assertEquals(progressLabel.getText(), String.format(context.getString(R.string.progressBarLabel), "Tasks", 50));
+        assertEquals(progressLabel.getText(), String.format(listTasksActivity.getString(R.string.progressBarLabel), listTasksActivity.getString(R.string.tasks_text), 50));
+    }
+
+    @Test
+    public void testOnUserAssignmentRevokedShouldResumeDrawer() {
+        Whitebox.setInternalState(listTasksActivity, "drawerView", drawerView);
+        doNothing().when(drawerView).onResume();
+        listTasksActivity.onUserAssignmentRevoked(mock(UserAssignmentDTO.class));
+        verify(drawerView).onResume();
+    }
+
+    @Test
+    public void testZambiaIRSLiteUndoSpray() {
+        View view = new View(listTasksActivity);
+        view.setId(R.id.btn_undo_spray);
+        listTasksActivity = spy(listTasksActivity);
+        Country buildcountry = BuildConfig.BUILD_COUNTRY;
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, Country.ZAMBIA);
+        Whitebox.setInternalState(BuildConfig.class, "SELECT_JURISDICTION", true);
+
+        listTasksActivity.onClick(view);
+        verify(listTasksActivity).displayResetInterventionTaskDialog(IRS_VERIFICATION);
+
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, buildcountry);
+
+    }
+
+    @Test
+    public void testUndoSpray() {
+        View view = new View(listTasksActivity);
+        view.setId(R.id.btn_undo_spray);
+        listTasksActivity = spy(listTasksActivity);
+        Whitebox.setInternalState(BuildConfig.class, "SELECT_JURISDICTION", false);
+
+        listTasksActivity.onClick(view);
+        verify(listTasksActivity).displayResetInterventionTaskDialog(IRS);
+
+    }
+
+    @Test
+    public void testUndoMosquitoCollection() {
+        View view = new View(listTasksActivity);
+        view.setId(R.id.btn_undo_mosquito_collection);
+        listTasksActivity = spy(listTasksActivity);
+
+        listTasksActivity.onClick(view);
+        verify(listTasksActivity).displayResetInterventionTaskDialog(MOSQUITO_COLLECTION);
+
+    }
+
+    @Test
+    public void testUndoLarvalDipping() {
+        View view = new View(listTasksActivity);
+        view.setId(R.id.btn_undo_larval_dipping);
+        listTasksActivity = spy(listTasksActivity);
+
+        listTasksActivity.onClick(view);
+        verify(listTasksActivity).displayResetInterventionTaskDialog(LARVAL_DIPPING);
+
+    }
+
+    @Test
+    public void testUndoPAOTDetails() {
+        View view = new View(listTasksActivity);
+        view.setId(R.id.btn_undo_paot_details);
+        listTasksActivity = spy(listTasksActivity);
+
+        listTasksActivity.onClick(view);
+        verify(listTasksActivity).displayResetInterventionTaskDialog(PAOT);
+
     }
 
 
+    @Test
+    public void testOpenFilterTaskActivityForNamibia() {
+        TaskFilterParams params = TaskFilterParams.builder().build();
+        Country buildcountry = BuildConfig.BUILD_COUNTRY;
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, Country.NAMIBIA);
+        listTasksActivity = spy(listTasksActivity);
+
+        listTasksActivity.openFilterTaskActivity(params);
+        verify(listTasksActivity).startActivityForResult(intentArgumentCaptor.capture(), integerArgumentCaptor.capture()); //(FilterConfiguration) getIntent().getSerializableExtra(FILTER_CONFIGURATION)
+        assertEquals(REQUEST_CODE_FILTER_TASKS, integerArgumentCaptor.getValue().intValue());
+        FilterConfiguration filterConfiguration = (FilterConfiguration) intentArgumentCaptor.getValue().getSerializableExtra(FILTER_CONFIGURATION);
+        assertFalse(filterConfiguration.isInterventionTypeLayoutEnabled());
+        assertFalse(filterConfiguration.isTaskCodeLayoutEnabled());
+        assertFalse(filterConfiguration.isTaskCodeLayoutEnabled());
+
+        Whitebox.setInternalState(BuildConfig.class, BuildConfig.BUILD_COUNTRY, buildcountry);
+
+    }
+
+    @Test
+    public void testCreateIRSLiteOABoundary() throws Exception {
+        Feature operationalArea = TestingUtils.getStructure();
+        Whitebox.setInternalState(listTasksActivity, "kujakuMapView", kujakuMapView);
+        Whitebox.invokeMethod(listTasksActivity, "createIRSLiteOABoundaryLayer", operationalArea );
+
+        verify(kujakuMapView).addLayer(kujakuLayerArgumentCaptor.capture());
+        KujakuLayer kujakuLayer = kujakuLayerArgumentCaptor.getValue();
+        assertNotNull(kujakuLayer);
+    }
+
+    @Test
+    public void testToggleProgressView() {
+        Whitebox.setInternalState(listTasksActivity, "drawerView", drawerView);
+        listTasksActivity.toggleProgressBarView(true);
+        verify(drawerView).toggleProgressBarView(true);
+    }
+
+    @Test
+    public void testDisplayEditCDDTaskCompleteDialog(){
+        Whitebox.setInternalState(listTasksActivity, "listTaskPresenter", listTaskPresenter);
+        listTasksActivity.displayEditCDDTaskCompleteDialog();
+        AlertDialog alertDialog = (AlertDialog) ShadowAlertDialog.getLatestDialog();
+        assertTrue(alertDialog.isShowing());
+        TextView textView = alertDialog.findViewById(android.R.id.message);
+        assertEquals("Please confirm that the task is complete",textView.getText());
+
+        alertDialog.getButton(BUTTON_POSITIVE).performClick();
+        verify(listTaskPresenter).onEditCDDTaskCompleteStatusConfirmed(eq(true));
+        assertFalse(alertDialog.isShowing());
+    }
+
+    private void setInterventionTypeForPlan(String interventionType) {
+        String plan = UUID.randomUUID().toString();
+        PreferencesUtil.getInstance().setCurrentPlan(plan);
+        PreferencesUtil.getInstance().setInterventionTypeForPlan(plan, interventionType);
+    }
 }

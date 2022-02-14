@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "เจาะเลือด SCD",
+    "title": "เจาะเลือด",
     "display_back_button": "true",
     "fields": [
       {
@@ -56,7 +56,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
+        "type": "hidden",
         "label": "Is this person eligible for blood screening?",
         "options": [
           {
@@ -152,11 +152,11 @@
         "options": [
           {
             "key": "Yes",
-            "text": "ใช่"
+            "text": "ค้าง"
           },
           {
             "key": "No",
-            "text": "ไม่ใช่"
+            "text": "ไม่ค้าง"
           }
         ],
         "v_required": {

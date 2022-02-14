@@ -1,5 +1,17 @@
 package org.smartregister.reveal.util;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.account.AccountHelper;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.application.RevealApplication;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static org.smartregister.reveal.util.Constants.ACTIONS;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.application.RevealApplication;
@@ -12,6 +24,7 @@ import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PROVINCE;
 import static org.smartregister.reveal.util.Constants.Preferences.FACILITY_LEVEL;
+import static org.smartregister.reveal.util.Constants.TILDE;
 
 /**
  * Created by samuelgithengi on 11/29/18.
@@ -46,6 +59,8 @@ public class PreferencesUtil {
         allSharedPreferences.savePreference(CURRENT_OPERATIONAL_AREA, operationalArea);
         if (StringUtils.isNotBlank(operationalArea)) {
             allSharedPreferences.savePreference(CURRENT_OPERATIONAL_AREA_ID, Utils.getCurrentLocationId());
+        } else {
+            allSharedPreferences.savePreference(CURRENT_OPERATIONAL_AREA_ID, null);
         }
     }
 
@@ -108,6 +123,24 @@ public class PreferencesUtil {
 
     public String getInterventionTypeForPlan(String planId) {
         return allSharedPreferences.getPreference(planId);
+    }
+
+    public boolean isKeycloakConfigured() {
+        return allSharedPreferences.getPreferences().getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false);
+    }
+
+    public void setActionCodesForPlan(String planId, List<String> actionCodes) {
+        String actionCodesJsonString = new Gson().toJson(actionCodes);
+        allSharedPreferences.savePreference(planId.concat(TILDE).concat(ACTIONS), actionCodesJsonString);
+    }
+
+    public List<String> getActionCodesForPlan(String planId) {
+        List<String> actionCodes;
+        String actionCodesJsonString = allSharedPreferences.getPreference(planId.concat(TILDE).concat(ACTIONS));
+        Type type = new TypeToken<List<String>>() {
+        }.getType();
+        actionCodes = new Gson().fromJson(actionCodesJsonString, type);
+        return actionCodes;
     }
 
 }

@@ -47,6 +47,8 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_G
 /**
  * Created by samuelgithengi on 4/8/19.
  */
+//TODO: Conflicts still to bring in Nigeria
+
 public class StructureTasksFragment extends Fragment implements StructureTasksContract.View {
 
     private RecyclerView taskRecyclerView;
@@ -185,9 +187,8 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
     }
 
     @Override
-    public void startForm(JSONObject formJSON, boolean readOnly) {
-        // HEADS UP
-        jsonFormUtils.startJsonForm(formJSON, getActivity(), REQUEST_CODE_GET_JSON_FRAGMENT, readOnly);
+    public void startForm(JSONObject formJSON) {
+        jsonFormUtils.startJsonForm(formJSON, getActivity(), REQUEST_CODE_GET_JSON_FRAGMENT);
     }
 
     @Override
@@ -203,15 +204,6 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
             adapter.setTaskDetailsList(taskDetailsList);
             updateNumberOfTasks();
             this.taskDetailsList = null;
-        }
-    }
-
-    @Override
-    public List<StructureTaskDetails> getTaskDetailsList() {
-        if (adapter == null) {
-            return this.taskDetailsList;
-        } else {
-            return this.adapter.getTaskDetailsList();
         }
     }
 

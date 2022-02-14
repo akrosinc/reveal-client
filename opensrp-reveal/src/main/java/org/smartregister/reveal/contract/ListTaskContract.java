@@ -24,6 +24,9 @@ import java.util.List;
 /**
  * Created by samuelgithengi on 11/27/18.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public interface ListTaskContract {
 
     interface ListTaskView extends UserLocationView, BaseDrawerContract.DrawerActivity {
@@ -72,16 +75,22 @@ public interface ListTaskContract {
 
         void displayMarkStructureInactiveDialog();
 
+        void displayEditCDDTaskCompleteDialog();
+
         void setNumberOfFilters(int numberOfFilters);
 
         void setSearchPhrase(String searchPhrase);
 
         void toggleProgressBarView(boolean syncing);
+
+        void setOperationalArea(String operationalArea);
     }
 
     interface Presenter extends BaseContract.BasePresenter {
 
         void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList);
+
+        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive);
 
         void onDrawerClosed();
 
@@ -104,6 +113,8 @@ public interface ListTaskContract {
 
         void onMarkStructureInactiveConfirmed();
 
+        void onEditCDDTaskCompleteStatusConfirmed(boolean isComplete);
+
         void onStructureMarkedInactive();
 
         void onMarkStructureIneligibleConfirmed();
@@ -123,5 +134,7 @@ public interface ListTaskContract {
         void findLastEvent(String featureId, String eventType);
       
         void onFociBoundaryLongClicked();
+
+        void onCDDTaskCompleteStatusEdited(String businessStatus);
     }
 }

@@ -23,6 +23,13 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.FetchStatus;
+import android.content.DialogInterface;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.json.JSONObject;
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.family.contract.FamilyOtherMemberContract.Model;
 import org.smartregister.family.domain.FamilyEventClient;
 import org.smartregister.family.interactor.FamilyProfileInteractor;
@@ -53,6 +60,10 @@ import java.util.Optional;
 import timber.log.Timber;
 
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
+import org.smartregister.reveal.util.FamilyJsonFormUtils;
+
+import timber.log.Timber;
+
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 
 /**
@@ -208,6 +219,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
             if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY)){
                 updateMDADispenseTasksOnAgeChange(familyEventClient);
             }
+
             profileInteractor.saveRegistration(familyEventClient, jsonString, true, this);
         } catch (Exception e) {
             getView().hideProgressDialog();
@@ -282,3 +294,4 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
             }
         }
     }
+}

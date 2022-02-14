@@ -8,11 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.smartregister.domain.Task;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.StructureTaskDetails;
 import org.smartregister.reveal.util.Constants.Intervention;
-import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.viewholder.StructureTaskViewHolder;
 
 import java.util.ArrayList;
@@ -22,6 +20,9 @@ import java.util.Set;
 /**
  * Created by samuelgithengi on 4/11/19.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskViewHolder> {
 
     private Context context;
@@ -43,10 +44,7 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
 
     @Override
     public void onBindViewHolder(@NonNull StructureTaskViewHolder viewHolder, int position) {
-        // HEADS UP
         StructureTaskDetails taskDetails = taskDetailsList.get(position);
-        String code = taskDetails.getTaskCode();
-
         if (Intervention.BEDNET_DISTRIBUTION.equals(taskDetails.getTaskCode())) {
             taskDetails.setTaskName(context.getString(R.string.distribute_llin));
             taskDetails.setTaskAction(context.getString(R.string.record_llin));
@@ -57,7 +55,6 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
 
             String action = taskDetails.getTaskAction();
             String name = taskDetails.getTaskName();
-
             if (Intervention.BLOOD_SCREENING.equals(taskDetails.getTaskCode())) {
                 action = context.getString(R.string.record_test);
             } else if (Intervention.CASE_CONFIRMATION.equals(taskDetails.getTaskCode())) {
@@ -66,34 +63,17 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
                 action = context.getString(R.string.register_family);
                 name = context.getString(R.string.add_fam);
             } else if (Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-                    action = context.getString(R.string.adhere_smc);
-                    code = "SPAQ Redose";
-                } else {
-                    action = context.getString(R.string.adhere_mda);
-                }
-
-            } else if (Intervention.MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-                    action = context.getString(R.string.adhere_drug_recon);
-                }
-            } if (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY ==  Country.NIGERIA) {
-                    action = context.getString(R.string.dispense_smc);
-                    code = "SMC Dispense";
-                } else {
-                    action = context.getString(R.string.dispense_mda);
-                }
+                action = context.getString(R.string.adhere_mda);
+            } else if (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode())) {
+                action = context.getString(R.string.dispense_mda);
             }
             taskDetails.setTaskName(name);
             taskDetails.setTaskAction(action);
-        }
 
+        }
         if (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode()) ||
-                Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode()) ||
-                    // New Intervention
-                Intervention.MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
-            viewHolder.setTaskName(taskDetails.getTaskName(), code);
+                Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
+            viewHolder.setTaskName(taskDetails.getTaskName(), taskDetails.getTaskCode());
         } else {
             viewHolder.setTaskName(taskDetails.getTaskName());
         }
@@ -109,10 +89,6 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
     public void setTaskDetailsList(List<StructureTaskDetails> taskDetailsList) {
         this.taskDetailsList = taskDetailsList;
         notifyDataSetChanged();
-    }
-
-    public List<StructureTaskDetails> getTaskDetailsList() {
-        return taskDetailsList;
     }
 
     private int updateTaskStatus(String taskID, Task.TaskStatus taskStatus, String businessStatus) {

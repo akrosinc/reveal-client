@@ -2,10 +2,16 @@ package org.smartregister.reveal.viewholder;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.smartregister.domain.Task;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +21,13 @@ import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.Utils;
+
+import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
+import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
+import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
@@ -103,6 +116,16 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
 
 
                     Pair<Drawable, String> actionViewPair = getActionDrawable(task);
+
+        boolean hasSingleGroupedTask = (BEDNET_DISTRIBUTION.equals(task.getTaskCode()) || BLOOD_SCREENING.equals(task.getTaskCode())) && task.getTaskCount() == 1;
+        // registered family with multiple tasks
+        if (cardDetails != null && task.getTaskCount() != null // task grouping only for FI
+                && !(REGISTER_FAMILY.equals(task.getTaskCode()) && Task.TaskStatus.READY.name().equals(task.getTaskStatus()))) { //skip if we have a READY family reg task
+            if (task.getTaskCount() > 1 || hasSingleGroupedTask) {
+                if (task.getTaskCount() != task.getCompleteTaskCount()) {
+
+
+                    Pair<Drawable, String > actionViewPair = getActionDrawable(task);
                     actionView.setTextColor(context.getResources().getColor(R.color.text_black));
                     actionView.setBackground(actionViewPair.first);
                     actionView.setText(actionViewPair.second);
@@ -118,6 +141,11 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
             actionView.setBackground(context.getResources().getDrawable(R.drawable.family_no_task_registered_bg));
             actionView.setTextColor(context.getResources().getColor(R.color.text_black));
             actionView.setText(R.string.family_member_registered);
+            actionView.setBackground(null);
+            actionView.setTextColor(context.getResources().getColor(cardDetails.getStatusColor()));
+        } else {
+            actionView.setBackground(context.getResources().getDrawable(R.drawable.task_action_bg));
+            actionView.setTextColor(context.getResources().getColor(R.color.text_black));
         }
         actionView.setOnClickListener(onClickListener);
         actionView.setTag(R.id.task_details, task);
@@ -156,6 +184,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
         if (Utils.isFocusInvestigation()) {
             actionView.setBackground(context.getResources().getDrawable(R.drawable.tasks_complete_bg));
         } else if (Utils.isMDA()){
+            actionView.setBackground(context.getResources().getDrawable(R.drawable.mda_adhered_bg));
             actionView.setBackground(context.getResources().getDrawable(R.drawable.tasks_complete_bg));
         }
         actionView.setTextColor(context.getResources().getColor(R.color.text_black));
@@ -188,6 +217,11 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
                 actionText = context.getText(R.string.tasks_complete).toString();
             } else if (familyRegTaskMissingOrFamilyRegComplete && task.isFullyReceived()) {
                 actionBg = context.getResources().getDrawable(R.drawable.mda_partially_received_bg);
+            if (familyRegTaskMissingOrFamilyRegComplete && task.isMdaAdhered()) {
+                actionBg = context.getResources().getDrawable(R.drawable.mda_adhered_bg);
+                actionText = context.getText(R.string.tasks_complete).toString();
+            } else if (familyRegTaskMissingOrFamilyRegComplete && task.isFullyReceived()) {
+                actionBg = context.getResources().getDrawable(R.drawable.mda_dispensed_bg);
             } else if (familyRegTaskMissingOrFamilyRegComplete && task.isPartiallyReceived()) {
                 actionBg = context.getResources().getDrawable(R.drawable.mda_partially_received_bg);
             } else if (familyRegTaskMissingOrFamilyRegComplete && task.isNoneReceived()) {
@@ -198,6 +232,11 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
                 actionBg = context.getResources().getDrawable(R.drawable.family_registered_bg);
             } else {
                 actionBg = context.getResources().getDrawable(R.drawable.mda_partially_received_bg);
+                actionBg = context.getResources().getDrawable(R.drawable.mda_not_eligible_bg);
+            } else if (familyRegTaskMissingOrFamilyRegComplete) {
+                actionBg = context.getResources().getDrawable(R.drawable.family_registered_bg);
+            } else {
+                actionBg = context.getResources().getDrawable(R.drawable.no_task_complete_bg);
             }
         }
 

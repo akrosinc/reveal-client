@@ -1,22 +1,22 @@
 package org.smartregister.reveal.viewholder;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.domain.Task;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.StructureTaskDetails;
 import org.smartregister.reveal.util.CardDetailsUtil;
+import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.Intervention;
+import org.smartregister.reveal.util.Country;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,9 +25,13 @@ import java.util.Locale;
 /**
  * Created by samuelgithengi on 4/11/19.
  */
+//TODO: Conflicts still to bring in Nigeria
+
 public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("M/dd", Locale.getDefault());
+    private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
+    private final static SimpleDateFormat ddMMyyDateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+
     private Context context;
 
     private TextView nameTextView;
@@ -66,21 +70,15 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setTaskAction(StructureTaskDetails taskDetails, View.OnClickListener onClickListener) {
-
-        // HEADS UP
-
         if (!BusinessStatus.NOT_VISITED.equals(taskDetails.getBusinessStatus())) {
             if (Intervention.CASE_CONFIRMATION.equals(taskDetails.getTaskCode())) {
                 actionTextView.setText(context.getResources().getString(R.string.index_case_confirmed));
             } else if (StringUtils.isNotBlank(taskDetails.getPersonTested())
                     && Intervention.BLOOD_SCREENING.equals(taskDetails.getTaskCode())
                     && BusinessStatus.COMPLETE.equals(taskDetails.getBusinessStatus())) {
-                String screening = context.getString(R.string.yes).equals(taskDetails.getPersonTested()) ?
+                String screening = Constants.JsonForm.YES.equals(taskDetails.getPersonTested()) ?
                         context.getString(R.string.tested) : context.getString(R.string.not_tested);
                 actionTextView.setText(screening);
-            } else if (Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())
-                    && BusinessStatus.SPAQ_COMPLETE.equals(taskDetails.getBusinessStatus())) {
-                actionTextView.setText("SPAQ Redose form Complete");
             } else {
                 actionTextView.setText(CardDetailsUtil.getTranslatedBusinessStatus(taskDetails.getBusinessStatus()));
             }
@@ -92,12 +90,10 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
             actionTextView.setText(taskDetails.getTaskAction());
             actionTextView.setBackground(context.getResources().getDrawable(R.drawable.structure_task_action_bg));
             actionTextView.setTextColor(context.getResources().getColor(R.color.task_not_done));
-
         }
 
         if (BusinessStatus.COMPLETE.equals(taskDetails.getBusinessStatus()) &&
-                (Intervention.BEDNET_DISTRIBUTION.equals(taskDetails.getTaskCode())
-                        || Intervention.BLOOD_SCREENING.equals(taskDetails.getTaskCode()))) {
+                (Intervention.BEDNET_DISTRIBUTION.equals(taskDetails.getTaskCode()) || Intervention.BLOOD_SCREENING.equals(taskDetails.getTaskCode()))) {
 
             viewEditImageView.setVisibility(View.VISIBLE);
             setClickHandler(onClickListener, taskDetails, viewEditImageView);
@@ -106,7 +102,7 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
             Date lastEdited = taskDetails.getLastEdited();
             if (lastEdited != null) {
                 lastEditedTextView.setVisibility(View.VISIBLE);
-                lastEditedTextView.setText(context.getString(R.string.last_edited, dateFormat.format(lastEdited)));
+                lastEditedTextView.setText(context.getString(R.string.last_edited, supportedDateFormat().format(lastEdited)));
                 actionTextView.setPadding(0, 0, 0, 0);
             } else {
                 lastEditedTextView.setVisibility(View.GONE);
@@ -116,29 +112,21 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
             lastEditedTextView.setVisibility(View.GONE);
             viewUndoImageView.setVisibility(View.GONE);
         }
-
-        // HEADS UP
-        // Support editing values for CHILD SMC form
-        if (Task.TaskStatus.COMPLETED.name().equals(taskDetails.getTaskStatus())
-                && (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode())
-                || Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())
-                || Intervention.MDA_DRUG_RECON.equals(taskDetails.getTaskCode())
-        )) {
-            viewEditImageView.setVisibility(View.VISIBLE);
-            setClickHandler(onClickListener, taskDetails, viewEditImageView);
-        } else {
-            viewEditImageView.setVisibility(View.GONE);
-            lastEditedTextView.setVisibility(View.GONE);
-            viewUndoImageView.setVisibility(View.GONE);
-        }
-
-
         setClickHandler(onClickListener, taskDetails, actionTextView);
 
+    }
+
+    private SimpleDateFormat supportedDateFormat(){
+        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN){
+            return ddMMyyDateFormat;
+        }
+        return dateFormat;
     }
 
     private void setClickHandler(View.OnClickListener onClickListener, StructureTaskDetails taskDetails, View view) {
         view.setOnClickListener(onClickListener);
         view.setTag(R.id.task_details, taskDetails);
     }
+
+
 }

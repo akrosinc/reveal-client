@@ -1,0 +1,2169 @@
+{
+  "count": "1",
+  "encounter_type": "Spray",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Record Spray Status",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "structure_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "text_size": "8sp",
+        "label": "Est ce que c'est une structure résidentielle?",
+        "options": [
+          {
+            "key": "residential",
+            "text": "Résidentielle"
+          },
+          {
+            "key": "nonResidential",
+            "text": "Non Résidentielle"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "nonresidential_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Quel genre de structure non résidentielle est ce?",
+        "text_size": "8sp",
+        "relevance": {
+          "step1:structure_type": {
+            "type": "string",
+            "ex": "equalTo(., \"nonResidential\")"
+          }
+        },
+        "options": [
+          {
+            "key": "toilet",
+            "text": "Toilette"
+          },
+          {
+            "key": "kitchen",
+            "text": "Cuisine"
+          },
+          {
+            "key": "animalShelter",
+            "text": "Refuge animalier"
+          },
+          {
+            "key": "foodStorage",
+            "text": "Grenier"
+          },
+          {
+            "key": "school",
+            "text": "Ecole"
+          },
+          {
+            "key": "lodge",
+            "text": "Logement payant"
+          },
+          {
+            "key": "shop",
+            "text": "Boutique"
+          },
+          {
+            "key": "office",
+            "text": "Bureau"
+          },
+          {
+            "key": "hospital",
+            "text": "Hopital"
+          },
+          {
+            "key": "clinic",
+            "text": "Clinique"
+          },
+          {
+            "key": "noStructure",
+            "text": "Pas de structure ici"
+          },
+          {
+            "key": "notHabitable",
+            "text": "Pas habitable"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "eligibility",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Est ce que cette structure est eligible",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "eligible",
+            "text": "Eligible"
+          },
+          {
+            "key": "notEligible",
+            "text": "Non eligible"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "residential_noteligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pourquoi cette structure résidentielle n'est pas éligible?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "notSprayableMaterial",
+            "text": "Mur non eligible (matiere)"
+          },
+          {
+            "key": "seasonalHome",
+            "text": "Maison saisonniére"
+          },
+          {
+            "key": "noPersonLivesHereNow",
+            "text": "Maison abandonnée"
+          },
+          {
+            "key": "structureDoesNotExist",
+            "text": "Structure n'existe pas"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "residential_noteligible_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Merci de saisir les raisons",
+        "v_max_length": {
+          "value": "110",
+          "err": "Pas plus de 110 caractéres"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s]*",
+          "err": "Merci de saisir une raison valable, les nombres ne sont pas autorisés\n"
+        },
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:residential_noteligible": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "notreseidential_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pourquoi cette structure non résidentielle est éligible?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "toilet",
+            "text": "Toilette avec toit"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "location_zone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Sélectionner le nom village ou se trouve cette structure?",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "location_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Spécifier autre village:",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Merci d'entrer un nomp valide"
+        },
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:location_zone": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "sprayop_code",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Selectionner le code de l'applicateur qui renseigné les données de cette structure",
+        "v_required": {
+          "value": "true",
+          "err": "Merci de renseigner le code de l'applicateur"
+        },
+        "relevance": {
+          "step1:eligibility": {
+            "type": "string",
+            "ex": "equalTo(., \"eligible\")"
+          }
+        }
+      },
+      {
+        "key": "compoundheadstructure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Est ce la structure ou vit le chef de concession?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "compoundheadname",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Renseigner le nom du chef de concession",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s]*",
+          "err": "Merci d'entrer un nomp valide"
+        },
+        "relevance": {
+          "step1:compoundheadstructure": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "compound_head_phone_number",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "edit_text",
+        "hint": "Phone number",
+        "v_numeric": {
+          "value": "true",
+          "err": "Please enter a number"
+        },
+        "v_regex": {
+          "value": "^$|^[0-9]{9}$",
+          "err": "Number must be 9 digits"
+        },
+        "relevance": {
+          "step1:compoundheadstructure": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "compoundStructure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "multi_select_list",
+        "dialogTitle": "Sélectionner le nom du chef de concession",
+        "buttonText": "+ Sélectionner le nom du chef de concession",
+        "searchHint": "Saisir le nom du chef de concession",
+        "text_size": "8sp",
+        "maxSelectable": "1",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "genderHoH",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Sexe",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "male",
+            "text": "Masculin"
+          },
+          {
+            "key": "female",
+            "text": "Féminin"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structure_sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Des pièces de cette structure ont-elles été traitées ?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Oui"
+          },
+          {
+            "key": "no",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:eligibility": {
+            "type": "string",
+            "ex": "equalTo(., \"eligible\")"
+          }
+        }
+      },
+      {
+        "key": "notsprayed_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pourquoi cette structure n'a-t-elle pas été traitée?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "sick",
+            "text": "Malade"
+          },
+          {
+            "key": "locked",
+            "text": "Fermé à clé"
+          },
+          {
+            "key": "funeral",
+            "text": "Funérailles"
+          },
+          {
+            "key": "refused",
+            "text": "Refusé"
+          },
+          {
+            "key": "noOneHome",
+            "text": "Personne à la maison"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:structure_sprayed": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "notsprayed_reason_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Spécifiez une autre raison:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:notsprayed_reason": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "refused_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Pourquoi ont-ils refusé l'IRS ?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "notSafe",
+            "text": "Pas sécurisé"
+          },
+          {
+            "key": "fearOfChemical",
+            "text": "Peur du chimique"
+          },
+          {
+            "key": "notWorthInconvinience",
+            "text": "Ne vaut pas le dérangement"
+          },
+          {
+            "key": "makesBugsAppear",
+            "text": "Fait apparaître des bugs"
+          },
+          {
+            "key": "religiousObjection",
+            "text": "Objection religieuse"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "other_refused_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Spécifiez une autre raison:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:refused_reason": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "rooms_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Nombre de piéces ELIGIBLES",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Champ obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le nombre de piéces éligibles doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le nombre de piéces éligibles doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "1",
+          "err": "Le nombre de piéces éligibles doit être supérieur ou égal à 1"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "Ne peut pas être supérieur à 99"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "rooms_sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Nombre de pièces traitées au TOTAL",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Veuillez préciser le nombre de pièces traitées"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le nombre de pièces traitées doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le nombre de pièces traitées doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "1",
+          "err": "Le nombre de pièces traitées doit être supérieur ou égal à 1"
+        },
+        "v_relative_max": {
+          "value": "rooms_eligible",
+          "err": "Le nombre de pièces pulvérisées ne peut pas être supérieur au nombre de pièces éligibles."
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "rooms_not_sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "hint": "Nombre de pièces non traitées",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "partiallysprayed_reasons",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "Confirmer le nbre pièces non traités",
+        "repeating_group_label": "Raison de la pièce",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        },
+        "value": [
+          {
+            "key": "partiallysprayed_reason",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "Raison pour laquelle cette pièce éligible n'a pas été traitée",
+            "text_size": "8sp",
+            "v_required": {
+              "value": "true",
+              "err": "Veuillez sélectionner la raison"
+            },
+            "options": [
+              {
+                "key": "refused",
+                "text": "Refusé"
+              },
+              {
+                "key": "locked",
+                "text": "Fermé à clé"
+              },
+              {
+                "key": "sick",
+                "text": "Malade"
+              },
+              {
+                "key": "foodStorage",
+                "text": "Grenier"
+              },
+              {
+                "key": "dontWantToClear",
+                "text": "Ne veux pas sortir ses bagages"
+              },
+              {
+                "key": "other",
+                "text": "Autre"
+              }
+            ]
+          },
+          {
+            "key": "partially_sprayed_reason_other",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Spécifiez une autre raison:",
+            "text_size": "8sp",
+            "v_required": {
+              "value": "true",
+              "err": "Champ obligatoire"
+            },
+            "relevance": {
+              "step1:partiallysprayed_reason": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "key": "rooms_sprayed_hint",
+        "type": "label",
+        "text": "S'il s'agit d'un nettoyage ou d'une nouvelle visite, veuillez enregistrer TOTAL des pièces traitées",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:structure_sprayed": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sprayed_males",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Population masculine dans les piéces traitées",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Veuillez préciser la population masculine"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "La population masculine doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": ""
+        },
+        "v_min": {
+          "value": "0",
+          "err": "La population masculine doit être supérieure ou égale à 0"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "La population masculine doit être inférieure à 99"
+        },
+        "v_relative_min": {
+          "value": "sprayed_totalmale",
+          "err": "Vous ne pouvez pas saisir 0 Population masculine lorsque le sexe du chef de ménage est un homme"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_females",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Population féminine dans les piéces traitées",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Veuillez préciser la population féminine"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "La population féminine doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "La population féminine doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "La population féminine doit être supérieure ou égale à 0"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "La population féminine doit être inférieure à 99"
+        },
+        "v_relative_min": {
+          "value": "sprayed_totalfemale",
+          "err": "Vous ne pouvez pas saisir 0 Population féminine lorsque le sexe du chef de ménage est une femme"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_totalpop",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_totalpop_toaster_info",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Population totale: {sprayed_totalpop}",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_totalmale",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_totalfemale",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_totalpop_approve",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label_text_size": "8sp",
+        "label": "Cliquez sur la case à cocher pour approuver la population totale.",
+        "options": [
+          {
+            "key": "isConsented",
+            "text": "I Accept",
+            "value": false,
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Veuillez vérifier l'article"
+        }
+      },
+      {
+        "key": "sprayed_totalpop_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Vous ne pouvez pas saisir une population de 0 pour une structure traitée",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_childrenU5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Enfants <5 ans dans des piéces traitées",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Enfants <5 ans est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Les enfants de moins de 5 ans doivent être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_childrenU5_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre d'enfant de moins de 5 ans devra etre inférieur au total de la population des piéces traitées",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_pregwomen",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Femmes enceintes dans des piéces pulvérisées",
+        "is_mandatory": true,
+        "text_size": "8sp",
+        "v_required": {
+          "value": true,
+          "err": "Les femmes enceintes est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Les femmes enceintes doivent être un numéro"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Les femmes enceintes doivent être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
+        },
+        "v_relative_max": {
+          "value": "sprayed_females",
+          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_nets_use_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_total_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
+        "v_required": {
+          "value": "true"
+        },
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_pregwomen_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "v_required": {
+          "value": "true"
+        },
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_u5_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_males",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Population masculine dans les pièces non traitées",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "La population masculine doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "La population masculine doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "La population masculine doit être supérieure ou égale à 0"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "La population masculine doit être inférieure à 99"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_male_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Male Population in rooms not sprayed is required",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_females",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Population féminine dans les pièces non traitées",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "La population féminine doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "La population féminine doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "La population féminine doit être supérieure ou égale à 0"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "La population féminine doit être inférieure à 99"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_female_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "La population féminine dans les pièces non traitées est requise",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_totalpop",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+       {
+        "key": "notsprayed_childrenU5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Enfants <5 ans dans des piéces non traitées",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "Les enfants de moins de 5 ans doivent être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Les enfants de moins de 5 ans doivent être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Les enfants de moins de 5 ans doivent être supérieurs ou égaux à 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_children_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "La population féminine dans les pièces non traitées est requise",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_childrenU5_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Children < 5 should be less than total population in rooms not sprayed",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_pregwomen",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "text_size": "8sp",
+        "hint": "Femmes enceintes dans des piéces non traitées",
+        "v_numeric": {
+          "value": "true",
+          "err": "Les femmes enceintes doivent être un numéro"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Les femmes enceintes doivent être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Les femmes enceintes doivent être supérieures ou égales à 0"
+        },
+        "v_relative_max": {
+          "value": "notsprayed_females",
+          "err": "Les femmes enceintes doivent être inférieures à la population féminine"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_pregwomen_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "La population féminine dans les pièces non traitées est requise",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "new_sachet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Un nouveau sachet d'insecticide a-t-il été mélangé dans cette structure ?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "options": [
+          {
+            "key": "yes",
+            "text": "Oui"
+          },
+          {
+            "key": "no",
+            "text": "Non"
+          }
+        ],
+        "relevance": {
+          "step1:structure_sprayed": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "serial_numbers",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "Nombre de sachets d'insecticide mélangés",
+        "repeating_group_label": "numéro de série",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:new_sachet": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "value": [
+          {
+            "key": "serial_number",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "Numéro de série du sachet",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_numeric": {
+              "value": "true",
+              "err": "Le numéro de série du sachet doit être un nombre"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Le numéro de série du sachet doit être un nombre entier"
+            }
+          }
+        ]
+      },
+      {
+        "key": "notsprayedrooms_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Nombre de piéces ELIGIBLES",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "Doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Doit être supérieur ou égal à 0"
+        },
+        "v_max": {
+          "value": "99",
+          "err": "Ne peut pas être supérieur à 99"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_nets_use",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total Number of Nets Hanging and in Use",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "Total Number of Nets Hanging and in Use must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Total Number of Nets Hanging and in Use must be a whole number"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_nets_use_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre total de filets suspendus et utilisés doit être inférieur ou égal à la population totale (femelles + mâles). De plus, il doit être inférieur au total des filets disponibles.",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_total_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre total de résidents dormant sous des moustiquaires doit être égal ou inférieur à la population totale ET égal ou supérieur au total des moustiquaires utilisées",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_pregwomen_uNet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of Pregnant Women Sleeping Under Net",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "Number of Pregnant Women Sleeping Under Net must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Number of Pregnant Women Sleeping Under Net must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number of Pregnant Women Sleeping Under Net must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_pregwomen_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre de femmes enceintes dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_u5_uNet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of Children Under 5 Yrs Sleeping Under Net",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "Number of Children Under 5 Yrs Sleeping Under Net must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Number of Children Under 5 Yrs Sleeping Under Net must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number of Children Under 5 Yrs Sleeping Under Net must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "notsprayed_u5_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Le nombre d'enfants de moins de 5 ans dormant sous une moustiquaire doit être égal ou inférieur à celui des enfants de moins de 5 ans et de la population totale dormant sous une moustiquaire",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+	  {
+        "key": "sbc",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Can you ask 5 Social Behaviour Change questions?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+	   {
+        "key": "about_malaria",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Have you heard or seen messages / information about malaria in the past year?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:sbc": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "information",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What type of message / information did you see or hear?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "malariaIsDangerous",
+            "text": "Malaria is dangerous"
+          },
+          {
+            "key": "mosquitosSpreadMalaria",
+            "text": "Mosquitoes spread malaria"
+          },
+          {
+            "key": "houseSprayingImportance",
+            "text": "Importance of house spraying"
+          },
+          {
+            "key": "mDAImportance",
+            "text": "Importance of mass drug administration"
+          },
+          {
+            "key": "sleepingUnderLLINImportance",
+            "text": "Importance of sleeping under mosquito net"
+          },
+          {
+            "key": "seekFeverTesting",
+            "text": "Seek testing for fever"
+          },
+          {
+            "key": "seekFeverTreatment",
+            "text": "Seek treatment for fever"
+          },
+          {
+            "key": "malariaEliminationPossible",
+            "text": "Malaria elimination is possible"
+          },
+          {
+            "key": "malariaEndsWithMe",
+            "text": "Malaria ends with me"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:about_malaria": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_information",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other information message:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:information": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "preferred_source",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What is your preferred source(s) of malaria messages / information?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "healthFacility",
+            "text": "Health Facility"
+          },
+          {
+            "key": "cHW",
+            "text": "Community Health Worker"
+          },
+          {
+            "key": "villageMeeting",
+            "text": "Village Meeting"
+          },
+          {
+            "key": "friendFamily",
+            "text": "Friend/Family"
+          },
+          {
+            "key": "church",
+            "text": "Church"
+          },
+          {
+            "key": "school",
+            "text": "School"
+          },
+          {
+            "key": "radio",
+            "text": "Radio"
+          },
+          {
+            "key": "tv",
+            "text": "TV"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "other_preferred_source",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other information source:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:preferred_source": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "health_service",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Can you ask questions on health seeking behaviour?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "districtName",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "provinceName",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "district",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "What district are you in?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_seek",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "When you or someone in your household is ill with a fever, which facility do you seek care from?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_seek_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other health facility:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "false",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:hfc_seek": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_belong",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "In which health facility catchment area do you reside?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_belong_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other health facility:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "false",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:hfc_belong": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "chw",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you have a community health worker working in your community?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
+          },
+          {
+            "key": "dontKnow",
+            "text": "Don't Know"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "chw_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "What is the name of name of your community health worker ?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:chw": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "chw_name_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other community health worker:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "false",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:hfc_belong": {
+            "type": "chw_name",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "business_status_toaster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Statut de la nouvelle structure : {business_status}",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal-spray-calculation.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

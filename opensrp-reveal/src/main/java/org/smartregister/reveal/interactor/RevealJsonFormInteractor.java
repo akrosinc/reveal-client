@@ -4,23 +4,27 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
-import org.smartregister.reveal.widget.RevealBarcodeFactory;
 import org.smartregister.reveal.widget.RevealEditTextFactory;
 import org.smartregister.reveal.widget.RevealLabelFactory;
+import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
 import org.smartregister.reveal.widget.RevealRadioButtonFactory;
+import org.smartregister.reveal.widget.RevealRepeatingGroupFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
 
-import static com.vijay.jsonwizard.constants.JsonFormConstants.BARCODE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.EDIT_TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.NATIVE_RADIO_BUTTON;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TOASTER_NOTES;
 
 /**
  * Created by samuelgithengi on 12/13/18.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class RevealJsonFormInteractor extends JsonFormInteractor {
 
 
@@ -46,9 +50,10 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         map.put(NATIVE_RADIO_BUTTON, new RevealRadioButtonFactory());
         map.put(LABEL, new RevealLabelFactory());
         map.put(TOASTER_NOTES, new RevealToasterNotesFactory());
+        map.put(MULTI_SELECT_LIST,new RevealMultiSelectListFactory());
 
-        if(Utils.isCountryBuild(Country.NIGERIA)){
-            map.put(BARCODE, new RevealBarcodeFactory());
+        if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+            map.put(REPEATING_GROUP, new RevealRepeatingGroupFactory());
         }
 
     }
