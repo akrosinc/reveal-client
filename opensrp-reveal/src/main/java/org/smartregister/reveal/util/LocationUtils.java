@@ -10,6 +10,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+
 import io.ona.kujaku.interfaces.ILocationClient;
 import io.ona.kujaku.listeners.BaseLocationListener;
 import io.ona.kujaku.location.clients.GoogleLocationClient;
@@ -20,9 +21,6 @@ import timber.log.Timber;
 /**
  * Created by samuelgithengi on 3/20/19.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class LocationUtils {
 
     private ILocationClient locationClient;

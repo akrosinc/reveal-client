@@ -203,7 +203,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     break;
                 case EventType.MDA_DISPENSE:
                     taskUtils.generateMDAAdherenceTask(RevealApplication.getInstance().getApplicationContext(),
-                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).optString(Properties.LOCATION_ID));
+                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),JsonFormUtils.getFieldValue(json,JsonForm.ADMINISTERED_SPAQ));
 
                 case BLOOD_SCREENING_EVENT:
                 case EventType.MDA_ADHERENCE:
