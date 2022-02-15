@@ -7,7 +7,6 @@ import androidx.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 
 import net.sqlcipher.Cursor;
@@ -76,7 +75,6 @@ import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
-import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
@@ -86,8 +84,6 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
@@ -119,6 +115,9 @@ import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.METADATA;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
@@ -135,9 +134,6 @@ import static org.smartregister.util.JsonFormUtils.getString;
 /**
  * Created by samuelgithengi on 3/25/19.
  */
-
-//TODO: conflicts still to bring in Nigeria
-
 public class BaseInteractor implements BaseContract.BaseInteractor {
 
     public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -206,7 +202,13 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                             getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),JsonFormUtils.getFieldValue(json,JsonForm.ADMINISTERED_SPAQ));
 
                 case BLOOD_SCREENING_EVENT:
+                case EventType.MDA_DRUG_RECON:
+                    saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
+                    break;
+
                 case EventType.MDA_ADHERENCE:
+                    taskUtils.generateMDAStructureDrug(RevealApplication.getInstance().getApplicationContext(),
+                            getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID));
                     saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
                     break;
 
@@ -300,7 +302,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     }
 
     private void saveLocationInterventionForm(JSONObject jsonForm) {
-            String encounterType = null;
+        String encounterType = null;
         String interventionType = null;
         try {
             encounterType = jsonForm.getString(ENCOUNTER_TYPE);
@@ -320,6 +322,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = Intervention.MDA_DISPENSE;
             } else if (encounterType.equals(EventType.MDA_ADHERENCE)) {
                 interventionType = Intervention.MDA_ADHERENCE;
+            } else if (encounterType.equals(EventType.MDA_DRUG_RECON)) {
+                interventionType = Intervention.MDA_DRUG_RECON;
             } else if (encounterType.equals(EventType.IRS_VERIFICATION)) {
                 interventionType = Intervention.IRS_VERIFICATION;
             } else if (encounterType.equals(EventType.DAILY_SUMMARY_EVENT)) {

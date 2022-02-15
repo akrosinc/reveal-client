@@ -15,9 +15,6 @@ import org.smartregister.view.contract.BaseRegisterContract;
 /**
  * Created by samuelgithengi on 3/11/19.
  */
-
-//TODO: conflicts still to bring in Nigeria
-
 public class TaskRegisterPresenter extends BaseRegisterPresenter implements TaskRegisterContract.Presenter, BaseRegisterContract.Presenter {
 
     private BaseRegisterContract.View view;

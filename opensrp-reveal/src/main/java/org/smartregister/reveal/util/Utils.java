@@ -90,9 +90,8 @@ import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
-import static org.smartregister.reveal.util.Constants.USER_NAME;
-import static org.smartregister.reveal.util.Constants.Intervention.SMC;
 import static org.smartregister.reveal.util.Constants.Tags.LGA;
+import static org.smartregister.reveal.util.Constants.USER_NAME;
 
 public class Utils {
 
@@ -484,6 +483,10 @@ public class Utils {
             Timber.e(e);
         }
         return updatedCoords;
+    }
+
+    public static boolean isCountryBuild(Country country){
+        return BuildConfig.BUILD_COUNTRY == country;
     }
 
     public static String getSyncEntityString(SyncEntity syncEntity) {

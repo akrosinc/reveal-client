@@ -134,9 +134,6 @@ import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 /**
  * Created by samuelgithengi on 11/20/18.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class ListTasksActivity extends BaseMapActivity implements ListTaskContract.ListTaskView,
         View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener {
 
@@ -365,7 +362,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                         RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
 
-                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN) {
+                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.NIGERIA) {
                             layerSwitcherFab.setVisibility(View.GONE);
                         }
 
@@ -443,12 +440,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
-                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN) {
+                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN && getBuildCountry() != Country.NIGERIA) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
             int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
 
-            int bottomMargin = org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs ? progressHeight + 40 : 40;
+            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda ) ? progressHeight + 40 : 40;
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
 
             if (layerSwitcherFab != null) {
