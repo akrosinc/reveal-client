@@ -94,11 +94,6 @@ import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
-import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
@@ -140,6 +135,9 @@ import static org.smartregister.util.JsonFormUtils.getString;
 /**
  * Created by samuelgithengi on 3/25/19.
  */
+
+//TODO: conflicts still to bring in Nigeria
+
 public class BaseInteractor implements BaseContract.BaseInteractor {
 
     public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -209,16 +207,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
 
                 case BLOOD_SCREENING_EVENT:
                 case EventType.MDA_ADHERENCE:
-                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),JsonFormUtils.getFieldValue(json,JsonForm.ADMINISTERED_SPAQ));
-
-                case BLOOD_SCREENING_EVENT:
-                case EventType.MDA_DRUG_RECON:
-                    saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
-                    break;
-
-                case EventType.MDA_ADHERENCE:
-                    taskUtils.generateMDAStructureDrug(RevealApplication.getInstance().getApplicationContext(),
-                            getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID));
                     saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
                     break;
 
@@ -340,10 +328,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = CDD_SUPERVISION;
             } else if(CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)){
                 interventionType = CELL_COORDINATION;
-            } else if (encounterType.equals(EventType.MDA_DRUG_RECON)) {
-                interventionType = Intervention.MDA_DRUG_RECON;
-            } else if (encounterType.equals(EventType.IRS_VERIFICATION)) {
-                interventionType = Intervention.IRS_VERIFICATION;
             }
         } catch (JSONException e) {
             Timber.e(e);

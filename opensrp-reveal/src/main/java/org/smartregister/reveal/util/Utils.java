@@ -76,6 +76,7 @@ import static org.smartregister.reveal.util.Constants.CONFIGURATION.METERS_PER_K
 import static org.smartregister.reveal.util.Constants.DateFormat.CARD_VIEW_DATE_FORMAT;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_FI;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_MDA;
 import static org.smartregister.reveal.util.Constants.Intervention.FI;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
@@ -90,6 +91,8 @@ import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Constants.Intervention.SMC;
+import static org.smartregister.reveal.util.Constants.Tags.LGA;
 
 public class Utils {
 

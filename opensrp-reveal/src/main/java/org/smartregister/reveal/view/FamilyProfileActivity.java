@@ -2,34 +2,22 @@ package org.smartregister.reveal.view;
 
 import android.app.Activity;
 import android.content.Intent;
+import androidx.viewpager.widget.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import androidx.viewpager.widget.ViewPager;
-
-import com.vijay.jsonwizard.domain.Form;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.domain.Task;
 import org.smartregister.family.activity.BaseFamilyProfileActivity;
 import org.smartregister.family.adapter.ViewPagerAdapter;
 import org.smartregister.family.util.Constants.INTENT_KEY;
-import org.smartregister.family.util.Utils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.FamilyProfileContract;
 import org.smartregister.reveal.fragment.FamilyProfileMemberFragment;
 import org.smartregister.reveal.fragment.StructureTasksFragment;
 import org.smartregister.reveal.model.FamilyProfileModel;
-import org.smartregister.reveal.model.FamilyRegisterModel;
 import org.smartregister.reveal.presenter.FamilyProfilePresenter;
 
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON_FRAGMENT;
@@ -37,6 +25,9 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_G
 /**
  * Created by samuelgithengi on 2/8/19.
  */
+
+//TODO: Conflicts still to bring in Nigeria
+
 public class FamilyProfileActivity extends BaseFamilyProfileActivity implements FamilyProfileContract.View {
 
     private StructureTasksFragment structureTasksFragment;
@@ -124,12 +115,6 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = this.getMenuInflater();
         inflater.inflate(R.menu.profile_menu, menu);
-
-        menu.findItem(R.id.archive_family).setVisible(false);
-        if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-            menu.findItem(R.id.edit_family).setTitle(getString(R.string.family_information));
-        }
-
         return true;
     }
 
@@ -157,45 +142,5 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
     @Override
     public FamilyProfileContract.Presenter presenter() {
         return (FamilyProfileContract.Presenter) super.presenter();
-    }
-
-    @Override
-    public void startFormActivity(JSONObject jsonForm, boolean readOnly) {
-        Form form = new Form();
-        form.setActionBarBackground(R.color.family_actionbar);
-        form.setWizard(false);
-        if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY)){
-            FamilyRegisterModel.populateCompoundStructureOptions(jsonForm);
-            String value = JsonFormUtils.getFieldValue(jsonForm.toString(), FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
-            JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(jsonForm),FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
-            JSONArray options = compoundStructureField.optJSONArray(AllConstants.OPTIONS);
-            for(int i=0;i < options.length();i++){
-                try{
-                    JSONObject option = (JSONObject)options.get(i);
-                    JSONArray multiSelectValue = new JSONArray();
-                    multiSelectValue.put(option);
-                    if(option.get(KEY).equals(value)){
-                        compoundStructureField.put(VALUE,multiSelectValue);
-                    }
-                }catch (Exception e){
-                    Timber.e(e);
-                }
-            }
-            String oldFamilyName = JsonFormUtils.getFieldValue(jsonForm.toString(), "family_name");
-            JSONObject oldFamilyNameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(jsonForm),FamilyConstants.DatabaseKeys.OLD_FAMILY_NAME);
-            if(oldFamilyNameField != null){
-                try {
-                    oldFamilyNameField.put(VALUE,oldFamilyName);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        Intent intent = new Intent(this, Utils.metadata().familyMemberFormActivity);
-        intent.putExtra(Constants.JSON_FORM_PARAM_JSON, jsonForm.toString());
-        intent.putExtra("form", form);
-        intent.putExtra(Constants.READ_ONLY, readOnly);
-
-        this.startActivityForResult(intent, 2244);
     }
 }

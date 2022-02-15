@@ -328,7 +328,6 @@ public interface Constants {
 
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
 
-        String IRS_VERIFICATION = "irs_verification";
     }
 
     interface Tables {
@@ -754,13 +753,12 @@ public interface Constants {
         String REFAPP_EC_CLIENT_FIELDS = "ec_client_fields_refapp.json";
         String KENYA_EC_CLIENT_FIELDS = "ec_client_fields_kenya.json";
         String RWANDA_EC_CLIENT_FIELDS = "ec_client_fields_rwanda.json";
-    }
-
-
-
-        String REFAPP_EC_CLIENT_FIELDS = "ec_client_fields_refapp.json";
         String NIGERIA_EC_CLIENT_FIELDS = "ec_client_fields_nigeria.json";
     }
+
+
+
+
 
 
     interface StructureType {

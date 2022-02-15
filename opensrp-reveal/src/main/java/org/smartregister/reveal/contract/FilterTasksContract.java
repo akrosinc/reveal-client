@@ -14,6 +14,8 @@ import java.util.List;
 /**
  * Created by samuelgithengi on 12/18/19.
  */
+
+//TODO: conflicts still to bring in Nigeria
 public interface FilterTasksContract {
 
     interface View {
@@ -42,10 +44,6 @@ public interface FilterTasksContract {
     }
 
     interface Presenter extends  DatePickerDialog.OnDateSetListener  {
-        void setSortBySelection(int sortBySpinner);
-    }
-
-    interface Presenter {
 
         @StringRes
         Integer getStringResource(String intervention);

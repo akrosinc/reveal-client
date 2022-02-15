@@ -80,6 +80,10 @@ public class TaskDetails extends BaseTaskDetails implements Comparable<TaskDetai
 
     private String aggregateBusinessStatus;
 
+    private int mdaTasksCount;
+
+    private boolean eligibleNonCompleted;
+
     private String groupedTaskCodes;
 
     public TaskDetails(@NonNull String taskId) {
@@ -386,5 +390,13 @@ public class TaskDetails extends BaseTaskDetails implements Comparable<TaskDetai
             stringBuilder.append(TILDE).append(taskCodeStatusArray[0]);
         }
         this.groupedTaskCodes = stringBuilder.toString();
+    }
+
+    public void setMdaTasksCount(int mdaTasksCount) {
+        this.mdaTasksCount = mdaTasksCount;
+    }
+
+    public int getMdaTasksCount() {
+        return mdaTasksCount;
     }
 }

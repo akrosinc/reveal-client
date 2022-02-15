@@ -15,6 +15,9 @@ import org.smartregister.view.contract.BaseRegisterContract;
 /**
  * Created by samuelgithengi on 3/11/19.
  */
+
+//TODO: conflicts still to bring in Nigeria
+
 public class TaskRegisterPresenter extends BaseRegisterPresenter implements TaskRegisterContract.Presenter, BaseRegisterContract.Presenter {
 
     private BaseRegisterContract.View view;
@@ -23,25 +26,6 @@ public class TaskRegisterPresenter extends BaseRegisterPresenter implements Task
         super(view);
         this.view = view;
         taskRegisterInteractor = new TaskRegisterInteractor(this);
-    }
-
-    @Override
-    public void registerViewConfigurations(List<String> viewIdentifiers) {
-        taskRegisterInteractor.registerViewConfigurations(viewIdentifiers);
-    }
-
-    @Override
-    public void unregisterViewConfiguration(List<String> viewIdentifiers) {
-        taskRegisterInteractor.unregisterViewConfiguration(viewIdentifiers);
-    }
-
-    @Override
-    public void onDestroy(boolean isChangingConfiguration) {
-        taskRegisterInteractor.cleanupResources();
-    }
-
-    @Override
-    public void updateInitials() {//do nothing
     }
 
     @Override

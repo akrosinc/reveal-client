@@ -42,10 +42,7 @@
 
     <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
     <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
-    <string name="select_campaign_operational_area_title">Plan and Operational area set</string>
-    <string name="select_campaign_operational_area">Plan and Operational area not set. Select from the hamburger menu</string>
 
-    <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
     <string name="reveal_streets_style" translatable="false">reveal-streets-style.json</string>
     <string name="reveal_offline_map_download_style" translatable="false">map-download-style.json</string>
     <string name="reveal_datasource_name" translatable="false">reveal-data-set</string>
@@ -186,7 +183,6 @@
 
     <string name="view_tasks">View \nTasks</string>
     <string name="tasks_complete">Tasks Complete</string>
-    <string name="tasks_complete">All Tasks\nComplete</string>
     <string name="tasks_incomplete">Tasks\nIncomplete</string>
 
     <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
@@ -239,20 +235,13 @@
     <string name="mobilization_form" translatable="false">Mobilization Form</string>
     <string name="irs_field_officer" translatable="false">IRS Field Officer Form</string>
     <string name="verification_form" translatable="false">Verification Form</string>
-    <string name="daily_summary">Enter Daily Summary Form</string>
-    <string name="team_leader_dos">Enter Team Leader DOS Form</string>
-    <string name="cb_spray_area">Enter CB Spray Area Visit Form</string>
-    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
-    <string name="mobilization_form">Enter Mobilization Form</string>
-    <string name="irs_field_officer">Enter IRS Field Officer Form</string>
-    <string name="verification_form">Enter Verification Form</string>
 
 
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
 
 
-    <string name="found_coverage">Found Coverage</string>
+    <string name="found_coverage">Found Coverage</string>mda_adherence
     <string name="spray_coverage">Spray Coverage</string>
     <string name="structures_remaining_90">Structures Remaining 90%</string>
     <string name="total_structures">Total Structures</string>
@@ -356,7 +345,6 @@
     <string name="mda_dispense">MDA Dispense</string>
     <string name="mda_adherence">SPAQ Redose</string>
 
-    <string name="mda_adherence">MDA Adherence</string>
     <string name="bednet_distributed">Bednet Distributed</string>
     <string name="family_registered">Family Registered</string>
     <string name="blood_screening_complete">Blood Screening Complete</string>
@@ -439,7 +427,6 @@
     <string name="sync_started">Sync Started</string>
     <string name="device_data_synced">Device data synced</string>
     <string name="device_data_not_synced">Device data not synced</string>
-    <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
     <string name="filled_forms">Filled Forms</string>
     <string name="event_date">Date</string>
@@ -458,10 +445,7 @@
     <string name="verification_form_name"> Verification Form</string>
     <string name="irs_lite_verification_form_name">IRS Lite Verification Form</string>
 
-    <string name="total_structures_targeted">Total structures targeted</string>
 
-    <string name="households_not_visited">Registered households not visited</string>
-    <string name="structure_is_inactive">This structure is inactive</string>
     <string name="filter_by_date">Filter By Date</string>
 
     <string name="date_format">DD-MM-YYYY</string>
@@ -478,7 +462,6 @@
     <string name="start_p2p_syc">Start P2P Sync</string>
 
     <string name="events">Events</string>
-    <string name="sync_started">Sync Started</string>
     <string name="ok">Done</string>
     <string name="locations">Locations</string>
     <string name="plans">Plans</string>

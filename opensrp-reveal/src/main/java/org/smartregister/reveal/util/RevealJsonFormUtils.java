@@ -29,10 +29,6 @@ import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.activity.RevealJsonFormActivity;
-import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
@@ -46,7 +42,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,7 +56,6 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.CHECK_BOX;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEYS;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.READ_ONLY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUES;
@@ -83,11 +81,6 @@ import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_OPERATOR_CO
 import static org.smartregister.reveal.util.Constants.JsonForm.YES;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MACEPA_PROVINCES;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
-import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
-import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
-import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
-import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
@@ -97,12 +90,13 @@ import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
-import static org.smartregister.reveal.util.Utils.getPropertyValue;
 
 
 /**
  * Created by samuelgithengi on 3/22/19.
  */
+
+//TODO: Conflicts still to bring in Nigeria
 public class RevealJsonFormUtils {
 
     private Set<String> nonEditablefields;
@@ -265,21 +259,6 @@ public class RevealJsonFormUtils {
         }
     }
 
-    public void startJsonForm(JSONObject form, Activity context, int requestCode, boolean readOnly) {
-        // HEADS UP
-
-        Intent intent = new Intent(context, RevealJsonFormActivity.class);
-        try {
-            intent.putExtra(JSON_FORM_PARAM_JSON, form.toString());
-            intent.putExtra(Constants.READ_ONLY, readOnly);
-
-            context.startActivityForResult(intent, requestCode);
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-    }
-
-
     public String getFormName(String encounterType, String taskCode) {
         String formName = null;
         if (SPRAY_EVENT.equals(encounterType) || Intervention.IRS.equals(taskCode)) {
@@ -381,8 +360,6 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.ZAMBIA_MDA_ADHERENCE_FORM;
             } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MDA_ADHERENCE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-                formName = JsonForm.NIGERIA_MDA_ADHERENCE_FORM;
             }
         } else if (Intervention.MDA_DISPENSE.equals(taskCode)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
@@ -459,13 +436,6 @@ public class RevealJsonFormUtils {
             }
         } else if(Constants.EventType.FPP_EVENT.equals(encounterType)){
             formName = JsonForm.FPP_FORM_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-                formName = JsonForm.NIGERIA_MDA_DISPENSE_FORM;
-            }
-        } else if (Intervention.MDA_DRUG_RECON.equals(taskCode)) {
-            formName = JsonForm.NIGERIA_MDA_DRUG_RECON_FORM;
-        } else if (IRS_VERIFICATION.equals(encounterType) || Intervention.IRS_VERIFICATION.equals(taskCode)) {
-            formName = JsonForm.ZAMBIA_IRS_VERIFICATION_FORM;
         }
         return formName;
     }

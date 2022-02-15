@@ -97,19 +97,12 @@
     <string name="irs">IRS การพ่นเคมีชนิดมีฤทธิ์ตกค้าง</string>
     <string name="mda">MDA</string>
     <string name="mda_lite">MDA-Lite</string>
-    <string name="focus_investigation">การสอบสวนแหล่งแพร่เชื้อ Focus</string>
-    <string name="irs">IRS การพ่นเคมีชนิดมีฤทธิ์ตกค้าง</string>
     <string name="task_icon">ไอคอนงาน</string>
     <string name="distance_from_structure">ห่างออกไป %1.0f ม.</string>
     <string name="distance_from_center">%1.0f ม. จากใจกลาง %2s </string>
 
     <string name="mosquito_collection_point">สถานที่ทำการเก็บตัวอย่างยุง</string>
-    <string name="record_mosquito_collection">จับยุง</string>
-    <string name="larval_breeding_site">แหล่งเพาะพันธุ์ตัวอ่อนยุง</string>
-    <string name="record_larvacide">ตักลูกน้ำ</string>
-    <string name="record_mosquito_collection">บันทึก\nCollection</string>
-    <string name="larval_breeding_site">แหล่งเพาะพันธุ์ตัวอ่อนยุง</string>
-    <string name="record_larvacide">บันทึก\nDipping</string>
+
     <string name="bcc">BCC การสื่อสารเพื่อปรับเปลี่ยนพฤติกรรม</string>
     <string name="record_bcc">บันทึก\nBCC</string>
     <string name="record_status">บันทึก\nStatus</string>
@@ -123,8 +116,7 @@
     </plurals>
 
     <string name="card_view_record_mosquito_collection">แก้ไขข้อมูล</string>
-    <string name="record_larval_dipping">แก้ไขข้อมูล</string>
-    <string name="record_larval_dipping">บแก้ไขข้อมูล</string>
+
     <string name="card_view_mosquito_collection_point">ตำแหน่งที่ทำการเก็บตัวอย่างยุง</string>
     <string name="mosquito_breeding_site">แหล่งเพาะพันธุ์ยุง</string>
 
@@ -138,12 +130,7 @@
     <string name="mosquito_collection_trap_set_date">กำหนดวันที่:&#160;</string>
     <string name="mosquito_collection_trap_follow_up_date">วันที่ติดตาม:&#160;</string>
 
-    <string name="paot_last_updated_date_test_text">กรุณาระบุวันที่:&#160;</string>
-    <string name="card_view_edit_paot_details">แก้ไขข้อมูล</string>
-    <string name="card_view_paot">พื้นที่เสี่ยงต่อการแพร่เชื้อ</string>
-    <string name="paot_last_updated_date_test_text">อัพเดทล่าสุด:&#160;</string>
-    <string name="card_view_edit_paot_details">บแก้ไขข้อมูล</string>
-    <string name="card_view_paot">ศักยภาพของการส่งสัญญาณ</string>
+
 
     <string name="residents">ผู้พักอาศัย</string>
     <string name="return_to_all_families">ย้อนกลับ</string>
@@ -199,16 +186,14 @@
     <string name="plans_download_on_progress_title">ดาวน์โหลดกำลังดำเนินการ</string>
     <string name="plans_download_on_progress">กำลังดาวน์โหลดแผนอยู่ในระหว่างดำเนินการ โปรดรอสักครู่</string>
 
-    <string name="view_tasks">ดูรายงาน</string>
-    <string name="view_tasks">ดูรายการงาน</string>
+
     <string name="tasks_complete">งานเสร็จสมบูรณ์</string>
     <string name="numero_sign">เลขที่</string>
 
     <string name="register_outside_boundary_title">Register structure outside area boundary?</string>
     <string name="register_outside_boundary_warning">Warning: this location is beyond the boundaries of the selected operational area. If you continue, the structure may be added to an incorrect area</string>
     <string name="register">Register</string>
-    <string name="cancel">ยกเลิก</string>
-    <string name="cancel">Cancel</string>
+
     <string name="partially_sprayed">Partially Sprayed</string>
 
     <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
@@ -216,10 +201,7 @@
     <!-- form -->
     <string name="add_fam">ทะเบียนครัวเรือน</string>
 
-    <string name="tested">เจาะเลือด</string>
-    <string name="not_tested">ไม่เจาะเลือด</string>
-    <string name="tested">Tested</string>
-    <string name="not_tested">Not Tested</string>
+
 
     <string name="save_point">บันทึกจุด</string>
     <string name="change_point">เปลี่ยนจุด</string>
@@ -229,12 +211,6 @@
     <string name="circle_not_clicked">Circle not clicked</string>
     <string name="start_drawing">เริ่มวาด</string>
     <string name="edit_boundary">แก้ไขขอบเขตกลุ่มบ้าน</string>
-    <string name="discard">ใช่</string>
-    <string name="delete_point_title">ลบจุดนี้??</string>
-    <string name="delete_point_msg">คุณต้องการยกเลิกสิ่งที่ได้แก้ไขไปใช่หรือไม่?</string>
-    <string name="discard">ยกเลิก</string>
-    <string name="delete_point_title">ลบจุดนี้??</string>
-    <string name="delete_point_msg">นี่จะเป็นการลบจุดออกจากขอบเขตกลุ่มบ้าน</string>
     <string name="discard_changes_title">ยกเลิกการเปลี่ยนแปลงหรือไม่?</string>
     <string name="discard_changes_msg">การดำเนินการนี้จะยกเลิกการแก้ไขที่ไม่ได้บันทึกที่คุณทำไว้ในขอบเขตกลุ่มบ้าน</string>
     <string name="tap_point_msg">แตะจุดดำเพื่อย้ายหรือลบ</string>
@@ -304,7 +280,6 @@
     <string name="view_details">แก้ไข</string>
     <string name="choose_action">โปรดเลือก</string>
     <string name="search_hint">ใส่ชื่อบุคคลหรือบ้านเลขที่เพื่อค้นหา</string>
-    <string name="x_years">%1$dปี</string>
     <string name="case_confirmation_description">ยืนยันบ้านผู้ป่วย</string>
     <string name="last_edited">แก้ไขวันที่ %1s</string>
     <string name="ok">ตกลง</string>
