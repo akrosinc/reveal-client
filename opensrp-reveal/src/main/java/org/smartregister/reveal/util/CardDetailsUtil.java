@@ -25,12 +25,14 @@ import timber.log.Timber;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_DISPENSED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYABLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.TASKS_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
@@ -38,24 +40,30 @@ import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 /**
  * Created by samuelgithengi on 3/22/19.
  */
-//TODO: Conflicts still to bring in Nigeria
-
 public class CardDetailsUtil {
 
     public static void formatCardDetails(CardDetails cardDetails) {
         if (cardDetails == null || cardDetails.getStatus() == null)
             return;
         // extract status color
-        String status = getBaseBusinessStatus(cardDetails.getStatus());
+        String status = BuildConfig.BUILD_COUNTRY == Country.NIGERIA ? cardDetails.getStatus() : getBaseBusinessStatus(cardDetails.getStatus());
         switch (status) {
+            case BusinessStatus.INELIGIBLE:
+            case BusinessStatus.FAMILY_NO_TASK_REGISTERED:
+                cardDetails.setStatusColor(R.color.family_no_task_registered);
+                cardDetails.setStatusMessage(R.string.family_member_registered);
+                break;
             case BusinessStatus.NOT_SPRAYED:
-            case BusinessStatus.INCOMPLETE:
+            case NOT_DISPENSED:
             case BusinessStatus.IN_PROGRESS:
             case BusinessStatus.NONE_RECEIVED:
                 cardDetails.setStatusColor(R.color.unsprayed);
                 cardDetails.setStatusMessage(R.string.details_not_sprayed);
                 break;
             case BusinessStatus.SPRAYED:
+            case BusinessStatus.SMC_COMPLETE:
+            case BusinessStatus.SPAQ_COMPLETE:
+            case BusinessStatus.ALL_TASKS_COMPLETE:
             case BusinessStatus.COMPLETE:
             case BusinessStatus.FULLY_RECEIVED:
                 formatCardDetailsForCompletedTasks(cardDetails);
@@ -65,6 +73,11 @@ public class CardDetailsUtil {
                 cardDetails.setStatusColor(R.color.unsprayable);
                 cardDetails.setStatusMessage(R.string.details_not_sprayable);
                 cardDetails.setReason(null);
+                break;
+            case BusinessStatus.INCOMPLETE:
+            case TASKS_INCOMPLETE:
+            case BusinessStatus.PARTIALLY_RECEIVED:
+                cardDetails.setStatusColor(R.color.partially_sprayed);
                 break;
             case PARTIALLY_SPRAYED:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
@@ -247,10 +260,14 @@ public class CardDetailsUtil {
                 return context.getString(R.string.complete);
             case INCOMPLETE:
                 return context.getString(R.string.incomplete);
+            case TASKS_INCOMPLETE:
+                return context.getString(R.string.tasks_incomplete);
             case NOT_ELIGIBLE:
                 return context.getString(R.string.not_eligible);
             case IN_PROGRESS:
                 return context.getString(R.string.in_progress);
+            case NOT_DISPENSED:
+                return context.getString(R.string.not_dispensed);
             case PARTIALLY_SPRAYED:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
                     return context.getString(R.string.sprayed);
