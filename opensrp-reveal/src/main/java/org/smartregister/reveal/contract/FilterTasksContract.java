@@ -14,8 +14,6 @@ import java.util.List;
 /**
  * Created by samuelgithengi on 12/18/19.
  */
-
-//TODO: conflicts still to bring in Nigeria
 public interface FilterTasksContract {
 
     interface View {

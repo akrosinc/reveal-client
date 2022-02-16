@@ -75,8 +75,6 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_F
 /**
  * Created by samuelgithengi on 3/11/19.
  */
-//TODO: Conflicts still to bring in Nigeria
-
 public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements TaskRegisterFragmentContract.View, BaseDrawerContract.DrawerActivity {
 
     private TaskRegisterAdapter taskAdapter;

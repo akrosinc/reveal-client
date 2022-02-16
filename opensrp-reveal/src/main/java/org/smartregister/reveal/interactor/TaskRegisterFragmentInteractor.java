@@ -80,8 +80,6 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_ME
 /**
  * Created by samuelgithengi on 3/18/19.
  */
-//TODO: Conflicts still to bring in Nigeria
-
 public class TaskRegisterFragmentInteractor extends BaseInteractor implements TaskRegisterFragmentContract.Interactor {
 
     private final LocationRepository locationRepository;

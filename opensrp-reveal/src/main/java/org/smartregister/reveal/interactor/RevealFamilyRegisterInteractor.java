@@ -2,12 +2,15 @@ package org.smartregister.reveal.interactor;
 
 import android.content.Context;
 
+import org.joda.time.DateTime;
+import org.joda.time.Years;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.family.domain.FamilyEventClient;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.FamilyRegisterContract;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.AppExecutors;
+import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.TaskUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.sync.ClientProcessorForJava;
@@ -19,9 +22,6 @@ import java.util.Set;
 /**
  * Created by samuelgithengi on 4/15/19.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class RevealFamilyRegisterInteractor extends org.smartregister.family.interactor.FamilyRegisterInteractor implements FamilyRegisterContract.Interactor {
 
     private TaskUtils taskUtils;
@@ -56,12 +56,18 @@ public class RevealFamilyRegisterInteractor extends org.smartregister.family.int
                     generatedIds.add(entityId);
                     if (Utils.isFocusInvestigation())
                         taskUtils.generateBloodScreeningTask(context, entityId, structureId);
-                    else if (Utils.isMDA())
-                        taskUtils.generateMDADispenseTask(context, entityId, structureId);
+                    else if (Utils.isMDA()) {
+                        DateTime birthDate = new DateTime(eventClient.getClient().getBirthdate().getTime());
+                        int age = Years.yearsBetween(birthDate, DateTime.now()).getYears();
+                        if (age < Constants.MDA_MIN_AGE) {
+                            taskUtils.generateMDADispenseTask(context, entityId, structureId);
+                        }
+                    }
                 }
             }
             if (Utils.isFocusInvestigation())
                 taskUtils.generateBedNetDistributionTask(context, structureId);
+            RevealApplication.getInstance().setRefreshMapOnEventSaved(true); //TODO: Need to check if this is necessary?
             appExecutors.mainThread().execute(() -> presenter.onTasksGenerated(eventClientList));
         });
     }

@@ -17,7 +17,6 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 /**
  * Created by Richard Kareko on 6/7/20.
  */
-//TODO: Conflicts still to bring in Nigeria
 
 public class EditFociBoundaryPresenter implements EditFociboundaryContract.Presenter {
 

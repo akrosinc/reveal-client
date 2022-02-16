@@ -24,9 +24,6 @@ import java.util.List;
 /**
  * Created by samuelgithengi on 11/27/18.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public interface ListTaskContract {
 
     interface ListTaskView extends UserLocationView, BaseDrawerContract.DrawerActivity {

@@ -34,6 +34,7 @@ import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.GeoJSON;
+import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.GeoJsonUtils;
@@ -105,9 +106,6 @@ import static org.smartregister.reveal.util.Utils.getPropertyValue;
 /**
  * Created by samuelgithengi on 11/27/18.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class ListTaskInteractor extends BaseInteractor {
 
     private CommonRepository commonRepository;
@@ -436,14 +434,18 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             details.put(Constants.Properties.LOCATION_ID, feature.id());
             details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+            details.put(Constants.Properties.PLAN_IDENTIFIER,task.getPlanIdentifier());
             task.setBusinessStatus(NOT_ELIGIBLE);
             task.setStatus(Task.TaskStatus.COMPLETED);
             task.setLastModified(new DateTime());
+            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
+            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             taskRepository.addOrUpdate(task);
             revealApplication.setSynced(false);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details, FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
             event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible").withFieldType("formsubmissionField"));
             event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible").withFieldType("formsubmissionField"));
+            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS).withFieldType(JsonForm.BUSINESS_STATUS));
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
