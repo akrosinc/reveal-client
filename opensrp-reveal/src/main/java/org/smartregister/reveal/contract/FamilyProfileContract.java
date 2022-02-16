@@ -7,14 +7,14 @@ import androidx.annotation.NonNull;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Task;
+
+import java.util.Date;
 
 /**
  * Created by samuelgithengi on 4/12/19.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public interface FamilyProfileContract extends org.smartregister.family.contract.FamilyProfileContract {
 
     interface View extends org.smartregister.family.contract.FamilyProfileContract.View {
@@ -34,11 +34,13 @@ public interface FamilyProfileContract extends org.smartregister.family.contract
 
     interface Interactor extends org.smartregister.family.contract.FamilyProfileContract.Interactor {
 
-        void generateTasks(Context applicationContext, String baseEntityId, String structureId);
+        void generateTasks(Context applicationContext, String baseEntityId, String structureId, Date birthDate);
 
         void updateFamilyMemberName(@NonNull Client family, Event event, @NonNull String oldFamilyName);
 
         void archiveFamily(String familyBaseEntityId, String structureId);
+
+        void getRegistrationEvent(CommonPersonObjectClient client, String familyHead);
     }
 
     interface Presenter extends org.smartregister.family.contract.FamilyProfileContract.Presenter {
@@ -52,6 +54,8 @@ public interface FamilyProfileContract extends org.smartregister.family.contract
         void onArchiveFamilyClicked();
 
         void onArchiveFamilyCompleted(boolean isSuccessfulSaved, Task task);
+
+        void onEventFound(org.smartregister.domain.Event structureEvent, CommonPersonObjectClient client);
     }
 }
 

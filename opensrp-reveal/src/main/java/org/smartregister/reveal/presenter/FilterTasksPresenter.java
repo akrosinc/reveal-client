@@ -32,8 +32,6 @@ import java.util.Set;
 /**
  * Created by samuelgithengi on 12/18/19.
  */
-
-//TODO: Conflicts still to bring in Nigeria
 public class FilterTasksPresenter implements FilterTasksContract.Presenter {
 
     private FilterTasksContract.View view;

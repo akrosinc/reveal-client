@@ -54,8 +54,6 @@ import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 /**
  * Created by samuelgithengi on 3/11/19.
  */
-//TODO: Conflicts still to bring in Nigeria
-
 public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter implements TaskRegisterFragmentContract.Presenter {
 
     private WeakReference<TaskRegisterFragmentContract.View> view;

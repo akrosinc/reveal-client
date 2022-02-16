@@ -54,9 +54,6 @@ import io.ona.kujaku.listeners.BaseLocationListener;
 /**
  * Created by samuelgithengi on 1/30/19.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter implements PasswordRequestCallback, UserLocationCallback {
 
     private JsonFormFragment formFragment;
