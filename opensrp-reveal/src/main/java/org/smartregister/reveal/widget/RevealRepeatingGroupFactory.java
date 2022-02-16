@@ -1,7 +1,9 @@
 package org.smartregister.reveal.widget;
 
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 
 import org.smartregister.reveal.BuildConfig;
@@ -20,33 +22,34 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
     public static final String NUMBER_OF_INSECTICIDE_SACHETS_MIXED = "Number of insecticide sachets mixed";
     public static final String NUMBER_OF_INSECTICIDE_SACHETS_VALIDATION_ERR_MESSAGE = "number of insecticide sachets must be greater than 0";
 
+    //TODO: test this method, after upgrading version of opensrp-native-form
     @Override
-    protected void addOnDoneAction(TextView textView) {
-        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY) ){
+    protected void addOnDoneAction(TextView textView, ImageButton doneButton, WidgetArgs widgetArgs) {
+        if (Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY)) {
             String inputText = textView.getText().toString();
-            if(inputText.isEmpty()){
+            if (inputText.isEmpty()) {
                 textView.setError(PLEASE_ENTER_A_VALUE_ERROR_MESSAGE);
                 return;
             }
-            RevealJsonFormActivity activity = (RevealJsonFormActivity) textView.getContext();
+            RevealJsonFormActivity activity = ( RevealJsonFormActivity ) textView.getContext();
             Integer reasonsOrSachetCount = Integer.parseInt(inputText);
-            if(CONFIRMED_ROOMS_NOT_SPRAYED.equals(textView.getHint().toString())){
-                TextView roomSprayedTextView = (TextView) activity.getFormDataView(  STEP1 + ":" + ROOMS_SPRAYED);
+            if (CONFIRMED_ROOMS_NOT_SPRAYED.equals(textView.getHint().toString())) {
+                TextView roomSprayedTextView = ( TextView ) activity.getFormDataView(STEP1 + ":" + ROOMS_SPRAYED);
                 Integer roomsSprayedCount = Integer.parseInt(roomSprayedTextView.getText().toString());
-                TextView roomsEligibleTextView = (TextView) activity.getFormDataView(STEP1 + ":" + ROOMS_ELIGIBLE);
+                TextView roomsEligibleTextView = ( TextView ) activity.getFormDataView(STEP1 + ":" + ROOMS_ELIGIBLE);
                 Integer roomsEligible = Integer.parseInt(roomsEligibleTextView.getText().toString());
-                if (reasonsOrSachetCount != (roomsEligible - roomsSprayedCount)){
+                if (reasonsOrSachetCount != (roomsEligible - roomsSprayedCount)) {
                     textView.setError(CONFIRMED_ROOMS_NOT_SPRAYED_ERROR);
                     return;
                 }
-            } else if(NUMBER_OF_INSECTICIDE_SACHETS_MIXED.equals(textView.getHint().toString())) {
-                if(reasonsOrSachetCount  < 1) {
+            } else if (NUMBER_OF_INSECTICIDE_SACHETS_MIXED.equals(textView.getHint().toString())) {
+                if (reasonsOrSachetCount < 1) {
                     textView.setError(NUMBER_OF_INSECTICIDE_SACHETS_VALIDATION_ERR_MESSAGE);
                     return;
                 }
             }
 
         }
-        super.addOnDoneAction(textView);
+        super.addOnDoneAction(textView, doneButton, widgetArgs);
     }
 }

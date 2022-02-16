@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.Task;
@@ -17,6 +18,8 @@ import org.smartregister.domain.Task;
 public interface FamilyProfileContract extends org.smartregister.family.contract.FamilyProfileContract {
 
     interface View extends org.smartregister.family.contract.FamilyProfileContract.View {
+
+        void startFormActivity(JSONObject jsonObject, boolean readOnly);
 
         void setStructureId(String structureId);
 

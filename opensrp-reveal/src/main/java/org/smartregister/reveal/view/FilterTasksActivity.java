@@ -40,8 +40,6 @@ import timber.log.Timber;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
 
-//TODO: Conflicts still to bring in Nigeria
-
 public class FilterTasksActivity extends MultiLanguageActivity implements FilterTasksContract.View, CompoundButton.OnCheckedChangeListener {
 
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);

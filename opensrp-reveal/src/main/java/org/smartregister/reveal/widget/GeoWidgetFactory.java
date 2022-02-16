@@ -80,9 +80,6 @@ import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 /**
  * Created by samuelgithengi on 12/13/18.
  */
-
-//TODO: Conflicts still to bring in Nigeria
-
 public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
 
     public static final String ZOOM_LEVEL = "zoom_level";

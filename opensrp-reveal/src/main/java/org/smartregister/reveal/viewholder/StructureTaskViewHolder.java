@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Task;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
@@ -25,8 +26,6 @@ import java.util.Locale;
 /**
  * Created by samuelgithengi on 4/11/19.
  */
-//TODO: Conflicts still to bring in Nigeria
-
 public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
 
     private final static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
@@ -79,6 +78,9 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
                 String screening = Constants.JsonForm.YES.equals(taskDetails.getPersonTested()) ?
                         context.getString(R.string.tested) : context.getString(R.string.not_tested);
                 actionTextView.setText(screening);
+            } else if (Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())
+                    && BusinessStatus.SPAQ_COMPLETE.equals(taskDetails.getBusinessStatus())) {
+                actionTextView.setText("SPAQ Redose form Complete");
             } else {
                 actionTextView.setText(CardDetailsUtil.getTranslatedBusinessStatus(taskDetails.getBusinessStatus()));
             }
@@ -112,6 +114,23 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
             lastEditedTextView.setVisibility(View.GONE);
             viewUndoImageView.setVisibility(View.GONE);
         }
+
+        // HEADS UP
+        // Support editing values for CHILD SMC form
+        if (Task.TaskStatus.COMPLETED.name().equals(taskDetails.getTaskStatus())
+                && (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode())
+                || Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())
+                || Intervention.MDA_DRUG_RECON.equals(taskDetails.getTaskCode())
+        )) {
+            viewEditImageView.setVisibility(View.VISIBLE);
+            setClickHandler(onClickListener, taskDetails, viewEditImageView);
+        } else {
+            viewEditImageView.setVisibility(View.GONE);
+            lastEditedTextView.setVisibility(View.GONE);
+            viewUndoImageView.setVisibility(View.GONE);
+        }
+
+
         setClickHandler(onClickListener, taskDetails, actionTextView);
 
     }
