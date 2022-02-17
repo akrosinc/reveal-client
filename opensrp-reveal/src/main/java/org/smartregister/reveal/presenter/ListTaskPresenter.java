@@ -71,6 +71,7 @@ import timber.log.Timber;
 
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_NEUTRAL;
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
@@ -862,11 +863,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                             markStructureIneligibleConfirmed = true;
                             reasonUnEligible = which == BUTTON_NEGATIVE ? listTaskView.getContext().getString(R.string.not_eligible_unoccupied) : listTaskView.getContext().getString(R.string.not_eligible_other);
                         }
-                        if (validateFarStructures()) {
-                            validateUserLocation();
-                        } else {
-                            onLocationValidated();
+
+                        if (which == BUTTON_POSITIVE) {
+                            markStructureIneligibleSelected = true;
+                            if (validateFarStructures()) {
+                                validateUserLocation();
+                            } else {
+                                onLocationValidated();
+                            }
+
                         }
+
                         dialog.dismiss();
                     }
                 });
