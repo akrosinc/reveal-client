@@ -56,6 +56,16 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
 
     private Button btnSupervisorDailySummary;
 
+    private Button btnDailySummaryMorning;
+
+    private Button btnDailySummaryEvening;
+
+    private Button btnHfwLevelReferral;
+
+    private Button btnCDDSupervisorChecklist;
+
+    private Button btnHFWSupervisorChecklist;
+
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -95,6 +105,14 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnTabletAccountabilityForm = view.findViewById(R.id.summary_tablet_accountability_form);
         btnSupervisorDailySummary = view.findViewById(R.id.supervisor_daily_summary);
         btnFPPForm = view.findViewById(R.id.fpp_form);
+
+
+        btnDailySummaryMorning = view.findViewById(R.id.summary_daily_summary_morning);
+        btnDailySummaryEvening = view.findViewById(R.id.summary_daily_summary_evening);
+        btnHfwLevelReferral =  view.findViewById(R.id.hfw_level_referral);
+        btnCDDSupervisorChecklist = view.findViewById(R.id.cdd_supervisor_checklist);
+        btnHFWSupervisorChecklist = view.findViewById(R.id.hfw_supervisor_checklist);
+
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
         } else if(Utils.isZambiaIRSFull()){
@@ -111,11 +129,21 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnFPPForm.setVisibility(View.VISIBLE);
         } else if(Utils.isMDALite()){
             btnTabletAccountabilityForm.setVisibility(View.VISIBLE);
-        }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
             btnIrsSaDecision.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator5).setVisibility(View.VISIBLE);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
+            btnDailySummaryMorning.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator11).setVisibility(View.VISIBLE);
+            btnDailySummaryEvening.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator12).setVisibility(View.VISIBLE);
+            btnHfwLevelReferral.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator13).setVisibility(View.VISIBLE);
+            btnCDDSupervisorChecklist.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator14).setVisibility(View.VISIBLE);
+            btnHFWSupervisorChecklist.setVisibility(View.VISIBLE);
         }
         setClickListeners();
     }
@@ -131,6 +159,11 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnVerificationForm.setOnClickListener(this);
             btnFPPForm.setOnClickListener(this);
             btnSupervisorDailySummary.setOnClickListener(this);
+            btnDailySummaryMorning.setOnClickListener(this);
+            btnDailySummaryEvening.setOnClickListener(this);
+            btnHfwLevelReferral.setOnClickListener(this);
+            btnCDDSupervisorChecklist.setOnClickListener(this);
+            btnHFWSupervisorChecklist.setOnClickListener(this);
     }
 
     @Override
@@ -186,6 +219,21 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     @Override
     public void onClick(View view) {
         switch(view.getId()) {
+            case R.id.hfw_level_referral:
+                presenter.showBasicForm(Constants.JsonForm.HFW_LEVEL_REFERRAL);
+                break;
+            case R.id.cdd_supervisor_checklist:
+                presenter.showBasicForm(Constants.JsonForm.CDD_SUPERVISOR_CHECKLIST);
+                break;
+            case R.id.hfw_supervisor_checklist:
+                presenter.showBasicForm(Constants.JsonForm.HFW_SUPERVISOR_CHECKLIST);
+                break;
+            case R.id.summary_daily_summary_morning:
+                presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_MORNING);
+                break;
+            case R.id.summary_daily_summary_evening:
+                presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_EVENING);
+                break;
             case R.id.summary_daily_summary:
             case R.id.supervisor_daily_summary:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {

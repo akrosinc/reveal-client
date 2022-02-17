@@ -219,6 +219,106 @@
             android:textColor="@color/text_black"
             android:textSize="20sp"
             android:visibility="gone"/>
+
+
+        <!--Summary forms from SMC/Nigeria -->
+        <Button
+            android:id="@+id/summary_daily_summary_morning"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/daily_summary_morning"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/separator11"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/summary_daily_summary_evening"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/daily_summary_evening"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/separator12"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/hfw_level_referral"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/hfw_level_referral"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
+
+        <View
+            android:id="@+id/separator13"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/cdd_supervisor_checklist"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/cdd_supervisor_checklist"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/separator14"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey" />
+
+        <Button
+            android:id="@+id/hfw_supervisor_checklist"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/hfw_supervisor_checklist"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
