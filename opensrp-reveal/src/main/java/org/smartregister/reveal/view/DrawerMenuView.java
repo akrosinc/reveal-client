@@ -166,9 +166,12 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             summaryFormsTextView.setVisibility(View.VISIBLE);
             summaryFormsTextView.setOnClickListener(this);
 
-            TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
-            filledForms.setVisibility(View.VISIBLE);
-            filledForms.setOnClickListener(this);
+            if(BuildConfig.BUILD_COUNTRY != Country.NIGERIA){
+                //Nigeria build currently does not have support for filled forms
+                TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
+                filledForms.setVisibility(View.VISIBLE);
+                filledForms.setOnClickListener(this);
+            }
 
         } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA || BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             summaryFormsTextView.setVisibility(View.VISIBLE);
