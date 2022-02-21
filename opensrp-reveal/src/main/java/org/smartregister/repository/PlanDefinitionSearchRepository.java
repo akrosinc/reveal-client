@@ -64,7 +64,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         contentValues.put(PLAN_ID, planDefinition.getIdentifier());
         contentValues.put(JURISDICTION_ID, jurisdiction);
         contentValues.put(NAME, planDefinition.getName());
-        contentValues.put(STATUS, planDefinition.getStatus().name());
+        contentValues.put(STATUS, planDefinition.getStatus().value());
         contentValues.put(START, planDefinition.getEffectivePeriod().getStart().toDate().getTime());
         contentValues.put(END, planDefinition.getEffectivePeriod().getEnd().toDate().getTime());
         contentValues.put(JURISDICTION_ID, jurisdiction);
@@ -113,7 +113,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
         String query = String.format("SELECT * FROM %s WHERE %s=? ",
                 PLAN_DEFINITION_SEARCH_TABLE, STATUS);
-        try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.name()})) {
+        try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.value()})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     planDefinitionSearchList.add(readCursor(cursor));
