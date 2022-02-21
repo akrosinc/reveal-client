@@ -68,11 +68,11 @@ import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
-import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
-import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
+import static org.smartregister.reveal.api.RevealService.OPENSRP_AUTH_USER_URL_PATH;
+import static org.smartregister.reveal.api.RevealService.OPENSRP_LOCATION_URL_PATH;
 
 public class UserService {
     private static final String KEYSTORE = "AndroidKeyStore";

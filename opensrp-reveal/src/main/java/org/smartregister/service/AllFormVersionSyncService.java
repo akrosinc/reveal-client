@@ -28,6 +28,8 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.api.RevealService.ALL_FORM_VERSION_URL;
+import static org.smartregister.reveal.api.RevealService.FORM_DOWNLOAD_URL;
 import static org.smartregister.util.Log.logError;
 
 /**
@@ -51,7 +53,7 @@ public class AllFormVersionSyncService {
     public FetchStatus pullFormDefinitionFromServer() {
         FetchStatus status = FetchStatus.nothingFetched;
         String baseUrl = configuration.dristhiBaseURL();
-        String uri = baseUrl + AllConstants.ALL_FORM_VERSION_URL;
+        String uri = baseUrl + ALL_FORM_VERSION_URL;
 
         Response<String> response = httpAgent.fetch(uri);
         if (response.isFailure()) {
@@ -121,7 +123,7 @@ public class AllFormVersionSyncService {
         } else {
             for (FormDefinitionVersion l : pendingFormList) {
                 String downloadLink =
-                        configuration.dristhiBaseURL() + AllConstants.FORM_DOWNLOAD_URL + l
+                        configuration.dristhiBaseURL() + FORM_DOWNLOAD_URL + l
                                 .getFormDirName();
 
                 status = httpAgent.downloadFromUrl(downloadLink, l.getFormDirName() + ".zip");

@@ -61,6 +61,12 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
 import static org.smartregister.AllConstants.RETURN_COUNT;
 import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.reveal.api.RevealService.ALL_LOCATIONS_URL;
+import static org.smartregister.reveal.api.RevealService.COMMON_LOCATIONS_SERVICE_URL;
+import static org.smartregister.reveal.api.RevealService.CREATE_STRUCTURE_URL;
+import static org.smartregister.reveal.api.RevealService.LOCATION_HIERARCHY_URL;
+import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
+import static org.smartregister.reveal.api.RevealService.OPENMRS_LOCATION_BY_TEAM_IDS;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -68,13 +74,6 @@ import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class LocationServiceHelper extends BaseHelper {
-
-    public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
-    public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
-    public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
-    public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
-    public static final String LOCATION_HIERARCHY_URL = "/rest/location/hierarchy/";
-    public static final String ALL_LOCATIONS_URL = "/rest/location/getAll";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";

@@ -87,6 +87,7 @@ import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE
 import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+import static org.smartregister.reveal.api.RevealService.ACCOUNT_CONFIGURATION_ENDPOINT;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
@@ -992,7 +993,7 @@ public class HTTPAgent {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
 
-        baseUrl = baseUrl + AccountHelper.OAUTH.ACCOUNT_CONFIGURATION_ENDPOINT;
+        baseUrl = baseUrl + ACCOUNT_CONFIGURATION_ENDPOINT;
 
         HttpURLConnection urlConnection = null;
 

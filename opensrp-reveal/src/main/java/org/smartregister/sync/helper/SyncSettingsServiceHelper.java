@@ -24,6 +24,8 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.api.RevealService.SETTINGS_URL;
+
 /**
  * Created by ndegwamartin on 14/09/2018.
  */
@@ -95,7 +97,7 @@ public class SyncSettingsServiceHelper {
             List<String> syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
             if (syncParams.size() > 0) {
                 for (String params : syncParams) {
-                    String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + "&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
+                    String url = SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + "&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
                     JSONArray extraSettings = pullSettings(url, accessToken);
                     if (extraSettings != null) {
                         aggregateSettings(completeExtraSettings, extraSettings);
@@ -131,7 +133,7 @@ public class SyncSettingsServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = MessageFormat.format("{0}/{1}", baseUrl, SettingsSyncIntentService.SETTINGS_URL);
+        String url = MessageFormat.format("{0}/{1}", baseUrl, SETTINGS_URL);
         Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
@@ -159,7 +161,7 @@ public class SyncSettingsServiceHelper {
      * @throws JSONException
      */
     public JSONArray pullSettingsFromServer(String syncFilterValue, String accessToken) throws JSONException {
-        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        String url = SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
         return pullSettings(url, accessToken);
     }
 
@@ -180,7 +182,7 @@ public class SyncSettingsServiceHelper {
      * @throws JSONException
      */
     public JSONArray pullGlobalSettingsFromServer(String accessToken) throws JSONException {
-        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + getGlobalSettingsQueryParams();
+        String url = SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + getGlobalSettingsQueryParams();
         return pullSettings(url, accessToken);
     }
 

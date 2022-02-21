@@ -51,6 +51,8 @@ import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
+import org.smartregister.reveal.api.RevealService;
+import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -94,6 +96,7 @@ import org.smartregister.service.formsubmissionhandler.PNCVisitHandler;
 import org.smartregister.service.formsubmissionhandler.RenewFPProductHandler;
 import org.smartregister.service.formsubmissionhandler.TTHandler;
 import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
+import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -120,6 +123,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -229,6 +238,8 @@ public class Context {
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
+
+    private RevealService revealService;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -1112,6 +1123,26 @@ public class Context {
 
     public HTTPAgent getHttpAgent() {
         return httpAgent();
+    }
+
+    public RevealService getRevealService(){
+        if(revealService == null){
+            String baseURL = configuration.dristhiBaseURL();
+            if(!baseURL.endsWith("/"))
+                 baseURL = baseURL.concat("/");
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.level(HttpLoggingInterceptor.Level.BODY);
+            OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(RevealApplication.getInstance().getApplicationContext(), configuration);
+            OkHttpClient httpClient = new OkHttpClient.Builder().sslSocketFactory(opensrpSSLHelper.getSSLSocketFactory()).addInterceptor(logging).build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(baseURL)
+                    .client(httpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            revealService = retrofit.create(RevealService.class);
+        }
+        return revealService;
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {

@@ -31,14 +31,15 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.api.RevealService.CLIENT_FORM_SYNC_URL;
+import static org.smartregister.reveal.api.RevealService.MANIFEST_SEARCH_URL;
+import static org.smartregister.reveal.api.RevealService.MANIFEST_SYNC_URL;
+
 public class DocumentConfigurationService {
     public static final String MANIFEST_FORMS_VERSION = "forms_version";
     public static final String FORM_VERSION = "form_version";
     public static final String CURRENT_FORM_VERSION = "current_form_version";
     public static final String IDENTIFIERS = "identifiers";
-    private static final String MANIFEST_SYNC_URL = "/rest/manifest/";
-    private static final String MANIFEST_SEARCH_URL = "/rest/manifest/search";
-    private static final String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
     private static final String APP_ID = "app_id";
     private static final String APP_VERSION = "app_version";

@@ -29,10 +29,6 @@ public class AccountHelper {
     }
 
     public static final class OAUTH {
-
-        public final static String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
-        public final static String TOKEN_ENDPOINT = "/auth/realms/reveal/protocol/openid-connect/token";
-
         public static final class GRANT_TYPE {
             public final static String PASSWORD = "password";
             public final static String REFRESH_TOKEN = "refresh_token";

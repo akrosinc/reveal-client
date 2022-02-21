@@ -27,9 +27,9 @@ import java.util.List;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
+import static org.smartregister.reveal.api.RevealService.CAMPAIGN_URL;
 
 public class CampaignIntentService extends BaseSyncIntentService {
-    public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();

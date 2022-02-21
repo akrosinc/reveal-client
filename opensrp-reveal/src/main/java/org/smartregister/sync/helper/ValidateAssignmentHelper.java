@@ -35,6 +35,7 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static org.smartregister.account.AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED;
+import static org.smartregister.reveal.api.RevealService.USER_ASSIGNMENT_URL;
 import static org.smartregister.sync.helper.LocationServiceHelper.LOCATION_LAST_SYNC_DATE;
 import static org.smartregister.sync.helper.LocationServiceHelper.STRUCTURES_LAST_SYNC_DATE;
 import static org.smartregister.sync.helper.PlanIntentServiceHelper.PLAN_LAST_SYNC_DATE;
@@ -44,9 +45,6 @@ import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DAT
  * Created by samuelgithengi on 9/16/20.
  */
 public class ValidateAssignmentHelper extends BaseHelper {
-
-    private static final String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
-
     public static final String ACTION_ASSIGNMENT_REMOVED = "action_assignment_removed";
 
     public static final String ASSIGNMENTS_REMOVED = "assignments_removed";

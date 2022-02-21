@@ -17,7 +17,6 @@ import static org.smartregister.util.Log.logError;
  * Created by ndegwamartin on 14/09/2018.
  */
 public class SettingsSyncIntentService extends BaseSyncIntentService {
-    public static final String SETTINGS_URL = "/rest/settings/sync";
 
     private static final String TAG = SettingsSyncIntentService.class.getCanonicalName();
 

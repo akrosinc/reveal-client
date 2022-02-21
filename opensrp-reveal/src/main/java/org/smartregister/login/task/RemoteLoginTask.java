@@ -33,6 +33,7 @@ import java.util.Locale;
 import timber.log.Timber;
 
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
+import static org.smartregister.reveal.api.RevealService.TOKEN_ENDPOINT;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
@@ -79,7 +80,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             if (!isKeycloakConfigured) {
                 accountConfiguration = new AccountConfiguration();
                 accountConfiguration.setGrantTypesSupported(Arrays.asList(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD));
-                accountConfiguration.setTokenEndpoint(getOpenSRPContext().configuration().dristhiBaseURL() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
+                accountConfiguration.setTokenEndpoint(getOpenSRPContext().configuration().dristhiBaseURL() + TOKEN_ENDPOINT);
                 accountConfiguration.setAuthorizationEndpoint("");
                 accountConfiguration.setIssuerEndpoint("");
             }

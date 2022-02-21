@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.api.RevealService.VALIDATE_SYNC_PATH;
+
 /**
  * Created by keyman on 11/10/2017.
  */
@@ -33,7 +35,6 @@ public class ValidateIntentService extends BaseSyncIntentService {
     private Context context;
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
-    private static final String VALIDATE_SYNC_PATH = "rest/validate/sync";
     private org.smartregister.Context openSRPContext = CoreLibrary.getInstance().context();
 
     private EventClientRepository eventClientRepository = getOpenSRPContext().getEventClientRepository();

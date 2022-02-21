@@ -15,7 +15,6 @@ public class AllConstants {
     public static final String CASE_ID = "caseId";
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
-    public static final int DATABASE_VERSION = 1;
     public static final String IDENTIFIER = "identifier";
     public static final String SETTINGS = "settings";
     public static final String SERVER_VERSION = "serverVersion";
@@ -35,7 +34,6 @@ public class AllConstants {
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
     public static final String SERVER_TIMEZONE = "server_timezone";
     public static final String FORCE_REMOTE_LOGIN = "force_remote_login";
-    public static final String ENCRYPTED_PASSWORD_PREFIX = "crptPw-";
     public static final String ENCRYPTED_GROUP_ID_PREFIX = "crptGrp-";
     public static final String DEFAULT_LOCALITY_ID_PREFIX = "dfltLoc-";
     public static final String DEFAULT_TEAM_PREFIX = "dfltTeam-";
@@ -56,11 +54,7 @@ public class AllConstants {
     public static final String WOMAN_TYPE = "woman";
     public static final String CHILD_TYPE = "child";
     public static final String REALM = "OpenSRP";
-    public static final String FORM_DOWNLOAD_URL = "/form/form-files?formDirName=";
-    public static final String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
-    public static final String AUTHENTICATE_USER_URL_PATH = "/anm-villages?anm-id=";
-    public static final String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
-    public static final String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
+
 
     public static final String FORM_NAME_PARAM = "formName";
     public static final String INSTANCE_ID_PARAM = "instanceId";
@@ -104,8 +98,6 @@ public class AllConstants {
 
     public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
 
-    public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
-    public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public static final Boolean TIME_CHECK = false;
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
@@ -136,7 +128,6 @@ public class AllConstants {
     public static final String JSON_FILE_EXTENSION = ".json";
     public static final String RESOLVE = "resolve";
 
-    public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
@@ -410,9 +401,6 @@ public class AllConstants {
         public static final String ASHA_PHONE_NUMBER = "ashaPhoneNumber";
         public static final String PHONE_NUMBER = "phoneNumber";
         public static final String REVIEWED_HRP_STATUS = "reviewedHRPStatus";
-        public static final String DELIVERY_FACILITY_HOME_VALUE = "home";
-        public static final String DELIVERY_FACILITY_SDH_VALUE = "sdh";
-        public static final String DELIVERY_FACILITY_DH_VALUE = "dh";
     }
 
     public final class ImageCache {

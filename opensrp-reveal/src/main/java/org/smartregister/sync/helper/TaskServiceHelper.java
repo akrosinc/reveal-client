@@ -45,6 +45,9 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -58,10 +61,6 @@ public class TaskServiceHelper extends BaseHelper {
     protected final Context context;
     private TaskRepository taskRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    public static final String UPDATE_STATUS_URL = "/rest/v2/task/update_status";
-    public static final String ADD_TASK_URL = "/rest/v2/task/add";
-    public static final String SYNC_TASK_URL = "/rest/v2/task/sync";
-
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
     public static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();

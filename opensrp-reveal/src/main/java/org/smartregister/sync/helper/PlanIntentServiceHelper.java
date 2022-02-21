@@ -37,6 +37,7 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
@@ -57,7 +58,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
 
-    public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
     private long totalRecords;
     private SyncProgress syncProgress;
@@ -162,10 +162,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
         request.put("serverVersion", serverVersion);
         request.put(AllConstants.RETURN_COUNT, returnCount);
 
-        if (httpAgent == null) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
-            throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
-        }
 
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
