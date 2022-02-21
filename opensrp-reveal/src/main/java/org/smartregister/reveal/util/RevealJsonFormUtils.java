@@ -29,6 +29,7 @@ import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.BaseTaskDetails;
+import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
@@ -72,6 +73,7 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFIC
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
+import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
 import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_OTHER;
@@ -150,7 +152,7 @@ public class RevealJsonFormUtils {
         int structureVersion = 0;
         String structureType = "";
         if (structure != null) {
-            structureId = structure.getIdentifier();
+            structureId = structure.getId();
             structureUUID = structure.getProperties().getUid();
             structureVersion = structure.getProperties().getVersion();
             structureType = structure.getProperties().getType();
@@ -358,14 +360,20 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.ZAMBIA_MDA_ADHERENCE_FORM;
             } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MDA_ADHERENCE_FORM;
+            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+                formName = JsonForm.NIGERIA_MDA_ADHERENCE_FORM;
             }
         } else if (Intervention.MDA_DISPENSE.equals(taskCode)) {
             if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                 formName = JsonForm.ZAMBIA_MDA_DISPENSE_FORM;
             } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MDA_DISPENSE_FORM;
+            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+                formName = JsonForm.NIGERIA_MDA_DISPENSE_FORM;
             }
-        } else if (IRS_VERIFICATION.equals(encounterType) || Intervention.IRS_VERIFICATION.equals(taskCode) || IRS_LITE_VERIFICATION.equals(encounterType)) {
+        } else if (Intervention.MDA_DRUG_RECON.equals(taskCode)) {
+                formName = JsonForm.NIGERIA_MDA_DRUG_RECON_FORM;
+        }else if (IRS_VERIFICATION.equals(encounterType) || Intervention.IRS_VERIFICATION.equals(taskCode) || IRS_LITE_VERIFICATION.equals(encounterType)) {
             if(isZambiaIRSLite()) {
                 return JsonForm.IRS_LITE_VERIFICATION;
             }
@@ -578,6 +586,29 @@ public class RevealJsonFormUtils {
             }
         }
     }
+
+    //Nigeria specific form
+    public void populateForm(FamilySummaryModel summary, JSONObject formJson) {
+        JSONArray fields = JsonFormUtils.fields(formJson);
+
+        for (int i = 0; i < fields.length(); i++) {
+            try {
+                JSONObject field = fields.getJSONObject(i);
+                String key = field.getString(KEY);
+
+                if (key.equalsIgnoreCase(CHILDREN_TREATED)) {
+                    field.put(VALUE, Integer.toString(summary.getChildrenTreated()));
+                } else if (key.equalsIgnoreCase(JsonForm.CALCULATED_CHILDREN_TREATED)) {
+                    field.put(VALUE, Integer.toString(summary.getChildrenTreated()));
+                } else if (key.equalsIgnoreCase(JsonForm.ADDITIONAL_DOSES_ADMINISTERED)) {
+                    field.put(VALUE, Integer.toString(summary.getAdditionalDosesAdministered()));
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+    }
+
 
     public void generateRepeatingGroupFields(JSONObject field, List<Obs> obs, JSONObject formJSON) {
         try {
@@ -846,7 +877,7 @@ public class RevealJsonFormUtils {
         JSONObject option;
         JSONObject property;
         JSONArray options = new JSONArray();
-        String locationId  = currentOperationalArea.getIdentifier();
+        String locationId  = currentOperationalArea.getId();
         String query = String.format("SELECT %s,%s FROM %s WHERE %s IS NOT NULL AND %s IN (SELECT %s FROM %s WHERE %s = ? ) ORDER BY %s DESC",Constants.DatabaseKeys.ID,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.Tables.SPRAYED_STRUCTURES,Constants.DatabaseKeys.COMPOUND_HEAD_NAME,Constants.DatabaseKeys.BASE_ENTITY_ID,Constants.DatabaseKeys.ID_,Constants.DatabaseKeys.STRUCTURES_TABLE,Constants.DatabaseKeys.PARENT_ID,Constants.DatabaseKeys.SPRAY_DATE);
         try(Cursor cursor = database.rawQuery(query,new String[]{locationId})){
             while (cursor.moveToNext()) {
@@ -884,7 +915,7 @@ public class RevealJsonFormUtils {
             List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
             locationNames = operationalAreaNames.stream()
                     .map(name -> locationRepository.getLocationByName(name))
-                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getIdentifier())).flatMap(Collection::stream)
+                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
                     .map(childLocation -> childLocation.getProperties().getName()).filter(name -> !name.isEmpty()).collect(Collectors.toList());
         } else {
             final String currentFacility = PreferencesUtil.getInstance().getCurrentFacility();

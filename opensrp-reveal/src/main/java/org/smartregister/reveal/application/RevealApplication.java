@@ -1,7 +1,6 @@
 package org.smartregister.reveal.application;
 
 import android.content.Intent;
-
 import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
@@ -11,7 +10,6 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
-import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -43,6 +41,7 @@ import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.LoginActivity;
+import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
 import org.smartregister.reveal.job.RevealJobCreator;
 import org.smartregister.reveal.repository.RevealRepository;
 import org.smartregister.reveal.sync.RevealClientProcessor;
@@ -142,6 +141,8 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
+        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
         FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
@@ -303,7 +304,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             return metadata;
         }
 
-        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, JsonWizardFormActivity.class, FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
+        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class, FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
 
         if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
             metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
@@ -314,6 +315,9 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
             metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
             metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
         } else {
             metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
             metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
@@ -336,7 +340,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
     }
 
     private static String[] getFtsTables() {
-        return new String[]{TABLE_NAME.FAMILY, TABLE_NAME.FAMILY_MEMBER, EventsRegister.TABLE_NAME};
+        return new String[]{TABLE_NAME.FAMILY, TABLE_NAME.FAMILY_MEMBER};
     }
 
     private static String[] getFtsSearchFields(String tableName) {

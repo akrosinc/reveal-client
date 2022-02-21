@@ -6,12 +6,16 @@ import androidx.annotation.NonNull;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.joda.time.DateTime;
+import org.joda.time.Months;
+import org.joda.time.Years;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
@@ -25,6 +29,8 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.FamilyProfileContract;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.AppExecutors;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.InteractorUtils;
 import org.smartregister.reveal.util.TaskUtils;
@@ -33,6 +39,7 @@ import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.JsonFormUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import timber.log.Timber;
@@ -54,7 +61,6 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_ME
 public class RevealFamilyProfileInteractor extends FamilyProfileInteractor implements FamilyProfileContract.Interactor {
 
     private TaskUtils taskUtils;
-
     private AppExecutors appExecutors;
     private FamilyProfileContract.Presenter presenter;
     private EventClientRepository eventClientRepository;
@@ -81,12 +87,19 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
     }
 
     @Override
-    public void generateTasks(Context applicationContext, String baseEntityId, String structureId) {
+    public void generateTasks(Context applicationContext, String baseEntityId, String structureId, Date birthDate) {
         appExecutors.diskIO().execute(() -> {
-            if (Utils.isFocusInvestigation())
+            if (Utils.isFocusInvestigation()) {
                 taskUtils.generateBloodScreeningTask(applicationContext, baseEntityId, structureId);
-            else if (Utils.isMDA())
-                taskUtils.generateMDADispenseTask(applicationContext, baseEntityId, structureId);
+                RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
+            } else if (Utils.isMDA()) {
+                int age = Years.yearsBetween(new DateTime(birthDate.getTime()), DateTime.now()).getYears();
+                int months =  Months.monthsBetween(new DateTime(birthDate.getTime()),DateTime.now()).getMonths();
+                if (age < Constants.MDA_MIN_AGE && months >= Constants.SMC_DISPENSE_MIN_MONTHS) {
+                    taskUtils.generateMDADispenseTask(applicationContext, baseEntityId, structureId);
+                    RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
+                }
+            }
             appExecutors.mainThread().execute(() -> {
                 presenter.onTasksGenerated();
             });
@@ -121,17 +134,19 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
                 }
             }
 
-            //update the client documents
-            eventClientRepository.batchInsertClients(familyMembers);
-            //generate the events for updating the members surname
-            eventClientRepository.batchInsertEvents(updateSurnameEvents, 0);
+            if(familyMembers.length() > 0){
+                //update the client documents
+                eventClientRepository.batchInsertClients(familyMembers);
+                //generate the events for updating the members surname
+                eventClientRepository.batchInsertEvents(updateSurnameEvents, 0);
 
-            //Client Process
-            clientProcessor.processClient(eventClientRepository.fetchEventClients(formSubmissionIds), true);
+                //Client Process
+                clientProcessor.processClient(eventClientRepository.fetchEventClients(formSubmissionIds), true);
 
-            appExecutors.mainThread().execute(() -> {
-                presenter.onMembersUpdated();
-            });
+                appExecutors.mainThread().execute(() -> {
+                    presenter.onMembersUpdated();
+                });
+            }
         });
     }
 
@@ -153,8 +168,6 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
                 taskRepository.cancelTasksForEntity(structureId);
                 taskRepository.archiveTasksForEntity(structureId);
                 task = taskUtils.generateRegisterFamilyTask(RevealApplication.getInstance().getApplicationContext(), structureId);
-                db.execSQL(String.format("update %s set name = null where %s = ? ", STRUCTURES_TABLE, ID_), new String[]{structureId});
-                db.execSQL(String.format("update %s set %s = null where %s = ? ", SPRAYED_STRUCTURES, STRUCTURE_NAME, ID), new String[]{structureId});
                 db.setTransactionSuccessful();
                 saved = true;
             } catch (Exception e) {
@@ -173,5 +186,23 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
     @Override
     protected void processClient(List<EventClient> eventClientList) {
         clientProcessor.processClient(eventClientList, true);
+    }
+
+    @Override
+    public void getRegistrationEvent(final CommonPersonObjectClient family, String familyHead) {
+        // Heads Up
+        appExecutors.diskIO().execute(() -> {
+
+            CommonPersonObject personObject = this.getCommonRepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName).findByBaseEntityId(familyHead);
+            final CommonPersonObjectClient pClient = new CommonPersonObjectClient(personObject.getCaseId(), personObject.getDetails(), "");
+            pClient.setColumnmaps(personObject.getColumnmaps());
+
+            final JSONObject structureJson = eventClientRepository.getEventsByBaseEntityIdAndEventType(family.getCaseId(), FamilyConstants.EventType.FAMILY_REGISTRATION);
+            final org.smartregister.domain.Event structureEvent = eventClientRepository.convert(structureJson, org.smartregister.domain.Event.class);
+
+            appExecutors.mainThread().execute(() -> {
+                presenter.onEventFound(structureEvent, pClient);
+            });
+        });
     }
 }

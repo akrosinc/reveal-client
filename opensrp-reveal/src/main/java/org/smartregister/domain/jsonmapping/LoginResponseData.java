@@ -14,7 +14,6 @@ public class LoginResponseData {
     public User user;
     public Time time;
     public LocationTree locations;
-    public OrganizationResponse teamAssignedToUser;
     public TeamMember team;
     public List<String> jurisdictions;
     public Set<String> jurisdictionIds;

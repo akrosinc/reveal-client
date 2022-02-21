@@ -1,8 +1,9 @@
 package org.smartregister.reveal.util;
 
 import android.content.Context;
-import androidx.annotation.StringRes;
 import android.util.Log;
+
+import androidx.annotation.StringRes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -10,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.Obs;
 import org.smartregister.family.domain.FamilyMetadata;
 import org.smartregister.family.util.Constants.JSON_FORM_KEY;
 import org.smartregister.family.util.JsonFormUtils;
@@ -28,6 +30,12 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.CHECK_BOX;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.HIDDEN;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.HINT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TYPE;
+import static org.smartregister.AllConstants.OPTIONS;
+import static org.smartregister.AllConstants.TEXT;
 import static org.smartregister.family.util.DBConstants.KEY.DOB;
 import static org.smartregister.family.util.DBConstants.KEY.FIRST_NAME;
 import static org.smartregister.family.util.DBConstants.KEY.GENDER;
@@ -36,6 +44,11 @@ import static org.smartregister.family.util.DBConstants.KEY.LAST_NAME;
 import static org.smartregister.family.util.DBConstants.KEY.STREET;
 import static org.smartregister.family.util.DBConstants.KEY.UNIQUE_ID;
 import static org.smartregister.family.util.DBConstants.KEY.VILLAGE_TOWN;
+import static org.smartregister.reveal.util.FamilyConstants.FormKeys.AGE_UNKNOWN;
+import static org.smartregister.reveal.util.FamilyConstants.FormKeys.CHILD_STAY_PERM;
+import static org.smartregister.reveal.util.FamilyConstants.FormKeys.DOb_UNKOWN_NOTE;
+import static org.smartregister.reveal.util.FamilyConstants.FormKeys.SAME_AS_FAM_NAME;
+import static org.smartregister.reveal.util.FamilyConstants.FormKeys.SURNAME;
 
 /**
  * Created by samuelgithengi on 5/24/19.
@@ -135,6 +148,53 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
         }
     }
 
+    // HEADS UP
+    public JSONObject getAutoPopulatedJsonEditMemberFormString(String formName,
+                                                               CommonPersonObjectClient client, String updateEventType, String familyName, boolean isFamilyHead) {
+        try {
+
+            // get the event and the client from ec model
+
+            JSONObject form = formUtils.getFormJson(formName);
+            if (form != null) {
+                form.put(ENTITY_ID, client.getCaseId());
+                form.put(ENCOUNTER_TYPE, updateEventType);
+
+                JSONObject metadata = form.getJSONObject(METADATA);
+                String lastLocationId = locationHelper.getOpenMrsLocationId(locationPickerView.getSelectedItem());
+
+                metadata.put(ENCOUNTER_LOCATION, lastLocationId);
+
+                form.put(CURRENT_OPENSRP_ID, Utils.getValue(client.getColumnmaps(), UNIQUE_ID, false));
+
+                //inject opensrp id into the form
+                String[] stepNames = new String[]{STEP1};
+
+                for (String stepName : stepNames) {
+                    JSONObject stepTwo = form.getJSONObject(stepName);
+
+                    JSONArray jsonArray = stepTwo.getJSONArray(FIELDS);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        try {
+                            processFieldsForMemberEdit(client, jsonObject, jsonArray, familyName, isFamilyHead);
+                        } catch (Exception e) {
+                            Timber.e(Log.getStackTraceString(e));
+                        }
+                    }
+                }
+
+                return form;
+            }
+        } catch (Exception e) {
+            Timber.e(Log.getStackTraceString(e));
+        }
+
+        return null;
+    }
+
+
     public JSONObject getAutoPopulatedJsonEditMemberFormString(@StringRes int formTitle, String formName,
                                                                CommonPersonObjectClient client, String updateEventType, String familyName, boolean isFamilyHead) {
         try {
@@ -170,7 +230,18 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                         Timber.e(Log.getStackTraceString(e));
                     }
                 }
-
+                if(isFamilyHead) {
+                    JSONObject childStayPermField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), CHILD_STAY_PERM);
+                    childStayPermField.put(TYPE,HIDDEN);
+                    JSONObject firstNameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), FIRST_NAME);
+                    firstNameField.put(HINT,"First name of Head of Household");
+                    JSONObject sameAsFamNameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),SAME_AS_FAM_NAME);
+                    sameAsFamNameField.put(TYPE,HIDDEN);
+                    JSONObject surnameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),SURNAME);
+                    surnameField.put(HINT,"Surname");
+                    JSONObject oldFamNameField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), DatabaseKeys.OLD_FAMILY_NAME);
+                    oldFamNameField.put(VALUE,JsonFormUtils.getFieldValue(form.toString(),SURNAME));
+                }
                 return form;
             }
         } catch (Exception e) {
@@ -186,6 +257,11 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
 
 
         switch (jsonObject.getString(KEY).toLowerCase()) {
+            // HEADS UP
+            case "family_name":
+                jsonObject.put(VALUE, familyName);
+                break;
+
             case JSON_FORM_KEY.DOB_UNKNOWN:
                 computeDOBUnknown(jsonObject, client);
                 break;
@@ -209,6 +285,17 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
             case DatabaseKeys.IS_FAMILY_HEAD:
                 jsonObject.put(VALUE, isFamilyHead);
                 break;
+
+            case AGE_UNKNOWN:
+                computeAgeUnknown(jsonObject, client, isFamilyHead);
+                break;
+
+            case DOb_UNKOWN_NOTE:
+                if (isFamilyHead) {
+                    jsonObject.put(TYPE, HIDDEN);
+                }
+                break;
+
 
             default:
                 String db_key = jsonDbMap.get(jsonObject.getString(KEY).toLowerCase());
@@ -242,6 +329,18 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
         optionsObject.put(VALUE, Utils.getValue(client.getColumnmaps(), JSON_FORM_KEY.DOB_UNKNOWN, false));
     }
 
+    private void computeAgeUnknown(JSONObject jsonObject, CommonPersonObjectClient client, boolean isFamilyHead) throws JSONException {
+        if (isFamilyHead) {
+            jsonObject.put(TYPE, HIDDEN);
+            return;
+        }
+        jsonObject.put(READ_ONLY, false);
+        JSONObject optionsObject = jsonObject.getJSONArray(JSON_FORM_KEY.OPTIONS).getJSONObject(0);
+        if (client.getColumnmaps().get(AGE_UNKNOWN) != null) {
+            optionsObject.put(VALUE, true);
+        }
+    }
+
     private void computeDOB(JSONObject jsonObject, CommonPersonObjectClient client) throws JSONException {
         String dobString = Utils.getValue(client.getColumnmaps(), DOB, false);
         if (StringUtils.isNotBlank(dobString)) {
@@ -268,13 +367,16 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
             sameAsFamName = getFieldJSONObject(jsonArray, FormKeys.SAME_AS_FAM_NAME);
             lookupField = getFieldJSONObject(jsonArray, FormKeys.SURNAME);
         }
-        JSONObject sameOptions = sameAsFamName.getJSONArray(JSON_FORM_KEY.OPTIONS).getJSONObject(0);
-        if (familyName.equals(lookupName)) {
-            sameOptions.put(VALUE, true);
-            lookupField.put(VALUE, "");
-        } else {
-            sameOptions.put(VALUE, false);
-            lookupField.put(VALUE, lookupName);
+
+        if(sameAsFamName!= null){
+            JSONObject sameOptions = sameAsFamName.getJSONArray(JSON_FORM_KEY.OPTIONS).getJSONObject(0);
+            if (familyName.equals(lookupName)) {
+                sameOptions.put(VALUE, true);
+                lookupField.put(VALUE, "");
+            } else {
+                sameOptions.put(VALUE, false);
+                lookupField.put(VALUE, lookupName);
+            }
         }
     }
 
@@ -289,5 +391,41 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
         return updateMemberNameEvent;
     }
 
+    public void populateForm(org.smartregister.domain.Event event, JSONObject formJSON, boolean readOnly) {
+        if (event == null)
+            return;
+        JSONArray fields = org.smartregister.util.JsonFormUtils.fields(formJSON);
+        for (int i = 0; i < fields.length(); i++) {
+            try {
+                JSONObject field = fields.getJSONObject(i);
+
+                // HEADS UP
+                if (readOnly) {
+                    field.put(READ_ONLY, true);
+                }
+
+                String key = field.getString(KEY);
+                Obs obs = event.findObs(null, false, key);
+                if (obs != null && obs.getValues() != null) {
+                    if (CHECK_BOX.equals(field.getString(TYPE))) {
+                        JSONArray options = field.getJSONArray(OPTIONS);
+                        Map<String, String> optionsKeyValue = new HashMap<>();
+                        for (int j = 0; j < options.length(); j++) {
+                            JSONObject option = options.getJSONObject(j);
+                            optionsKeyValue.put(option.getString(TEXT), option.getString(KEY));
+                        }
+                        JSONArray keys = new JSONArray();
+                        for (Object value : obs.getValues()) {
+                            keys.put(optionsKeyValue.get(value.toString()));
+                        }
+                        field.put(VALUE, keys);
+                    } else
+                        field.put(VALUE, obs.getValue());
+                }
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+    }
 
 }

@@ -54,7 +54,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
             @Override
             public void run() {
                 Location operationalArea = Utils.getOperationalAreaLocation(jurisdictionName);
-                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getIdentifier() : null;
+                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getId() : null;
                 Set<PlanDefinition> planDefinitionSet = planDefinitionSearchRepository.findActivePlansByJurisdiction(jurisdictionIdentifier);
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
@@ -75,7 +75,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
             @Override
             public void run() {
                 Location operationalArea = Utils.getOperationalAreaLocation(selectedOperationalArea);
-                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getIdentifier() : null;
+                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getId() : null;
                 boolean isValid = planDefinitionSearchRepository.planExists(currentPlanId, jurisdictionIdentifier);
                 appExecutors.mainThread().execute(() -> presenter.onPlanValidated(isValid));
 

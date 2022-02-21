@@ -253,7 +253,7 @@ public class RevealJsonFormUtilsTest extends BaseUnitTest {
         task.setTaskAction("Record\n" +"Screening");
 
         Location structure = new Location();
-        structure.setIdentifier("e5246812-f66c-41d9-8739-464f913b112d");
+        structure.setId("e5246812-f66c-41d9-8739-464f913b112d");
         structure.setServerVersion(1569490867604L);
         structure.setSyncStatus("Synced");
         structure.setType("Feature");

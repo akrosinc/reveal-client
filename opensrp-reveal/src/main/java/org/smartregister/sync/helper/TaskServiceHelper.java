@@ -61,8 +61,6 @@ public class TaskServiceHelper extends BaseHelper {
     public static final String UPDATE_STATUS_URL = "/rest/v2/task/update_status";
     public static final String ADD_TASK_URL = "/rest/v2/task/add";
     public static final String SYNC_TASK_URL = "/rest/v2/task/sync";
-    public static final String REVEAL_SYNC_TASK_URL = "/task/sync";
-
 
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
@@ -130,47 +128,35 @@ public class TaskServiceHelper extends BaseHelper {
         return CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds();
     }
 
-//    public List<Task> fetchTasksFromServer() {
-//        Set<String> planDefinitions = getPlanDefinitionIds();
-//        List<String> groups = getLocationIds();
-//
-//        syncProgress = new SyncProgress();
-//        syncProgress.setSyncEntity(SyncEntity.TASKS);
-//        syncProgress.setTotalRecords(totalRecords);
-//
-//        List<Task> tasks = batchFetchTasksFromServer(planDefinitions, groups, new ArrayList<>(), true);
-//
-//        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
-//        sendSyncProgressBroadcast(syncProgress, context);
-//
-//        return tasks;
-//    }
-
-
-
     public List<Task> fetchTasksFromServer() {
-        //new way
-        Set<String> planDefinitionIds = getPlanDefinitionIds();
-//        List<String> groups = getLocationIds();
+        Set<String> planDefinitions = getPlanDefinitionIds();
+        List<String> groups = getLocationIds();
 
         syncProgress = new SyncProgress();
         syncProgress.setSyncEntity(SyncEntity.TASKS);
         syncProgress.setTotalRecords(totalRecords);
 
-        List<Task> tasks = batchFetchTasksFromServer(planDefinitionIds, true);
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions, groups, new ArrayList<>(), true);
 
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
         sendSyncProgressBroadcast(syncProgress, context);
 
         return tasks;
     }
-    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, boolean returnCount) {
-        List<Task> tasks = new ArrayList<>();
-        //new way
+
+    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, List<Task> batchFetchedTasks, boolean returnCount) {
+        long serverVersion = 0;
         try {
-            String tasksResponse = fetchTasks(planDefinitions, returnCount);
+            serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
+        } catch (NumberFormatException e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        }
+        if (serverVersion > 0) serverVersion += 1;
+        try {
+            long maxServerVersion = 0L;
+            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion, returnCount);
             startTaskTrace(FETCH, 0);
-            tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
+            List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
 
             addAttribute(taskSyncTrace, COUNT, String.valueOf(tasks.size()));
@@ -186,56 +172,21 @@ public class TaskServiceHelper extends BaseHelper {
                     }
                 }
             }
-
+            if (!Utils.isEmptyCollection(tasks)) {
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
+                // retry fetch since there were items synced from the server
+                tasks.addAll(batchFetchedTasks);
+                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
+                sendSyncProgressBroadcast(syncProgress, context);
+                return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
+            }
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
-        return tasks;
+        return batchFetchedTasks;
     }
-//    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, List<Task> batchFetchedTasks, boolean returnCount) {
-//        long serverVersion = 0;
-//        try {
-//            serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
-//        } catch (NumberFormatException e) {
-//            Timber.e(e, "EXCEPTION %s", e.toString());
-//        }
-//        if (serverVersion > 0) serverVersion += 1;
-//        try {
-//            long maxServerVersion = 0L;
-//            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion, returnCount);
-//            startTaskTrace(FETCH, 0);
-//            List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
-//            }.getType());
-//
-//            addAttribute(taskSyncTrace, COUNT, String.valueOf(tasks.size()));
-//            stopTrace(taskSyncTrace);
-//            if (tasks != null && tasks.size() > 0) {
-//                for (Task task : tasks) {
-//                    try {
-//                        task.setSyncStatus(BaseRepository.TYPE_Synced);
-//                        task.setLastModified(new DateTime());
-//                        taskRepository.addOrUpdate(task);
-//                    } catch (Exception e) {
-//                        Timber.e(e, "Error saving task %s", task.getIdentifier());
-//                    }
-//                }
-//            }
-//            if (!Utils.isEmptyCollection(tasks)) {
-//                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
-//                // retry fetch since there were items synced from the server
-//                tasks.addAll(batchFetchedTasks);
-//                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
-//                sendSyncProgressBroadcast(syncProgress, context);
-//                return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
-//            }
-//        } catch (Exception e) {
-//            Timber.e(e, "Error fetching tasks from server");
-//        }
-//        return batchFetchedTasks;
-//    }
 
-    private String fetchTasks(Set<String> planIdentifiers, boolean returnCount) throws Exception {
-        //new way
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {
         HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -244,19 +195,19 @@ public class TaskServiceHelper extends BaseHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        JSONObject request  = new JSONObject();
-        request.put("plan", new JSONArray(planIdentifiers));
+        JSONObject request = isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
+                getSyncTaskRequest(plan, getOwner(), serverVersion);
         request.put(AllConstants.RETURN_COUNT, returnCount);
 
         if (httpAgent == null) {
-            throw new IllegalArgumentException(REVEAL_SYNC_TASK_URL + " http agent is null");
+            throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        String requestURL = baseUrl + REVEAL_SYNC_TASK_URL;
-        Response resp = httpAgent.fetch(requestURL); //TODO be able to set paramaters for filtering...maybe introduce Retrofit or equivalent
+        Response resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, SYNC_TASK_URL),
+                request.toString());
 
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(REVEAL_SYNC_TASK_URL + " not returned data");
+            throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
         if (returnCount) {
@@ -265,37 +216,6 @@ public class TaskServiceHelper extends BaseHelper {
 
         return resp.payload().toString();
     }
-
-//    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {
-//        HTTPAgent httpAgent = getHttpAgent();
-//        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-//        String endString = "/";
-//
-//        if (baseUrl.endsWith(endString)) {
-//            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-//        }
-//
-//        JSONObject request = isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
-//                getSyncTaskRequest(plan, getOwner(), serverVersion);
-//        request.put(AllConstants.RETURN_COUNT, returnCount);
-//
-//        if (httpAgent == null) {
-//            throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
-//        }
-//
-//        Response resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, SYNC_TASK_URL),
-//                request.toString());
-//
-//        if (resp.isFailure()) {
-//            throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
-//        }
-//
-//        if (returnCount) {
-//            totalRecords = resp.getTotalRecords();
-//        }
-//
-//        return resp.payload().toString();
-//    }
 
     protected String getOwner() {
         return allSharedPreferences.fetchRegisteredANM();

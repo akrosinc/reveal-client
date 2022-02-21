@@ -71,6 +71,7 @@ import timber.log.Timber;
 
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_NEUTRAL;
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
@@ -176,6 +177,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private boolean markStructureIneligibleConfirmed;
 
+    private boolean markStructureIneligibleSelected;
+
     private String reasonUnEligible;
 
     private boolean isTasksFiltered;
@@ -267,13 +270,13 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
                 || BuildConfig.BUILD_COUNTRY == Country.RWANDA
                 || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN)) {
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN
+                || BuildConfig.BUILD_COUNTRY == Country.NIGERIA)) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
 
     public void onMapReady() {
-
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
         String operationalArea = PreferencesUtil.getInstance().getCurrentOperationalArea();
         if (StringUtils.isNotBlank(planId) &&
@@ -281,14 +284,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchLocations(planId, operationalArea);
         } else {
             listTaskView.displayNotification(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
-            //TODO: decide on this
-
-            // drawerPresenter.getView().lockNavigationDrawerForSelection();
+            drawerPresenter.getView().lockNavigationDrawerForSelection();
         }
-
-        //test..
-        listTaskInteractor.fetchLocations(null, null);
-
     }
 
     public void onMapClicked(MapboxMap mapboxMap, LatLng point, boolean isLongclick) {
@@ -328,6 +325,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     private void onFeatureSelected(Feature feature, boolean isLongclick) {
         this.selectedFeature = feature;
         this.changeInterventionStatus = false;
+        markStructureIneligibleSelected = false;
         cardDetails = null;
 
         listTaskView.closeAllCardViews();
@@ -462,8 +460,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         revealApplication.setFeatureCollection(featureCollection);
         revealApplication.setOperationalArea(operationalArea);
 
-        Intent intent = new Intent(listTaskView.getContext(), EditFociBoundaryActivity.class);
-        listTaskView.getActivity().startActivity(intent);
+        if(BuildConfig.BUILD_COUNTRY != Country.NIGERIA){
+            Intent intent = new Intent(listTaskView.getContext(), EditFociBoundaryActivity.class);
+            listTaskView.getActivity().startActivity(intent);
+        }
     }
 
     @Override
@@ -498,6 +498,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     @Override
     public void onCardDetailsFetched(CardDetails cardDetails) {
         if (cardDetails instanceof SprayCardDetails) {
+            if (cardDetails == null) {
+                return;
+            }
             formatSprayCardDetails((SprayCardDetails) cardDetails);
             listTaskView.openCardView(cardDetails);
         } else if (cardDetails instanceof MosquitoHarvestCardDetails) {
@@ -719,8 +722,11 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         if (markStructureIneligibleConfirmed) {
             onMarkStructureIneligibleConfirmed();
             markStructureIneligibleConfirmed = false;
-        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
+        } else if (markStructureIneligibleSelected) {
             listTaskView.registerFamily();
+        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
+            displayMarkStructureIneligibleDialog();
+            RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
         } else if (cardDetails == null || !changeInterventionStatus) {
             startForm(selectedFeature, null, selectedFeatureInterventionType);
         } else {
@@ -857,14 +863,21 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                             markStructureIneligibleConfirmed = true;
                             reasonUnEligible = which == BUTTON_NEGATIVE ? listTaskView.getContext().getString(R.string.not_eligible_unoccupied) : listTaskView.getContext().getString(R.string.not_eligible_other);
                         }
-                        if (validateFarStructures()) {
-                            validateUserLocation();
-                        } else {
-                            onLocationValidated();
+
+                        if (which == BUTTON_POSITIVE) {
+                            markStructureIneligibleSelected = true;
+                            if (validateFarStructures()) {
+                                validateUserLocation();
+                            } else {
+                                onLocationValidated();
+                            }
+
                         }
+
                         dialog.dismiss();
                     }
                 });
+        RevealApplication.getInstance().setRefreshMapOnEventSaved(true); //TODO: check if this is necessary?
     }
 
 

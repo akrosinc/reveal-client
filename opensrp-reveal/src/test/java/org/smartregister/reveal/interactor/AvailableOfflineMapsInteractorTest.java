@@ -80,9 +80,9 @@ public class AvailableOfflineMapsInteractorTest extends BaseUnitTest {
         assertNotNull(offlineMapModelListArgumentCaptor.getValue().get(0).getLocation());
 
         Location location = offlineMapModelListArgumentCaptor.getValue().get(0).getLocation();
-        assertEquals(locationId, location.getIdentifier());
+        assertEquals(locationId, location.getId());
         assertEquals("Polygon", location.getType());
-        assertEquals(locationId, location.getIdentifier());
+        assertEquals(locationId, location.getId());
 
     }
 
@@ -96,15 +96,15 @@ public class AvailableOfflineMapsInteractorTest extends BaseUnitTest {
         assertNotNull(offlineMapModels.get(0).getLocation());
 
         Location location = offlineMapModels.get(0).getLocation();
-        assertEquals(locationId, location.getIdentifier());
+        assertEquals(locationId, location.getId());
         assertEquals("Polygon", location.getType());
-        assertEquals(locationId, location.getIdentifier());
+        assertEquals(locationId, location.getId());
     }
 
     private Location initLocation() {
         Location location = new Location();
         location.setType("Polygon");
-        location.setIdentifier(locationId);
+        location.setId(locationId);
         location.setJurisdiction(true);
         return location;
     }

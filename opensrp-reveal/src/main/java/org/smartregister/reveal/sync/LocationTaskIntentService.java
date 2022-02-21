@@ -92,7 +92,7 @@ public class LocationTaskIntentService extends IntentService {
         PlanIntentServiceHelper planServiceHelper = PlanIntentServiceHelper.getInstance();
 
 
-        List<Location> syncedStructures = locationServiceHelper.fetchLocations();
+        List<Location> syncedStructures = locationServiceHelper.fetchLocationsStructures();
 
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         planServiceHelper.syncPlans();
@@ -109,12 +109,11 @@ public class LocationTaskIntentService extends IntentService {
             Intent intent = new Intent(STRUCTURE_TASK_SYNCED);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
         }
-//TODO: why was this done, we may remove this
 
-//        if (!org.smartregister.util.Utils.isEmptyCollection(syncedStructures)
-//                || !org.smartregister.util.Utils.isEmptyCollection(synchedTasks)) {
-//            doSync();
-//        }
+        if (!org.smartregister.util.Utils.isEmptyCollection(syncedStructures)
+                || !org.smartregister.util.Utils.isEmptyCollection(synchedTasks)) {
+            doSync();
+        }
 
         new AppExecutors().mainThread().execute(new Runnable() {
             @Override
@@ -138,7 +137,7 @@ public class LocationTaskIntentService extends IntentService {
         if (operationalAreaLocation == null) {
             return false;
         } else {
-            operationalAreaLocationId = operationalAreaLocation.getIdentifier();
+            operationalAreaLocationId = operationalAreaLocation.getId();
         }
         if (syncedStructures != null) {
             for (Location structure : syncedStructures) {

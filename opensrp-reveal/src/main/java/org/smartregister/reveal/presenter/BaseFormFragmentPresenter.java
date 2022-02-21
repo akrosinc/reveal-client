@@ -5,6 +5,8 @@ import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Pair;
+import androidx.core.util.Pair;
+import androidx.appcompat.app.AlertDialog;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +20,7 @@ import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Location;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseFormFragmentContract;
@@ -56,6 +59,13 @@ import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
+import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DRUG_RECON;
+import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
+import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Country.NAMIBIA;
 
 /**
  * Created by samuelgithengi on 4/18/19.

@@ -74,7 +74,7 @@ public class IndicatorsCalculatorTaskTest extends BaseUnitTest {
 
         PreferencesUtil.getInstance().setCurrentOperationalArea("mti");
         Location jurisdiction = new Location();
-        jurisdiction.setIdentifier("2980");
+        jurisdiction.setId("2980");
         Cache<Location> cache = mock(Cache.class);
         Mockito.when(cache.get(anyString(), any())).thenReturn(jurisdiction);
         Whitebox.setInternalState(Utils.class, cache);

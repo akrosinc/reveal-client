@@ -35,7 +35,7 @@ public class SprayAreaMultiSelectRepository implements MultiSelectListRepository
             List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
             locationNames = operationalAreaNames.stream()
                                                     .map(name -> locationRepository.getLocationByName(name))
-                                                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getIdentifier())).flatMap(Collection::stream)
+                                                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
                                                     .map(childLocation -> childLocation.getProperties().getName()).filter(name -> !name.isEmpty()).collect(Collectors.toList());
         } else {
             final String currentFacility = PreferencesUtil.getInstance().getCurrentFacility();

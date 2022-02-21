@@ -488,8 +488,8 @@ public class TaskRepository extends BaseRepository {
 
             for (Location location : locations) {
 
-                updateStatement.bindString(1, location.getIdentifier());
-                updateStatement.bindString(2, location.getIdentifier());
+                updateStatement.bindString(1, location.getId());
+                updateStatement.bindString(2, location.getId());
                 updateStatement.executeUpdateDelete();
             }
 

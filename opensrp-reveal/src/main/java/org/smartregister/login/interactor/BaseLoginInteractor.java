@@ -130,14 +130,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private void remoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml) {
 
         try {
-            if (getSharedPreferences().fetchAuthBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.auth_base_url))) {
-                getSharedPreferences().savePreference("AUTH_BASE_URL", getApplicationContext().getString(R.string.auth_base_url));
+            if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
+                getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
-
-            if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_base_url))) {
-                getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_base_url));
-            }
-            if (!getSharedPreferences().fetchAuthBaseURL("").isEmpty() || !getSharedPreferences().fetchBaseURL("").isEmpty()) {
+            if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
                 tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
                     getLoginView().enableLoginButton(true);
                     if (loginResponse == LoginResponse.SUCCESS) {
@@ -219,8 +215,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         scheduleJobsPeriodically();
         scheduleJobsImmediately();
 
-        //TODO: initializing the P2p library...currently depends on teamId, which is going to change...
-       // CoreLibrary.getInstance().initP2pLibrary(userName);
+        CoreLibrary.getInstance().initP2pLibrary(userName);
 
         getLoginView().goToHome(true);
     }

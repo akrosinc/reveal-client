@@ -2,6 +2,8 @@ package org.smartregister.reveal.model;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.family.domain.FamilyEventClient;
@@ -11,8 +13,13 @@ import org.smartregister.family.util.Utils;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.PreferencesUtil;
 
+import timber.log.Timber;
+
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
 
@@ -29,6 +36,10 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
 
     private com.vijay.jsonwizard.utils.FormUtils formUtils = new com.vijay.jsonwizard.utils.FormUtils();
 
+    private String taskIdentifier;
+
+
+    private String planIdentifier;
 
     public FamilyProfileModel(String familyName) {
         super(familyName);
@@ -37,6 +48,7 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
     @Override
     public FamilyEventClient processMemberRegistration(String jsonString, String familyBaseEntityId) {
         eventClient = super.processMemberRegistration(jsonString, familyBaseEntityId);
+        setPlanAndTaskIdentifiers(familyBaseEntityId);
         tagEventClientDetails(eventClient);
         return eventClient;
     }
@@ -44,6 +56,9 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
     @Override
     public FamilyEventClient processFamilyRegistrationForm(String jsonString, String familyBaseEntityId) {
         eventClient = super.processFamilyRegistrationForm(jsonString, familyBaseEntityId);
+        if(org.smartregister.reveal.util.Utils.isCountryBuild(Country.NIGERIA)){
+            setPlanAndTaskIdentifiers(familyBaseEntityId);
+        }
         tagEventClientDetails(eventClient);
         return eventClient;
     }
@@ -51,6 +66,9 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
     @Override
     public FamilyEventClient processUpdateMemberRegistration(String jsonString, String familyBaseEntityId) {
         eventClient = super.processUpdateMemberRegistration(jsonString, familyBaseEntityId);
+        if(org.smartregister.reveal.util.Utils.isCountryBuild(Country.NIGERIA)){
+            setPlanAndTaskIdentifiers(familyBaseEntityId);
+        }
         tagEventClientDetails(eventClient);
         return eventClient;
     }
@@ -65,13 +83,38 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
         String planIdentifier = PreferencesUtil.getInstance().getCurrentPlanId();
         eventClient.getEvent().addDetails(Constants.Properties.PLAN_IDENTIFIER, planIdentifier);
         eventClient.getEvent().addDetails(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-        eventClient.getEvent().setLocationId(org.smartregister.reveal.util.Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()).getIdentifier());
+        eventClient.getEvent().setLocationId(org.smartregister.reveal.util.Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea()).getId());
+
+        if(getPlanIdentifier() != null){
+            eventClient.getEvent().addDetails(Constants.Properties.PLAN_IDENTIFIER,getPlanIdentifier());
+        }
+        if(getTaskIdentifier() !=null){
+            eventClient.getEvent().addDetails(Constants.Properties.TASK_IDENTIFIER,getTaskIdentifier());
+        }
     }
 
     public void setStructureId(String structureId) {
         this.structureId = structureId;
     }
 
+    public String getTaskIdentifier() {
+        return taskIdentifier;
+    }
+
+    public void setTaskIdentifier(String taskIdentifier) {
+        this.taskIdentifier = taskIdentifier;
+    }
+
+    public String getPlanIdentifier() {
+        return planIdentifier;
+    }
+
+    public void setPlanIdentifier(String planIdentifier) {
+        this.planIdentifier = planIdentifier;
+    }
+    public String getStructureId() {
+        return structureId;
+    }
 
     @Override
     public JSONObject getFormAsJson(String formName, String entityId, String currentLocationId) throws Exception {
@@ -95,5 +138,34 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
 
     public CommonPersonObject getFamilyHeadPersonObject() {
         return familyHeadPersonObject;
+    }
+
+    private void setPlanAndTaskIdentifiers(String familyBaseEntityId) {
+            JSONObject eventsByBaseEntityId = RevealApplication.getInstance().getContext().getEventClientRepository().getEventsByBaseEntityId(familyBaseEntityId);
+            JSONArray events = eventsByBaseEntityId.optJSONArray("events");
+            JSONObject familyRegistrationEvent = null;
+            for (int i = 0; i < events.length(); i++) {
+                try {
+                    JSONObject event = events.getJSONObject(i);
+                    String eventType = event.getString(EVENT_TYPE_FIELD);
+                    if (eventType.equals(FamilyConstants.EventType.FAMILY_REGISTRATION)) {
+                        familyRegistrationEvent = event;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
+            if (familyRegistrationEvent != null) {
+                try {
+                    JSONObject details = familyRegistrationEvent.getJSONObject(Constants.DETAILS);
+                    String planIdentifier = details.getString(Constants.Properties.PLAN_IDENTIFIER);
+                    String taskIdentifier = details.getString(Constants.Properties.TASK_IDENTIFIER);
+                    setPlanIdentifier(planIdentifier);
+                    setTaskIdentifier(taskIdentifier);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
+            }
     }
 }

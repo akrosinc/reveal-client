@@ -104,16 +104,16 @@ public class StructureRepository extends LocationRepository {
     }
 
     public void addOrUpdate(Location location) {
-        if (StringUtils.isBlank(location.getIdentifier()))
+        if (StringUtils.isBlank(location.getId()))
             throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
 
-        if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, location.getIdentifier(), getWritableDatabase())) {
+        if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, location.getId(), getWritableDatabase())) {
             int maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
             contentValues.put(ROWID, ++maxRowId);
         }
 
-        contentValues.put(ID, location.getIdentifier());
+        contentValues.put(ID, location.getId());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());

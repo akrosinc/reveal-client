@@ -183,7 +183,7 @@ public class AvailableOfflineMapsFragment extends BaseOfflineMapsFragment implem
     public void removeOperationalAreaToDownload(String operationalAreaId) {
         List<Location> toRemove = new ArrayList<>();
         for (Location location: this.operationalAreasToDownload ) {
-            if (location.getIdentifier().equals(operationalAreaId)) {
+            if (location.getId().equals(operationalAreaId)) {
                 toRemove.add(location);
             }
         }
@@ -201,7 +201,7 @@ public class AvailableOfflineMapsFragment extends BaseOfflineMapsFragment implem
 
         for (Location location: this.operationalAreasToDownload ) {
             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(location));
-            String mapName = location.getIdentifier();
+            String mapName = location.getId();
             currentMapDownload = mapName;
             OfflineMapHelper.downloadMap(operationalAreaFeature, mapName, getActivity());
         }

@@ -82,9 +82,9 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
 
         Task task = initTestTask(null, null);
 
-        tasks.put(structure.getIdentifier(), Collections.singleton(task));
+        tasks.put(structure.getId(), Collections.singleton(task));
 
-        String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, structure.getIdentifier(), structureNames);
+        String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, structure.getId(), structureNames);
 
         JSONArray featuresJsonArray = new JSONArray(geoJsonString);
 
@@ -110,7 +110,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         task.setCode(BEDNET_DISTRIBUTION); // Value set to another code that
         // is not "Case Confirmation"
 
-        tasks.put(structure.getIdentifier(), Collections.singleton(task));
+        tasks.put(structure.getId(), Collections.singleton(task));
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -139,7 +139,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         task.setCode(REGISTER_FAMILY);
         taskSet.add(task);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -168,7 +168,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         task.setBusinessStatus(COMPLETE);
         taskSet.add(task);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -203,7 +203,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, COMPLETE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -235,7 +235,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, INCOMPLETE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -267,7 +267,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, INCOMPLETE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -299,7 +299,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, COMPLETE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -332,7 +332,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, NOT_ELIGIBLE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(),new HashMap<>());
 
@@ -366,7 +366,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task mdaDispenseTask2 = initTestTask(MDA_DISPENSE, FULLY_RECEIVED);
         taskSet.add(mdaDispenseTask2);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -403,7 +403,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task notElligibleTask = initTestTask(MDA_DISPENSE, NOT_ELIGIBLE);
         taskSet.add(notElligibleTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -437,7 +437,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task noneReceivedTask1 = initTestTask(MDA_DISPENSE, NONE_RECEIVED);
         taskSet.add(noneReceivedTask1);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -471,7 +471,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task notElligibleTask1 = initTestTask(MDA_DISPENSE, NOT_ELIGIBLE);
         taskSet.add(notElligibleTask1);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -511,7 +511,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task adherenceTask = initTestTask(MDA_ADHERENCE, COMPLETE);
         taskSet.add(adherenceTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -540,7 +540,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task familyRegTask = initTestTask(REGISTER_FAMILY, NOT_ELIGIBLE);
         taskSet.add(familyRegTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -568,7 +568,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task paotTask = initTestTask(PAOT, COMPLETE);
         taskSet.add(paotTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -596,7 +596,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task paotTask = initTestTask(PAOT, NOT_ELIGIBLE);
         taskSet.add(paotTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -624,7 +624,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task mosquitoCollectionTask = initTestTask(MOSQUITO_COLLECTION, COMPLETE);
         taskSet.add(mosquitoCollectionTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -652,7 +652,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task mosquitoCollectionTask = initTestTask(MOSQUITO_COLLECTION, NOT_ELIGIBLE);
         taskSet.add(mosquitoCollectionTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -680,7 +680,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task larvalDippingTask = initTestTask(LARVAL_DIPPING, COMPLETE);
         taskSet.add(larvalDippingTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -709,7 +709,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task larvalDippingTask = initTestTask(LARVAL_DIPPING, NOT_ELIGIBLE);
         taskSet.add(larvalDippingTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -740,7 +740,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bednetDistributionTask = initTestTask(BEDNET_DISTRIBUTION, COMPLETE);
         taskSet.add(bednetDistributionTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -769,7 +769,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         Task bloodScreeningTask = initTestTask(BLOOD_SCREENING, COMPLETE);
         taskSet.add(bloodScreeningTask);
 
-        tasks.put(structure.getIdentifier(), taskSet);
+        tasks.put(structure.getId(), taskSet);
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, UUID.randomUUID().toString(), structureNames);
 
@@ -787,7 +787,7 @@ public class GeoJsonUtilsTest extends BaseUnitTest {
         ArrayList<Location> structures = new ArrayList<Location>();
         structures.add(structure);
         StructureDetails structureDetails = new StructureDetails("John House", "John");
-        structureNames.put(structure.getIdentifier(), structureDetails);
+        structureNames.put(structure.getId(), structureDetails);
         Map<String, Set<Task>> tasks = new HashMap<>();
 
         String geoJsonString = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, null, structureNames);

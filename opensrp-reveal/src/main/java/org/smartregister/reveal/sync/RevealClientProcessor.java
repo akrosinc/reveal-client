@@ -20,11 +20,13 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Constants.StructureType;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants.EventType;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
@@ -99,14 +101,20 @@ public class RevealClientProcessor extends ClientProcessorForJava {
     }
 
     public void processClient(List<EventClient> eventClients, boolean localEvents) {
-        ClientClassification clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
+        ClientClassification clientClassification;
+        if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
+            clientClassification = assetJsonToJava("ec_client_classification_nigeria.json", ClientClassification.class);
+        } else {
+           clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
+        }
+
         if (clientClassification == null) {
             return;
         }
 
         ArrayList<Client> clients = new ArrayList<>();
         Location operationalArea = Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
-        String operationalAreaLocationId = operationalArea == null ? null : operationalArea.getIdentifier();
+        String operationalAreaLocationId = operationalArea == null ? null : operationalArea.getId();
         boolean hasSyncedEventsInTarget = false;
         if (!eventClients.isEmpty()) {
             String operationalAreaId = null;
@@ -288,7 +296,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
     }
 
     public String calculateBusinessStatus(Event event) {
-        if (EventType.FAMILY_REGISTRATION.equals(event.getEventType()) || EventType.FAMILY_MEMBER_REGISTRATION.equals(event.getEventType())) {
+        if (EventType.FAMILY_REGISTRATION.equals(event.getEventType()) || EventType.FAMILY_MEMBER_REGISTRATION.equals(event.getEventType()) || EventType.UPDATE_FAMILY_MEMBER_REGISTRATION.equals(event.getEventType())) {
             return BusinessStatus.COMPLETE;
         }
         Obs businessStatusObs = event.findObs(null, false, JsonForm.BUSINESS_STATUS);

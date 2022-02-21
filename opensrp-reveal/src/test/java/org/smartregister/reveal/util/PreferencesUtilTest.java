@@ -130,7 +130,7 @@ public class PreferencesUtilTest extends BaseUnitTest {
         String operationalArea = "oa_1";
         Whitebox.setInternalState(Utils.class, "cache", cache);
         when(cache.get(eq(operationalArea), any())).thenReturn(location);
-        when(location.getIdentifier()).thenReturn("id_11121121");
+        when(location.getId()).thenReturn("id_11121121");
         when(preferencesUtil.getCurrentOperationalArea()).thenReturn(operationalArea);
 
         preferencesUtil.setCurrentOperationalArea(operationalArea);

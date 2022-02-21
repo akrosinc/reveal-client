@@ -151,9 +151,7 @@ android {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", 'opensrp_base_url', '"http://localhost:8080/api/v1/"'
-            resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
-
+            resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
@@ -179,14 +177,13 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"http://10.0.2.2:8080/api/v1/"'
-            resValue "string", 'auth_base_url', '"https://sso-ops.akros.online/"'
+            resValue "string", 'opensrp_base_url', '"https://opensrp-smc-ng-uat.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.NIGERIA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -202,9 +199,6 @@ android {
             buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
             buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
 
-
-
-            manifestPlaceholders = [usesCleartextTraffic:"true"] //***Warning this should not get to production apk, only for local dev***
 
             testCoverageEnabled true
         }
@@ -243,6 +237,11 @@ tasks.withType(Test) {
 dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
+    implementation('io.ona.kujaku:library:0.9.0') {
+        exclude group: 'com.android.volley'
+        exclude group: 'stax', module: 'stax-api'
+    }
+
     //*****Tempfix Required by org.smartregister.* classes******
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
@@ -374,10 +373,6 @@ dependencies {
 
 
     //*****End temp fix*****
-    implementation('io.ona.kujaku:library:0.9.0') {
-        exclude group: 'com.android.volley'
-        exclude group: 'stax', module: 'stax-api'
-    }
 
     testImplementation 'com.ibm.fhir:fhir-model:4.7.0'
     implementation('org.smartregister:opensrp-client-configurable-views:1.1.5-SNAPSHOT@aar') {
@@ -386,7 +381,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
 
-    implementation('org.smartregister:opensrp-client-family:2.0.0-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-family:2.0.4-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'org.smartregister', module: 'opensrp-client-core'
         exclude group: 'org.smartregister', module: 'opensrp-client-native-form'
@@ -396,7 +391,7 @@ dependencies {
 
     ///Upgrade to latest native forms issue tracked here
     //https://github.com/OpenSRP/opensrp-client-reveal/issues/1235
-    implementation('org.smartregister:opensrp-client-native-form:1.14.2.2-FORM-CONFIG-RULES-FIX-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-native-form:1.14.7.5-FORM-CONFIG-RULES-FIX-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'cardview-v7'

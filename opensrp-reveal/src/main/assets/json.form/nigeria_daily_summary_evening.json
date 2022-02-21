@@ -1,0 +1,334 @@
+{
+  "count": "1",
+  "encounter_type": "hw_drug_evening",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "HF-level drug reconciliation - Evening",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "dayOfCycle",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Day of cycle",
+        "values": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "keys": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      {
+        "key": "nameOfHWIssuing",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of HW receiving",
+        "values": [
+          "MUSTAPAHA SANI",
+          "ZAYYANU SANI",
+          "HALIRU JATAU",
+          "YUSUF USMAN",
+          "LUKMAN MUHAMMAD",
+          "MUSTAPHA UMAR",
+          "RABIU UMAR",
+          "BASHAR BALA"
+        ],
+        "keys": [
+          "MUSTAPAHA SANI",
+          "ZAYYANU SANI",
+          "HALIRU JATAU",
+          "YUSUF USMAN",
+          "LUKMAN MUHAMMAD",
+          "MUSTAPHA UMAR",
+          "RABIU UMAR",
+          "BASHAR BALA"
+        ]
+      },
+      {
+        "key": "nameOfCDDreceiving",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD returning",
+        "values": [
+          "HADIZA MUHD",
+          "RABIATU UMAR",
+          "NAJA,ATU MUHAMMED",
+          "MARYAM ABUBAKAR",
+          "ASAMAU MODE",
+          "FIDDAUSI HUSSAINI",
+          "SALIMA DAHIRU",
+          "JAMILA UMAR",
+          "FATIMA USMAN",
+          "MARYAM ABDULLAHI",
+          "ALIYA BELLO",
+          "HAJARA DANSANI",
+          "SARATU ABDULLAHI SANI",
+          "ASMAU SABO",
+          "AMINA ATIKU",
+          "UMMU SALAMA ALIYU",
+          "FARIDA SHEHU",
+          "ZALIHA BALA",
+          "HANNATU YAU JIMAJIMI",
+          "NAFISA YAU",
+          "MARYAM YAKUBU",
+          "AMAMATU ABUBAKAR",
+          "SARATU SHEHU",
+          "NAFISA MUHD",
+          "NAFISA BALA",
+          "MAIMUNA MALAMI",
+          "HADIZA ABDULLAHI",
+          "HINDATU MUHD",
+          "HADIZA MALAMI",
+          "HAUWAU MUSA MUHD",
+          "NAFISA MODI SHAGARI",
+          "HAUWAU ABUBKAR",
+          "AMINA LABARAN",
+          "FATIMA YAHAYA",
+          "ZALIHA ABUBAKAR",
+          "SAMIRA MUHD",
+          "SHEMAU ALIYU",
+          "KARIMA ABUBAKAR",
+          "SARATU ABUBAKAR",
+          "HASSANA BALA",
+          "SUWAIBA ALIYU",
+          "HASSANA MALAMI",
+          "RAHANA BUDA",
+          "RAFIA SHEHU",
+          "ASABE SHEHU",
+          "SAIDA UMAR"
+        ],
+        "keys": [
+          "HADIZA MUHD",
+          "RABIATU UMAR",
+          "NAJA,ATU MUHAMMED",
+          "MARYAM ABUBAKAR",
+          "ASAMAU MODE",
+          "FIDDAUSI HUSSAINI",
+          "SALIMA DAHIRU",
+          "JAMILA UMAR",
+          "FATIMA USMAN",
+          "MARYAM ABDULLAHI",
+          "ALIYA BELLO",
+          "HAJARA DANSANI",
+          "SARATU ABDULLAHI SANI",
+          "ASMAU SABO",
+          "AMINA ATIKU",
+          "UMMU SALAMA ALIYU",
+          "FARIDA SHEHU",
+          "ZALIHA BALA",
+          "HANNATU YAU JIMAJIMI",
+          "NAFISA YAU",
+          "MARYAM YAKUBU",
+          "AMAMATU ABUBAKAR",
+          "SARATU SHEHU",
+          "NAFISA MUHD",
+          "NAFISA BALA",
+          "MAIMUNA MALAMI",
+          "HADIZA ABDULLAHI",
+          "HINDATU MUHD",
+          "HADIZA MALAMI",
+          "HAUWAU MUSA MUHD",
+          "NAFISA MODI SHAGARI",
+          "HAUWAU ABUBKAR",
+          "AMINA LABARAN",
+          "FATIMA YAHAYA",
+          "ZALIHA ABUBAKAR",
+          "SAMIRA MUHD",
+          "SHEMAU ALIYU",
+          "KARIMA ABUBAKAR",
+          "SARATU ABUBAKAR",
+          "HASSANA BALA",
+          "SUWAIBA ALIYU",
+          "HASSANA MALAMI",
+          "RAHANA BUDA",
+          "RAFIA SHEHU",
+          "ASABE SHEHU",
+          "SAIDA UMAR"
+        ]
+      },
+      {
+        "key": "spaqBlistersIssuedFirst",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ unused whole blisters returned for 3<12 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      },
+      {
+        "key": "spaqBlistersIssuedSecond",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ unused whole blisters returned for 12-59 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      },
+      {
+        "key": "spaqBlistersIssuedThird",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ damaged blisters returned for 3<12 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      },
+      {
+        "key": "spaqBlistersIssuedFourth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ damaged blisters returned for 12-59 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      },
+      {
+        "key": "spaqBlistersIssuedFifth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ opened blisters returned for 3<12 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      },
+      {
+        "key": "spaqBlistersIssuedSixth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of SPAQ opened blisters returned for 12-59 mos:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Number must be equal or less than 100"
+        }
+      }
+    ]
+  }
+}
+

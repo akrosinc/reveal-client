@@ -68,7 +68,7 @@ import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
-import static org.smartregister.AllConstants.REVEAL_AUTH_USER_URL_PATH;
+import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.ORGANIZATION_IDS;
@@ -344,7 +344,7 @@ public class UserService {
     public LoginResponse fetchUserDetails(String accessToken) {
         String requestURL;
 
-        requestURL = configuration.dristhiBaseURL() + REVEAL_AUTH_USER_URL_PATH;
+        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
 
         LoginResponse loginResponse = httpAgent.fetchUserDetails(requestURL, accessToken);
 
@@ -455,8 +455,8 @@ public class UserService {
 
     public String getUserDefaultTeam(LoginResponseData userInfo) {
         try {
-            if (userInfo != null && userInfo.teamAssignedToUser != null) {
-                return userInfo.teamAssignedToUser.getName();
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
+                return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
             Timber.e(e);
@@ -472,8 +472,8 @@ public class UserService {
 
     public String getUserDefaultTeamId(LoginResponseData userInfo) {
         try {
-            if (userInfo != null && userInfo.teamAssignedToUser != null) {
-                return userInfo.teamAssignedToUser.getIdentifier().toString();
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
+                return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
             Timber.e(e);

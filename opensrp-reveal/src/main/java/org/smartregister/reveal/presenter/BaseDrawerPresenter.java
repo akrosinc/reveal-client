@@ -2,6 +2,10 @@ package org.smartregister.reveal.presenter;
 
 import android.app.Activity;
 import android.content.Intent;
+import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
+import android.app.Activity;
+
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -19,6 +23,7 @@ import org.smartregister.domain.PlanDefinition.PlanStatus;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -49,6 +54,16 @@ import static org.smartregister.reveal.util.Constants.Tags.SECTOR;
 import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
 import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
+import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
+import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
+import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
+import static org.smartregister.reveal.util.Constants.Tags.LGA;
+import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
+import static org.smartregister.reveal.util.Constants.Tags.PROVINCE;
+import static org.smartregister.reveal.util.Constants.Tags.REGION;
+import static org.smartregister.reveal.util.Constants.Tags.STATE;
+import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
+import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
 import static org.smartregister.reveal.util.Constants.UseContextCode.INTERVENTION_TYPE;
 
 /**
@@ -91,33 +106,32 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
         view.setOperator();
 
-        //TODO : handle this logic of fetching hierarchy in new way
-//        if (StringUtils.isBlank(prefsUtil.getCurrentOperationalArea())) {
-//            ArrayList<String> operationalAreaLevels = new ArrayList<>();
-//            operationalAreaLevels.add(DISTRICT);
-//            operationalAreaLevels.add(HEALTH_CENTER);
-//            operationalAreaLevels.add(VILLAGE);
-//            operationalAreaLevels.add(CANTON);
-//            operationalAreaLevels.add(SUB_DISTRICT);
-//            List<String> defaultLocation = locationHelper.generateDefaultLocationHierarchy(operationalAreaLevels);
-//
-//            if (defaultLocation != null) {
-//                view.setDistrict(defaultLocation.get(0));
-//                prefsUtil.setCurrentDistrict(defaultLocation.get(0));
-//                ArrayList<String> levels = new ArrayList<>();
-//                levels.add(CANTON);
-//                String level;
-//                if (locationHelper.generateLocationHierarchyTree(false, levels).isEmpty()) {
-//                    level = HEALTH_CENTER;
-//                } else {
-//                    level = CANTON;
-//                }
-//                if (defaultLocation.size() > 1)
-//                    view.setFacility(defaultLocation.get(1), level);
-//            }
-//        } else {
-//            populateLocationsFromPreferences();
-//        }
+        if (StringUtils.isBlank(prefsUtil.getCurrentOperationalArea())) {
+            ArrayList<String> operationalAreaLevels = new ArrayList<>();
+            operationalAreaLevels.add(DISTRICT);
+            operationalAreaLevels.add(HEALTH_CENTER);
+            operationalAreaLevels.add(VILLAGE);
+            operationalAreaLevels.add(CANTON);
+            operationalAreaLevels.add(SUB_DISTRICT);
+            List<String> defaultLocation = locationHelper.generateDefaultLocationHierarchy(operationalAreaLevels);
+
+            if (defaultLocation != null) {
+                view.setDistrict(defaultLocation.get(0));
+                prefsUtil.setCurrentDistrict(defaultLocation.get(0));
+                ArrayList<String> levels = new ArrayList<>();
+                levels.add(CANTON);
+                String level;
+                if (locationHelper.generateLocationHierarchyTree(false, levels).isEmpty()) {
+                    level = HEALTH_CENTER;
+                } else {
+                    level = CANTON;
+                }
+                if (defaultLocation.size() > 1)
+                    view.setFacility(defaultLocation.get(1), level);
+            }
+        } else {
+            populateLocationsFromPreferences();
+        }
 
         view.setPlan(prefsUtil.getCurrentPlan());
 
@@ -179,18 +193,16 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
     @Override
     public void onShowOperationalAreaSelector() {
         Pair<String, ArrayList<String>> locationHierarchy = extractLocationHierarchy();
-
-        view.unlockNavigationDrawer();        //TODO: we  update this logic
-//        if (locationHierarchy == null) {//try to evict location hierachy in cache
-//            revealApplication.getContext().anmLocationController().evict();
-//            locationHierarchy = extractLocationHierarchy();
-//        }
-//        if (locationHierarchy != null) {
-//            view.showOperationalAreaSelector(extractLocationHierarchy());
-//        } else {
-//            view.displayNotification(R.string.error_fetching_location_hierarchy_title, R.string.error_fetching_location_hierarchy);
-//            revealApplication.getContext().userService().forceRemoteLogin(revealApplication.getContext().allSharedPreferences().fetchRegisteredANM());
-//        }
+        if (locationHierarchy == null) {//try to evict location hierachy in cache
+            revealApplication.getContext().anmLocationController().evict();
+            locationHierarchy = extractLocationHierarchy();
+        }
+        if (locationHierarchy != null) {
+            view.showOperationalAreaSelector(extractLocationHierarchy());
+        } else {
+            view.displayNotification(R.string.error_fetching_location_hierarchy_title, R.string.error_fetching_location_hierarchy);
+            revealApplication.getContext().userService().forceRemoteLogin(revealApplication.getContext().allSharedPreferences().fetchRegisteredANM());
+        }
 
     }
 
@@ -199,6 +211,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         ArrayList<String> operationalAreaLevels = new ArrayList<>();
         operationalAreaLevels.add(COUNTRY);
         operationalAreaLevels.add(PROVINCE);
+        if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA)
+        {
+            operationalAreaLevels.add(STATE);
+            operationalAreaLevels.add(LGA);
+        }
         operationalAreaLevels.add(REGION);
         operationalAreaLevels.add(DISTRICT);
         operationalAreaLevels.add(SUB_DISTRICT);
@@ -316,12 +333,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     @Override
     public void onShowPlanSelector() {
-        //TODO we update this
-//        if (StringUtils.isBlank(prefsUtil.getCurrentOperationalArea())) {
-//            view.displayNotification(R.string.operational_area, R.string.operational_area_not_selected);
-//        } else {
-//            interactor.fetchPlans(prefsUtil.getCurrentOperationalArea());
-//        }
+        if (StringUtils.isBlank(prefsUtil.getCurrentOperationalArea())) {
+            view.displayNotification(R.string.operational_area, R.string.operational_area_not_selected);
+        } else {
+            interactor.fetchPlans(prefsUtil.getCurrentOperationalArea());
+        }
     }
 
 
@@ -372,8 +388,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                     (StringUtils.isNotBlank(view.getPlan()) || StringUtils.isNotBlank(view.getOperationalArea()))) {
                 view.setOperationalArea(prefsUtil.getCurrentOperationalArea());
                 view.setPlan(prefsUtil.getCurrentPlan());
-                //TODO: to update where locking or not
-               // view.lockNavigationDrawerForSelection(R.string.select_campaign_operational_area_title, R.string.revoked_plan_operational_area);
+                view.lockNavigationDrawerForSelection(R.string.select_campaign_operational_area_title, R.string.revoked_plan_operational_area);
             } else if (!prefsUtil.getCurrentPlan().equals(view.getPlan())
                     || !prefsUtil.getCurrentOperationalArea().equals(view.getOperationalArea())) {
                 changedCurrentSelection = true;

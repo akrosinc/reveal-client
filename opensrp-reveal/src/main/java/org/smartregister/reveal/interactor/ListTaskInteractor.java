@@ -34,6 +34,7 @@ import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.GeoJSON;
+import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.GeoJsonUtils;
@@ -47,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -268,92 +268,62 @@ public class ListTaskInteractor extends BaseInteractor {
     }
 
     public void fetchLocations(String plan, String operationalArea) {
-            fetchLocations(null,null,null,null);
+        fetchLocations(plan, operationalArea, null, null);
     }
 
-    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive){
-      Runnable runnable =   new Runnable(){
+    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
+        Runnable runnable = new Runnable() {
 
             @Override
             public void run() {
-                List<Location> locations = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("structure")).collect(Collectors.toList());
                 JSONObject featureCollection = null;
+
+                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+                List<TaskDetails> taskDetailsList = null;
+
                 try {
                     featureCollection = createFeatureCollection();
-                      String features = GeoJsonUtils.getGeoJsonFromLocations(locations);
-                      featureCollection.put(GeoJSON.FEATURES,new JSONArray(features));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                JSONObject finalFeatureCollection = featureCollection;
-
-                appExecutors.mainThread().execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                            getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
+                    if (operationalAreaLocation != null) {
+                        Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        List<Location> structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
+                        Map<String, StructureDetails> structureNames = getStructureName(operationalAreaLocation.getId());
+                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
+                        String indexCase = null;
+                        if (getInterventionLabel() == R.string.focus_investigation)
+                            indexCase = getIndexCaseStructure(plan);
+                        String features = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
 
                     }
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+                JSONObject finalFeatureCollection = featureCollection;
+                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+                appExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (operationalAreaLocation != null) {
+                            operationalAreaId = operationalAreaLocation.getId();
+                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
+                            if (locationComponentActive != null) {
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList, point, locationComponentActive);
+                            } else {
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList);
+                            }
+                        } else {
+                            getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
+                        }
+                    }
                 });
+
             }
+
         };
+
+
         appExecutors.diskIO().execute(runnable);
-
     }
-
-//    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
-//        Runnable runnable = new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                JSONObject featureCollection = null;
-//
-//                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
-//                List<TaskDetails> taskDetailsList = null;
-//
-//                try {
-//                    featureCollection = createFeatureCollection();
-//                    if (operationalAreaLocation != null) {
-//                        Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(plan, operationalAreaLocation.getIdentifier());
-//                        List<Location> structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getIdentifier());
-//                        Map<String, StructureDetails> structureNames = getStructureName(operationalAreaLocation.getIdentifier());
-//                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
-//                        String indexCase = null;
-//                        if (getInterventionLabel() == R.string.focus_investigation)
-//                            indexCase = getIndexCaseStructure(plan);
-//                        String features = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
-//                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
-//
-//                    }
-//                } catch (Exception e) {
-//                    Timber.e(e);
-//                }
-//                JSONObject finalFeatureCollection = featureCollection;
-//                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
-//                appExecutors.mainThread().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (operationalAreaLocation != null) {
-//                            operationalAreaId = operationalAreaLocation.getIdentifier();
-//                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
-//                            if (locationComponentActive != null) {
-//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList, point, locationComponentActive);
-//                            } else {
-//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList);
-//                            }
-//                        } else {
-//                            getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
-//                        }
-//                    }
-//                });
-//
-//            }
-//
-//        };
-//
-//
-//        appExecutors.diskIO().execute(runnable);
-//    }
 
 
     protected String getStructureNamesSelect(String mainCondition) {
@@ -439,7 +409,7 @@ public class ListTaskInteractor extends BaseInteractor {
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         Location currentOperationalArea = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
         if(currentOperationalArea != null) {
-            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getIdentifier());
+            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getId());
             this.setTaskDetails(IndicatorUtils.processTaskDetails(tasks));
         }
 
@@ -466,14 +436,18 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             details.put(Constants.Properties.LOCATION_ID, feature.id());
             details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+            details.put(Constants.Properties.PLAN_IDENTIFIER,task.getPlanIdentifier());
             task.setBusinessStatus(NOT_ELIGIBLE);
             task.setStatus(Task.TaskStatus.COMPLETED);
             task.setLastModified(new DateTime());
+            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
+            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             taskRepository.addOrUpdate(task);
             revealApplication.setSynced(false);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details, FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
             event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible").withFieldType("formsubmissionField"));
             event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible").withFieldType("formsubmissionField"));
+            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS).withFieldType(JsonForm.BUSINESS_STATUS));
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {

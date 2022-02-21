@@ -4,7 +4,9 @@ import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
+import org.smartregister.reveal.widget.RevealBarcodeFactory;
 import org.smartregister.reveal.widget.RevealEditTextFactory;
 import org.smartregister.reveal.widget.RevealLabelFactory;
 import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
@@ -12,6 +14,7 @@ import org.smartregister.reveal.widget.RevealRadioButtonFactory;
 import org.smartregister.reveal.widget.RevealRepeatingGroupFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BARCODE;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.EDIT_TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
@@ -51,6 +54,10 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
 
         if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             map.put(REPEATING_GROUP, new RevealRepeatingGroupFactory());
+        }
+
+        if(Utils.isCountryBuild(Country.NIGERIA)){
+            map.put(BARCODE, new RevealBarcodeFactory());
         }
 
     }

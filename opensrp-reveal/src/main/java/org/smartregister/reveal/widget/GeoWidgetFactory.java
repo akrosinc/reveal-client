@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.Point;
@@ -362,7 +361,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> {
             String parentId = locationRepository.getLocationById(operationalAreaFeature.id()).getProperties().getParentId();
             for (Location location : locationRepository.getAllLocations()) {
-                if (!location.getIdentifier().equals(operationalAreaFeature.id())) {
+                if (!location.getId().equals(operationalAreaFeature.id())) {
                     com.mapbox.geojson.Feature feature = convertFromLocation(location);
                     if (feature != null) {
                         if (location.getProperties().getParentId().equals(parentId) && location.getProperties().getName().toLowerCase().contains(OTHER)) {
@@ -391,7 +390,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         try {
             return com.mapbox.geojson.Feature.fromJson(gson.toJson(location));
         } catch (Exception e) {
-            Timber.e(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getIdentifier());
+            Timber.e(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getId());
         }
         return null;
     }

@@ -128,7 +128,7 @@ public class DownloadedOfflineMapsInteractorTest extends BaseUnitTest {
 
         assertNotNull(actualOfflineMapModelList);
         assertFalse(actualOfflineMapModelList.isEmpty());
-        assertEquals(locationId, actualOfflineMapModelList.get(0).getLocation().getIdentifier());
+        assertEquals(locationId, actualOfflineMapModelList.get(0).getLocation().getId());
         assertEquals("Polygon", actualOfflineMapModelList.get(0).getLocation().getType());
         assertTrue(actualOfflineMapModelList.get(0).getLocation().isJurisdiction());
         assertEquals(expectedOfflineQueueTaskMap.get(locationId).getDateCreated(), actualOfflineMapModelList.get(0).getDateCreated());
@@ -155,7 +155,7 @@ public class DownloadedOfflineMapsInteractorTest extends BaseUnitTest {
     private Location initLocation() {
         Location location = new Location();
         location.setType("Polygon");
-        location.setIdentifier(locationId);
+        location.setId(locationId);
         location.setJurisdiction(true);
         return location;
     }

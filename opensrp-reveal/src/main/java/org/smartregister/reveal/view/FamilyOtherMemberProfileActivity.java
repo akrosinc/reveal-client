@@ -2,6 +2,13 @@ package org.smartregister.reveal.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -122,6 +129,21 @@ public class FamilyOtherMemberProfileActivity extends BaseFamilyOtherMemberProfi
                 refreshList(adapter.getItem(i));
             }
         });
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                refreshList(adapter.getItem(i));
+            }
+        } else {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                public void run() {
+                    for (int i = 0; i < adapter.getCount(); i++) {
+                        refreshList(adapter.getItem(i));
+                    }
+                }
+            });
+        }
+
     }
 
     private void refreshList(Fragment fragment) {

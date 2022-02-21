@@ -83,6 +83,19 @@ public interface Constants {
     String ADMIN_PASSWORD_ENTERED = "admin_password_entered";
 
     String GPS_ACCURACY = "gps_accuracy";
+    int MDA_MIN_AGE = 5;
+
+    int ADMINISTERED_SPAQ = 1;
+    int NOT_ADMINISTERED_SPAQ = 0;
+
+    String READ_ONLY = "READ_ONLY";
+
+    String MDA_DISPENSE_TASK_COUNT = "mda_dispense_task_count";
+    String MDA_TASK_COUNT = "mda_task_count";
+    String MDA_ADHERENCE_COMPLETE_COUNT = "mda_adherence_complete_count";
+    String MDA_DRUG_RECON_COMPLETE_COUNT = "mda_drug_recon_complete_count";
+
+    int SMC_DISPENSE_MIN_MONTHS = 3;
 
     interface CONFIGURATION {
         String LOGIN = "login";
@@ -136,6 +149,7 @@ public interface Constants {
         String VILLAGES = "villages";
         String SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = "select_jurisdiction_max_select_zoom_level";
         String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
+
     }
 
     interface Preferences {
@@ -156,6 +170,8 @@ public interface Constants {
     interface Tags {
         String COUNTRY = "Country";
         String PROVINCE = "Province";
+        String STATE = "State";
+        String LGA = "Lga";
         String REGION = "Region";
         String DISTRICT = "District";
         String SUB_DISTRICT = "Sub-district";
@@ -235,7 +251,14 @@ public interface Constants {
 
         String IRS_VERIFICATION = "IRS Verification";
 
-        List<String> PERSON_INTERVENTIONS = Arrays.asList(BLOOD_SCREENING, CASE_CONFIRMATION, MDA_DISPENSE, MDA_ADHERENCE);
+        // New Drug Recon Form
+        String MDA_DRUG_RECON = "Drug Reconciliation";
+
+//        String MDA = "Dynamic MDA";
+        String SMC = "SMC";
+
+
+        List<String> PERSON_INTERVENTIONS = Arrays.asList(BLOOD_SCREENING, CASE_CONFIRMATION, MDA_DISPENSE, MDA_ADHERENCE, MDA_DRUG_RECON);
 
         List<String> IRS_INTERVENTIONS = Arrays.asList(IRS, IRS_VERIFICATION);
 
@@ -243,7 +266,7 @@ public interface Constants {
                 LARVAL_DIPPING, BCC, BEDNET_DISTRIBUTION, BLOOD_SCREENING, CASE_CONFIRMATION,
                 REGISTER_FAMILY, PAOT);
 
-        List<String> MDA_INTERVENTIONS = Arrays.asList(REGISTER_FAMILY, MDA_ADHERENCE, MDA_DISPENSE);
+        List<String> MDA_INTERVENTIONS = Arrays.asList(REGISTER_FAMILY, MDA_ADHERENCE, MDA_DISPENSE, MDA_DRUG_RECON);
 
         List<String> TASK_RESET_INTERVENTIONS = Arrays.asList(MOSQUITO_COLLECTION,
                 LARVAL_DIPPING, BCC, CASE_CONFIRMATION,
@@ -303,6 +326,8 @@ public interface Constants {
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
 
 
+        String MDA_DRUG_RECON = "mda_drug_reconciliation";
+
     }
 
     interface Tables {
@@ -325,6 +350,7 @@ public interface Constants {
         String SPRAYED = "Sprayed";
         String NOT_SPRAYABLE = "Not Sprayable";
         String COMPLETE = "Complete";
+        String ALL_TASKS_COMPLETE = "All Tasks Complete";
         String INCOMPLETE = "Incomplete";
         String NOT_ELIGIBLE = "Not Eligible";
         String IN_PROGRESS = "In Progress";
@@ -335,6 +361,14 @@ public interface Constants {
         String NONE_RECEIVED = "None Received";
         String ADHERENCE_VISIT_DONE = "Adherence Visit Done";
         String PARTIALLY_RECEIVED = "Partially Received";
+
+        // Nigeria SMC workflow
+        String SMC_COMPLETE = "SMC Complete";
+        String SPAQ_COMPLETE = "SPAQ Complete";
+        String INELIGIBLE = "Ineligible";
+        String TASKS_INCOMPLETE = "Tasks Incomplete";
+        String NOT_DISPENSED = "Not Dispensed";
+        String FAMILY_NO_TASK_REGISTERED = "Family No Task Registered";
 
         // Following are for grouped structure tasks. Not synced to server
         String FAMILY_REGISTERED = "Family Registered";
@@ -349,9 +383,10 @@ public interface Constants {
         List<String> FI_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, FAMILY_REGISTERED, BEDNET_DISTRIBUTED,
                 BLOOD_SCREENING_COMPLETE, COMPLETE, NOT_ELIGIBLE);
 
-        List<String> MDA_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, FULLY_RECEIVED, NONE_RECEIVED,
-                ADHERENCE_VISIT_DONE, PARTIALLY_RECEIVED, COMPLETE, NOT_ELIGIBLE);
         List<String> MDA_LITE_BUSINESS_STATUS = Arrays.asList(NOT_VISITED,IN_PROGRESS,COMPLETE);
+        List<String> MDA_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, FULLY_RECEIVED, NONE_RECEIVED,
+                ADHERENCE_VISIT_DONE, PARTIALLY_RECEIVED, COMPLETE, NOT_ELIGIBLE,NOT_VISITED, SMC_COMPLETE, INELIGIBLE,
+                TASKS_INCOMPLETE, COMPLETE, NOT_ELIGIBLE, FAMILY_NO_TASK_REGISTERED, ALL_TASKS_COMPLETE, SPAQ_COMPLETE);
     }
 
     interface BusinessStatusWrapper {
@@ -360,6 +395,7 @@ public interface Constants {
         List<String> NOT_SPRAYED = Arrays.asList(BusinessStatus.NOT_SPRAYED, BusinessStatus.IN_PROGRESS, BusinessStatus.INCOMPLETE);
         List<String> NOT_ELIGIBLE = Arrays.asList(BusinessStatus.NOT_SPRAYABLE, BusinessStatus.NOT_ELIGIBLE);
         List<String> NOT_VISITED = Arrays.asList(BusinessStatus.NOT_VISITED);
+        List<String> MDA_DISPENSE_ELIGIBLE_STATUS = Arrays.asList(BusinessStatus.NOT_VISITED,BusinessStatus.SMC_COMPLETE,BusinessStatus.NOT_DISPENSED);
     }
 
     interface Map {
@@ -391,7 +427,12 @@ public interface Constants {
 
         String STRUCTURE_PROPERTIES_TYPE = "[structure_type]";
 
+        String WAS_ADMINISTERED_SPAQ = "[administeredSpaq]";
+        String WAS_NOT_ADMINISTERED_SPAQ = "[wasNotAdministeredSpaq]";
+
         String NUMBER_OF_FAMILY_MEMBERS = "[num_fam_members]";
+
+        String NUMBER_OF_ADHERED_FAMILY_MEMBERS = "[num_adhered_family_members]";
 
         String NUMBER_OF_FAMILY_MEMBERS_SLEEPING_OUTDOORS = "[num_sleeps_outdoors]";
 
@@ -486,6 +527,27 @@ public interface Constants {
         String LOCATION_COMPONENT_ACTIVE = "my_location_active";
 
         String VALID_OPERATIONAL_AREA = "valid_operational_area";
+
+        // Nigeria
+        String NIGERIA_MDA_ADHERENCE_FORM = "json.form/nigeria_second_dose_of_spaq.json";
+        String NIGERIA_MDA_DISPENSE_FORM = "json.form/nigeria_child_smc_form.json";
+        String NIGERIA_MDA_DRUG_RECON_FORM = "json.form/nigeria_structure_level_drug.json";
+
+        // Summary Forms
+        String DAILY_SUMMARY_MORNING = "json.form/nigeria_daily_summary_morning.json";
+
+        String DAILY_SUMMARY_EVENING = "json.form/nigeria_daily_summary_evening.json";
+
+        String HFW_LEVEL_REFERRAL = "json.form/nigeria_hfw_level_referral.json";
+
+        String CDD_SUPERVISOR_CHECKLIST = "json.form/nigeria_cdd_supervisor_checklist.json";
+
+        String HFW_SUPERVISOR_CHECKLIST = "json.form/nigeria_hfw_supervisor_checklist.json";
+
+        String OPERATIONAL_AREA_TAG = "operational_area";
+
+        String STRUCTURES_TAG = "structures";
+
 
         String NO_PADDING = "no_padding";
 
@@ -655,6 +717,19 @@ public interface Constants {
         String EVENT_POSITION = "event_position";
 
 
+        String ADMINISTERED_SPAQ = "administeredSpaq";
+
+        String ADDITIONAL_DOSES_ADMINISTERED = "additionalDosesAdministered";
+
+        String CHILDREN_TREATED = "childrenTreated";
+
+        String CALCULATED_CHILDREN_TREATED = "calculatedChildrenTreated";
+
+        String NUMBER_OF_ADDITIONAL_DOSES = "number_of_additional_doses";
+
+        String TOTAL_ADMINISTERED_SPAQ = "totalAdministeredSpaq";
+
+        String TOTAL_NUMBER_OF_ADDITIONAL_DOSES = "totalNumberOfAdditionalDoses";
     }
 
     interface DateFormat {
@@ -678,7 +753,11 @@ public interface Constants {
         String REFAPP_EC_CLIENT_FIELDS = "ec_client_fields_refapp.json";
         String KENYA_EC_CLIENT_FIELDS = "ec_client_fields_kenya.json";
         String RWANDA_EC_CLIENT_FIELDS = "ec_client_fields_rwanda.json";
+        String NIGERIA_EC_CLIENT_FIELDS = "ec_client_fields_nigeria.json";
     }
+
+
+
 
 
 
@@ -855,6 +934,13 @@ public interface Constants {
         String COMPOUND_STRUCTURE = "compound_structure";
 
         String SPRAY_DATE = "spray_date";
+        String ADMINISTERED_SPAQ = "administered_spaq";
+
+        String NUMBER_OF_ADDITIONAL_DOSES = "number_of_additional_doses";
+
+        String JOB_AID = "job_aid";
+
+        String LAST_INTERACTED_WITH = "last_interacted_with";
 
     }
 

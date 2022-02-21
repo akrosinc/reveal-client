@@ -3,7 +3,6 @@ package org.smartregister.domain;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 
 import org.joda.time.LocalDate;
 
@@ -59,9 +58,6 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
 
     @JsonProperty
     private boolean experimental;
-
-    @JsonProperty
-    private InterventionType interventionType;
 
     public String getIdentifier() {
         return identifier;
@@ -175,14 +171,6 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
         this.description = description;
     }
 
-    public InterventionType getInterventionType() {
-        return interventionType;
-    }
-
-    public void setInterventionType(InterventionType interventionType) {
-        this.interventionType = interventionType;
-    }
-
     @Override
     public int compareTo(PlanDefinition o) {
         return getName().equals(o.getName()) ? getName().compareTo(o.getIdentifier()) : getName().compareTo(o.getName());
@@ -211,106 +199,68 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
         }
     }
 
-    public static  class InterventionType implements Serializable {
-        private UUID identifier;
-        private String name;
-        private String code;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public UUID getIdentifier() {
-            return identifier;
-        }
-
-        public void setIdentifier(UUID identifier) {
-            this.identifier = identifier;
-        }
-    }
-
-
     public enum PlanStatus {
-        DRAFT,
-        ACTIVE,
-        RETIRED,
-        COMPLETED,
-        UNKNOWN
+
+        /**
+         * Draft
+         * <p>
+         * This resource is still under development and is not yet considered to be ready for normal
+         * use.
+         */
+        @SerializedName("draft")
+        DRAFT("draft"),
+
+        /**
+         * Active
+         * <p>
+         * This resource is ready for normal use.
+         */
+        @SerializedName("active")
+        ACTIVE("active"),
+
+        /**
+         * Retired
+         * <p>
+         * This resource has been withdrawn or superseded and should no longer be used.
+         */
+        @SerializedName("retired")
+        RETIRED("retired"),
+
+        /**
+         * Completed
+         * <p>
+         * This resource is completed for normal use.
+         */
+        @SerializedName("complete")
+        COMPLETED("complete"),
+
+        /**
+         * Unknown
+         * <p>
+         * The authoring system does not know which of the status values currently applies for this
+         * resource. Note: This concept is not to be used for "other" - one of the listed statuses
+         * is presumed to apply, it's just not known which one.
+         */
+        @SerializedName("unknown")
+        UNKNOWN("unknown");
+
+        private final String value;
+
+        PlanStatus(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+
+        public static PlanStatus from(String value) {
+            for (PlanStatus c : PlanStatus.values()) {
+                if (c.value.equals(value)) {
+                    return c;
+                }
+            }
+            throw new IllegalArgumentException(value);
+        }
     }
-//    public enum PlanStatus {
-//
-//        /**
-//         * Draft
-//         * <p>
-//         * This resource is still under development and is not yet considered to be ready for normal
-//         * use.
-//         */
-//        @SerializedName("draft")
-//        DRAFT("draft"),
-//
-//        /**
-//         * Active
-//         * <p>
-//         * This resource is ready for normal use.
-//         */
-//        @SerializedName("active")
-//        ACTIVE("active"),
-//
-//        /**
-//         * Retired
-//         * <p>
-//         * This resource has been withdrawn or superseded and should no longer be used.
-//         */
-//        @SerializedName("retired")
-//        RETIRED("retired"),
-//
-//        /**
-//         * Completed
-//         * <p>
-//         * This resource is completed for normal use.
-//         */
-//        @SerializedName("complete")
-//        COMPLETED("complete"),
-//
-//        /**
-//         * Unknown
-//         * <p>
-//         * The authoring system does not know which of the status values currently applies for this
-//         * resource. Note: This concept is not to be used for "other" - one of the listed statuses
-//         * is presumed to apply, it's just not known which one.
-//         */
-//        @SerializedName("unknown")
-//        UNKNOWN("unknown");
-//
-//        private final String value;
-//
-//        PlanStatus(String value) {
-//            this.value = value;
-//        }
-//
-//        public String value() {
-//            return value;
-//        }
-//
-//        public static PlanStatus from(String value) {
-//            for (PlanStatus c : PlanStatus.values()) {
-//                if (c.value.equals(value)) {
-//                    return c;
-//                }
-//            }
-//            throw new IllegalArgumentException(value);
-//        }
-//    }
 }

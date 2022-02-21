@@ -75,7 +75,6 @@ import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
-import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
@@ -85,8 +84,6 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
@@ -118,6 +115,9 @@ import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.METADATA;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
@@ -199,10 +199,16 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     break;
                 case EventType.MDA_DISPENSE:
                     taskUtils.generateMDAAdherenceTask(RevealApplication.getInstance().getApplicationContext(),
-                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).optString(Properties.LOCATION_ID));
+                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),JsonFormUtils.getFieldValue(json,JsonForm.ADMINISTERED_SPAQ));
 
                 case BLOOD_SCREENING_EVENT:
+                case EventType.MDA_DRUG_RECON:
+                    saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
+                    break;
+
                 case EventType.MDA_ADHERENCE:
+                    taskUtils.generateMDAStructureDrug(RevealApplication.getInstance().getApplicationContext(),
+                            getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID));
                     saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
                     break;
 
@@ -296,7 +302,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     }
 
     private void saveLocationInterventionForm(JSONObject jsonForm) {
-            String encounterType = null;
+        String encounterType = null;
         String interventionType = null;
         try {
             encounterType = jsonForm.getString(ENCOUNTER_TYPE);
@@ -316,6 +322,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = Intervention.MDA_DISPENSE;
             } else if (encounterType.equals(EventType.MDA_ADHERENCE)) {
                 interventionType = Intervention.MDA_ADHERENCE;
+            } else if (encounterType.equals(EventType.MDA_DRUG_RECON)) {
+                interventionType = Intervention.MDA_DRUG_RECON;
             } else if (encounterType.equals(EventType.IRS_VERIFICATION)) {
                 interventionType = Intervention.IRS_VERIFICATION;
             } else if (encounterType.equals(EventType.DAILY_SUMMARY_EVENT)) {
@@ -380,7 +388,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     com.cocoahero.android.geojson.Feature feature = new com.cocoahero.android.geojson.Feature(new JSONObject(event.findObs(null, false, "structure").getValue().toString()));
                     Date now = new Date();
                     Location structure = new Location();
-                    structure.setIdentifier(event.getBaseEntityId());
+                    structure.setId(event.getBaseEntityId());
                     structure.setType(feature.getType());
                     org.smartregister.domain.Geometry geometry = new org.smartregister.domain.Geometry();
                     geometry.setType(org.smartregister.domain.Geometry.GeometryType.valueOf(feature.getGeometry().getType().toUpperCase()));
@@ -417,19 +425,19 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     Context applicationContext = revealApplication.getApplicationContext();
                     Task task = null;
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
-                        task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getIdentifier());
+                        task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
                     } else {
                         if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
+                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);
                         } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
+                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.MOSQUITO_COLLECTION, R.string.mosquito_collection_task_description);
                         } else if (StructureType.LARVAL_BREEDING_SITE.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
+                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.LARVAL_DIPPING, R.string.larval_dipping_task_description);
                         } else if (StructureType.POTENTIAL_AREA_OF_TRANSMISSION.equals(structureType)) {
-                            task = taskUtils.generateTask(applicationContext, structure.getIdentifier(), structure.getIdentifier(),
+                            task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, PAOT, R.string.poat_task_description);
                         }
                     }
@@ -515,7 +523,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 taskRepository.addOrUpdate(task);
                 Set<Task> removedTasks = new HashSet<>();
                 for (Task bloodScreeningTask : taskRepository.getTasksByEntityAndCode(prefsUtil.getCurrentPlanId(),
-                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier(), baseEntityId, BLOOD_SCREENING)) {
+                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId(), baseEntityId, BLOOD_SCREENING)) {
                     bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
                     bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
                     taskRepository.addOrUpdate(bloodScreeningTask);

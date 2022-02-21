@@ -235,7 +235,7 @@ public class UtilsTest {
         JSONArray actualCoords = getCoordsFromGeometry(editedFeature.geometry(), originalFeature.geometry());
 
         assertEquals("[[[101.887646,13.515772],[101.887932,13.515634],[101.888134,13.514786],[101.888607,13.514849]]]",actualCoords.toString());
-        
+
     }
 
     @Test

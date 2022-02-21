@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(of = "identifier")
+@EqualsAndHashCode(of = "id")
 @Data
 public class PhysicalLocation implements Serializable {
 
@@ -14,7 +14,7 @@ public class PhysicalLocation implements Serializable {
 
     private String type;
 
-    private String identifier;
+    private String id;
 
     private Geometry geometry;
 

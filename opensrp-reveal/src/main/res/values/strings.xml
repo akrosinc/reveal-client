@@ -42,6 +42,7 @@
 
     <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
     <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
+
     <string name="reveal_streets_style" translatable="false">reveal-streets-style.json</string>
     <string name="reveal_offline_map_download_style" translatable="false">map-download-style.json</string>
     <string name="reveal_datasource_name" translatable="false">reveal-data-set</string>
@@ -115,6 +116,7 @@
     <string name="irs">IRS</string>
     <string name="mda">MDA</string>
     <string name="mda_lite">MDA-Lite</string>
+    <string name="smc">SMC</string>
     <string name="task_icon">Task Icon</string>
     <string name="distance_from_structure">%1.0f m away</string>
     <string name="distance_from_center">%1.0f m from %2s center </string>
@@ -181,6 +183,8 @@
 
     <string name="view_tasks">View \nTasks</string>
     <string name="tasks_complete">Tasks Complete</string>
+    <string name="tasks_incomplete">Tasks\nIncomplete</string>
+
     <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
 
     <string name="classification_details">Classification Details</string>
@@ -237,7 +241,7 @@
     <string name="device_to_device_sync">P2P Sync</string>
 
 
-    <string name="found_coverage">Found Coverage</string>
+    <string name="found_coverage">Found Coverage</string>mda_adherence
     <string name="spray_coverage">Spray Coverage</string>
     <string name="structures_remaining_90">Structures Remaining 90%</string>
     <string name="total_structures">Total Structures</string>
@@ -260,6 +264,11 @@
 
     <string name="dispense_mda">Dispense MDA</string>
     <string name="adhere_mda">Adhere MDA</string>
+
+    // For Nigeria
+    <string name="dispense_smc">Dispense SMC</string>
+    <string name="adhere_smc">SPAQ Redose</string>
+    <string name="adhere_drug_recon">Drug Recon</string>
 
     <string name="irs_verification">IRS Verification</string>
     <string name="not_true_structure">Not True Structure</string>
@@ -334,7 +343,8 @@
     <string name="case_confirmation">Case Confirmation</string>
     <string name="paot">PAOT</string>
     <string name="mda_dispense">MDA Dispense</string>
-    <string name="mda_adherence">MDA Adherence</string>
+    <string name="mda_adherence">SPAQ Redose</string>
+
     <string name="bednet_distributed">Bednet Distributed</string>
     <string name="family_registered">Family Registered</string>
     <string name="blood_screening_complete">Blood Screening Complete</string>
@@ -391,9 +401,32 @@
     <string name="tap_point_msg">Tap black point to move or delete</string>
     <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
     <string name="progressBarLabel">Syncing %s : %d%% </string>
+    <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
+    <string name="total_structures_targeted">Total structures targeted</string>
+    <string name="households_not_visited">Registered households not visited</string>
+    <string name="structure_is_inactive">This structure is inactive</string>
+    <string name="family_member_registered">Registration\nComplete</string>
+    <string name="hfw_level_referral">Enter HFW-Referral Form</string>
+    <string name="daily_summary_morning">Enter HF-level Drug Morning Form</string>
+    <string name="daily_summary_evening">Enter HF-level Drug Evening Form</string>
+    <string name="not_dispensed">Not Dispensed</string>
+    <string name="drug_recon_complete">Drug Recon Complete</string>
+    <string name="family_information">Family Information</string>
+    <string name="cdd_supervisor_checklist">CDD Supervisor checklist</string>
+    <string name="hfw_supervisor_checklist">HFW Supervisor checklist</string>
+    <string name="distribution_coverage">Distribution coverage</string>
+    <string name="and_individuals_complete">And Individuals complete</string>
+    <string name="structure_total">Structure: TOTAL</string>
+    <string name="structure_visited">Structure: VISITED</string>
+    <string name="structure_not_visited">Structure: NOT VISITED</string>
+    <string name="structure_confirmed_eligible">Structure: CONFIRMED ELIGIBLE</string>
+    <string name="structure_complete_drug_distribution">Structure: COMPLETE DRUG DISTRIBUTION</string>
+    <string name="structure_partial_drug_distribution">Structure: PARTIAL DRUG DISTRIBUTION</string>
+    <string name="individual_total_number_of_children_eligible_3_to_49_mos">Individual: TOTAL NUMBER OF ELIGIBLE CHILDREN 3-59 MOS</string>
+    <string name="individual_total_treated_3_to_59_mos">Individual: TOTAL TREATED 3-59 MOS</string>
+    <string name="sync_started">Sync Started</string>
     <string name="device_data_synced">Device data synced</string>
     <string name="device_data_not_synced">Device data not synced</string>
-    <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
     <string name="filled_forms">Filled Forms</string>
     <string name="event_date">Date</string>
@@ -412,10 +445,7 @@
     <string name="verification_form_name"> Verification Form</string>
     <string name="irs_lite_verification_form_name">IRS Lite Verification Form</string>
 
-    <string name="total_structures_targeted">Total structures targeted</string>
 
-    <string name="households_not_visited">Registered households not visited</string>
-    <string name="structure_is_inactive">This structure is inactive</string>
     <string name="filter_by_date">Filter By Date</string>
 
     <string name="date_format">DD-MM-YYYY</string>
@@ -432,7 +462,6 @@
     <string name="start_p2p_syc">Start P2P Sync</string>
 
     <string name="events">Events</string>
-    <string name="sync_started">Sync Started</string>
     <string name="ok">Done</string>
     <string name="locations">Locations</string>
     <string name="plans">Plans</string>

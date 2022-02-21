@@ -27,6 +27,20 @@ condition: "step1_dob_unknown.contains('dob_unknown')"
 actions:
   - "isRelevant = true"
 ---
+name: step1_job_aid
+description: job_aid relevance
+priority: 1
+condition: "step1_age_unknown.contains('age_unknown')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_job_aid_label
+description: job_aid_label relevance
+priority: 1
+condition: "step1_age_unknown.contains('age_unknown')"
+actions:
+ - "isRelevant = true"
+
 name: step1_occupation
 description: age relevance
 priority: 1

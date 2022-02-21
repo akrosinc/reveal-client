@@ -76,6 +76,7 @@ import static org.smartregister.reveal.util.Constants.CONFIGURATION.METERS_PER_K
 import static org.smartregister.reveal.util.Constants.DateFormat.CARD_VIEW_DATE_FORMAT;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_FI;
 import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.DYNAMIC_MDA;
 import static org.smartregister.reveal.util.Constants.Intervention.FI;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
@@ -89,6 +90,7 @@ import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.Tags.LGA;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
 
 public class Utils {
@@ -106,6 +108,7 @@ public class Utils {
         ALLOWED_LEVELS.add(Tags.CANTON);
         ALLOWED_LEVELS.add(Tags.VILLAGE);
         ALLOWED_LEVELS.add(REVEAL_PROJECT);
+        ALLOWED_LEVELS.add(LGA);
     }
 
     public static void saveLanguage(String language) {
@@ -228,6 +231,8 @@ public class Utils {
             return R.string.focus_investigation;
         else if (interventionType.equals(IRS) || interventionType.equals(DYNAMIC_IRS))
             return R.string.irs;
+        else if (interventionType.equals(MDA) || interventionType.equals(DYNAMIC_MDA))
+            return R.string.mda;
         else if (interventionType.equals(MDA) || interventionType.equals(MDA))
             return R.string.mda;
         else if (interventionType.equals(MDA_LITE))
@@ -373,7 +378,7 @@ public class Utils {
 
     public static String getCurrentLocationId() {
         Location currentOperationalArea = getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
-        return currentOperationalArea == null ? null : currentOperationalArea.getIdentifier();
+        return currentOperationalArea == null ? null : currentOperationalArea.getId();
     }
 
     public static FormTag getFormTag() {
@@ -478,6 +483,10 @@ public class Utils {
             Timber.e(e);
         }
         return updatedCoords;
+    }
+
+    public static boolean isCountryBuild(Country country){
+        return BuildConfig.BUILD_COUNTRY == country;
     }
 
     public static String getSyncEntityString(SyncEntity syncEntity) {

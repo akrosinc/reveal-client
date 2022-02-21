@@ -1,6 +1,7 @@
 package org.smartregister.reveal.presenter;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -8,18 +9,22 @@ import com.mapbox.geojson.Feature;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.domain.Event;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.BaseFormFragmentContract;
 import org.smartregister.reveal.contract.StructureTasksContract;
 import org.smartregister.reveal.interactor.BaseFormFragmentInteractor;
 import org.smartregister.reveal.interactor.StructureTasksInteractor;
+import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.StructureTaskDetails;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 
@@ -27,9 +32,16 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 import static org.smartregister.reveal.contract.StructureTasksContract.Interactor;
 import static org.smartregister.reveal.contract.StructureTasksContract.Presenter;
+import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DRUG_RECON;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 
 /**
  * Created by samuelgithengi on 4/12/19.
@@ -67,7 +79,7 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
     public void findTasks(String structureId) {
         this.structureId = structureId;
         interactor.findTasks(structureId, prefsUtil.getCurrentPlanId(),
-                Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getIdentifier());
+                Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId());
     }
 
     @Override
@@ -96,6 +108,10 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
                     interactor.getStructure(details);
                 } else if(isUndo) {
                     getView().displayResetTaskInfoDialog(details);
+                } else if (MDA_DISPENSE.equals(details.getTaskCode()) || MDA_ADHERENCE.equals(details.getTaskCode()) || MDA_DRUG_RECON.equals(details.getTaskCode())) {
+                    // HEADS UP
+                    getView().showProgressDialog(R.string.opening_form_title, R.string.opening_form_message);
+                    interactor.getStructure(details);
                 } else {
                     getView().displayToast("Task Completed");
                 }
@@ -112,6 +128,15 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
         StructureTaskDetails taskDetails = (StructureTaskDetails) getTaskDetails();
         if (taskDetails.isEdit() && (Constants.Intervention.BEDNET_DISTRIBUTION.equals(taskDetails.getTaskCode()) || BLOOD_SCREENING.equals(taskDetails.getTaskCode()))) {
             interactor.findLastEvent(taskDetails);
+        } else if (MDA_DISPENSE.equals(taskDetails.getTaskCode()) || MDA_ADHERENCE.equals(taskDetails.getTaskCode()) || MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
+            // HEADS UP
+            if (taskDetails.isEdit() || TaskStatus.COMPLETED.name().equals(taskDetails.getTaskStatus())) {
+                interactor.findLastEvent(taskDetails);
+            } else if (MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
+                interactor.findCompletedDispenseTasks(taskDetails, getView().getTaskDetailsList());
+            } else {
+                super.onLocationValidated();
+            }
         } else {
             super.onLocationValidated();
         }
@@ -147,21 +172,43 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
 
     @Override
     public void onEventFound(Event event) {
+        startTaskForm(event, null);
+    }
 
+    public void startTaskForm(Event event, FamilySummaryModel summary) {
+
+        // Heads up
         String formName = getView().getJsonFormUtils().getFormName(null, getTaskDetails().getTaskCode());
         if (StringUtils.isBlank(formName)) {
             getView().displayError(R.string.opening_form_title, R.string.form_not_found);
         } else {
+            StructureTaskDetails taskDetails = (StructureTaskDetails) getTaskDetails();
+            boolean readOnly = !taskDetails.isEdit() && taskDetails.getTaskStatus().equals(TaskStatus.COMPLETED.name());
+
             JSONObject formJSON = getView().getJsonFormUtils().getFormJSON(getView().getContext(), formName, getTaskDetails(), getStructure());
-            getView().getJsonFormUtils().populateForm(event, formJSON);
-            if (Constants.Intervention.BEDNET_DISTRIBUTION.equals(getTaskDetails().getTaskCode())) {
+
+            if (event != null) {
+                getView().getJsonFormUtils().populateForm(event, formJSON);
+            }
+
+            if(summary != null) {
+                getView().getJsonFormUtils().populateForm(summary, formJSON);
+            }
+
+            if (summary == null && BEDNET_DISTRIBUTION.equals(getTaskDetails().getTaskCode())) {
                 formInteractor.findNumberOfMembers(getTaskDetails().getTaskEntity(), formJSON);
+            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA && MDA_DRUG_RECON.equals(getTaskDetails().getTaskCode())) {
+                interactor.findTotalSMCDosageCounts(taskDetails, formJSON);
             } else {
                 getView().startForm(formJSON);
             }
         }
         getView().hideProgressDialog();
+    }
 
+    @Override
+    public void onFetchedMembersCount(FamilySummaryModel summary) {
+        startTaskForm(null, summary);
     }
 
     @Override
@@ -192,4 +239,19 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
     @Override
     public void onFamilyFound(CommonPersonObjectClient finalFamily) {//not used
     }
+
+    @Override
+    public void onTotalSMCDosageCountsFound(StructureTaskDetails taskDetails, JSONObject formJSON) {
+
+        try {
+            getView().getJsonFormUtils().populateField(formJSON, Constants.JsonForm.TOTAL_ADMINISTERED_SPAQ, taskDetails.getTotalAdministeredSpaq() + "", VALUE);
+            getView().getJsonFormUtils().populateField(formJSON, Constants.JsonForm.TOTAL_NUMBER_OF_ADDITIONAL_DOSES, taskDetails.getTotalNumberOfAdditionalDoses() + "", VALUE);
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        boolean readOnly = !taskDetails.isEdit() && taskDetails.getTaskStatus().equals(TaskStatus.COMPLETED.name());
+        getView().startForm(formJSON);
+    }
+
 }

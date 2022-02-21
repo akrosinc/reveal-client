@@ -66,19 +66,18 @@ public class PlanDefinitionRepository extends BaseRepository {
     }
 
     public void addOrUpdate(PlanDefinition planDefinition) {
-        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus().name()))
+        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus().value()))
             return;
         try {
             getWritableDatabase().beginTransaction();
             ContentValues contentValues = new ContentValues();
             contentValues.put(ID, planDefinition.getIdentifier());
 
-            contentValues.put(STATUS, planDefinition.getStatus().name());
+            contentValues.put(STATUS, planDefinition.getStatus().value());
 
-            //TODO: handling of search table and use of jurisdiction
-//            for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
-//                searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
-//            }
+            for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
+                searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
+            }
             planDefinition.setJurisdiction(new ArrayList<>());
             contentValues.put(JSON, gson.toJson(planDefinition));
             getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
@@ -145,7 +144,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?",
                     JSON, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.name()});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
@@ -163,7 +162,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         Set<String> ids = new HashSet<>();
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?", ID, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.name()});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
             while (cursor.moveToNext()) {
                 ids.add(cursor.getString(0));
             }

@@ -77,7 +77,7 @@ public class LocationPickerFragmentInteractorTest extends BaseUnitTest {
         Location actualLocation = locationListArgumentCaptor.getValue().get(0);
 
         assertNotNull(actualLocation);
-        assertEquals(expectedLocation.getIdentifier(), actualLocation.getIdentifier());
+        assertEquals(expectedLocation.getId(), actualLocation.getId());
         assertEquals(expectedLocation.getType(), actualLocation.getType());
     }
 }

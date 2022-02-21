@@ -12,6 +12,10 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.smartregister.reveal.util.Constants.ACTIONS;
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.application.RevealApplication;
+
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_DISTRICT;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_FACILITY;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;

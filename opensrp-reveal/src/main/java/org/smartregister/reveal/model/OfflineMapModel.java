@@ -49,7 +49,7 @@ public class OfflineMapModel {
     }
 
     public String getDownloadAreaId() {
-        return location != null ? location.getIdentifier() : null;
+        return location != null ? location.getId() : null;
     }
 
     public OfflineRegion getOfflineRegion() {
