@@ -16,6 +16,9 @@ public interface RevealService {
     String MANIFEST_SYNC_URL = "/rest/manifest/";
     String MANIFEST_SEARCH_URL = "/rest/manifest/search";
     String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
+    String FORM_DOWNLOAD_URL = "/form/form-files?formDirName=";
+    String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
+    String FORM_SUBMISSIONS_PATH = "form-submissions";
 
     String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     String CREATE_STRUCTURE_URL = "/rest/location/add";
@@ -28,30 +31,23 @@ public interface RevealService {
 
    String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
    String TOKEN_ENDPOINT = "/auth/realms/reveal/protocol/openid-connect/token";
+    String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
+    String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
+    String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
+
+    String SETTINGS_URL = "/rest/settings/sync";
 
    String CAMPAIGN_URL = "/rest/campaign/";
 
-   String SETTINGS_URL = "/rest/settings/sync";
-
-   String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
-   String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
-   String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
-
-
    String VALIDATE_SYNC_PATH = "rest/validate/sync";
 
-   String FORM_DOWNLOAD_URL = "/form/form-files?formDirName=";
-   String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
+    String SYNC_URL = "/rest/event/sync";
+    String ADD_URL = "rest/event/add";
+
 
    String ID_URL = "/uniqueids/get";
 
    String ACTIONS_URL = "/actions";
-
-
-   String SYNC_URL = "/rest/event/sync";
-   String ADD_URL = "rest/event/add";
-
-   String FORM_SUBMISSIONS_PATH = "form-submissions";
 
 
 }
