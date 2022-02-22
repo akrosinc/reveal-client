@@ -51,6 +51,7 @@ public interface RevealService {
    String SYNC_URL = "/rest/event/sync";
    String ADD_URL = "rest/event/add";
 
+   String FORM_SUBMISSIONS_PATH = "form-submissions";
 
 
 }

@@ -23,11 +23,11 @@ import static org.smartregister.convertor.FormSubmissionConvertor.toDomain;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.fetchedFailed;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
+import static org.smartregister.reveal.api.RevealService.FORM_SUBMISSIONS_PATH;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
 public class FormSubmissionSyncService {
-    public static final String FORM_SUBMISSIONS_PATH = "form-submissions";
     private final HTTPAgent httpAgent;
     private final FormDataRepository formDataRepository;
     private AllSettings allSettings;
