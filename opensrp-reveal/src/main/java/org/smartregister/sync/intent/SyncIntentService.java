@@ -49,6 +49,8 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.ADD_URL;
+import static org.smartregister.reveal.api.RevealService.SYNC_URL;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -56,10 +58,8 @@ import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class SyncIntentService extends BaseSyncIntentService {
-    public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
-    private static final String ADD_URL = "rest/event/add";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;

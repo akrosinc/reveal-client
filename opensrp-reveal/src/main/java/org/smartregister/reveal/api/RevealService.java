@@ -43,4 +43,14 @@ public interface RevealService {
    String FORM_DOWNLOAD_URL = "/form/form-files?formDirName=";
    String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
 
+   String ID_URL = "/uniqueids/get";
+
+   String ACTIONS_URL = "/actions";
+
+
+   String SYNC_URL = "/rest/event/sync";
+   String ADD_URL = "rest/event/add";
+
+
+
 }

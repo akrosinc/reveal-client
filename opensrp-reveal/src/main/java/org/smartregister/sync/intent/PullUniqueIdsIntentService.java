@@ -20,8 +20,9 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.api.RevealService.ID_URL;
+
 public class PullUniqueIdsIntentService extends BaseSyncIntentService {
-    public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private UniqueIdRepository uniqueIdRepo;
 
