@@ -194,6 +194,42 @@
     <dimen name="profile_btn_registration_info_padding">24dp</dimen>
     <dimen name="profile_dot_separator_margin">10dp</dimen>
 
+
+    <!--from opensrp-client-family-->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="app_bar_height">200dp</dimen>
+    <dimen name="item_width">200dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="register_list_item_width">130dp</dimen>
+    <dimen name="register_list_item_height">75dp</dimen>
+    <dimen name="register_list_item_margin">15dp</dimen>
+    <dimen name="register_list_member_icon_margin">10dp</dimen>
+    <dimen name="register_list_top_bottom_margin">7dp</dimen>
+    <dimen name="register_list_item_end_margin">5dp</dimen>
+
+    <dimen name="register_list_arrow_right_margin">20dp</dimen>
+    <dimen name="register_list_max_padding">15dp</dimen>
+    <dimen name="register_list_member_item_padding">10dp</dimen>
+    <dimen name="register_list_elevation">8dp</dimen>
+    <dimen name="register_list_item_padding">7dp</dimen>
+    <dimen name="register_list_top_bottom_padding">7dp</dimen>
+    <dimen name="register_list_next_arrow_padding">5dp</dimen>
+    <dimen name="register_list_top_bottom_min_padding">2dp</dimen>
+
+    <dimen name="register_list_title_size">19sp</dimen>
+    <dimen name="register_list_desc_size">17sp</dimen>
+    <dimen name="register_list_due_size">15sp</dimen>
+
+    <dimen name="register_member_title_size">17sp</dimen>
+    <dimen name="register_member_name_size">22sp</dimen>
+    <dimen name="register_member_village_size">15sp</dimen>
+    <dimen name="register_member_toolbar_margin">16dp</dimen>
+    <dimen name="register_member_nav_margin">10dp</dimen>
+
+    <dimen name="register_due_status_size">10dp</dimen>
+    <dimen name="register_due_status_top_margin">5dp</dimen>
+    <dimen name="register_last_visit_top_margin">5dp</dimen>
 </resources>
 
 

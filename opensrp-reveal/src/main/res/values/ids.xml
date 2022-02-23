@@ -8,5 +8,9 @@
     <item name="node_items" type="id" />
     <item name="tree_items" type="id" />
     <item name="entity_id" type="id" />
+
+<!--from opensrp-client-family-->
+    <item name="VIEW_ID" type="id" />
+
 </resources>
 

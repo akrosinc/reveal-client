@@ -260,7 +260,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
     }
 
     private void archiveFamily() {
-        getView().showProgressDialog(org.smartregister.family.R.string.saving_dialog_title);
+        getView().showProgressDialog(org.smartregister.reveal.R.string.saving_dialog_title);
         getInteractor().archiveFamily(familyBaseEntityId, structureId);
     }
 

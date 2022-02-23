@@ -200,7 +200,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
     @Override
     public void updateFamilyMember(String jsonString) {
         try {
-            getView().showProgressDialog(org.smartregister.family.R.string.saving_dialog_title);
+            getView().showProgressDialog(org.smartregister.reveal.R.string.saving_dialog_title);
 
             FamilyEventClient familyEventClient = profileModel.processUpdateMemberRegistration(jsonString, familyBaseEntityId);
             if (familyEventClient == null) {
@@ -227,7 +227,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
     }
 
     private void archiveFamilyMember() {
-        getView().showProgressDialog(org.smartregister.family.R.string.saving_dialog_title);
+        getView().showProgressDialog(org.smartregister.reveal.R.string.saving_dialog_title);
         otherMemberInteractor.archiveFamilyMember(this, client);
     }
 

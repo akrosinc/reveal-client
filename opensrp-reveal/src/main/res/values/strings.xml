@@ -898,4 +898,63 @@
     <string name="photo_captured">Photo Captured</string>
     <string name="invalid_url_massage">Please enter a valid url.</string>
 
+
+    <!--from openspr-client-family-->
+
+
+    <string name="title_family_detail">Family Detail</string>
+    <string name="families">Families</string>
+    <string name="all_families">All Families</string>
+
+    <string name="saving_dialog_title">Saving…</string>
+    <string name="no_unique_id">No unique ids found. Click on the sync button to get more and if this error persists contact the system admin.</string>
+    <string name="error_unable_to_start_form">An error occurred when starting the form</string>
+    <string name="no_matching_record_found_on_this_device">No matching record found on this device.</string>
+
+    <string name="new_registration_saved">New registration saved &#x21;</string>
+    <string name="registration_info_updated">Registration info updated &#x21;</string>
+
+    <!-- profile -->
+    <string name="unique_id_text">ID: %1$s</string>
+    <string name="age_text">Age: %1$s</string>
+    <string name="member">Members</string>
+    <string name="due">Due</string>
+    <string name="activity">Activity</string>
+
+    <!-- menu -->
+    <string name="add_member">Add Member</string>
+    <string name="sort">Sort</string>
+    <string name="home">Home</string>
+    <string name="add_family">Add family</string>
+    <string name="scan_qr">Scan QR</string>
+    <string name="job_aids">Job Aids</string>
+
+
+
+    <!-- register -->
+    <string name="family_head">Family Head</string>
+    <string name="primary_care_giver">Primary Caregiver</string>
+    <string name="physically_challenged">Physically Challenged</string>
+
+
+    <!-- member -->
+    <string name="return_to_family_profile">Return to family profile</string>
+    <string name="deceased_brackets">(deceased)</string>
+    <string name="id_with_value">ID: %1$s</string>
+
+    <!-- warning -->
+    <string name="any_changes_you_make">Any changes you have made will be lost</string>
+
+    <string name="back">BACK</string>
+
+    <string name="family_title">{0} Family</string>
+    <string name="family_profile_title">%1$s Family</string>
+    <string name="family_profile_title_with_firstname">%1$s %2$s Family</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="abbrv_days">d</string>
+    <string name="abbrv_weeks">w</string>
+    <string name="abbrv_months">m</string>
+    <string name="abbrv_years">y</string>
+
 </resources>

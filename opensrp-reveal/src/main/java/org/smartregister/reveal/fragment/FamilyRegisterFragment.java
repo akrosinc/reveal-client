@@ -48,6 +48,6 @@ public class FamilyRegisterFragment extends BaseFamilyRegisterFragment {
             searchView.setTextColor(getResources().getColor(R.color.text_black));
         }
 
-        view.findViewById(org.smartregister.family.R.id.filter_sort_layout).setVisibility(View.GONE);
+        view.findViewById(org.smartregister.reveal.R.id.filter_sort_layout).setVisibility(View.GONE);
     }
 }

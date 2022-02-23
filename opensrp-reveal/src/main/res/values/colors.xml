@@ -116,5 +116,18 @@
     <color name="translucent_yellow">#CCEDCA00</color>
 
 
+    <!--from openspr-client-family-->
+    <color name="vaccine_blue_bg_stk">#267ea5</color>
+    <color name="vaccine_blue_bg_st">#389cc8</color>
+    <color name="vaccine_blue_bg_end">#3495bf</color>
+
+    <color name="progress_orange">#fca917</color>
+
+    <color name="family_actionbar">#30383C</color>
+    <color name="family_navigation">#596468</color>
+
+    <color name="other_member_profile_bg">#FAFAFA</color>
+    <color name="due_profile_blue">#218CC5</color>
+
 
 </resources>
