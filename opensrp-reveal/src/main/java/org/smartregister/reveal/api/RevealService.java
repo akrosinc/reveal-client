@@ -33,7 +33,7 @@ public interface RevealService {
    String TOKEN_ENDPOINT = "/auth/realms/reveal/protocol/openid-connect/token";
     String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
     String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
-    String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
+    String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree"; //TODO: endpoint is not used, will remove
 
     String SETTINGS_URL = "/rest/settings/sync";
 
