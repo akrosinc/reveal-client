@@ -3,8 +3,6 @@ package org.smartregister.sync.helper;
 import android.content.Context;
 import android.text.TextUtils;
 
-import androidx.annotation.Nullable;
-
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,18 +11,15 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
-import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -32,7 +27,6 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.AssetHandler;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
@@ -47,12 +41,6 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
-import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
-import static org.smartregister.AllConstants.LocationConstants.LOCATION;
-import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
-import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
-import static org.smartregister.AllConstants.LocationConstants.TEAM;
-import static org.smartregister.AllConstants.LocationConstants.UUID;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
@@ -61,12 +49,8 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
 import static org.smartregister.AllConstants.RETURN_COUNT;
 import static org.smartregister.AllConstants.TYPE;
-import static org.smartregister.reveal.api.RevealService.ALL_LOCATIONS_URL;
-import static org.smartregister.reveal.api.RevealService.COMMON_LOCATIONS_SERVICE_URL;
 import static org.smartregister.reveal.api.RevealService.CREATE_STRUCTURE_URL;
-import static org.smartregister.reveal.api.RevealService.LOCATION_HIERARCHY_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
-import static org.smartregister.reveal.api.RevealService.OPENMRS_LOCATION_BY_TEAM_IDS;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -245,60 +229,6 @@ public class LocationServiceHelper extends BaseHelper {
         return locations;
     }
 
-    public void fetchLocationsByLevelAndTags() throws Exception {
-
-        HTTPAgent httpAgent = getHttpAgent();
-
-        if (httpAgent == null) {
-            throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
-        }
-
-        String baseUrl = getFormattedBaseUrl();
-
-        SyncConfiguration configs = getSyncConfiguration();
-
-        JSONObject requestPayload = new JSONObject();
-        requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
-        requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
-        requestPayload.put("locationTagsQueried", new JSONArray(new Gson().toJson(configs.getSynchronizedLocationTags())));
-
-        Response<String> resp = httpAgent.post(
-                MessageFormat.format("{0}{1}",
-                        baseUrl,
-                        COMMON_LOCATIONS_SERVICE_URL),
-                requestPayload.toString());
-
-        if (resp.isFailure()) {
-            throw new NoHttpResponseException(COMMON_LOCATIONS_SERVICE_URL + " not returned data");
-        }
-
-        List<org.smartregister.domain.jsonmapping.Location> receivedOpenMrsLocations =
-                new Gson().fromJson(resp.payload(),
-                        new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
-                        }.getType());
-
-        for (org.smartregister.domain.jsonmapping.Location openMrsLocation : receivedOpenMrsLocations) {
-            Location location = new Location();
-            location.setId(openMrsLocation.getLocationId());
-            LocationProperty property = new LocationProperty();
-            property.setUid(openMrsLocation.getLocationId());
-            property.setParentId(openMrsLocation.getParentLocation().getLocationId());
-            property.setName(openMrsLocation.getName());
-            location.setProperties(property);
-
-            locationRepository.addOrUpdate(location);
-
-
-            for (String tagName : openMrsLocation.getTags()) {
-                LocationTag locationTag = new LocationTag();
-                locationTag.setLocationId(openMrsLocation.getLocationId());
-                locationTag.setName(tagName);
-
-                locationTagRepository.addOrUpdate(locationTag);
-            }
-        }
-    }
-
     public SyncConfiguration getSyncConfiguration() {
         return CoreLibrary.getInstance().getSyncConfiguration();
     }
@@ -372,57 +302,6 @@ public class LocationServiceHelper extends BaseHelper {
             }
         }
     }
-
-    public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
-        HTTPAgent httpAgent = getHttpAgent();
-        if (httpAgent == null) {
-            throw new IllegalArgumentException(OPENMRS_LOCATION_BY_TEAM_IDS + " http agent is null");
-        }
-        String baseUrl = getFormattedBaseUrl();
-
-        Response resp = httpAgent.post(
-                MessageFormat.format("{0}{1}", baseUrl, OPENMRS_LOCATION_BY_TEAM_IDS),
-                new JSONArray().put(allSharedPreferences.fetchDefaultLocalityId(
-                        allSharedPreferences.fetchRegisteredANM())).toString());
-
-        if (resp.isFailure()) {
-            throw new NoHttpResponseException(OPENMRS_LOCATION_BY_TEAM_IDS + " not returned data");
-        }
-
-        Timber.i(resp.payload().toString());
-        JSONArray teamLocations = new JSONArray(resp.payload().toString());
-
-        for (int index = 0; index < teamLocations.length(); index++) {
-            JSONObject openMrsLocation = teamLocations.getJSONObject(index);
-            if (openMrsLocation.has(LOCATIONS) && openMrsLocation.has(TEAM)) {
-                JSONArray actualLocations = openMrsLocation.getJSONArray(LOCATIONS);
-                saveOpenMrsTeamLocation(openMrsLocation, actualLocations);
-            }
-        }
-    }
-
-    private void saveOpenMrsTeamLocation(JSONObject openMrsLocation, JSONArray actualLocations) throws JSONException {
-        for (int currentIndex = 0; currentIndex < actualLocations.length(); currentIndex++) {
-            JSONObject actualLocation = actualLocations.getJSONObject(currentIndex);
-            if (actualLocation.has(DISPLAY) && actualLocation.has(UUID)) {
-                Location location = new Location();
-                location.setId(actualLocation.getString(UUID));
-                LocationProperty property = new LocationProperty();
-                property.setUid(actualLocation.getString(UUID));
-                property.setParentId(openMrsLocation.getJSONObject(TEAM).getJSONObject(LOCATION).getString(UUID));
-                property.setName(actualLocation.getString(DISPLAY));
-                location.setProperties(property);
-                locationRepository.addOrUpdate(location);
-
-                //Save tag with a special keyword for team members on the location tags table.
-                LocationTag locationTag = new LocationTag();
-                locationTag.setLocationId(location.getId());
-                locationTag.setName(SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS);
-                locationTagRepository.addOrUpdate(locationTag);
-            }
-        }
-    }
-
     public HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
@@ -437,69 +316,5 @@ public class LocationServiceHelper extends BaseHelper {
         return baseUrl;
     }
 
-    public void fetchAllLocations() {
-        fetchAllLocations(RECORD_COUNT);
-    }
-
-    public void fetchAllLocations(int recordCount) {
-        try {
-            HTTPAgent httpAgent = getHttpAgent();
-            if (httpAgent == null) {
-                throw new IllegalArgumentException(ALL_LOCATIONS_URL + " http agent is null");
-            }
-
-            String baseUrl = getFormattedBaseUrl();
-
-            String urlParams = "?" + IS_JURISDICTION + "=" + true;
-            urlParams += "&" + AllConstants.SERVER_VERSION + "=" + 0;
-            urlParams += "&" + LIMIT + "=" + recordCount;
-
-            Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}{2}", baseUrl, ALL_LOCATIONS_URL, urlParams));
-
-            if (resp.isFailure()) {
-                throw new NoHttpResponseException(ALL_LOCATIONS_URL + " not returned data");
-            }
-
-            List<Location> locations = locationGson.fromJson(
-                    resp.payload(),
-                    new TypeToken<List<Location>>() {
-                    }.getType()
-            );
-
-            for (Location location : locations) {
-                try {
-                    location.setSyncStatus(BaseRepository.TYPE_Synced);
-
-                    locationRepository.addOrUpdate(location);
-
-                    for (LocationTag tag : location.getLocationTags()) {
-                        LocationTag locationTag = new LocationTag();
-                        locationTag.setLocationId(location.getId());
-                        locationTag.setName(tag.getName());
-
-                        locationTagRepository.addOrUpdate(locationTag);
-                    }
-                } catch (Exception e) {
-                    Timber.e(e, "EXCEPTION %s", e.toString());
-                }
-            }
-        } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
-        }
-    }
-
-    @Nullable
-    public LocationTree getLocationHierarchy(String locationId) {
-        LocationTree locationTree = null;
-        Response<String> resp = getHttpAgent().fetch(MessageFormat.format("{0}{1}{2}",
-                getFormattedBaseUrl(), LOCATION_HIERARCHY_URL, locationId));
-
-        if (resp.isFailure()) {
-            Timber.e("Location hierarchy sync failed");
-            return locationTree;
-        }
-
-        return AssetHandler.jsonStringToJava(resp.payload(), LocationTree.class);
-    }
 }
 

@@ -9,12 +9,10 @@ import android.util.Base64;
 import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.LoginResponse;
-import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
@@ -24,6 +22,7 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.security.PasswordHash;
 import org.smartregister.security.SecurityHelper;
 import org.smartregister.sync.SaveANMLocationTask;
@@ -72,7 +71,6 @@ import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.reveal.api.RevealService.OPENSRP_AUTH_USER_URL_PATH;
-import static org.smartregister.reveal.api.RevealService.OPENSRP_LOCATION_URL_PATH;
 
 public class UserService {
     private static final String KEYSTORE = "AndroidKeyStore";
@@ -353,11 +351,6 @@ public class UserService {
 
     public AllSharedPreferences getAllSharedPreferences() {
         return allSharedPreferences;
-    }
-
-    public Response<String> getLocationInformation() {
-        String requestURL = configuration.dristhiBaseURL() + OPENSRP_LOCATION_URL_PATH;
-        return httpAgent.fetch(requestURL);
     }
 
     public boolean localLoginWith(String userName) {
