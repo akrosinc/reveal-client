@@ -30,7 +30,6 @@ public class StructureSyncedCheck implements PreResetAppCheck, SyncStatusBroadca
         org.smartregister.Context context = application.getContext();
         LocationServiceHelper locationServiceHelper = new LocationServiceHelper(
                 context.getLocationRepository(),
-                context.getLocationTagRepository(),
                 context.getStructureRepository());
         locationServiceHelper.syncCreatedStructureToServer();
     }

@@ -65,8 +65,6 @@ public class LocationServiceHelper extends BaseHelper {
     private static final String IS_JURISDICTION = "is_jurisdiction";
     private static final String LOCATION_NAMES = "location_names";
     private static final String PARENT_ID = "parent_id";
-    private static final String LIMIT = "limit";
-    private static final int RECORD_COUNT = 2000;
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -74,17 +72,15 @@ public class LocationServiceHelper extends BaseHelper {
     protected final Context context;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private LocationRepository locationRepository;
-    private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
     private Trace locationSyncTrace;
     private String team;
     private long totalRecords;
     private SyncProgress syncProgress;
 
-    public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
+    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
-        this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
         this.locationSyncTrace = initTrace(LOCATION_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
@@ -93,7 +89,7 @@ public class LocationServiceHelper extends BaseHelper {
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
-            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getLocationTagRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
         }
         return instance;
     }
