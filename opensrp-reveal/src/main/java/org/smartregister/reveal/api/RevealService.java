@@ -28,7 +28,7 @@ public interface RevealService {
     String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
     String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
 
-    String SETTINGS_URL = "/rest/settings/sync";
+    String SETTINGS_URL = "/api/v1/settings/sync";
 
    String VALIDATE_SYNC_PATH = "rest/validate/sync";
 
