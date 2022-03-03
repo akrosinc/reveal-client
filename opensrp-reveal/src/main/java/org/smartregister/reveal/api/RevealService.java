@@ -30,8 +30,6 @@ public interface RevealService {
 
     String SETTINGS_URL = "/rest/settings/sync";
 
-   String CAMPAIGN_URL = "/rest/campaign/";
-
    String VALIDATE_SYNC_PATH = "rest/validate/sync";
 
     String SYNC_URL = "/rest/event/sync";
@@ -41,6 +39,4 @@ public interface RevealService {
    String ID_URL = "/uniqueids/get";
 
    String ACTIONS_URL = "/actions";
-
-
 }
