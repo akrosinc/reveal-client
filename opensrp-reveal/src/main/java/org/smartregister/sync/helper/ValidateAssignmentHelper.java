@@ -91,7 +91,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             String assignment = getUserAssignment();
             if (StringUtils.isNotBlank(assignment)) {
                 UserAssignmentDTO currentUserAssignment = gson.fromJson(assignment, UserAssignmentDTO.class);
-                Set<Long> existingOrganizations = userService.fetchOrganizations();
+                Set<String> existingOrganizations = userService.fetchOrganizations();
                 Set<String> existingJurisdictions = getExistingJurisdictions();
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
@@ -130,8 +130,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
 
-    private UserAssignmentDTO processRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) throws AuthenticatorException, OperationCanceledException, IOException {
-        Set<Long> ids = new HashSet<>(existingOrganizations);
+    private UserAssignmentDTO processRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<String> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) throws AuthenticatorException, OperationCanceledException, IOException {
+        Set<String> ids = new HashSet<>(existingOrganizations);
         Set<String> prefsIds = new HashSet<>(existingJurisdictions);
         existingJurisdictions.removeAll(currentUserAssignment.getJurisdictions());
         existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
@@ -176,7 +176,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
 
-    private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
+    private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<String> existingOrganizations, Set<String> existingJurisdictions) {
         if (existingJurisdictions.isEmpty()) {
             LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
             for (String location : currentUserAssignment.getJurisdictions()) {

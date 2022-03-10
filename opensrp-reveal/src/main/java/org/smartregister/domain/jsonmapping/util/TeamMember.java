@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package org.smartregister.domain.jsonmapping.util;
 
 import java.util.HashSet;

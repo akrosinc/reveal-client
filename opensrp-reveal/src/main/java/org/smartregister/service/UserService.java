@@ -540,19 +540,19 @@ public class UserService {
 
     public void saveOrganizations(TeamMember teamMember) {
         if (teamMember != null && teamMember.team != null) {
-            List<Long> organizations = teamMember.team.organizationIds;
+            List<String> organizations = teamMember.team.organizationIds;
             if (organizations != null && !organizations.isEmpty())
                 saveOrganizations(organizations);
         }
     }
 
-    public void saveOrganizations(List<Long> organizations) {
+    public void saveOrganizations(List<String> organizations) {
         allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
     }
 
-    public Set<Long> fetchOrganizations() {
+    public Set<String> fetchOrganizations() {
         String organizationIds = allSharedPreferences.getPreference(ORGANIZATION_IDS);
-        return Arrays.stream(StringUtils.split(organizationIds, ",")).map(Long::parseLong).collect(Collectors.toSet());
+        return Arrays.stream(StringUtils.split(organizationIds, ",")).collect(Collectors.toSet());
     }
 
     public void saveUserInfo(User user) {

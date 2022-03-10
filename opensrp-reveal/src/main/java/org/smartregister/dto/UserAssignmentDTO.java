@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class UserAssignmentDTO implements Serializable {
 
-    private Set<Long> organizationIds;
+    private Set<String> organizationIds;
 
     private Set<String> jurisdictions;
 

@@ -14,5 +14,5 @@ public class Team {
 
     public String uuid;
 
-    public List<Long> organizationIds;
+    public List<String> organizationIds;
 }
