@@ -39,7 +39,7 @@ public class RevealSyncConfiguration extends SyncConfiguration {
 
     @Override
     public SyncFilter getSyncFilterParam() {
-        return SyncFilter.LOCATION;
+        return SyncFilter.TEAM_ID;
     }
 
     @Override
