@@ -494,12 +494,6 @@ public class HTTPAgent {
         if (responseData.team == null || responseData.team.team == null) {
             Timber.e("Empty Response in: %s ", SUCCESS_WITHOUT_TEAM_DETAILS.name());
             return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
-        } else if (responseData.team.team.location == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION.name());
-            return SUCCESS_WITHOUT_TEAM_LOCATION.withPayload(responseData);
-        } else if (responseData.team.team.location.uuid == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
-            return SUCCESS_WITHOUT_TEAM_LOCATION_UUID.withPayload(responseData);
         } else if (responseData.team.team.uuid == null) {
             Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_UUID.name());
             return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
@@ -514,26 +508,11 @@ public class HTTPAgent {
         } else if (responseData.user.getUsername() == null) {
             Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_USERNAME.name());
             return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
-        } else if (responseData.user.getPreferredName() == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
-            return SUCCESS_WITHOUT_USER_PREFERREDNAME.withPayload(responseData);
         }
-
         if (responseData.locations == null) {
             Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
             return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
         }
-        if (responseData.time == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_DETAILS.name());
-            return SUCCESS_WITHOUT_TIME_DETAILS.withPayload(responseData);
-        } else if (responseData.time.getTime() == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME.name());
-            return SUCCESS_WITHOUT_TIME.withPayload(responseData);
-        } else if (responseData.time.getTimeZone() == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_ZONE.name());
-            return SUCCESS_WITHOUT_TIME_ZONE.withPayload(responseData);
-        }
-
         return SUCCESS.withPayload(responseData);
     }
 
