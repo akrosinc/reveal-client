@@ -159,10 +159,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
         if (!organizationIds.isEmpty()) {
             request.put("organizations", new JSONArray(organizationIds));
         }
-        request.put("serverVersion", serverVersion);
-        request.put(AllConstants.RETURN_COUNT, returnCount);
-
-
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
                         baseUrl,
