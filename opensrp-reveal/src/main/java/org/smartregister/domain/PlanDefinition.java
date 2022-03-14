@@ -49,11 +49,9 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
     private Long serverVersion;
 
     @JsonProperty
-    @SerializedName("goal")
     private List<Goal> goals;
 
     @JsonProperty
-    @SerializedName("action")
     private List<Action> actions;
 
     @JsonProperty
