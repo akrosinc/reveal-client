@@ -66,14 +66,14 @@ public class PlanDefinitionRepository extends BaseRepository {
     }
 
     public void addOrUpdate(PlanDefinition planDefinition) {
-        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus().value()))
+        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus().name()))
             return;
         try {
             getWritableDatabase().beginTransaction();
             ContentValues contentValues = new ContentValues();
             contentValues.put(ID, planDefinition.getIdentifier());
 
-            contentValues.put(STATUS, planDefinition.getStatus().value());
+            contentValues.put(STATUS, planDefinition.getStatus().name());
 
             for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
                 searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
@@ -144,7 +144,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?",
                     JSON, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.name()});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
@@ -162,7 +162,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         Set<String> ids = new HashSet<>();
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?", ID, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.name()});
             while (cursor.moveToNext()) {
                 ids.add(cursor.getString(0));
             }

@@ -34,7 +34,6 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
 
     protected static final String[] COLUMNS = new String[]{PLAN_ID, JURISDICTION_ID, NAME, STATUS, START, END};
-    protected static final String ACTIVE = "active";
 
     protected static final String PLAN_DEFINITION_SEARCH_TABLE = "plan_definition_search";
 
@@ -64,7 +63,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         contentValues.put(PLAN_ID, planDefinition.getIdentifier());
         contentValues.put(JURISDICTION_ID, jurisdiction);
         contentValues.put(NAME, planDefinition.getName());
-        contentValues.put(STATUS, planDefinition.getStatus().value());
+        contentValues.put(STATUS, planDefinition.getStatus().name());
         contentValues.put(START, planDefinition.getEffectivePeriod().getStart().toDate().getTime());
         contentValues.put(END, planDefinition.getEffectivePeriod().getEnd().toDate().getTime());
         contentValues.put(JURISDICTION_ID, jurisdiction);
@@ -79,7 +78,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
             String query = String.format("SELECT %s FROM %s " +
                             "WHERE %s=? AND %s=?  AND %s  >=? ", PLAN_ID,
                     PLAN_DEFINITION_SEARCH_TABLE, JURISDICTION_ID, STATUS, END);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{jurisdiction, ACTIVE,
+            cursor = getReadableDatabase().rawQuery(query, new String[]{jurisdiction, PlanDefinition.PlanStatus.ACTIVE.name(),
                     String.valueOf(LocalDate.now().toDate().getTime())});
             while (cursor.moveToNext()) {
                 planIds.add(cursor.getString(0));
@@ -113,7 +112,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         List<PlanDefinitionSearch> planDefinitionSearchList = new ArrayList<>();
         String query = String.format("SELECT * FROM %s WHERE %s=? ",
                 PLAN_DEFINITION_SEARCH_TABLE, STATUS);
-        try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.value()})) {
+        try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{status.name()})) {
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     planDefinitionSearchList.add(readCursor(cursor));
@@ -143,7 +142,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
             String query = String.format("SELECT %s FROM %s " +
                             "WHERE %s=? AND %s=? AND %s=?  AND %s  >=? ", PLAN_ID,
                     PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, JURISDICTION_ID, STATUS, END);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{planId, jurisdictionId, ACTIVE,
+            cursor = getReadableDatabase().rawQuery(query, new String[]{planId, jurisdictionId, PlanDefinition.PlanStatus.ACTIVE.name(),
                     String.valueOf(LocalDate.now().toDate().getTime())});
             return cursor.moveToFirst();
         } catch (Exception e) {
