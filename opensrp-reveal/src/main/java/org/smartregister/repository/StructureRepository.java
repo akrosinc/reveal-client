@@ -114,7 +114,7 @@ public class StructureRepository extends LocationRepository {
         }
 
         contentValues.put(ID, location.getId());
-        contentValues.put(UUID, location.getProperties().getUid());
+        contentValues.put(UUID, location.getId());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
