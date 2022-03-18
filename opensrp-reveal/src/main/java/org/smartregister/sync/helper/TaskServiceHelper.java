@@ -174,10 +174,9 @@ public class TaskServiceHelper extends BaseHelper {
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
                 // retry fetch since there were items synced from the server
-                tasks.addAll(batchFetchedTasks);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
                 sendSyncProgressBroadcast(syncProgress, context);
-                return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
+                batchFetchedTasks.addAll(tasks);
             }
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
