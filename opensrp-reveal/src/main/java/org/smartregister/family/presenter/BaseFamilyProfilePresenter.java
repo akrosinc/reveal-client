@@ -85,23 +85,6 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
         try {
             String jsonString = data.getStringExtra(Constants.INTENT_KEY.JSON);
             Timber.d(jsonString);
-
-           /*JSONObject form = new JSONObject(jsonString);
-
-            getProfileView().showProgressDialog(form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.CLOSE) ? R.string.removing_dialog_title : R.string.saving_dialog_title);
-
-            if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.UPDATE_REGISTRATION)) {
-
-                Pair<Client, Event> values = JsonFormUtils.processRegistrationForm(allSharedPreferences, jsonString);
-                mRegisterInteractor.saveRegistration(values, jsonString, true, this);
-
-            } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.CLOSE)) {
-
-                mRegisterInteractor.removeWomanFromRegister(jsonString, allSharedPreferences.fetchRegisteredANM());
-
-            } else {
-                getProfileView().hideProgressDialog();
-            }*/
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -158,11 +141,11 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
     @Override
     public void startForm(String formName, String entityId, String metadata, String currentLocationId) throws Exception {
 
-        if (StringUtils.isBlank(entityId)) {
-            Triple<String, String, String> triple = Triple.of(formName, metadata, currentLocationId);
-            interactor.getNextUniqueId(triple, this);
-            return;
-        }
+//        if (StringUtils.isBlank(entityId)) {
+//            Triple<String, String, String> triple = Triple.of(formName, metadata, currentLocationId);
+//            interactor.getNextUniqueId(triple, this);
+//            return;
+//        }
 
         JSONObject form = model.getFormAsJson(formName, entityId, currentLocationId);
         getView().startFormActivity(form);

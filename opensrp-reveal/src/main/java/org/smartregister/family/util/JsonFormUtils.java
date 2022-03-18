@@ -73,35 +73,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         form.getJSONObject(METADATA).put(ENCOUNTER_LOCATION, currentLocationId);
 
         if (Utils.metadata().familyRegister.formName.equals(formName) || Utils.metadata().familyMemberRegister.formName.equals(formName)) {
-            if (StringUtils.isNotBlank(entityId)) {
-                entityId = entityId.replace("-", "");
-            }
-
-            JSONArray field = fields(form, STEP1);
-            JSONObject uniqueId = getFieldJSONObject(field, Constants.JSON_FORM_KEY.UNIQUE_ID);
-
-            if (formName.equals(Utils.metadata().familyRegister.formName)) {
-                if (uniqueId != null) {
-                    uniqueId.remove(JsonFormUtils.VALUE);
-                    uniqueId.put(JsonFormUtils.VALUE, entityId + "_Family");
-                }
-
-                // Inject opensrp id into the form
-                field = fields(form, STEP2);
-                uniqueId = getFieldJSONObject(field, Constants.JSON_FORM_KEY.UNIQUE_ID);
-                if (uniqueId != null) {
-                    uniqueId.remove(JsonFormUtils.VALUE);
-                    uniqueId.put(JsonFormUtils.VALUE, entityId);
-                }
-            } else {
-                if (uniqueId != null) {
-                    uniqueId.remove(JsonFormUtils.VALUE);
-                    uniqueId.put(JsonFormUtils.VALUE, entityId);
-                }
-            }
-
             JsonFormUtils.addLocHierarchyQuestions(form);
-
         } else {
             Timber.w("Unsupported form requested for launch " + formName);
         }
