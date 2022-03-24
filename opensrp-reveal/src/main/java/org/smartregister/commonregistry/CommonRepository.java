@@ -315,6 +315,22 @@ public class CommonRepository extends DrishtiRepository {
         return null;
     }
 
+    public List<CommonPersonObject> findByBaseEntityIds(String... baseEntityIds){
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
+                            BASE_ENTITY_ID_COLUMN, insertPlaceholdersForInClause(baseEntityIds.length)),
+                    baseEntityIds);
+            return readAllcommon(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     public CommonPersonObject findHHByGOBHHID(String caseId) {
         SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;

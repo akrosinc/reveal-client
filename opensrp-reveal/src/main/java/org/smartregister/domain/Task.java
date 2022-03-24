@@ -3,17 +3,18 @@ package org.smartregister.domain;
 
 import com.google.gson.annotations.SerializedName;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 import org.joda.time.DateTime;
+import org.smartregister.reveal.model.PersonRequest;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @ToString
 @Data
@@ -108,6 +109,8 @@ public class Task implements Serializable {
 
     @SerializedName("for")
     private String forEntity;
+
+    private PersonRequest personRequest;
 
     private Period executionPeriod;
 
