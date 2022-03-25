@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -311,19 +312,19 @@ public class TaskServiceHelper extends BaseHelper {
         commonRepository = RevealApplication.getInstance().getContext()
                 .commonrepository("ec_family_member");
         List<CommonPersonObject> commonPersonObjects = commonRepository
-                .findByBaseEntityIds(personIdentifiers);
+                .findByIds(personIdentifiers);
 
         commonPersonObjects.stream().forEach(commonPersonObject -> {
-            String baseEntityId = commonPersonObject.getColumnmaps().get("base_entity_id");
+            String id = commonPersonObject.getColumnmaps().get("id");
             List<Task> personTasks = tasks.stream()
-                    .filter(task -> task.getForEntity().equals(baseEntityId)).collect(Collectors.toList());
+                    .filter(task -> task.getForEntity().equals(id)).collect(Collectors.toList());
             String firstName = commonPersonObject.getColumnmaps().get("first_name");
             String lastName = commonPersonObject.getColumnmaps().get("last_name");
             String gender = commonPersonObject.getColumnmaps().get("gender").toUpperCase();
             PersonName personName = PersonName.builder()
                     .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
                     .build();
-            PersonRequest personRequest = PersonRequest.builder().name(personName).gender(gender).build();
+            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(id)).name(personName).gender(gender).build();
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {

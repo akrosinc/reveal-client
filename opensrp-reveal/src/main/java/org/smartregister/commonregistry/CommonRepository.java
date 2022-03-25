@@ -315,14 +315,14 @@ public class CommonRepository extends DrishtiRepository {
         return null;
     }
 
-    public List<CommonPersonObject> findByBaseEntityIds(String... baseEntityIds){
+    public List<CommonPersonObject> findByIds(String... ids){
         SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
                     String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
-                            BASE_ENTITY_ID_COLUMN, insertPlaceholdersForInClause(baseEntityIds.length)),
-                    baseEntityIds);
+                           ID_COLUMN, insertPlaceholdersForInClause(ids.length)),
+                    ids);
             return readAllcommon(cursor);
         } finally {
             if (cursor != null) {
