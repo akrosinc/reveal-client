@@ -312,19 +312,19 @@ public class TaskServiceHelper extends BaseHelper {
         commonRepository = RevealApplication.getInstance().getContext()
                 .commonrepository("ec_family_member");
         List<CommonPersonObject> commonPersonObjects = commonRepository
-                .findByIds(personIdentifiers);
+                .findByBaseEntityIds(personIdentifiers);
 
         commonPersonObjects.stream().forEach(commonPersonObject -> {
-            String id = commonPersonObject.getColumnmaps().get("id");
+            String baseEntityId = commonPersonObject.getColumnmaps().get("base_entity_id");
             List<Task> personTasks = tasks.stream()
-                    .filter(task -> task.getForEntity().equals(id)).collect(Collectors.toList());
+                    .filter(task -> task.getForEntity().equals(baseEntityId)).collect(Collectors.toList());
             String firstName = commonPersonObject.getColumnmaps().get("first_name");
             String lastName = commonPersonObject.getColumnmaps().get("last_name");
             String gender = commonPersonObject.getColumnmaps().get("gender").toUpperCase();
             PersonName personName = PersonName.builder()
                     .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
                     .build();
-            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(id)).name(personName).gender(gender).build();
+            PersonRequest personRequest = PersonRequest.builder().name(personName).gender(gender).build();
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {
