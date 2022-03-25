@@ -324,7 +324,7 @@ public class TaskServiceHelper extends BaseHelper {
             PersonName personName = PersonName.builder()
                     .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
                     .build();
-            PersonRequest personRequest = PersonRequest.builder().name(personName).gender(gender).build();
+            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId)).name(personName).gender(gender).build();
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {
