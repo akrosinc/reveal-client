@@ -1,21 +1,36 @@
 package org.smartregister.reveal.presenter;
 
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.reveal.util.Constants.Tags.CANTON;
+import static org.smartregister.reveal.util.Constants.Tags.CELL;
+import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
+import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
+import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
+import static org.smartregister.reveal.util.Constants.Tags.LGA;
+import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL;
+import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
+import static org.smartregister.reveal.util.Constants.Tags.PROVINCE;
+import static org.smartregister.reveal.util.Constants.Tags.REGION;
+import static org.smartregister.reveal.util.Constants.Tags.SECTOR;
+import static org.smartregister.reveal.util.Constants.Tags.STATE;
+import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
+import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
+import static org.smartregister.reveal.util.Constants.Tags.ZONE;
+import static org.smartregister.reveal.util.Constants.UseContextCode.INTERVENTION_TYPE;
+
 import android.app.Activity;
 import android.content.Intent;
-import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
-import android.app.Activity;
-
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
-
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.reflect.TypeToken;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Action;
 import org.smartregister.domain.PlanDefinition;
@@ -23,7 +38,6 @@ import org.smartregister.domain.PlanDefinition.PlanStatus;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -33,38 +47,7 @@ import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.view.EventRegisterActivity;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-import static org.smartregister.reveal.util.Constants.Tags.CANTON;
-import static org.smartregister.reveal.util.Constants.Tags.CELL;
-import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
-import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
-import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
-import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Constants.Tags.PROVINCE;
-import static org.smartregister.reveal.util.Constants.Tags.REGION;
-import static org.smartregister.reveal.util.Constants.Tags.SECTOR;
-import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
-import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
-import static org.smartregister.reveal.util.Constants.Tags.ZONE;
-import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
-import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
-import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
-import static org.smartregister.reveal.util.Constants.Tags.LGA;
-import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Constants.Tags.PROVINCE;
-import static org.smartregister.reveal.util.Constants.Tags.REGION;
-import static org.smartregister.reveal.util.Constants.Tags.STATE;
-import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
-import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
-import static org.smartregister.reveal.util.Constants.UseContextCode.INTERVENTION_TYPE;
 
 /**
  * Created by samuelgithengi on 3/21/19.
@@ -211,11 +194,9 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         ArrayList<String> operationalAreaLevels = new ArrayList<>();
         operationalAreaLevels.add(COUNTRY);
         operationalAreaLevels.add(PROVINCE);
-        if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA)
-        {
-            operationalAreaLevels.add(STATE);
-            operationalAreaLevels.add(LGA);
-        }
+        operationalAreaLevels.add(OPERATIONAL);
+        operationalAreaLevels.add(STATE);
+        operationalAreaLevels.add(LGA);
         operationalAreaLevels.add(REGION);
         operationalAreaLevels.add(DISTRICT);
         operationalAreaLevels.add(SUB_DISTRICT);

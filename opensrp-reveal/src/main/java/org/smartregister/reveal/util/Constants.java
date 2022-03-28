@@ -182,6 +182,7 @@ public interface Constants {
         String ZONE = "Zones";
         String SECTOR = "Sector";
         String CELL = "Cell";
+        String OPERATIONAL = "Operational";
     }
 
     interface Properties {

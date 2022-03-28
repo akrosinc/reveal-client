@@ -445,7 +445,7 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
-                    if (allowedLevels.contains(level)) {
+                    if (allowedLevels.stream().filter(allowedLevel -> allowedLevel.equalsIgnoreCase(level)).findAny().isPresent()) {
                         hierarchy.add(idValue? node.getLocationId(): node.getName());
                     }
                 }
@@ -505,7 +505,7 @@ public class LocationHelper {
 
                 boolean allowed = false;
                 for (String level : levels) {
-                    if (allowedLevels.contains(level)) {
+                    if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
                         formLocation.nodes = children;
                         allowed = true;
                     }
@@ -517,7 +517,7 @@ public class LocationHelper {
             }
 
             for (String level : levels) {
-                if (allowedLevels.contains(level)) {
+                if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
                     allLocationData.add(formLocation);
                 }
             }
