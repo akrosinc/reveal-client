@@ -1,14 +1,23 @@
 package org.smartregister;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
-
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +36,6 @@ import org.smartregister.repository.AllServicesProvided;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
-import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ClientRelationshipRepository;
@@ -114,24 +122,9 @@ import org.smartregister.view.contract.Villages;
 import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
-
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
 
@@ -227,7 +220,6 @@ public class Context {
     private EventClientRepository eventClientRepository;
     private EventClientRepository foreignEventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
-    private CampaignRepository campaignRepository;
     private TaskRepository taskRepository;
     private TaskNotesRepository taskNotesRepository;
     private LocationRepository locationRepository;
@@ -1199,13 +1191,6 @@ public class Context {
             uniqueIdRepository = new UniqueIdRepository();
         }
         return uniqueIdRepository;
-    }
-
-    public CampaignRepository getCampaignRepository() {
-        if (campaignRepository == null) {
-            campaignRepository = new CampaignRepository();
-        }
-        return campaignRepository;
     }
 
     public TaskRepository getTaskRepository() {

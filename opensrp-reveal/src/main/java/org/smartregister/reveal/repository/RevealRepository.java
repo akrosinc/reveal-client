@@ -10,7 +10,6 @@ import org.smartregister.configurableviews.repository.ConfigurableViewsRepositor
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.repository.BaseRepository;
-import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.EventClientRepository;
@@ -63,9 +62,6 @@ import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.STRUCTURE;
 import static org.smartregister.reveal.util.Constants.StructureType.RESIDENTIAL;
 import static org.smartregister.reveal.util.Constants.Tables.CLIENT_TABLE;
-import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
-import static org.smartregister.reveal.util.Constants.STRUCTURE;
-import static org.smartregister.reveal.util.Constants.StructureType.RESIDENTIAL;
 import static org.smartregister.reveal.util.Constants.Tables.EVENT_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.LARVAL_DIPPINGS_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.MOSQUITO_COLLECTIONS_TABLE;
@@ -94,7 +90,6 @@ public class RevealRepository extends Repository {
         EventClientRepository.createTable(database, EventClientRepository.Table.client, client_column.values());
         EventClientRepository.createTable(database, event, event_column.values());
 
-        CampaignRepository.createTable(database);
         TaskRepository.createTable(database);
         LocationRepository.createTable(database);
         StructureRepository.createTable(database);

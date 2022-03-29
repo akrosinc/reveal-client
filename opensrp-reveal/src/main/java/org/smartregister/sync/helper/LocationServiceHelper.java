@@ -1,44 +1,5 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
-import android.text.TextUtils;
-
-import com.google.firebase.perf.metrics.Trace;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.CoreLibrary;
-import org.smartregister.SyncConfiguration;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.SyncEntity;
-import org.smartregister.domain.SyncProgress;
-import org.smartregister.exception.NoHttpResponseException;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.BaseRepository;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.LocationTagRepository;
-import org.smartregister.repository.StructureRepository;
-import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.PropertiesConverter;
-import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import timber.log.Timber;
-
 import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -56,6 +17,40 @@ import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttrib
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
+import android.content.Context;
+import android.text.TextUtils;
+import com.google.firebase.perf.metrics.Trace;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
+import org.smartregister.exception.NoHttpResponseException;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.PropertiesConverter;
+import org.smartregister.util.Utils;
+import timber.log.Timber;
 
 public class LocationServiceHelper extends BaseHelper {
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
