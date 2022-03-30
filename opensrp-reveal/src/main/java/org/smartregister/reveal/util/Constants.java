@@ -183,6 +183,7 @@ public interface Constants {
         String SECTOR = "Sector";
         String CELL = "Cell";
         String OPERATIONAL = "Operational";
+        String CATCHMENT = "Catchment";
     }
 
     interface Properties {

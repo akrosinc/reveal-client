@@ -2,6 +2,7 @@ package org.smartregister.reveal.presenter;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.reveal.util.Constants.Tags.CANTON;
+import static org.smartregister.reveal.util.Constants.Tags.CATCHMENT;
 import static org.smartregister.reveal.util.Constants.Tags.CELL;
 import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
 import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
@@ -206,6 +207,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         operationalAreaLevels.add(ZONE);
         operationalAreaLevels.add(SECTOR);
         operationalAreaLevels.add(CELL);
+        operationalAreaLevels.add(CATCHMENT);
 
 
         List<String> defaultLocation = locationHelper.generateDefaultLocationHierarchy(operationalAreaLevels);
