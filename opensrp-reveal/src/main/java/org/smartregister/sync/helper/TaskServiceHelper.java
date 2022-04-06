@@ -180,6 +180,15 @@ public class TaskServiceHelper extends BaseHelper {
             if (tasks != null && tasks.size() > 0) {
                 for (Task task : tasks) {
                     try {
+                        Task existingTask = taskRepository.getTaskByIdentifier(task.getIdentifier());
+                        //We skip task not yet synced and not changed
+                        if (existingTask != null && (existingTask.getSyncStatus().equals(BaseRepository.TYPE_Unsynced)
+                                || existingTask.getSyncStatus().equals(BaseRepository.TYPE_Created) || (
+                                existingTask.getSyncStatus().equals(BaseRepository.TYPE_Synced) && existingTask
+                                        .getStatus().name().equals(task.getStatus().name())))) {
+                            tasks.remove(tasks.indexOf(existingTask));
+                            continue;
+                        }
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
@@ -191,10 +200,10 @@ public class TaskServiceHelper extends BaseHelper {
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
                         String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
-                // retry fetch since there were items synced from the server
+                tasks.addAll(batchFetchedTasks);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
                 sendSyncProgressBroadcast(syncProgress, context);
-                batchFetchedTasks.addAll(tasks);
+                return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
             }
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
@@ -202,8 +211,8 @@ public class TaskServiceHelper extends BaseHelper {
         return batchFetchedTasks;
     }
 
-    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion,
-            boolean returnCount) throws Exception {
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount)
+            throws Exception {
         HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -212,9 +221,8 @@ public class TaskServiceHelper extends BaseHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        JSONObject request =
-                isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
-                        getSyncTaskRequest(plan, getOwner(), serverVersion);
+        JSONObject request = isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
+                getSyncTaskRequest(plan, getOwner(), serverVersion);
         request.put(AllConstants.RETURN_COUNT, returnCount);
 
         if (httpAgent == null) {
@@ -250,8 +258,7 @@ public class TaskServiceHelper extends BaseHelper {
     }
 
     @NonNull
-    private JSONObject getSyncTaskRequest(Set<String> plan, String owner, Long serverVersion)
-            throws JSONException {
+    private JSONObject getSyncTaskRequest(Set<String> plan, String owner, Long serverVersion) throws JSONException {
         JSONObject request = new JSONObject();
         request.put("plan", new JSONArray(plan));
         request.put("owner", owner);
@@ -292,6 +299,9 @@ public class TaskServiceHelper extends BaseHelper {
                 try {
                     JSONObject idObject = new JSONObject(response.payload());
                     JSONArray updatedIds = idObject.optJSONArray("task_ids");
+                    Long maxServerVersion = idObject.optLong("maxServerVersion");
+                    allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
+                            String.valueOf(maxServerVersion));
                     if (updatedIds != null) {
                         for (int i = 0; i < updatedIds.length(); i++) {
                             taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
@@ -324,7 +334,8 @@ public class TaskServiceHelper extends BaseHelper {
             PersonName personName = PersonName.builder()
                     .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
                     .build();
-            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId)).name(personName).gender(gender).build();
+            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId))
+                    .name(personName).gender(gender).build();
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {
@@ -344,14 +355,16 @@ public class TaskServiceHelper extends BaseHelper {
             Set<String> unprocessedIds = new HashSet<>();
             if (StringUtils.isNotBlank(response.payload())) {
                 if (response.payload().startsWith(TASKS_NOT_PROCESSED)) {
-                    unprocessedIds.addAll(
-                            Arrays.asList(response.payload().substring(TASKS_NOT_PROCESSED.length()).split(",")));
+                    unprocessedIds.addAll(Arrays
+                            .asList(response.payload().substring(TASKS_NOT_PROCESSED.length()).split(",")));
                 }
                 for (Task task : tasks) {
                     if (!unprocessedIds.contains(task.getIdentifier())) {
                         taskRepository.markTaskAsSynced(task.getIdentifier());
                     }
                 }
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
+                        String.valueOf(getTaskMaxServerVersion(tasks, 0)));
             }
 
         }

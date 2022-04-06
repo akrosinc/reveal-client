@@ -143,9 +143,16 @@ public class LocationServiceHelper extends BaseHelper {
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {
+                String maxServerVersion = getMaxServerVersion(locations);
+                String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
+                allSharedPreferences.savePreference(updateKey, maxServerVersion);
+
+                // retry fetch since there were items synced from the server
                 locations.addAll(batchLocationStructures);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
                 sendSyncProgressBroadcast(syncProgress, context);
+                return batchSyncLocationsStructures(isJurisdiction, locations, false);
+
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
