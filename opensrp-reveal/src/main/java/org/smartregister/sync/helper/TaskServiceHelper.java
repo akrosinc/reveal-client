@@ -180,15 +180,6 @@ public class TaskServiceHelper extends BaseHelper {
             if (tasks != null && tasks.size() > 0) {
                 for (Task task : tasks) {
                     try {
-                        Task existingTask = taskRepository.getTaskByIdentifier(task.getIdentifier());
-                        //We skip task not yet synced and not changed
-                        if (existingTask != null && (existingTask.getSyncStatus().equals(BaseRepository.TYPE_Unsynced)
-                                || existingTask.getSyncStatus().equals(BaseRepository.TYPE_Created) || (
-                                existingTask.getSyncStatus().equals(BaseRepository.TYPE_Synced) && existingTask
-                                        .getStatus().name().equals(task.getStatus().name())))) {
-                            tasks.remove(tasks.indexOf(existingTask));
-                            continue;
-                        }
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
@@ -200,7 +191,7 @@ public class TaskServiceHelper extends BaseHelper {
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
                         String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
-                tasks.addAll(batchFetchedTasks);
+                // retry fetch since there were items synced from the server
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
                 sendSyncProgressBroadcast(syncProgress, context);
                 return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
@@ -299,9 +290,6 @@ public class TaskServiceHelper extends BaseHelper {
                 try {
                     JSONObject idObject = new JSONObject(response.payload());
                     JSONArray updatedIds = idObject.optJSONArray("task_ids");
-                    Long maxServerVersion = idObject.optLong("maxServerVersion");
-                    allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
-                            String.valueOf(maxServerVersion));
                     if (updatedIds != null) {
                         for (int i = 0; i < updatedIds.length(); i++) {
                             taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
@@ -363,8 +351,6 @@ public class TaskServiceHelper extends BaseHelper {
                         taskRepository.markTaskAsSynced(task.getIdentifier());
                     }
                 }
-                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE,
-                        String.valueOf(getTaskMaxServerVersion(tasks, 0)));
             }
 
         }
