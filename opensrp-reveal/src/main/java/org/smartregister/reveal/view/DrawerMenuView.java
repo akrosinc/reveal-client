@@ -296,6 +296,10 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     @Override
     public void showPlanSelector(List<String> campaigns, String entireTreeString) {
+        if(campaigns.isEmpty()){
+            displayNotification(R.string.no_active_plans_found,R.string.no_active_plans_found);
+            return;
+        }
         if (StringUtils.isBlank(entireTreeString)) {
             displayNotification(R.string.plans_download_on_progress_title, R.string.plans_download_on_progress);
             return;

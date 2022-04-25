@@ -20,7 +20,7 @@ public enum LoginResponse {
     SUCCESS_WITHOUT_TEAM_LOCATION_UUID("User team location uuid was not accessible. Try again"),
     SUCCESS_WITHOUT_TEAM_UUID("User team UUID was not accessible. Try again"),
     SUCCESS_WITHOUT_TEAM_NAME("User team name was not accessible. Try again"),
-    SUCCESS_WITHOUT_USER_LOCATION("User location was not accessible. Try again"),
+    SUCCESS_WITHOUT_USER_LOCATION("User assigned locations was not accessible. Try again (If this persists, please contact your administrator)"),
     SUCCESS_WITHOUT_TIME_DETAILS("Time Details was not accessible. Try again"),
     SUCCESS_WITHOUT_TIME("Server time was not accessible. Try again"),
     SUCCESS_WITHOUT_TIME_ZONE("Server time zone was not accessible. Try again"),
