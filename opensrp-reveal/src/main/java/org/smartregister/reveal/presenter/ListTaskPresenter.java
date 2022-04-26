@@ -862,6 +862,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                         if (which == BUTTON_NEGATIVE || which == BUTTON_NEUTRAL) {
                             markStructureIneligibleConfirmed = true;
                             reasonUnEligible = which == BUTTON_NEGATIVE ? listTaskView.getContext().getString(R.string.not_eligible_unoccupied) : listTaskView.getContext().getString(R.string.not_eligible_other);
+                            onLocationValidated();
                         }
 
                         if (which == BUTTON_POSITIVE) {
@@ -873,11 +874,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                             }
 
                         }
-
                         dialog.dismiss();
                     }
                 });
-        RevealApplication.getInstance().setRefreshMapOnEventSaved(true); //TODO: check if this is necessary?
+        RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
     }
 
 
