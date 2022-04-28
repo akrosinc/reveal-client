@@ -243,7 +243,7 @@ public class GeoJsonUtils {
                     } else if (state.partiallyReceived) {
                         taskProperties.put(TASK_BUSINESS_STATUS, PARTIALLY_RECEIVED);
                     } else if (state.nonReceived) {
-                        taskProperties.put(TASK_BUSINESS_STATUS, NOT_DISPENSED);
+                        taskProperties.put(TASK_BUSINESS_STATUS, NONE_RECEIVED);
                     } else if (state.nonEligible) {
                         taskProperties.put(TASK_BUSINESS_STATUS, INELIGIBLE);
                     } else {
