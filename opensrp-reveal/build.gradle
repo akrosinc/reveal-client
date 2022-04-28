@@ -177,7 +177,7 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"https://opensrp-smc-ng-uat.akros.online/opensrp/"'
+            resValue "string", 'opensrp_base_url', '"https://api-qa.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
