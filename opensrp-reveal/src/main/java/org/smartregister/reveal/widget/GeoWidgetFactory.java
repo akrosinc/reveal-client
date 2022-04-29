@@ -364,7 +364,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 if (!location.getId().equals(operationalAreaFeature.id())) {
                     com.mapbox.geojson.Feature feature = convertFromLocation(location);
                     if (feature != null) {
-                        if (location.getProperties().getParentId().equals(parentId) && location.getProperties().getName().toLowerCase().contains(OTHER)) {
+                        if (location.getProperties().getParentId() != null && location.getProperties().getParentId().equals(parentId) && location.getProperties().getName().toLowerCase().contains(OTHER)) {
                             geoFencingValidator.setOtherOperationalArea(feature);
                         }
                         geoFencingValidator.getOperationalAreas().add(feature);
