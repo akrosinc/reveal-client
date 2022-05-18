@@ -1,37 +1,39 @@
 package org.smartregister.reveal.view;
 
+import static org.smartregister.reveal.util.Constants.COPYDBNAME;
+import static org.smartregister.reveal.util.Constants.DBNAME;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.util.Pair;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.Pair;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import com.google.android.material.navigation.NavigationView;
 import com.vijay.jsonwizard.customviews.TreeViewDialog;
-
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.PlanDefinition;
-import org.smartregister.p2p.activity.P2pModeSelectActivity;
+import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -42,20 +44,9 @@ import org.smartregister.reveal.presenter.BaseDrawerPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants.Tags;
 import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.Constants.COPYDBNAME;
-import static org.smartregister.reveal.util.Constants.DBNAME;
 
 /**
  * Created by samuelgithengi on 3/21/19.
@@ -79,6 +70,10 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     private BaseDrawerContract.Interactor interactor;
 
     private final PlanDefinitionRepository planDefinitionRepository;
+
+    private ProgressIndicatorView syncProgressIndicatorView;
+
+    private ConstraintLayout syncStatsLayout;
 
     public DrawerMenuView(BaseDrawerContract.DrawerActivity activity) {
         this.activity = activity;
@@ -195,7 +190,6 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
         headerView.findViewById(R.id.logout_button).setOnClickListener(this);
         headerView.findViewById(R.id.sync_button).setOnClickListener(this);
-        headerView.findViewById(R.id.btn_navMenu_offline_maps).setOnClickListener(this);
 
         districtTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -214,6 +208,18 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
                 return false;
             }
         });
+        syncProgressIndicatorView = headerView.findViewById(R.id.overall_sync_progress_view);
+        syncStatsLayout  = headerView.findViewById(R.id.sync_progress_section);
+                syncProgressIndicatorView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        if( View.GONE == syncStatsLayout.getVisibility()){
+                            syncStatsLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            syncStatsLayout.setVisibility(View.GONE);
+                        }
+                    }
+                });
         //Check sync status and Update UI to show sync status
         checkSynced();
     }
@@ -436,5 +442,9 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     @Override
     public String getManifestVersion() {
         return CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion();
+    }
+
+    private void setViewVisibility(View view, boolean isVisible) {
+        view.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 }

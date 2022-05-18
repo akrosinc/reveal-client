@@ -30,12 +30,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/reveal_icon" />
     <!--start sync progress report-->
-
+    <org.smartregister.reporting.view.ProgressIndicatorView
+        android:id="@+id/overall_sync_progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_weight="3"
+        app:subTitle="@string/sync_progress"
+        app:title="Sync Progress 0%"
+        app:progress="0"
+        app:progressBarBackgroundColor="@color/text_gray"
+        app:progressBarForegroundColor="@color/light_blue"
+        app:layout_constraintBottom_toTopOf="@id/sync_progress_section"
+        app:layout_constraintTop_toBottomOf="@id/branding_separator"
+        />
+    <View
+        android:id="@+id/overall_sync_progress_view_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/drawer_margin_vertical"
+        android:layout_marginBottom="@dimen/drawer_separator_margin"
+        android:background="#DEDEDE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/overall_sync_progress_view" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/sync_progress_section"
-        app:layout_constraintTop_toBottomOf="@id/branding_separator">
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/overall_sync_progress_view_separator">
     <TextView
         android:id="@+id/location_sync_progress_bar_label"
         android:layout_width="wrap_content"

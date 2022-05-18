@@ -62,6 +62,7 @@ import org.smartregister.family.util.Utils;
 import org.smartregister.receiver.SyncProgressBroadcastReceiver;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.receiver.ValidateAssignmentReceiver;
+import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -97,6 +98,7 @@ import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
 import io.ona.kujaku.listeners.OnFeatureLongClickListener;
 import io.ona.kujaku.utils.Constants;
+import org.smartregister.view.ProgressIndicator;
 import timber.log.Timber;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -632,7 +634,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             geoJsonSource.setGeoJson(featureCollection);
 
             if (operationalArea != null) {
-                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());  //TODO: setting up this camera view
+                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation) {
                     Feature indexCase = revealMapHelper.getIndexCase(featureCollection);
                     if (indexCase != null) {
@@ -1051,6 +1053,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             syncProgressBarLabel.setText(labelText);
         }
 
+        ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
+        overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", progress));
+        overallSyncProgressView.setProgress(progress);
     }
 
     @Override
