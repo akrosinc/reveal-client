@@ -18,6 +18,7 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -25,8 +26,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -191,6 +195,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private final String USER_INTERACTS_WITH_STRUCTURE = "user_interacts_with_structure";
 
+    private final PlanDefinitionRepository planDefinitionRepository;
+
+    private final LocationRepository locationRepository;
+
 
     public ListTaskPresenter(ListTaskView listTaskView, BaseDrawerContract.Presenter drawerPresenter) {
         this.listTaskView = listTaskView;
@@ -203,6 +211,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         setChangeMapPosition(true);
         revealApplication = RevealApplication.getInstance();
         mappingHelper = new RevealMappingHelper();
+        planDefinitionRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
+        locationRepository = RevealApplication.getInstance().getLocationRepository();
     }
 
     @Override
@@ -279,12 +289,28 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onMapReady() {
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
         String operationalArea = PreferencesUtil.getInstance().getCurrentOperationalArea();
+
+        //TODO: fetch the default plan
         if (StringUtils.isNotBlank(planId) &&
                 StringUtils.isNotBlank(operationalArea)) {
             listTaskInteractor.fetchLocations(planId, operationalArea);
         } else {
-            listTaskView.displayNotification(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
-            drawerPresenter.getView().lockNavigationDrawerForSelection();
+//            listTaskView.displayNotification(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
+//            drawerPresenter.getView().lockNavigationDrawerForSelection();
+            Optional<PlanDefinition> defaultPlanIdOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
+            if(defaultPlanIdOptional.isPresent()){
+                PlanDefinition planDefinition = defaultPlanIdOptional.get();
+                planId = planDefinition.getIdentifier();
+                PreferencesUtil.getInstance().setCurrentPlanId(planId);
+                PreferencesUtil.getInstance().setCurrentPlan(planDefinition.getName());
+                drawerPresenter.getView().setPlan(planDefinition.getName());
+            }
+            Optional<org.smartregister.domain.Location> defaultOperationalArea  = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("operational")).findAny();
+            if(defaultOperationalArea.isPresent()){
+                operationalArea = defaultOperationalArea.get().getProperties().getName();
+                PreferencesUtil.getInstance().setCurrentOperationalArea(operationalArea);
+                drawerPresenter.getView().setOperationalArea(operationalArea);
+            }
         }
     }
 
@@ -988,5 +1014,4 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         bundle.putString(STRUCTURE_ID,feature.id());
         FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(USER_INTERACTS_WITH_STRUCTURE,bundle);
     }
-
 }

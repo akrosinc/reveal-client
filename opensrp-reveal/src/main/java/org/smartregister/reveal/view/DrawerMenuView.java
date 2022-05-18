@@ -24,12 +24,15 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.customviews.TreeViewDialog;
 
+import java.util.Optional;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.p2p.activity.P2pModeSelectActivity;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -39,6 +42,7 @@ import org.smartregister.reveal.presenter.BaseDrawerPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants.Tags;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 
@@ -74,10 +78,13 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     private BaseDrawerContract.Interactor interactor;
 
+    private final PlanDefinitionRepository planDefinitionRepository;
+
     public DrawerMenuView(BaseDrawerContract.DrawerActivity activity) {
         this.activity = activity;
         presenter = new BaseDrawerPresenter(this, activity);
         interactor = new BaseDrawerInteractor(presenter);
+        planDefinitionRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
     }
 
     @Override
@@ -296,7 +303,8 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     @Override
     public void showPlanSelector(List<String> campaigns, String entireTreeString) {
-        if(campaigns.isEmpty()){
+        Optional<PlanDefinition> defaultPlanIdOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
+        if(campaigns.isEmpty() && !defaultPlanIdOptional.isPresent()){
             displayNotification(R.string.no_active_plans_found,R.string.no_active_plans_found);
             return;
         }
