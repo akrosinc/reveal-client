@@ -1,17 +1,12 @@
 package org.smartregister.reveal.interactor;
 
+import java.lang.ref.WeakReference;
 import org.smartregister.CoreLibrary;
-import org.smartregister.job.DocumentConfigurationServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.interactor.BaseLoginInteractor;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.job.LocationTaskServiceJob;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
-
-import java.lang.ref.WeakReference;
 
 public class LoginInteractor extends BaseLoginInteractor implements BaseLoginContract.Interactor {
 
@@ -23,12 +18,6 @@ public class LoginInteractor extends BaseLoginInteractor implements BaseLoginCon
     protected void scheduleJobsPeriodically() {
         LocationTaskServiceJob.scheduleJob(LocationTaskServiceJob.TAG,
                 Utils.getSyncInterval(), getFlexValue((int) Utils.getSyncInterval()));
-
-        PullUniqueIdsServiceJob.scheduleJob(SyncServiceJob.TAG,
-                BuildConfig.PULL_UNIQUE_IDS_MINUTES, getFlexValue((int) BuildConfig.PULL_UNIQUE_IDS_MINUTES));
-
-        DocumentConfigurationServiceJob
-                .scheduleJob(DocumentConfigurationServiceJob.TAG, Utils.getSyncInterval(), getFlexValue((int) Utils.getSyncInterval()));
     }
 
     @Override

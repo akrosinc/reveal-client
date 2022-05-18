@@ -1025,12 +1025,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void onSyncProgress(SyncProgress syncProgress) {
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
-//        ProgressBar syncProgressBar = findViewById(R.id.sync_progress_bar);
-//        TextView syncProgressBarLabel = findViewById(R.id.sync_progress_bar_label);
-//        String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
-//        syncProgressBar.setProgress(progress);
-//        syncProgressBarLabel.setText(labelText);
-
         if(syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)){
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
@@ -1055,7 +1049,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
-    }
+        }
 
     }
 

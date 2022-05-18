@@ -159,6 +159,13 @@ public class PlanIntentServiceHelper extends BaseHelper {
         if (!organizationIds.isEmpty()) {
             request.put("organizations", new JSONArray(organizationIds));
         }
+        request.put("serverVersion", serverVersion);
+
+        if (httpAgent == null) {
+            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
+        }
+
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
                         baseUrl,

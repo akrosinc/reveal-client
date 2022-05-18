@@ -73,7 +73,7 @@
             android:visibility="visible"
             android:textSize="10sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/location_sync_progress_bar"/>
+            app:layout_constraintTop_toBottomOf="@+id/location_sync_progress_bar"/>
 
         <ProgressBar
             android:id="@+id/task_sync_progress_bar"
