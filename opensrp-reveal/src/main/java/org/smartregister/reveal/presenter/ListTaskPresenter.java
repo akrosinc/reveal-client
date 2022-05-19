@@ -290,27 +290,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
         String operationalArea = PreferencesUtil.getInstance().getCurrentOperationalArea();
 
-        //TODO: fetch the default plan
         if (StringUtils.isNotBlank(planId) &&
                 StringUtils.isNotBlank(operationalArea)) {
             listTaskInteractor.fetchLocations(planId, operationalArea);
         } else {
-//            listTaskView.displayNotification(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
-//            drawerPresenter.getView().lockNavigationDrawerForSelection();
-            Optional<PlanDefinition> defaultPlanIdOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
-            if(defaultPlanIdOptional.isPresent()){
-                PlanDefinition planDefinition = defaultPlanIdOptional.get();
-                planId = planDefinition.getIdentifier();
-                PreferencesUtil.getInstance().setCurrentPlanId(planId);
-                PreferencesUtil.getInstance().setCurrentPlan(planDefinition.getName());
-                drawerPresenter.getView().setPlan(planDefinition.getName());
-            }
             Optional<org.smartregister.domain.Location> defaultOperationalArea  = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("operational")).findAny();
             if(defaultOperationalArea.isPresent()){
                 operationalArea = defaultOperationalArea.get().getProperties().getName();
                 PreferencesUtil.getInstance().setCurrentOperationalArea(operationalArea);
                 drawerPresenter.getView().setOperationalArea(operationalArea);
             }
+            //TODO: alert user that sync still on progress no default operational area can be set.
         }
     }
 
