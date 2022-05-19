@@ -84,6 +84,7 @@ import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Constants.TaskRegister;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
@@ -98,7 +99,6 @@ import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
 import io.ona.kujaku.listeners.OnFeatureLongClickListener;
 import io.ona.kujaku.utils.Constants;
-import org.smartregister.view.ProgressIndicator;
 import timber.log.Timber;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -195,6 +195,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private CardDetailsUtil cardDetailsUtil = new CardDetailsUtil();
 
     private boolean formOpening;
+    private int SYNC_ENTITY_COUNT = 4;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1026,6 +1028,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     @Override
     public void onSyncProgress(SyncProgress syncProgress) {
         int progress = syncProgress.getPercentageSynced();
+        int totalSyncProgress;
+        try {
+            totalSyncProgress = Integer.valueOf(PreferencesUtil.getInstance().getCurrentTotalSyncProgress());
+        }
+        catch(Exception e){
+            totalSyncProgress = 0;
+        }
+
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
         if(syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)){
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
@@ -1033,29 +1043,57 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
+                 PreferencesUtil.getInstance().setAllLocationsSynced(true);
+            } else  {
+                PreferencesUtil.getInstance().setAllLocationsSynced(false);
+            }
+
         } else if(syncProgress.getSyncEntity().equals(SyncEntity.TASKS)){
             ProgressBar syncProgressBar = findViewById(R.id.task_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.task_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
+                PreferencesUtil.getInstance().setAllTasksSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllTasksSynced(false);
+            }
         } else if(syncProgress.getSyncEntity().equals(SyncEntity.PLANS)){
             ProgressBar syncProgressBar = findViewById(R.id.plan_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.plan_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
+                PreferencesUtil.getInstance().setAllPlansSynced(true);
+            }else {
+                PreferencesUtil.getInstance().setAllPlansSynced(false);
+            }
         } else if(syncProgress.getSyncEntity().equals(SyncEntity.EVENTS)){
             ProgressBar syncProgressBar = findViewById(R.id.event_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.event_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
+                PreferencesUtil.getInstance().setAllEventsSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllEventsSynced(false);
+            }
         }
 
-        ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
-        overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", progress));
-        overallSyncProgressView.setProgress(progress);
+        if(totalSyncProgress < 100) {
+            ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
+            overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
+            overallSyncProgressView.setProgress(totalSyncProgress);
+            PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
+        }
     }
 
     @Override

@@ -165,6 +165,7 @@ public interface Constants {
         String EVENT_LONGITUDE = "EVENT_LONGITUDE";
         String GPS_ACCURACY = "GPS_ACCURACY";
         String ADMIN_PASSWORD_ENTERED = "ADMIN_PASSWORD_ENTERED";
+        String TOTAL_SYNC_PROGRESS = "TOTAL_SYNC_PROGRESS";
     }
 
     interface Tags {

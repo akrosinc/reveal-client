@@ -70,7 +70,7 @@ import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
-import static org.smartregister.reveal.api.RevealService.OPENSRP_AUTH_USER_URL_PATH;
+import static org.smartregister.reveal.api.RevealService.REVEAL_AUTH_USER_URL_PATH;
 
 public class UserService {
     private static final String KEYSTORE = "AndroidKeyStore";
@@ -342,7 +342,7 @@ public class UserService {
     public LoginResponse fetchUserDetails(String accessToken) {
         String requestURL;
 
-        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
+        requestURL = configuration.dristhiBaseURL() + REVEAL_AUTH_USER_URL_PATH;
 
         LoginResponse loginResponse = httpAgent.fetchUserDetails(requestURL, accessToken);
 

@@ -391,5 +391,9 @@ public class AllSharedPreferences {
     public void setDBEncryptionVersion(int encryptionVersion) {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
+
+    public  void saveBooleanPreference(String key,boolean value){
+        preferences.edit().putBoolean(key,value);
+    }
 }
 

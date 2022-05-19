@@ -26,14 +26,14 @@ public interface RevealService {
    String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
    String TOKEN_ENDPOINT = "/auth/realms/reveal/protocol/openid-connect/token";
     String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
-    String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
+    String REVEAL_AUTH_USER_URL_PATH = "/security/authenticate";
 
     String SETTINGS_URL = "/api/v1/settings/sync";
 
    String VALIDATE_SYNC_PATH = "rest/validate/sync";
 
-    String SYNC_URL = "/rest/event/sync";
-    String ADD_URL = "rest/event/add";
+    String EVENT_SYNC_URL = "/rest/event/sync";
+    String EVENT_ADD_URL = "rest/event/add";
 
 
    String ID_URL = "/uniqueids/get";

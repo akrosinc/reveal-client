@@ -49,8 +49,8 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.reveal.api.RevealService.ADD_URL;
-import static org.smartregister.reveal.api.RevealService.SYNC_URL;
+import static org.smartregister.reveal.api.RevealService.EVENT_ADD_URL;
+import static org.smartregister.reveal.api.RevealService.EVENT_SYNC_URL;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -165,7 +165,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             startEventTrace(FETCH, 0);
 
-            String url = baseUrl + SYNC_URL;
+            String url = baseUrl + EVENT_SYNC_URL;
             Response resp;
             if (configs.isSyncUsingPost()) {
                 JSONObject syncParams = new JSONObject();
@@ -317,7 +317,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
-                            ADD_URL),
+                            EVENT_ADD_URL),
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
