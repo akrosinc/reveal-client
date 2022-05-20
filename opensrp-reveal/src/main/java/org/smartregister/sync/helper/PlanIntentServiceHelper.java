@@ -1,12 +1,31 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
+import static org.smartregister.reveal.util.Constants.DEFAULT_PLAN_READY;
+import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;
+import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
+import android.content.Context;
+import android.content.Intent;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -14,39 +33,28 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Location;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
 public class PlanIntentServiceHelper extends BaseHelper {
+
 
     private final PlanDefinitionRepository planDefinitionRepository;
     private final AllSharedPreferences allSharedPreferences;
@@ -61,7 +69,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
     private long totalRecords;
     private SyncProgress syncProgress;
-
+    private LocationRepository mLocationRepository = RevealApplication.getInstance().getLocationRepository();
     private Trace planSyncTrace;
 
     public static PlanIntentServiceHelper getInstance() {
@@ -128,7 +136,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
                 sendSyncProgressBroadcast(syncProgress, context);
-
+                setDefaultPlanAndOperationalArea();
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
@@ -139,6 +147,37 @@ public class PlanIntentServiceHelper extends BaseHelper {
         return batchFetchCount;
     }
 
+    private void setDefaultPlanAndOperationalArea() {
+        String currentOperationalArea = null;
+        try {
+          currentOperationalArea =  allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA);
+         } catch (NumberFormatException e) {
+          Timber.e(e, "EXCEPTION %s", e.toString());
+        }
+        if(StringUtils.isBlank(currentOperationalArea)){
+            Optional<Location> defaultOperationalAreaOptional = mLocationRepository.getAllLocations().stream().filter(location -> location.getProperties().getName().equals("operational")).findAny();
+            if(defaultOperationalAreaOptional.isPresent()){
+                PreferencesUtil.getInstance().setCurrentOperationalArea(defaultOperationalAreaOptional.get().getProperties().getName());
+            }
+        }
+
+            String currentPlanIdentifier = null;
+            try {
+                currentPlanIdentifier = allSharedPreferences.getPreference(CURRENT_PLAN_ID);
+            } catch(NumberFormatException e){
+                Timber.e(e, "EXCEPTION %s", e.toString());
+            }
+
+           if(currentPlanIdentifier == null || StringUtils.isBlank(currentPlanIdentifier)){
+               Optional<PlanDefinition> defaultPlanListOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
+               if(defaultPlanListOptional.isPresent()){
+                   PreferencesUtil.getInstance().setCurrentPlanId(defaultPlanListOptional.get().getIdentifier());
+                   PreferencesUtil.getInstance().setCurrentPlan(defaultPlanListOptional.get().getName());
+                   Intent intent = new Intent(DEFAULT_PLAN_READY);
+                   LocalBroadcastManager.getInstance(RevealApplication.getInstance().getBaseContext().getApplicationContext()).sendBroadcast(intent);
+               }
+           }
+        }
     private void startPlanTrace(String action) {
         String providerId = allSharedPreferences.fetchRegisteredANM();
         String team = allSharedPreferences.fetchDefaultTeam(providerId);

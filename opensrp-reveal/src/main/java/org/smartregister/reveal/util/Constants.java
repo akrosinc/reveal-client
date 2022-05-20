@@ -1,6 +1,5 @@
 package org.smartregister.reveal.util;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,6 +95,9 @@ public interface Constants {
     String MDA_DRUG_RECON_COMPLETE_COUNT = "mda_drug_recon_complete_count";
 
     int SMC_DISPENSE_MIN_MONTHS = 3;
+
+    String DEFAULT_PLAN_READY = "DEFAULT_PLAN_READY";
+
 
     interface CONFIGURATION {
         String LOGIN = "login";

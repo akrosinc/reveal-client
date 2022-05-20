@@ -1,6 +1,7 @@
 package org.smartregister.reveal.presenter;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.reveal.util.Constants.DEFAULT_PLAN_READY;
 import static org.smartregister.reveal.util.Constants.Tags.CANTON;
 import static org.smartregister.reveal.util.Constants.Tags.CATCHMENT;
 import static org.smartregister.reveal.util.Constants.Tags.CELL;
@@ -20,12 +21,16 @@ import static org.smartregister.reveal.util.Constants.Tags.ZONE;
 import static org.smartregister.reveal.util.Constants.UseContextCode.INTERVENTION_TYPE;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
@@ -53,11 +58,10 @@ import timber.log.Timber;
 /**
  * Created by samuelgithengi on 3/21/19.
  */
-public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
+public class BaseDrawerPresenter extends BroadcastReceiver implements BaseDrawerContract.Presenter {
 
     private BaseDrawerContract.View view;
     private BaseDrawerContract.DrawerActivity drawerActivity;
-
     private PreferencesUtil prefsUtil;
 
     private LocationHelper locationHelper;
@@ -83,6 +87,9 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         interactor = new BaseDrawerInteractor(this);
         revealApplication = RevealApplication.getInstance();
         sharedPreferences = revealApplication.getContext().allSharedPreferences();
+        LocalBroadcastManager.getInstance(view.getContext()).registerReceiver(this, new IntentFilter(
+                DEFAULT_PLAN_READY));
+
     }
 
 
@@ -454,4 +461,20 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
             drawerActivity.getActivity().startActivity(new Intent(drawerActivity.getActivity(), EventRegisterActivity.class));
     }
 
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+        try {
+            String action = intent.getAction();
+
+            if(DEFAULT_PLAN_READY.equals(action)){
+                view.setPlan(prefsUtil.getCurrentPlan());
+                view.setOperationalArea(prefsUtil.getCurrentOperationalArea());
+                changedCurrentSelection = true;
+                unlockDrawerLayout();
+            }
+
+        } catch (Exception e){
+            Timber.e(e);
+        }
+    }
 }
