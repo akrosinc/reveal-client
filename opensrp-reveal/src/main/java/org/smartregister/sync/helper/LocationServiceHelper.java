@@ -12,6 +12,7 @@ import static org.smartregister.AllConstants.RETURN_COUNT;
 import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.reveal.api.RevealService.CREATE_STRUCTURE_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
+import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
@@ -146,7 +149,7 @@ public class LocationServiceHelper extends BaseHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
-
+                setDefaultOperationalArea();
                 // retry fetch since there were items synced from the server
                 locations.addAll(batchLocationStructures);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
@@ -158,6 +161,17 @@ public class LocationServiceHelper extends BaseHelper {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
         return batchLocationStructures;
+    }
+
+    private void setDefaultOperationalArea() {
+        String currentOperationalArea =  allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA);
+        if(StringUtils.isBlank(currentOperationalArea)){
+            Optional<Location> defaultOperationalAreaOptional = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("operational")).findAny();
+            if(defaultOperationalAreaOptional.isPresent()){
+                PreferencesUtil
+                        .getInstance().setCurrentOperationalArea(defaultOperationalAreaOptional.get().getProperties().getName());
+            }
+        }
     }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {

@@ -1,78 +1,5 @@
 package org.smartregister.reveal.presenter;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.PointF;
-import android.graphics.RectF;
-import android.location.Location;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.JsonElement;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-
-import java.util.Optional;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.Event;
-import org.smartregister.domain.PlanDefinition;
-import org.smartregister.domain.Task;
-import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.PlanDefinitionRepository;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.BaseDrawerContract;
-import org.smartregister.reveal.contract.ListTaskContract;
-import org.smartregister.reveal.contract.PasswordRequestCallback;
-import org.smartregister.reveal.contract.UserLocationContract.UserLocationCallback;
-import org.smartregister.reveal.interactor.ListTaskInteractor;
-import org.smartregister.reveal.model.CardDetails;
-import org.smartregister.reveal.model.FamilyCardDetails;
-import org.smartregister.reveal.model.IRSVerificationCardDetails;
-import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
-import org.smartregister.reveal.model.SprayCardDetails;
-import org.smartregister.reveal.model.TaskDetails;
-import org.smartregister.reveal.model.TaskFilterParams;
-import org.smartregister.reveal.repository.RevealMappingHelper;
-import org.smartregister.reveal.task.IndicatorsCalculatorTask;
-import org.smartregister.reveal.util.AlertDialogUtils;
-import org.smartregister.reveal.util.CardDetailsUtil;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.CONFIGURATION;
-import org.smartregister.reveal.util.Constants.Filter;
-import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.PasswordDialogUtils;
-import org.smartregister.reveal.util.PreferencesUtil;
-import org.smartregister.reveal.util.RevealJsonFormUtils;
-import org.smartregister.reveal.view.EditFociBoundaryActivity;
-import org.smartregister.util.JsonFormUtils;
-import org.smartregister.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import timber.log.Timber;
-
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_NEUTRAL;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -133,6 +60,72 @@ import static org.smartregister.reveal.util.Utils.isRwandaMDALite;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
 import static org.smartregister.reveal.util.Utils.validateFarStructures;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.location.Location;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.JsonElement;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Task;
+import org.smartregister.domain.Task.TaskStatus;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.BaseDrawerContract;
+import org.smartregister.reveal.contract.ListTaskContract;
+import org.smartregister.reveal.contract.PasswordRequestCallback;
+import org.smartregister.reveal.contract.UserLocationContract.UserLocationCallback;
+import org.smartregister.reveal.interactor.ListTaskInteractor;
+import org.smartregister.reveal.model.CardDetails;
+import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.IRSVerificationCardDetails;
+import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
+import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.model.TaskFilterParams;
+import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.task.IndicatorsCalculatorTask;
+import org.smartregister.reveal.util.AlertDialogUtils;
+import org.smartregister.reveal.util.CardDetailsUtil;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.CONFIGURATION;
+import org.smartregister.reveal.util.Constants.Filter;
+import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PasswordDialogUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.view.EditFociBoundaryActivity;
+import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
+import timber.log.Timber;
 
 
 /**
@@ -294,13 +287,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 StringUtils.isNotBlank(operationalArea)) {
             listTaskInteractor.fetchLocations(planId, operationalArea);
         } else {
-            Optional<org.smartregister.domain.Location> defaultOperationalArea  = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("operational")).findAny();
-            if(defaultOperationalArea.isPresent()){
-                operationalArea = defaultOperationalArea.get().getProperties().getName();
-                PreferencesUtil.getInstance().setCurrentOperationalArea(operationalArea);
-                drawerPresenter.getView().setOperationalArea(operationalArea);
-            }
-            //TODO: alert user that sync still on progress no default operational area can be set.
+            drawerPresenter.getView().lockNavigationDrawerForSelection();
         }
     }
 

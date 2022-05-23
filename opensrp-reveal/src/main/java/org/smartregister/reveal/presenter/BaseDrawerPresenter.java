@@ -79,6 +79,7 @@ public class BaseDrawerPresenter extends BroadcastReceiver implements BaseDrawer
     private RevealApplication revealApplication;
     private AllSharedPreferences sharedPreferences;
 
+
     public BaseDrawerPresenter(BaseDrawerContract.View view, BaseDrawerContract.DrawerActivity drawerActivity) {
         this.view = view;
         this.drawerActivity = drawerActivity;
@@ -465,7 +466,6 @@ public class BaseDrawerPresenter extends BroadcastReceiver implements BaseDrawer
     public void onReceive(final Context context, final Intent intent) {
         try {
             String action = intent.getAction();
-
             if(DEFAULT_PLAN_READY.equals(action)){
                 view.setPlan(prefsUtil.getCurrentPlan());
                 view.setOperationalArea(prefsUtil.getCurrentOperationalArea());

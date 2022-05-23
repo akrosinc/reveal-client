@@ -1,56 +1,5 @@
 package org.smartregister.reveal.interactor;
 
-import com.mapbox.geojson.Feature;
-
-import net.sqlcipher.Cursor;
-
-import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.clientandeventmodel.Event;
-import org.smartregister.clientandeventmodel.Obs;
-import org.smartregister.commonregistry.CommonPersonObject;
-import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.Task;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.StructureRepository;
-import org.smartregister.repository.TaskRepository;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.ListTaskContract;
-import org.smartregister.reveal.model.CardDetails;
-import org.smartregister.reveal.model.FamilyCardDetails;
-import org.smartregister.reveal.model.IRSVerificationCardDetails;
-import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
-import org.smartregister.reveal.model.SprayCardDetails;
-import org.smartregister.reveal.model.StructureDetails;
-import org.smartregister.reveal.model.StructureTaskDetails;
-import org.smartregister.reveal.model.TaskDetails;
-import org.smartregister.reveal.presenter.ListTaskPresenter;
-import org.smartregister.reveal.util.CardDetailsUtil;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.GeoJSON;
-import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.FamilyConstants;
-import org.smartregister.reveal.util.FamilyJsonFormUtils;
-import org.smartregister.reveal.util.GeoJsonUtils;
-import org.smartregister.reveal.util.IndicatorUtils;
-import org.smartregister.reveal.util.InteractorUtils;
-import org.smartregister.reveal.util.PreferencesUtil;
-import org.smartregister.reveal.util.Utils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import timber.log.Timber;
-
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.family.util.Constants.KEY.FAMILY_HEAD_NAME;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
@@ -103,18 +52,71 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_ME
 import static org.smartregister.reveal.util.Utils.getInterventionLabel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
 
+import com.mapbox.geojson.Feature;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import net.sqlcipher.Cursor;
+import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.Task;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.repository.TaskRepository;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.ListTaskContract;
+import org.smartregister.reveal.model.CardDetails;
+import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.IRSVerificationCardDetails;
+import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
+import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.StructureDetails;
+import org.smartregister.reveal.model.StructureTaskDetails;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.presenter.ListTaskPresenter;
+import org.smartregister.reveal.util.CardDetailsUtil;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.GeoJSON;
+import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.FamilyConstants;
+import org.smartregister.reveal.util.FamilyJsonFormUtils;
+import org.smartregister.reveal.util.GeoJsonUtils;
+import org.smartregister.reveal.util.IndicatorUtils;
+import org.smartregister.reveal.util.InteractorUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.Utils;
+import timber.log.Timber;
+
 /**
  * Created by samuelgithengi on 11/27/18.
  */
 public class ListTaskInteractor extends BaseInteractor {
 
     private CommonRepository commonRepository;
+
     private InteractorUtils interactorUtils;
+
     private StructureRepository structureRepository;
+
     private TaskRepository taskRepository;
+
     private RevealApplication revealApplication;
+
     private List<TaskDetails> taskDetails;
-    private LocationRepository locationRepository;
+
+
     public ListTaskInteractor(ListTaskContract.Presenter presenter) {
         super(presenter);
         commonRepository = RevealApplication.getInstance().getContext().commonrepository(SPRAYED_STRUCTURES);
@@ -123,7 +125,6 @@ public class ListTaskInteractor extends BaseInteractor {
         interactorUtils = new InteractorUtils(taskRepository, eventClientRepository, clientProcessor);
         revealApplication = RevealApplication.getInstance();
         taskDetails = new ArrayList<>();
-        locationRepository = RevealApplication.getInstance().getLocationRepository();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -140,7 +141,8 @@ public class ListTaskInteractor extends BaseInteractor {
                     PAOT_COMMENTS, LAST_UPDATED_DATE, PAOT_TABLE, BASE_ENTITY_ID);
         } else if (IRS_VERIFICATION.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s WHERE id= ?",
-                    TRUE_STRUCTURE, ELIGIBLE_STRUCTURE, REPORT_SPRAY, CHALK_SPRAY, STICKER_SPRAY, CARD_SPRAY, IRS_VERIFICATION_TABLE);
+                    TRUE_STRUCTURE, ELIGIBLE_STRUCTURE, REPORT_SPRAY, CHALK_SPRAY, STICKER_SPRAY, CARD_SPRAY,
+                    IRS_VERIFICATION_TABLE);
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
@@ -186,8 +188,9 @@ public class ListTaskInteractor extends BaseInteractor {
     }
 
     private void getSprayDetails(String interventionType, String structureId, CardDetails cardDetails) {
-        if (!IRS.equals(interventionType))
+        if (!IRS.equals(interventionType)) {
             return;
+        }
         CommonPersonObject commonPersonObject = interactorUtils.fetchSprayDetails(interventionType, structureId,
                 eventClientRepository, commonRepository);
         ((SprayCardDetails) cardDetails).setCommonPersonObject(commonPersonObject);
@@ -284,14 +287,19 @@ public class ListTaskInteractor extends BaseInteractor {
                 try {
                     featureCollection = createFeatureCollection();
                     if (operationalAreaLocation != null) {
-                        Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
-                        List<Location> structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
-                        Map<String, StructureDetails> structureNames = getStructureName(operationalAreaLocation.getId());
+                        Map<String, Set<Task>> tasks = taskRepository
+                                .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        List<Location> structures = structureRepository
+                                .getLocationsByParentId(operationalAreaLocation.getId());
+                        Map<String, StructureDetails> structureNames = getStructureName(
+                                operationalAreaLocation.getId());
                         taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
                         String indexCase = null;
-                        if (getInterventionLabel() == R.string.focus_investigation)
+                        if (getInterventionLabel() == R.string.focus_investigation) {
                             indexCase = getIndexCaseStructure(plan);
-                        String features = GeoJsonUtils.getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+                        }
+                        String features = GeoJsonUtils
+                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
                         featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
 
                     }
@@ -303,13 +311,15 @@ public class ListTaskInteractor extends BaseInteractor {
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (operationalAreaLocation != null) {
+                        if (operationalAreaLocation != null && !finalTaskDetailsList.isEmpty()) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
                             if (locationComponentActive != null) {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList, point, locationComponentActive);
-                            } else {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, finalTaskDetailsList);
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature,
+                                        finalTaskDetailsList, point, locationComponentActive);
+                            } else  {
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature,
+                                        finalTaskDetailsList);
                             }
                         } else {
                             getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
@@ -321,7 +331,6 @@ public class ListTaskInteractor extends BaseInteractor {
 
         };
 
-
         appExecutors.diskIO().execute(runnable);
     }
 
@@ -330,7 +339,8 @@ public class ListTaskInteractor extends BaseInteractor {
         SmartRegisterQueryBuilder queryBuilder = new SmartRegisterQueryBuilder();
         queryBuilder.selectInitiateMainTable(STRUCTURES_TABLE, new String[]{
                 String.format("COALESCE(%s.%s,%s,%s,%s)", FAMILY, FIRST_NAME, STRUCTURE_NAME, NAME, FAMILY_HEAD_NAME),
-                String.format("group_concat(%s.%s||' '||%s.%s)", FAMILY_MEMBER, FIRST_NAME, FAMILY_MEMBER, LAST_NAME)}, ID_);
+                String.format("group_concat(%s.%s||' '||%s.%s)", FAMILY_MEMBER, FIRST_NAME, FAMILY_MEMBER,
+                        LAST_NAME)}, ID_);
         queryBuilder.customJoin(String.format("LEFT JOIN %s ON %s.%s = %s.%s AND %s.%s IS NULL collate nocase ",
                 FAMILY, STRUCTURES_TABLE, ID_, FAMILY, STRUCTURE_ID, FAMILY, DATE_REMOVED));
         queryBuilder.customJoin(String.format("LEFT JOIN %s ON %s.%s = %s.%s AND %s.%s IS NULL collate nocase ",
@@ -345,11 +355,13 @@ public class ListTaskInteractor extends BaseInteractor {
         Map<String, StructureDetails> structureNames = new HashMap<>();
         try {
             String query = getStructureNamesSelect(String.format("%s=?",
-                    Constants.DatabaseKeys.PARENT_ID)).concat(String.format(" GROUP BY %s.%s", STRUCTURES_TABLE, ID_));
+                    Constants.DatabaseKeys.PARENT_ID))
+                    .concat(String.format(" GROUP BY %s.%s", STRUCTURES_TABLE, ID_));
             Timber.d(query);
             cursor = getDatabase().rawQuery(query, new String[]{parentId});
             while (cursor.moveToNext()) {
-                structureNames.put(cursor.getString(0), new StructureDetails(cursor.getString(1), cursor.getString(2)));
+                structureNames
+                        .put(cursor.getString(0), new StructureDetails(cursor.getString(1), cursor.getString(2)));
             }
         } catch (Exception e) {
             Timber.e(e);
@@ -407,9 +419,12 @@ public class ListTaskInteractor extends BaseInteractor {
             Timber.e(e);
         }
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
-        Location currentOperationalArea = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
-        if(currentOperationalArea != null) {
-            Map<String, Set<Task>> tasks = taskRepository.getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(), currentOperationalArea.getId());
+        Location currentOperationalArea = locationRepository
+                .getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
+        if (currentOperationalArea != null) {
+            Map<String, Set<Task>> tasks = taskRepository
+                    .getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(),
+                            currentOperationalArea.getId());
             this.setTaskDetails(IndicatorUtils.processTaskDetails(tasks));
         }
 
@@ -436,7 +451,7 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             details.put(Constants.Properties.LOCATION_ID, feature.id());
             details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            details.put(Constants.Properties.PLAN_IDENTIFIER,task.getPlanIdentifier());
+            details.put(Constants.Properties.PLAN_IDENTIFIER, task.getPlanIdentifier());
             task.setBusinessStatus(NOT_ELIGIBLE);
             task.setStatus(Task.TaskStatus.COMPLETED);
             task.setLastModified(new DateTime());
@@ -444,10 +459,14 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             taskRepository.addOrUpdate(task);
             revealApplication.setSynced(false);
-            Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details, FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
-            event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible").withFieldType("formsubmissionField"));
-            event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible").withFieldType("formsubmissionField"));
-            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS).withFieldType(JsonForm.BUSINESS_STATUS));
+            Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details,
+                    FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
+            event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible")
+                    .withFieldType("formsubmissionField"));
+            event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible")
+                    .withFieldType("formsubmissionField"));
+            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS)
+                    .withFieldType(JsonForm.BUSINESS_STATUS));
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
@@ -507,7 +526,6 @@ public class ListTaskInteractor extends BaseInteractor {
 
             // Reset task info
             taskInfoResetSuccessful = interactorUtils.resetTaskInfo(getDatabase(), taskDetails);
-
 
             boolean finalTaskInfoResetSuccessful = taskInfoResetSuccessful;
             appExecutors.mainThread().execute(() -> {

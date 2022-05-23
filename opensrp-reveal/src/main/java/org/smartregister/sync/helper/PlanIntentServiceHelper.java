@@ -7,7 +7,6 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
 import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
 import static org.smartregister.reveal.util.Constants.DEFAULT_PLAN_READY;
-import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -33,14 +32,12 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.Location;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.PreferencesUtil;
@@ -57,19 +54,25 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
 
     private final PlanDefinitionRepository planDefinitionRepository;
+
     private final AllSharedPreferences allSharedPreferences;
-    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+
+    protected static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
             .disableHtmlEscaping()
             .create();
 
     protected final Context context;
+
     protected static PlanIntentServiceHelper instance;
 
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
+
     private long totalRecords;
+
     private SyncProgress syncProgress;
-    private LocationRepository mLocationRepository = RevealApplication.getInstance().getLocationRepository();
+
     private Trace planSyncTrace;
 
     public static PlanIntentServiceHelper getInstance() {
@@ -82,7 +85,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
-        this.planSyncTrace  = initTrace(PLAN_SYNC);
+        this.planSyncTrace = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
@@ -132,11 +135,12 @@ public class PlanIntentServiceHelper extends BaseHelper {
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
                 batchFetchCount = plans.size();
-                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE,
+                        String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
 
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
                 sendSyncProgressBroadcast(syncProgress, context);
-                setDefaultPlanAndOperationalArea();
+                setDefaultPlan();
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
@@ -147,37 +151,20 @@ public class PlanIntentServiceHelper extends BaseHelper {
         return batchFetchCount;
     }
 
-    private void setDefaultPlanAndOperationalArea() {
-        String currentOperationalArea = null;
-        try {
-          currentOperationalArea =  allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA);
-         } catch (NumberFormatException e) {
-          Timber.e(e, "EXCEPTION %s", e.toString());
-        }
-        if(StringUtils.isBlank(currentOperationalArea)){
-            Optional<Location> defaultOperationalAreaOptional = mLocationRepository.getAllLocations().stream().filter(location -> location.getProperties().getName().equals("operational")).findAny();
-            if(defaultOperationalAreaOptional.isPresent()){
-                PreferencesUtil.getInstance().setCurrentOperationalArea(defaultOperationalAreaOptional.get().getProperties().getName());
+    private void setDefaultPlan() {
+        String currentPlanIdentifier = allSharedPreferences.getPreference(CURRENT_PLAN_ID);
+        if (StringUtils.isBlank(currentPlanIdentifier)) {
+            Optional<PlanDefinition> defaultPlanListOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
+            if (defaultPlanListOptional.isPresent()) {
+                PreferencesUtil.getInstance().setCurrentPlanId(defaultPlanListOptional.get().getIdentifier());
+                PreferencesUtil.getInstance().setCurrentPlan(defaultPlanListOptional.get().getName());
+                Intent intent = new Intent(DEFAULT_PLAN_READY);
+                LocalBroadcastManager.getInstance(RevealApplication.getInstance().getBaseContext().getApplicationContext())
+                                     .sendBroadcast(intent);
             }
         }
+    }
 
-            String currentPlanIdentifier = null;
-            try {
-                currentPlanIdentifier = allSharedPreferences.getPreference(CURRENT_PLAN_ID);
-            } catch(NumberFormatException e){
-                Timber.e(e, "EXCEPTION %s", e.toString());
-            }
-
-           if(currentPlanIdentifier == null || StringUtils.isBlank(currentPlanIdentifier)){
-               Optional<PlanDefinition> defaultPlanListOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
-               if(defaultPlanListOptional.isPresent()){
-                   PreferencesUtil.getInstance().setCurrentPlanId(defaultPlanListOptional.get().getIdentifier());
-                   PreferencesUtil.getInstance().setCurrentPlan(defaultPlanListOptional.get().getName());
-                   Intent intent = new Intent(DEFAULT_PLAN_READY);
-                   LocalBroadcastManager.getInstance(RevealApplication.getInstance().getBaseContext().getApplicationContext()).sendBroadcast(intent);
-               }
-           }
-        }
     private void startPlanTrace(String action) {
         String providerId = allSharedPreferences.fetchRegisteredANM();
         String team = allSharedPreferences.fetchDefaultTeam(providerId);
@@ -186,7 +173,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
         startTrace(planSyncTrace);
     }
 
-    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
+    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount)
+            throws Exception {
         HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
