@@ -1088,7 +1088,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             }
         }
 
-        if(totalSyncProgress < 100) {
+        if(totalSyncProgress <= 100) {
             ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
             overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
             overallSyncProgressView.setProgress(totalSyncProgress);

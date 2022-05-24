@@ -221,6 +221,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         if (eCount == 0) {
+            sendSyncProgressBroadcast(eCount);
             complete(FetchStatus.nothingFetched);
         } else if (eCount < 0) {
             fetchFailed(count);
