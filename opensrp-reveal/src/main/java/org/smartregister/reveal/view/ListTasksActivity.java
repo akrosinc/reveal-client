@@ -1084,7 +1084,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 totalSyncProgress += 100/SYNC_ENTITY_COUNT;
                 PreferencesUtil.getInstance().setAllEventsSynced(true);
             } else {
-                PreferencesUtil.getInstance().setAllEventsSynced(false);
+                if(PreferencesUtil.getInstance().isAllEventsSynced()){
+                    totalSyncProgress -= 100/SYNC_ENTITY_COUNT;
+                    PreferencesUtil.getInstance().setAllEventsSynced(false);
+                }
             }
         }
 
