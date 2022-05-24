@@ -4,6 +4,7 @@ import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.family.util.Constants.KEY.FAMILY_HEAD_NAME;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.DBConstants.KEY.RELATIONAL_ID;
+import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
@@ -457,6 +458,7 @@ public class ListTaskInteractor extends BaseInteractor {
             task.setLastModified(new DateTime());
             details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
+            task.setSyncStatus(TYPE_Unsynced);
             taskRepository.addOrUpdate(task);
             revealApplication.setSynced(false);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details,
