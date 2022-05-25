@@ -23,6 +23,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -53,6 +57,7 @@ import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.LocalDateTypeConverter;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
 
@@ -69,7 +74,7 @@ public class TaskServiceHelper extends BaseHelper {
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
     public static final Gson taskGson = new GsonBuilder()
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).registerTypeAdapter(LocalDate.class,new LocalDateTypeConverter()).create();
 
     protected static TaskServiceHelper instance;
 
@@ -319,6 +324,17 @@ public class TaskServiceHelper extends BaseHelper {
                     .build();
             PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId))
                     .name(personName).gender(gender).build();
+            String dob = commonPersonObject.getColumnmaps().get("dob");
+            LocalDateTime dateOfBirthAndTime;
+            if(!StringUtils.isBlank(dob)){
+                try {
+                    dateOfBirthAndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(org.joda.time.DateTime.parse(dob).getMillis()), ZoneId.systemDefault());
+                    personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
+                } catch (Exception e){
+                    Timber.e(e);
+                }
+            }
+
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {
