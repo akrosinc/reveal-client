@@ -1,16 +1,35 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -35,31 +54,7 @@ import org.smartregister.reveal.model.PersonRequest;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
-import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
-import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class TaskServiceHelper extends BaseHelper {
 
