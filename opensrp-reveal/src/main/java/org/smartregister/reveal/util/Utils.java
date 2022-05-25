@@ -71,7 +71,6 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.job.DocumentConfigurationServiceJob;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -140,7 +139,6 @@ public class Utils {
 
     public static void startImmediateSync() {
         LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
-        DocumentConfigurationServiceJob.scheduleJobImmediately(DocumentConfigurationServiceJob.TAG);
     }
 
 

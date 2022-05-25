@@ -37,6 +37,4 @@ public interface RevealService {
 
 
    String ID_URL = "/uniqueids/get";
-
-   String ACTIONS_URL = "/actions";
 }
