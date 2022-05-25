@@ -1,49 +1,5 @@
 package org.smartregister.reveal.repository;
 
-import android.content.Context;
-
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.apache.commons.lang3.StringUtils;
-import org.smartregister.AllConstants;
-import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
-import org.smartregister.domain.db.EventClient;
-import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.repository.BaseRepository;
-import org.smartregister.repository.ClientFormRepository;
-import org.smartregister.repository.ClientRelationshipRepository;
-import org.smartregister.repository.EventClientRepository;
-import org.smartregister.repository.EventClientRepository.client_column;
-import org.smartregister.repository.EventClientRepository.event_column;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.ManifestRepository;
-import org.smartregister.repository.PlanDefinitionRepository;
-import org.smartregister.repository.PlanDefinitionSearchRepository;
-import org.smartregister.repository.Repository;
-import org.smartregister.repository.SettingsRepository;
-import org.smartregister.repository.StructureRepository;
-import org.smartregister.repository.TaskRepository;
-import org.smartregister.repository.UniqueIdRepository;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.sync.RevealClientProcessor;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.DatabaseKeys;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.FamilyConstants.EventType;
-import org.smartregister.reveal.util.Utils;
-import org.smartregister.util.DatabaseMigrationUtils;
-import org.smartregister.util.RecreateECUtil;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import timber.log.Timber;
-
 import static org.smartregister.repository.EventClientRepository.Table.event;
 import static org.smartregister.repository.EventClientRepository.event_column.baseEntityId;
 import static org.smartregister.repository.EventClientRepository.event_column.eventType;
@@ -71,6 +27,45 @@ import static org.smartregister.reveal.util.Constants.Tables.TASK_TABLE;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 import static org.smartregister.util.DatabaseMigrationUtils.isColumnExists;
+
+import android.content.Context;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import net.sqlcipher.database.SQLiteDatabase;
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.AllConstants;
+import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
+import org.smartregister.domain.db.EventClient;
+import org.smartregister.repository.BaseRepository;
+import org.smartregister.repository.ClientFormRepository;
+import org.smartregister.repository.ClientRelationshipRepository;
+import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.EventClientRepository.client_column;
+import org.smartregister.repository.EventClientRepository.event_column;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.ManifestRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.repository.PlanDefinitionSearchRepository;
+import org.smartregister.repository.Repository;
+import org.smartregister.repository.SettingsRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.repository.TaskRepository;
+import org.smartregister.repository.UniqueIdRepository;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.sync.RevealClientProcessor;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.DatabaseKeys;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.FamilyConstants.EventType;
+import org.smartregister.reveal.util.Utils;
+import org.smartregister.util.DatabaseMigrationUtils;
+import org.smartregister.util.RecreateECUtil;
+import timber.log.Timber;
 
 
 public class RevealRepository extends Repository {
@@ -176,7 +171,6 @@ public class RevealRepository extends Repository {
             }
         }, 5000);
 
-        PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
 
         PlanDefinitionRepository.createTable(db);
         PlanDefinitionSearchRepository.createTable(db);
