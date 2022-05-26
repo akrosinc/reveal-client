@@ -312,7 +312,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (operationalAreaLocation != null && !finalTaskDetailsList.isEmpty()) {
+                        if (operationalAreaLocation != null) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
                             if (locationComponentActive != null) {
