@@ -158,20 +158,6 @@ public class RevealRepository extends Repository {
         DatabaseMigrationUtils.createAddedECTables(db,
                 new HashSet<>(Arrays.asList(FAMILY, FAMILY_MEMBER)),
                 RevealApplication.createCommonFtsObject());
-
-        //client process family events after 5 seconds so that get calls to getDatabase return
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                EventClientRepository ecRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
-                List<EventClient> eventClientList = ecRepository.fetchEventClientsByEventTypes(
-                        Arrays.asList(EventType.FAMILY_REGISTRATION, EventType.FAMILY_MEMBER_REGISTRATION,
-                                EventType.UPDATE_FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION));
-                RevealClientProcessor.getInstance(RevealApplication.getInstance().getApplicationContext()).processClient(eventClientList);
-            }
-        }, 5000);
-
-
         PlanDefinitionRepository.createTable(db);
         PlanDefinitionSearchRepository.createTable(db);
     }
