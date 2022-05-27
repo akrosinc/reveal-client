@@ -47,6 +47,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,6 +82,7 @@ import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants.Action;
+import org.smartregister.reveal.util.Constants.Preferences;
 import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Constants.TaskRegister;
 import org.smartregister.reveal.util.Country;
@@ -124,6 +126,7 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_F
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_TASK_LISTS;
 import static org.smartregister.reveal.util.Constants.SYNC_BACK_OFF_DELAY;
+import static org.smartregister.reveal.util.Constants.SYNC_ENTITY_COUNT;
 import static org.smartregister.reveal.util.Constants.VERTICAL_OFFSET;
 import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTRATION;
 import static org.smartregister.reveal.util.Utils.displayDistanceScale;
@@ -195,7 +198,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private CardDetailsUtil cardDetailsUtil = new CardDetailsUtil();
 
     private boolean formOpening;
-    private int SYNC_ENTITY_COUNT = 4;
 
 
     @Override
@@ -1028,14 +1030,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     @Override
     public void onSyncProgress(SyncProgress syncProgress) {
         int progress = syncProgress.getPercentageSynced();
-        int totalSyncProgress;
-        try {
-            totalSyncProgress = Integer.valueOf(PreferencesUtil.getInstance().getCurrentTotalSyncProgress());
-        }
-        catch(Exception e){
-            totalSyncProgress = 0;
-        }
-
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
         if(syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)){
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
@@ -1044,7 +1038,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
             if(progress == 100){
-                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
                  PreferencesUtil.getInstance().setAllLocationsSynced(true);
             } else  {
                 PreferencesUtil.getInstance().setAllLocationsSynced(false);
@@ -1057,7 +1050,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
             if(progress == 100){
-                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
                 PreferencesUtil.getInstance().setAllTasksSynced(true);
             } else {
                 PreferencesUtil.getInstance().setAllTasksSynced(false);
@@ -1069,7 +1061,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
             if(progress == 100){
-                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
                 PreferencesUtil.getInstance().setAllPlansSynced(true);
             }else {
                 PreferencesUtil.getInstance().setAllPlansSynced(false);
@@ -1081,22 +1072,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
             if(progress == 100){
-                totalSyncProgress += 100/SYNC_ENTITY_COUNT;
                 PreferencesUtil.getInstance().setAllEventsSynced(true);
             } else {
-                if(PreferencesUtil.getInstance().isAllEventsSynced()){
-                    totalSyncProgress -= 100/SYNC_ENTITY_COUNT;
-                    PreferencesUtil.getInstance().setAllEventsSynced(false);
-                }
+                PreferencesUtil.getInstance().setAllEventsSynced(false);
             }
         }
 
-        if(totalSyncProgress <= 100) {
-            ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
-            overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
-            overallSyncProgressView.setProgress(totalSyncProgress);
-            PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
-        }
+        int totalSyncProgress = getTotalSyncProgress();
+        updateTotalSyncProgressSection(totalSyncProgress);
     }
 
     @Override
@@ -1133,5 +1116,19 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                         dialog.dismiss();
                     }
                 });
+    }
+
+    private void updateTotalSyncProgressSection(final int totalSyncProgress) {
+        ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
+        overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
+        overallSyncProgressView.setProgress(totalSyncProgress);
+        PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
+    }
+
+    private int getTotalSyncProgress() {
+        return  (BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllEventsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllLocationsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced())) * 100 / SYNC_ENTITY_COUNT;
     }
 }

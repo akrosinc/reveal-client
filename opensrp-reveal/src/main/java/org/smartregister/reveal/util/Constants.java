@@ -96,6 +96,9 @@ public interface Constants {
 
     int SMC_DISPENSE_MIN_MONTHS = 3;
 
+    int SYNC_ENTITY_COUNT = 4;
+
+
     interface CONFIGURATION {
         String LOGIN = "login";
         String GLOBAL_CONFIGS = "global_configs";

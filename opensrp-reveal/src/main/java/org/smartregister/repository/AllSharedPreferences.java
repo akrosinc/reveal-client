@@ -393,7 +393,7 @@ public class AllSharedPreferences {
     }
 
     public  void saveBooleanPreference(String key,boolean value){
-        preferences.edit().putBoolean(key,value);
+        preferences.edit().putBoolean(key,value).commit();
     }
 }
 
