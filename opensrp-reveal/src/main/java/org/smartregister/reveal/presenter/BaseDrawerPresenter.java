@@ -38,6 +38,7 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.PlanDefinition.PlanStatus;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
+import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -435,6 +436,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         View headerView = navigationView.getHeaderView(0);
         syncLabel = headerView.findViewById(R.id.sync_label);
         syncBadge = activity.findViewById(R.id.sync_badge);
+        ProgressIndicatorView overallSyncProgressView = headerView.findViewById(R.id.overall_sync_progress_view);
         if (syncBadge != null && syncLabel != null) {
             if (synced && SyncUtils.getTotalSyncProgress() == 100) {
                 syncBadge.setBackground(ContextCompat.getDrawable(activity, R.drawable.badge_green_oval));
@@ -446,6 +448,8 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                 syncLabel.setText(getView().getContext().getString(R.string.device_data_not_synced));
                 syncLabel.setTextColor(ContextCompat.getColor(activity, R.color.alert_urgent_red));
                 syncLabel.setBackground(ContextCompat.getDrawable(activity, R.drawable.rounded_border_alert_red));
+                overallSyncProgressView.setTitle("Sync Progress: 0%");
+                overallSyncProgressView.setProgress(0);
             }
         }
     }
