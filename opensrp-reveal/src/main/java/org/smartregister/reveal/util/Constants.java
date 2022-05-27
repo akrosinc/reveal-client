@@ -96,9 +96,6 @@ public interface Constants {
 
     int SMC_DISPENSE_MIN_MONTHS = 3;
 
-    String DEFAULT_PLAN_READY = "DEFAULT_PLAN_READY";
-
-
     interface CONFIGURATION {
         String LOGIN = "login";
         String GLOBAL_CONFIGS = "global_configs";

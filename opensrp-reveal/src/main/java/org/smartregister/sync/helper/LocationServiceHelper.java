@@ -149,7 +149,6 @@ public class LocationServiceHelper extends BaseHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
-                setDefaultOperationalArea();
                 // retry fetch since there were items synced from the server
                 locations.addAll(batchLocationStructures);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
@@ -163,16 +162,6 @@ public class LocationServiceHelper extends BaseHelper {
         return batchLocationStructures;
     }
 
-    private void setDefaultOperationalArea() {
-        String currentOperationalArea =  allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA);
-        if(StringUtils.isBlank(currentOperationalArea)){
-            Optional<Location> defaultOperationalAreaOptional = locationRepository.getAllLocations().stream().filter(location -> location.getProperties().getGeographicLevel().equals("operational")).findAny();
-            if(defaultOperationalAreaOptional.isPresent()){
-                PreferencesUtil
-                        .getInstance().setCurrentOperationalArea(defaultOperationalAreaOptional.get().getProperties().getName());
-            }
-        }
-    }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {
 

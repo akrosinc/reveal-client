@@ -6,16 +6,12 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
 import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
-import static org.smartregister.reveal.util.Constants.DEFAULT_PLAN_READY;
-import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 import android.content.Context;
-import android.content.Intent;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,8 +19,6 @@ import com.google.gson.reflect.TypeToken;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -39,8 +33,6 @@ import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
@@ -140,7 +132,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
                 sendSyncProgressBroadcast(syncProgress, context);
-                setDefaultPlan();
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
@@ -149,20 +140,6 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
 
         return batchFetchCount;
-    }
-
-    private void setDefaultPlan() {
-        String currentPlanIdentifier = allSharedPreferences.getPreference(CURRENT_PLAN_ID);
-        if (StringUtils.isBlank(currentPlanIdentifier)) {
-            Optional<PlanDefinition> defaultPlanListOptional = planDefinitionRepository.findAllPlanDefinitions().stream().findAny();
-            if (defaultPlanListOptional.isPresent()) {
-                PreferencesUtil.getInstance().setCurrentPlanId(defaultPlanListOptional.get().getIdentifier());
-                PreferencesUtil.getInstance().setCurrentPlan(defaultPlanListOptional.get().getName());
-                Intent intent = new Intent(DEFAULT_PLAN_READY);
-                LocalBroadcastManager.getInstance(RevealApplication.getInstance().getBaseContext().getApplicationContext())
-                                     .sendBroadcast(intent);
-            }
-        }
     }
 
     private void startPlanTrace(String action) {
