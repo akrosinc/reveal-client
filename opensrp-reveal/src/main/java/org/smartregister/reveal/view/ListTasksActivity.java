@@ -1,5 +1,38 @@
 package org.smartregister.reveal.view;
 
+import static android.content.DialogInterface.BUTTON_POSITIVE;
+import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
+import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
+import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
+import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FAMILY_PROFILE;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_TASK_LISTS;
+import static org.smartregister.reveal.util.Constants.SYNC_BACK_OFF_DELAY;
+import static org.smartregister.reveal.util.Constants.VERTICAL_OFFSET;
+import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTRATION;
+import static org.smartregister.reveal.util.Utils.displayDistanceScale;
+import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
+import static org.smartregister.reveal.util.Utils.getLocationBuffer;
+import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
+import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.getSyncEntityString;
+import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,13 +56,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -46,8 +77,15 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
-
-import org.apache.commons.lang3.BooleanUtils;
+import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
+import io.ona.kujaku.layers.BoundaryLayer;
+import io.ona.kujaku.listeners.OnFeatureLongClickListener;
+import io.ona.kujaku.utils.Constants;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +120,6 @@ import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants.Action;
-import org.smartregister.reveal.util.Constants.Preferences;
 import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Constants.TaskRegister;
 import org.smartregister.reveal.util.Country;
@@ -90,52 +127,8 @@ import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
-import io.ona.kujaku.listeners.OnFeatureLongClickListener;
-import io.ona.kujaku.utils.Constants;
+import org.smartregister.util.SyncUtils;
 import timber.log.Timber;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
-import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
-import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
-import static org.smartregister.reveal.util.Constants.Intervention.IRS;
-import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
-import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
-import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
-import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
-import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FAMILY_PROFILE;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_TASK_LISTS;
-import static org.smartregister.reveal.util.Constants.SYNC_BACK_OFF_DELAY;
-import static org.smartregister.reveal.util.Constants.SYNC_ENTITY_COUNT;
-import static org.smartregister.reveal.util.Constants.VERTICAL_OFFSET;
-import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTRATION;
-import static org.smartregister.reveal.util.Utils.displayDistanceScale;
-import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
-import static org.smartregister.reveal.util.Utils.getLocationBuffer;
-import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
-import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
-import static org.smartregister.reveal.util.Utils.getSyncEntityString;
-import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
 /**
  * Created by samuelgithengi on 11/20/18.
@@ -1078,7 +1071,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             }
         }
 
-        int totalSyncProgress = getTotalSyncProgress();
+        int totalSyncProgress = SyncUtils.getTotalSyncProgress();
         updateTotalSyncProgressSection(totalSyncProgress);
     }
 
@@ -1123,12 +1116,5 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
         overallSyncProgressView.setProgress(totalSyncProgress);
         PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
-    }
-
-    private int getTotalSyncProgress() {
-        return  (BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllEventsSynced()) +
-                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllLocationsSynced()) +
-                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
-                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced())) * 100 / SYNC_ENTITY_COUNT;
     }
 }

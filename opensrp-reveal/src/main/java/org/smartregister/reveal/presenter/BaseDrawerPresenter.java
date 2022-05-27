@@ -47,6 +47,7 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.view.EventRegisterActivity;
 import org.smartregister.util.AssetHandler;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
 
@@ -73,6 +74,8 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     private RevealApplication revealApplication;
     private AllSharedPreferences sharedPreferences;
+
+
 
     public BaseDrawerPresenter(BaseDrawerContract.View view, BaseDrawerContract.DrawerActivity drawerActivity) {
         this.view = view;
@@ -433,7 +436,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         syncLabel = headerView.findViewById(R.id.sync_label);
         syncBadge = activity.findViewById(R.id.sync_badge);
         if (syncBadge != null && syncLabel != null) {
-            if (synced) {
+            if (synced && SyncUtils.getTotalSyncProgress() == 100) {
                 syncBadge.setBackground(ContextCompat.getDrawable(activity, R.drawable.badge_green_oval));
                 syncLabel.setText(getView().getContext().getString(R.string.device_data_synced));
                 syncLabel.setTextColor(ContextCompat.getColor(activity, R.color.alert_complete_green));
@@ -452,4 +455,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         if (drawerActivity.getActivity() != null)
             drawerActivity.getActivity().startActivity(new Intent(drawerActivity.getActivity(), EventRegisterActivity.class));
     }
+
+
 }

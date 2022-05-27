@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,7 @@ import org.smartregister.repository.BaseRepository;
 import java.io.IOException;
 import java.util.List;
 
+import org.smartregister.reveal.util.PreferencesUtil;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
@@ -36,6 +38,7 @@ import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSI
 import static org.smartregister.AllConstants.JSON.KEY;
 import static org.smartregister.AllConstants.JSON.VALUE;
 import static org.smartregister.AllConstants.SETTINGS;
+import static org.smartregister.reveal.util.Constants.SYNC_ENTITY_COUNT;
 import static org.smartregister.util.Utils.getVersionCode;
 import static org.smartregister.util.Utils.isEmptyCollection;
 
@@ -190,5 +193,12 @@ public class SyncUtils {
             Timber.e(e);
         }
         return minAllowedAppVersion;
+    }
+
+    public static int getTotalSyncProgress() {
+        return  (BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllEventsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllLocationsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced())) * 100 / SYNC_ENTITY_COUNT;
     }
 }
