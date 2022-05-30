@@ -104,7 +104,7 @@ public class FamilyRegisterModel extends BaseFamilyRegisterModel {
                                 FamilyConstants.TABLE_NAME.FAMILY,
                                 FamilyConstants.DatabaseKeys.COMPOUND_STRUCTURE,
                                 Constants.DatabaseKeys.STRUCTURE_ID,
-                                Constants.DatabaseKeys.ID,
+                                Constants.DatabaseKeys.ID_,
                                 Constants.DatabaseKeys.STRUCTURES_TABLE,
                                 Constants.DatabaseKeys.PARENT_ID,
                                 Constants.DatabaseKeys.LAST_INTERACTED_WITH);
