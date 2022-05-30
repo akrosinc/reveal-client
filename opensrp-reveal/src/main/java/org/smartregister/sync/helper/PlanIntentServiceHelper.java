@@ -33,6 +33,7 @@ import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
@@ -178,6 +179,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            FirebaseLogger.logApiFailures(request.toString(), resp);
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
         if (returnCount) {
@@ -185,6 +187,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
         return resp.payload().toString();
     }
+
+
 
     private long getPlanDefinitionMaxServerVersion(List<PlanDefinition> planDefinitions, long maxServerVersion) {
         for (PlanDefinition planDefinition : planDefinitions) {

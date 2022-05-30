@@ -1,47 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.content.Context;
-import android.content.Intent;
-import android.util.Pair;
-
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.google.firebase.perf.metrics.Trace;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.CoreLibrary;
-import org.smartregister.reveal.R;
-import org.smartregister.SyncConfiguration;
-import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.SyncEntity;
-import org.smartregister.domain.SyncProgress;
-import org.smartregister.domain.db.EventClient;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.EventClientRepository;
-import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.helper.ECSyncHelper;
-import org.smartregister.sync.helper.ValidateAssignmentHelper;
-import org.smartregister.util.NetworkUtils;
-import org.smartregister.util.SyncUtils;
-import org.smartregister.util.Utils;
-import org.smartregister.view.activity.DrishtiApplication;
-
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import timber.log.Timber;
-
 import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
 import static org.smartregister.AllConstants.PerformanceMonitoring.CLIENT_PROCESSING;
@@ -56,6 +14,43 @@ import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttrib
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Pair;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import com.google.firebase.perf.metrics.Trace;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
+import org.smartregister.domain.db.EventClient;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.EventClientRepository;
+import org.smartregister.reveal.R;
+import org.smartregister.service.HTTPAgent;
+import org.smartregister.sync.helper.ECSyncHelper;
+import org.smartregister.sync.helper.ValidateAssignmentHelper;
+import org.smartregister.util.NetworkUtils;
+import org.smartregister.util.SyncUtils;
+import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
+import timber.log.Timber;
 
 public class SyncIntentService extends BaseSyncIntentService {
     protected static final int EVENT_PULL_LIMIT = 250;

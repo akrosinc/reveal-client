@@ -12,7 +12,6 @@ import static org.smartregister.AllConstants.RETURN_COUNT;
 import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.reveal.api.RevealService.CREATE_STRUCTURE_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
-import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;
 import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +47,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
-import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
@@ -194,6 +192,7 @@ public class LocationServiceHelper extends BaseHelper {
                 request.toString());
 
         if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(request.toString(),resp);
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
@@ -281,6 +280,7 @@ public class LocationServiceHelper extends BaseHelper {
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
 

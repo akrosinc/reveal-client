@@ -55,6 +55,7 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.LocalDateTypeConverter;
@@ -224,6 +225,7 @@ public class TaskServiceHelper extends BaseHelper {
                 request.toString());
 
         if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(request.toString(),resp);
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
@@ -282,7 +284,8 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Timber.e("Update Status failedd: %s", response.payload());
+                Timber.e("Update Status failed: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
 
@@ -349,6 +352,7 @@ public class TaskServiceHelper extends BaseHelper {
             stopTrace(taskSyncTrace);
             if (response.isFailure()) {
                 Timber.e("Failed to create new tasks on server.: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
             Set<String> unprocessedIds = new HashSet<>();
