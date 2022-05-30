@@ -448,8 +448,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                 syncLabel.setText(getView().getContext().getString(R.string.device_data_not_synced));
                 syncLabel.setTextColor(ContextCompat.getColor(activity, R.color.alert_urgent_red));
                 syncLabel.setBackground(ContextCompat.getDrawable(activity, R.drawable.rounded_border_alert_red));
-                overallSyncProgressView.setTitle("Sync Progress: 0%");
-                overallSyncProgressView.setProgress(0);
             }
         }
     }

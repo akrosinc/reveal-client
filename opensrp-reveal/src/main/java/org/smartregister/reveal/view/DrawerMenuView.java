@@ -2,6 +2,7 @@ package org.smartregister.reveal.view;
 
 import static org.smartregister.reveal.util.Constants.COPYDBNAME;
 import static org.smartregister.reveal.util.Constants.DBNAME;
+import static org.smartregister.util.SyncUtils.setAllEntityNotSynced;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -377,6 +378,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         else if (v.getId() == R.id.btn_navMenu_filled_forms)
             presenter.onShowFilledForms();
         else if (v.getId() == R.id.sync_button) {
+            resetProgressIndicators();
             toggleProgressBarView(true);
             org.smartregister.reveal.util.Utils.startImmediateSync();
             closeDrawerLayout();
@@ -427,6 +429,35 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             syncButton.setVisibility(View.VISIBLE);
             syncBadge.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void resetProgressIndicators() {
+        setAllEntityNotSynced();
+
+        ProgressIndicatorView totalProgressIndicatorView = this.activity.getActivity().findViewById(R.id.overall_sync_progress_view);
+        TextView locationsSyncLabel = this.activity.getActivity().findViewById(R.id.location_sync_progress_bar_label);
+        ProgressBar locationSyncProgressBar = this.activity.getActivity().findViewById(R.id.location_sync_progress_bar);
+
+        TextView taskSyncLabel = this.activity.getActivity().findViewById(R.id.task_sync_progress_bar_label);
+        ProgressBar taskSyncProgressBar = this.activity.getActivity().findViewById(R.id.task_sync_progress_bar);
+
+        TextView planSyncLabel = this.activity.getActivity().findViewById(R.id.plan_sync_progress_bar_label);
+        ProgressBar planSyncProgressBar = this.activity.getActivity().findViewById(R.id.plan_sync_progress_bar);
+
+        TextView eventSyncLabel = this.activity.getActivity().findViewById(R.id.event_sync_progress_bar_label);
+        ProgressBar eventSyncProgressBar = this.activity.getActivity().findViewById(R.id.event_sync_progress_bar);
+
+        totalProgressIndicatorView.setProgress(0);
+        totalProgressIndicatorView.setTitle("Sync Progress: 0%");
+
+        locationsSyncLabel.setText(String.format(this.activity.getActivity().getResources().getString(R.string.progressBarLabel), "Locations", 0));
+        locationSyncProgressBar.setProgress(0);
+        taskSyncLabel.setText(String.format(this.activity.getActivity().getResources().getString(R.string.progressBarLabel), "Tasks", 0));
+        taskSyncProgressBar.setProgress(0);
+        planSyncLabel.setText(String.format(this.activity.getActivity().getResources().getString(R.string.progressBarLabel), "Plans", 0));
+        planSyncProgressBar.setProgress(0);
+        eventSyncLabel.setText(String.format(this.activity.getActivity().getResources().getString(R.string.progressBarLabel), "Events", 0));
+        eventSyncProgressBar.setProgress(0);
     }
 
 

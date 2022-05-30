@@ -201,4 +201,10 @@ public class SyncUtils {
                 BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
                 BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced())) * 100 / SYNC_ENTITY_COUNT;
     }
+    public static void setAllEntityNotSynced(){
+        PreferencesUtil.getInstance().setAllPlansSynced(false);
+        PreferencesUtil.getInstance().setAllTasksSynced(false);
+        PreferencesUtil.getInstance().setAllEventsSynced(false);
+        PreferencesUtil.getInstance().setAllLocationsSynced(false);
+    }
 }
