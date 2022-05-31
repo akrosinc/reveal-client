@@ -34,7 +34,9 @@
         android:id="@+id/overall_sync_progress_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
+        android:layout_marginTop="@dimen/drawer_margin_vertical"
+        android:layout_marginStart="@dimen/hamburger_margin"
+        android:layout_marginEnd="@dimen/hamburger_margin"
         android:layout_weight="3"
         app:subTitle="@string/sync_progress"
         app:title="Sync Progress 0%"
@@ -174,16 +176,6 @@
 
     <!--sync progress indication end-->
 
-    <View
-        android:id="@+id/sync_stats_separator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/drawer_margin_vertical"
-        android:layout_marginBottom="@dimen/drawer_separator_margin"
-        android:background="#DEDEDE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sync_progress_section" />
     <TextView
         android:id="@+id/sync_button"
         android:layout_width="wrap_content"
@@ -194,7 +186,7 @@
         android:textColor="@color/button_blue"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sync_stats_separator" />
+        app:layout_constraintTop_toBottomOf="@id/sync_progress_section" />
 
     <TextView
         android:id="@+id/sync_label"
@@ -204,7 +196,7 @@
         android:layout_marginTop="@dimen/drawer_margin_vertical"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sync_stats_separator" />
+        app:layout_constraintTop_toBottomOf="@id/sync_progress_section" />
 
     <TextView
         android:id="@+id/btn_navMenu_p2pSyncBtn"
