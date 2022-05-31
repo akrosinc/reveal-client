@@ -460,7 +460,6 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             task.setSyncStatus(TYPE_Unsynced);
             taskRepository.addOrUpdate(task);
-            revealApplication.setSynced(false);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details,
                     FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
             event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible")
@@ -474,7 +473,7 @@ public class ListTaskInteractor extends BaseInteractor {
             } catch (JSONException e) {
                 Timber.e(e);
             }
-
+            revealApplication.setSynced(false);
         }
 
         appExecutors.mainThread().execute(new Runnable() {
