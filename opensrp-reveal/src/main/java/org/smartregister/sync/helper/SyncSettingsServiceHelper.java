@@ -73,7 +73,7 @@ public class SyncSettingsServiceHelper {
 
         String authToken = getAccessToken();
 
-        JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
+        JSONArray settings = pullSettingsFromServer(authToken);
         getGlobalSettings(settings, authToken);
         getExtraSettings(settings, authToken);
         return settings;
@@ -160,8 +160,8 @@ public class SyncSettingsServiceHelper {
      * @return settings {@link JSONArray} -- a JSON array of all the settings
      * @throws JSONException
      */
-    public JSONArray pullSettingsFromServer(String syncFilterValue, String accessToken) throws JSONException {
-        String url = SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+    public JSONArray pullSettingsFromServer(String accessToken) throws JSONException {
+        String url = SETTINGS_URL + "?" + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
         return pullSettings(url, accessToken);
     }
 
@@ -222,8 +222,8 @@ public class SyncSettingsServiceHelper {
             Timber.e(" %s  not returned data ", completeUrl);
             return null;
         }
-
-        return new JSONArray((String) resp.payload());
+        JSONObject settings = new JSONObject((String)resp.payload());
+        return settings.optJSONArray("settings");
     }
 
     @VisibleForTesting
