@@ -1,7 +1,10 @@
 package org.smartregister.sync.helper;
 
-import androidx.annotation.VisibleForTesting;
+import static org.smartregister.reveal.api.RevealService.SETTINGS_URL;
 
+import androidx.annotation.VisibleForTesting;
+import java.text.MessageFormat;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,16 +18,9 @@ import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.api.RevealService.SETTINGS_URL;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
@@ -222,8 +218,7 @@ public class SyncSettingsServiceHelper {
             Timber.e(" %s  not returned data ", completeUrl);
             return null;
         }
-        JSONObject settings = new JSONObject((String)resp.payload());
-        return settings.optJSONArray("settings");
+        return new JSONArray((String) resp.payload());
     }
 
     @VisibleForTesting
