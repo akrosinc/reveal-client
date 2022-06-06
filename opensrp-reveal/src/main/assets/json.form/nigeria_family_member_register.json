@@ -55,20 +55,6 @@
     "title": "Add Family Member",
     "fields": [
       {
-        "key": "unique_id",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "person_identifier",
-        "openmrs_entity_id": "opensrp_id",
-        "type": "edit_text",
-        "hint": "ID",
-        "read_only": "True",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Please enter the ID"
-        }
-      },
-      {
         "key": "first_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "person",

@@ -1,16 +1,39 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
+import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -32,34 +55,12 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.LocalDateTypeConverter;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
-import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
-import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.clearTraceAttributes;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 public class TaskServiceHelper extends BaseHelper {
 
@@ -74,7 +75,7 @@ public class TaskServiceHelper extends BaseHelper {
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
     public static final Gson taskGson = new GsonBuilder()
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).registerTypeAdapter(LocalDate.class,new LocalDateTypeConverter()).create();
 
     protected static TaskServiceHelper instance;
 
@@ -224,6 +225,7 @@ public class TaskServiceHelper extends BaseHelper {
                 request.toString());
 
         if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(request.toString(),resp);
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
@@ -282,7 +284,8 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Timber.e("Update Status failedd: %s", response.payload());
+                Timber.e("Update Status failed: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
 
@@ -324,6 +327,17 @@ public class TaskServiceHelper extends BaseHelper {
                     .build();
             PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId))
                     .name(personName).gender(gender).build();
+            String dob = commonPersonObject.getColumnmaps().get("dob");
+            LocalDateTime dateOfBirthAndTime;
+            if(!StringUtils.isBlank(dob)){
+                try {
+                    dateOfBirthAndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(org.joda.time.DateTime.parse(dob).getMillis()), ZoneId.systemDefault());
+                    personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
+                } catch (Exception e){
+                    Timber.e(e);
+                }
+            }
+
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
         if (!tasks.isEmpty()) {
@@ -338,6 +352,7 @@ public class TaskServiceHelper extends BaseHelper {
             stopTrace(taskSyncTrace);
             if (response.isFailure()) {
                 Timber.e("Failed to create new tasks on server.: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
             Set<String> unprocessedIds = new HashSet<>();

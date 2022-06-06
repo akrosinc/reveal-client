@@ -38,6 +38,7 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.PlanDefinition.PlanStatus;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
+import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -47,6 +48,7 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.view.EventRegisterActivity;
 import org.smartregister.util.AssetHandler;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
 
@@ -57,7 +59,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     private BaseDrawerContract.View view;
     private BaseDrawerContract.DrawerActivity drawerActivity;
-
     private PreferencesUtil prefsUtil;
 
     private LocationHelper locationHelper;
@@ -74,6 +75,8 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     private RevealApplication revealApplication;
     private AllSharedPreferences sharedPreferences;
+
+
 
     public BaseDrawerPresenter(BaseDrawerContract.View view, BaseDrawerContract.DrawerActivity drawerActivity) {
         this.view = view;
@@ -433,8 +436,9 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         View headerView = navigationView.getHeaderView(0);
         syncLabel = headerView.findViewById(R.id.sync_label);
         syncBadge = activity.findViewById(R.id.sync_badge);
+        ProgressIndicatorView overallSyncProgressView = headerView.findViewById(R.id.overall_sync_progress_view);
         if (syncBadge != null && syncLabel != null) {
-            if (synced) {
+            if (synced && SyncUtils.getTotalSyncProgress() == 100) {
                 syncBadge.setBackground(ContextCompat.getDrawable(activity, R.drawable.badge_green_oval));
                 syncLabel.setText(getView().getContext().getString(R.string.device_data_synced));
                 syncLabel.setTextColor(ContextCompat.getColor(activity, R.color.alert_complete_green));
@@ -453,5 +457,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         if (drawerActivity.getActivity() != null)
             drawerActivity.getActivity().startActivity(new Intent(drawerActivity.getActivity(), EventRegisterActivity.class));
     }
+
 
 }

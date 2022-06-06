@@ -47,6 +47,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
@@ -146,7 +147,6 @@ public class LocationServiceHelper extends BaseHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
-
                 // retry fetch since there were items synced from the server
                 locations.addAll(batchLocationStructures);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
@@ -159,6 +159,7 @@ public class LocationServiceHelper extends BaseHelper {
         }
         return batchLocationStructures;
     }
+
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {
 
@@ -191,6 +192,7 @@ public class LocationServiceHelper extends BaseHelper {
                 request.toString());
 
         if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(request.toString(),resp);
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
@@ -278,6 +280,7 @@ public class LocationServiceHelper extends BaseHelper {
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
+                FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
 

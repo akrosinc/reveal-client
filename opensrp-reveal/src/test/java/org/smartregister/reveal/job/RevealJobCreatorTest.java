@@ -10,7 +10,6 @@ import org.mockito.junit.MockitoRule;
 import org.smartregister.job.DocumentConfigurationServiceJob;
 import org.smartregister.job.ExtendedSyncServiceJob;
 import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.ValidateSyncDataServiceJob;
 import org.smartregister.reveal.BaseUnitTest;
@@ -69,12 +68,6 @@ public class RevealJobCreatorTest extends BaseUnitTest {
         assertTrue(extendedSyncServiceJob instanceof  ExtendedSyncServiceJob);
     }
 
-    @Test
-    public void testCreatePullUniqueIdsServiceJob() {
-        Job pullUniqueIdsServiceJob = revealJobCreator.create(PullUniqueIdsServiceJob.TAG);
-        assertNotNull(pullUniqueIdsServiceJob);
-        assertTrue(pullUniqueIdsServiceJob instanceof PullUniqueIdsServiceJob);
-    }
 
     @Test
     public void testValidateSyncDataServiceJob() {

@@ -20,6 +20,7 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.service.UserService;
 import org.smartregister.util.SyncUtils;
@@ -195,6 +196,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         String baseUrl = getFormattedBaseUrl();
         Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}", baseUrl, USER_ASSIGNMENT_URL));
         if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(USER_ASSIGNMENT_URL,resp);
             throw new NoHttpResponseException(USER_ASSIGNMENT_URL + " not returned data");
         }
         return resp.payload();

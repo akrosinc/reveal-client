@@ -1,22 +1,6 @@
 package org.smartregister.reveal.interactor;
 
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.smartregister.domain.Location;
-import org.smartregister.domain.PlanDefinition;
-import org.smartregister.repository.PlanDefinitionSearchRepository;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.BaseDrawerContract;
-import org.smartregister.reveal.util.AppExecutors;
-import org.smartregister.reveal.util.Utils;
-
-import java.util.Set;
-
-import timber.log.Timber;
-
 import static org.smartregister.repository.BaseRepository.TYPE_Synced;
-import static org.smartregister.repository.BaseRepository.TYPE_Task_Unprocessed;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_SYNC_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.SYNC_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_SYNC_STATUS;
@@ -24,6 +8,18 @@ import static org.smartregister.reveal.util.Constants.Tables.CLIENT_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.EVENT_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.STRUCTURE_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.TASK_TABLE;
+
+import java.util.Set;
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.PlanDefinition;
+import org.smartregister.repository.PlanDefinitionSearchRepository;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.BaseDrawerContract;
+import org.smartregister.reveal.util.AppExecutors;
+import org.smartregister.reveal.util.Utils;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 3/21/19.
@@ -103,7 +99,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
                 Cursor syncCursor = null;
                 try
                 {
-                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Task_Unprocessed, TYPE_Synced, TYPE_Synced});
+                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced});
                     Integer count = syncCursor.getCount();
 
                     if(count == 0)

@@ -1,12 +1,24 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
+import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
+import android.content.Context;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -21,45 +33,37 @@ import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.COUNT;
-import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
-import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
-import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
-import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
-import static org.smartregister.reveal.api.RevealService.SYNC_PLANS_URL;
-import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
-import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
-import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
 public class PlanIntentServiceHelper extends BaseHelper {
 
+
     private final PlanDefinitionRepository planDefinitionRepository;
+
     private final AllSharedPreferences allSharedPreferences;
-    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+
+    protected static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
             .disableHtmlEscaping()
             .create();
 
     protected final Context context;
+
     protected static PlanIntentServiceHelper instance;
 
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
+
     private long totalRecords;
+
     private SyncProgress syncProgress;
 
     private Trace planSyncTrace;
@@ -74,7 +78,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
-        this.planSyncTrace  = initTrace(PLAN_SYNC);
+        this.planSyncTrace = initTrace(PLAN_SYNC);
         this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
@@ -124,11 +128,11 @@ public class PlanIntentServiceHelper extends BaseHelper {
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
                 batchFetchCount = plans.size();
-                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE,
+                        String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
 
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
                 sendSyncProgressBroadcast(syncProgress, context);
-
                 // retry fetch since there were items synced from the server
                 batchFetchPlansFromServer(false);
             }
@@ -147,7 +151,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
         startTrace(planSyncTrace);
     }
 
-    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
+    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount)
+            throws Exception {
         HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -159,6 +164,13 @@ public class PlanIntentServiceHelper extends BaseHelper {
         if (!organizationIds.isEmpty()) {
             request.put("organizations", new JSONArray(organizationIds));
         }
+        request.put("serverVersion", serverVersion);
+
+        if (httpAgent == null) {
+            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
+        }
+
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
                         baseUrl,
@@ -167,6 +179,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            FirebaseLogger.logApiFailures(request.toString(), resp);
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
         if (returnCount) {
@@ -174,6 +187,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
         return resp.payload().toString();
     }
+
+
 
     private long getPlanDefinitionMaxServerVersion(List<PlanDefinition> planDefinitions, long maxServerVersion) {
         for (PlanDefinition planDefinition : planDefinitions) {

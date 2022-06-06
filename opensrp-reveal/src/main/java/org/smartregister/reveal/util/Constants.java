@@ -1,6 +1,5 @@
 package org.smartregister.reveal.util;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,6 +96,9 @@ public interface Constants {
 
     int SMC_DISPENSE_MIN_MONTHS = 3;
 
+    int SYNC_ENTITY_COUNT = 4;
+
+
     interface CONFIGURATION {
         String LOGIN = "login";
         String GLOBAL_CONFIGS = "global_configs";
@@ -165,6 +167,7 @@ public interface Constants {
         String EVENT_LONGITUDE = "EVENT_LONGITUDE";
         String GPS_ACCURACY = "GPS_ACCURACY";
         String ADMIN_PASSWORD_ENTERED = "ADMIN_PASSWORD_ENTERED";
+        String TOTAL_SYNC_PROGRESS = "TOTAL_SYNC_PROGRESS";
     }
 
     interface Tags {

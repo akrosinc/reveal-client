@@ -1,7 +1,10 @@
 package org.smartregister.sync.helper;
 
-import androidx.annotation.VisibleForTesting;
+import static org.smartregister.reveal.api.RevealService.SETTINGS_URL;
 
+import androidx.annotation.VisibleForTesting;
+import java.text.MessageFormat;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,16 +18,9 @@ import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.intent.SettingsSyncIntentService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
-
-import java.text.MessageFormat;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.api.RevealService.SETTINGS_URL;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
@@ -73,7 +69,7 @@ public class SyncSettingsServiceHelper {
 
         String authToken = getAccessToken();
 
-        JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
+        JSONArray settings = pullSettingsFromServer(authToken);
         getGlobalSettings(settings, authToken);
         getExtraSettings(settings, authToken);
         return settings;
@@ -160,8 +156,8 @@ public class SyncSettingsServiceHelper {
      * @return settings {@link JSONArray} -- a JSON array of all the settings
      * @throws JSONException
      */
-    public JSONArray pullSettingsFromServer(String syncFilterValue, String accessToken) throws JSONException {
-        String url = SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+    public JSONArray pullSettingsFromServer(String accessToken) throws JSONException {
+        String url = SETTINGS_URL + "?" + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
         return pullSettings(url, accessToken);
     }
 
@@ -222,7 +218,6 @@ public class SyncSettingsServiceHelper {
             Timber.e(" %s  not returned data ", completeUrl);
             return null;
         }
-
         return new JSONArray((String) resp.payload());
     }
 

@@ -1,8 +1,13 @@
 package org.smartregister.login.interactor;
 
+import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
+import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
+
 import android.content.Context;
 import android.content.DialogInterface;
-
+import java.lang.ref.WeakReference;
+import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -11,32 +16,23 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
-import org.smartregister.reveal.R;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
 import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.R;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
-
-import java.lang.ref.WeakReference;
-import java.util.TimeZone;
-
 import timber.log.Timber;
-
-import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
-import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 
 /**
  * Created by ndegwamartin on 26/06/2018.
@@ -253,7 +249,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
 
         if (NetworkUtils.isNetworkAvailable()) {
-            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
             SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
         }
     }

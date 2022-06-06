@@ -1,21 +1,6 @@
 package org.smartregister.reveal.util;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.apache.commons.lang3.StringUtils;
-import org.smartregister.account.AccountHelper;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.application.RevealApplication;
-
-import java.lang.reflect.Type;
-import java.util.List;
-
 import static org.smartregister.reveal.util.Constants.ACTIONS;
-import org.apache.commons.lang3.StringUtils;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.application.RevealApplication;
-
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_DISTRICT;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_FACILITY;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA;
@@ -24,12 +9,30 @@ import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PROVINCE;
 import static org.smartregister.reveal.util.Constants.Preferences.FACILITY_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.TOTAL_SYNC_PROGRESS;
 import static org.smartregister.reveal.util.Constants.TILDE;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.account.AccountHelper;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.application.RevealApplication;
 
 /**
  * Created by samuelgithengi on 11/29/18.
  */
 public class PreferencesUtil {
+
+    public static final String ALL_TASKS_SYNCED = "ALL_TASKS_SYNCED";
+
+    public static final String ALL_EVENTS_SYNCED = "ALL_EVENTS_SYNCED";
+
+    public static final String ALL_PLANS_SYNCED = "ALL_PLANS_SYNCED";
+
+    public static final String ALL_LOCATIONS_SYNCED = "ALL_LOCATIONS_SYNCED";
 
     private AllSharedPreferences allSharedPreferences;
 
@@ -143,4 +146,43 @@ public class PreferencesUtil {
         return actionCodes;
     }
 
+    public void setCurrentTotalSyncProgress(String progress){
+        allSharedPreferences.savePreference(TOTAL_SYNC_PROGRESS,progress);
+    }
+
+    public String getCurrentTotalSyncProgress(){
+        return allSharedPreferences.getPreference(TOTAL_SYNC_PROGRESS);
+    }
+
+    public void setAllTasksSynced(boolean isAllTasksSynced){
+       allSharedPreferences.saveBooleanPreference(ALL_TASKS_SYNCED,isAllTasksSynced);
+    }
+
+    public boolean isAllTasksSynced(){
+        return allSharedPreferences.getBooleanPreference(ALL_TASKS_SYNCED);
+    }
+
+    public void setAllEventsSynced(boolean isAllEventsSynced){
+        allSharedPreferences.saveBooleanPreference(ALL_EVENTS_SYNCED,isAllEventsSynced);
+    }
+
+    public boolean isAllEventsSynced(){
+        return allSharedPreferences.getBooleanPreference(ALL_EVENTS_SYNCED);
+    }
+
+    public void setAllPlansSynced(boolean isAllPlansSynced){
+        allSharedPreferences.saveBooleanPreference(ALL_PLANS_SYNCED,isAllPlansSynced);
+    }
+
+    public boolean isAllPlansSynced(){
+        return allSharedPreferences.getBooleanPreference(ALL_PLANS_SYNCED);
+    }
+
+    public void setAllLocationsSynced(boolean isAllLocationsSynced){
+        allSharedPreferences.saveBooleanPreference(ALL_LOCATIONS_SYNCED,isAllLocationsSynced);
+    }
+
+    public boolean isAllLocationsSynced(){
+        return allSharedPreferences.getBooleanPreference(ALL_LOCATIONS_SYNCED);
+    }
 }

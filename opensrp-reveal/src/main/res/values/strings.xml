@@ -40,6 +40,9 @@
     <string name="select_campaign_operational_area">Plan and Operational area not set. Select from the hamburger menu</string>
     <string name="revoked_plan_operational_area">Previously selected Plan and/or Operational area revoked. Select from the hamburger menu</string>
 
+    <string name="location_and_plan_sync_in_progress">Location and Plan Sync in Progress</string>
+
+
     <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
     <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
 
@@ -426,6 +429,7 @@
     <string name="individual_total_number_of_children_eligible_3_to_49_mos">Individual: TOTAL NUMBER OF ELIGIBLE CHILDREN 3-59 MOS</string>
     <string name="individual_total_treated_3_to_59_mos">Individual: TOTAL TREATED 3-59 MOS</string>
     <string name="sync_started">Sync Started</string>
+    <string name="sync_progress">Sync Progress</string>
     <string name="device_data_synced">Device data synced</string>
     <string name="device_data_not_synced">Device data not synced</string>
 

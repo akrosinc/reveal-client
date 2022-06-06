@@ -1,73 +1,5 @@
 package org.smartregister.reveal.util;
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.util.Pair;
-
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.gson.JsonElement;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.Geometry;
-import com.mapbox.geojson.MultiPolygon;
-import com.mapbox.geojson.Polygon;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.clientandeventmodel.Client;
-import org.smartregister.clientandeventmodel.Event;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.Obs;
-import org.smartregister.domain.SyncEntity;
-import org.smartregister.domain.tag.FormTag;
-import org.smartregister.job.DocumentConfigurationServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.job.LocationTaskServiceJob;
-import org.smartregister.reveal.util.Constants.CONFIGURATION;
-import org.smartregister.reveal.util.Constants.Properties;
-import org.smartregister.reveal.util.Constants.Tags;
-import org.smartregister.util.Cache;
-import org.smartregister.util.CacheableData;
-import org.smartregister.util.DatabaseMigrationUtils;
-import org.smartregister.util.RecreateECUtil;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import timber.log.Timber;
-
 import static org.smartregister.reveal.util.Constants.ADMIN_PASSWORD_REQUIRED;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LATITUDE_AT_EQUITOR;
@@ -92,6 +24,66 @@ import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUD
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 import static org.smartregister.reveal.util.Constants.Tags.LGA;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.View;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.util.Pair;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.gson.JsonElement;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.Geometry;
+import com.mapbox.geojson.MultiPolygon;
+import com.mapbox.geojson.Polygon;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import net.sqlcipher.database.SQLiteDatabase;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.tag.FormTag;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.job.LocationTaskServiceJob;
+import org.smartregister.reveal.util.Constants.CONFIGURATION;
+import org.smartregister.reveal.util.Constants.Properties;
+import org.smartregister.reveal.util.Constants.Tags;
+import org.smartregister.util.Cache;
+import org.smartregister.util.CacheableData;
+import org.smartregister.util.DatabaseMigrationUtils;
+import org.smartregister.util.RecreateECUtil;
+import timber.log.Timber;
 
 public class Utils {
 
@@ -147,8 +139,6 @@ public class Utils {
 
     public static void startImmediateSync() {
         LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
-        PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-        DocumentConfigurationServiceJob.scheduleJobImmediately(DocumentConfigurationServiceJob.TAG);
     }
 
 

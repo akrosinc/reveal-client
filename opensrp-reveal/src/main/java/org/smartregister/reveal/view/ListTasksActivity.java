@@ -1,103 +1,5 @@
 package org.smartregister.reveal.view;
 
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.UiSettings;
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.pluginscalebar.ScaleBarOptions;
-import com.mapbox.pluginscalebar.ScaleBarPlugin;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.SyncProgress;
-import org.smartregister.domain.Task;
-import org.smartregister.dto.UserAssignmentDTO;
-import org.smartregister.family.util.DBConstants;
-import org.smartregister.family.util.Utils;
-import org.smartregister.receiver.SyncProgressBroadcastReceiver;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.receiver.ValidateAssignmentReceiver;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.BaseDrawerContract;
-import org.smartregister.reveal.contract.ListTaskContract;
-import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
-import org.smartregister.reveal.model.CardDetails;
-import org.smartregister.reveal.model.FamilyCardDetails;
-import org.smartregister.reveal.model.FilterConfiguration;
-import org.smartregister.reveal.model.IRSVerificationCardDetails;
-import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
-import org.smartregister.reveal.model.SprayCardDetails;
-import org.smartregister.reveal.model.TaskFilterParams;
-import org.smartregister.reveal.presenter.ListTaskPresenter;
-import org.smartregister.reveal.repository.RevealMappingHelper;
-import org.smartregister.reveal.util.AlertDialogUtils;
-import org.smartregister.reveal.util.CardDetailsUtil;
-import org.smartregister.reveal.util.Constants.Action;
-import org.smartregister.reveal.util.Constants.Properties;
-import org.smartregister.reveal.util.Constants.TaskRegister;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.RevealJsonFormUtils;
-import org.smartregister.reveal.util.RevealMapHelper;
-import org.smartregister.util.NetworkUtils;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
-import io.ona.kujaku.listeners.OnFeatureLongClickListener;
-import io.ona.kujaku.utils.Constants;
-import timber.log.Timber;
-
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
@@ -130,6 +32,103 @@ import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
+
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.pluginscalebar.ScaleBarOptions;
+import com.mapbox.pluginscalebar.ScaleBarPlugin;
+import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
+import io.ona.kujaku.layers.BoundaryLayer;
+import io.ona.kujaku.listeners.OnFeatureLongClickListener;
+import io.ona.kujaku.utils.Constants;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
+import org.smartregister.domain.Task;
+import org.smartregister.dto.UserAssignmentDTO;
+import org.smartregister.family.util.DBConstants;
+import org.smartregister.family.util.Utils;
+import org.smartregister.receiver.SyncProgressBroadcastReceiver;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.receiver.ValidateAssignmentReceiver;
+import org.smartregister.reporting.view.ProgressIndicatorView;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.BaseDrawerContract;
+import org.smartregister.reveal.contract.ListTaskContract;
+import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
+import org.smartregister.reveal.model.CardDetails;
+import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.FilterConfiguration;
+import org.smartregister.reveal.model.IRSVerificationCardDetails;
+import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
+import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.TaskFilterParams;
+import org.smartregister.reveal.presenter.ListTaskPresenter;
+import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.util.AlertDialogUtils;
+import org.smartregister.reveal.util.CardDetailsUtil;
+import org.smartregister.reveal.util.Constants.Action;
+import org.smartregister.reveal.util.Constants.Properties;
+import org.smartregister.reveal.util.Constants.TaskRegister;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.util.RevealMapHelper;
+import org.smartregister.util.NetworkUtils;
+import org.smartregister.util.SyncUtils;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 11/20/18.
@@ -192,6 +191,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private CardDetailsUtil cardDetailsUtil = new CardDetailsUtil();
 
     private boolean formOpening;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -631,7 +631,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             geoJsonSource.setGeoJson(featureCollection);
 
             if (operationalArea != null) {
-                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());  //TODO: setting up this camera view
+                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation) {
                     Feature indexCase = revealMapHelper.getIndexCase(featureCollection);
                     if (indexCase != null) {
@@ -1024,11 +1024,55 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void onSyncProgress(SyncProgress syncProgress) {
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
-        ProgressBar syncProgressBar = findViewById(R.id.sync_progress_bar);
-        TextView syncProgressBarLabel = findViewById(R.id.sync_progress_bar_label);
-        String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
-        syncProgressBar.setProgress(progress);
-        syncProgressBarLabel.setText(labelText);
+        if(syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)){
+            ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
+            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                 PreferencesUtil.getInstance().setAllLocationsSynced(true);
+            } else  {
+                PreferencesUtil.getInstance().setAllLocationsSynced(false);
+            }
+
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.TASKS)){
+            ProgressBar syncProgressBar = findViewById(R.id.task_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.task_sync_progress_bar_label);
+            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                PreferencesUtil.getInstance().setAllTasksSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllTasksSynced(false);
+            }
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.PLANS)){
+            ProgressBar syncProgressBar = findViewById(R.id.plan_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.plan_sync_progress_bar_label);
+            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                PreferencesUtil.getInstance().setAllPlansSynced(true);
+            }else {
+                PreferencesUtil.getInstance().setAllPlansSynced(false);
+            }
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.EVENTS)){
+            ProgressBar syncProgressBar = findViewById(R.id.event_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.event_sync_progress_bar_label);
+            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if(progress == 100){
+                PreferencesUtil.getInstance().setAllEventsSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllEventsSynced(false);
+            }
+        }
+
+        int totalSyncProgress = SyncUtils.getTotalSyncProgress();
+        updateTotalSyncProgressSection(totalSyncProgress);
     }
 
     @Override
@@ -1065,5 +1109,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                         dialog.dismiss();
                     }
                 });
+    }
+
+    private void updateTotalSyncProgressSection(final int totalSyncProgress) {
+        ProgressIndicatorView overallSyncProgressView = findViewById(R.id.overall_sync_progress_view);
+        overallSyncProgressView.setTitle(String.format("Sync Progress  %d%%", totalSyncProgress));
+        overallSyncProgressView.setProgress(totalSyncProgress);
+        PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
     }
 }

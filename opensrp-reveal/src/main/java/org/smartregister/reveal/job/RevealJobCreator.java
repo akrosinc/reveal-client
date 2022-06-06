@@ -9,7 +9,6 @@ import com.evernote.android.job.JobCreator;
 import org.smartregister.job.DocumentConfigurationServiceJob;
 import org.smartregister.job.ExtendedSyncServiceJob;
 import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.ValidateSyncDataServiceJob;
 import org.smartregister.reveal.sync.RevealSyncIntentService;
@@ -33,8 +32,6 @@ public class RevealJobCreator implements JobCreator {
                 return new RevealSyncSettingsServiceJob();
             case ExtendedSyncServiceJob.TAG:
                 return new ExtendedSyncServiceJob();
-            case PullUniqueIdsServiceJob.TAG:
-                return new PullUniqueIdsServiceJob();
             case ValidateSyncDataServiceJob.TAG:
                 return new ValidateSyncDataServiceJob();
             case DocumentConfigurationServiceJob.TAG:
