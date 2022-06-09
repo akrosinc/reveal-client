@@ -13,14 +13,14 @@ These instructions will get you a copy of the project up and running on your loc
 ## Development setup
 
 ### Steps to set up
-[OpenSRP android client app build](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619236/OpenSRP+App+Build)
+TBC
 
 ### Running the tests
 
-[Android client unit tests](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/65570428/OpenSRP+Client)
+TBC
 
 ## Deployment
-[Production releases](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/1141866503/How+to+create+a+release+APK)
+TBC
 
 ## Features
 -   Supports tasking functionality
@@ -40,18 +40,16 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 For more details check out <https://semver.org/>
 
 ## Authors/Team 
--   The OpenSRP team
--   See the list of contributors who participated in this project from the [Contributors](../../graphs/contributors) link
+TBC
 
 ## Contributing
-[Contribution guidelines](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619193/OpenSRP+Developer+s+Guide)
+TBC
 
 ## Documentation
-Wiki [OpenSRP Documentation](https://smartregister.atlassian.net/wiki/spaces/Documentation)
+TBC
 
 ## Support
-Email: <mailto:support@ona.io>
-Slack workspace: <opensrp.slack.com>
+TBC
 
 ## License
 This project is licensed under the Apache 2.0 License - see the LICENSE.md file for details
