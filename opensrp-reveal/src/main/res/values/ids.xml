@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="task_details" type="id" />
+    <item name="filter_category" type="id" />
+
+    <!-- from base-->
+    <item name="node_header" type="id" />
+    <item name="node_items" type="id" />
+    <item name="tree_items" type="id" />
+    <item name="entity_id" type="id" />
+
+<!--from opensrp-client-family-->
+    <item name="VIEW_ID" type="id" />
+
+</resources>
+

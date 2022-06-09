@@ -1,0 +1,481 @@
+{
+  "count": "1",
+  "encounter_type": "daily_summary",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Saisir le formulaire de synthése journaliére",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "collection_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date de la collecte",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Merci de spécifier la date de la collecte"
+        }
+      },
+      {
+        "key": "zone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "name",
+        "hint": "Nom de la localité",
+        "v_regex": {
+          "value": "[A-Za-z\\s\.\-]*",
+          "err": "Merci d'entrer un nomp valide"
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "spray_areas",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "multi_select_list",
+        "buttonText": "Select the SA(s) that this spray operator worked in today",
+        "dialogTitle": "Select the SA(s) that this spray operator worked in today",
+        "searchHint": "Saisier le nom de la zone d'aspersion",
+        "source": "true",
+        "repositoryClass":"org.smartregister.reveal.model.SprayAreaMultiSelectRepository",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        }
+      },
+      {
+        "key": "sprayop_code",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Nom de l'applicateur",
+        "v_required": {
+          "value": "true",
+          "err": "Merci de saisir le code l'applicateur"
+        }
+      },
+      {
+        "key": "found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Nombre de structures éligibles trouvées par applicateur",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Le nombre de structures éligibles trouvées par applicateur est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre une nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre une nombre entier"
+        },
+        "v_max": {
+          "value": "50",
+          "err": "Le nombre de structures éligibles trouvées par applicateur doit etre infierieur à 50"
+        }
+      },
+      {
+        "key": "found_hint",
+        "type": "label",
+        "text": "Vérifiez que cela correspond au nombre total enregistré sur la fiche de collecte de l'applicateur",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Nombre de structures éligibles TRAITEES par applicateur",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Nombre de structures éligibles TRAITEES par applicateur est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre supérieur ou égal à 0"
+        },
+        "v_relative_max": {
+          "value": "found",
+          "err": "Le nombre de structures éligibles TRAITEES par applicateur doit etre inférieur au nombre de structures trouvées"
+        }
+      },
+      {
+        "key": "sprayed_hint",
+        "type": "label",
+        "text": "Vérifiez que cela correspond au numéro enregistré sur la fiche de collecte de l'applicateur",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "bottles_start",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien de sachets ont été RECUS par l'applicateur en début de journée",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Le champ est mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le champ doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le champ doit etre un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Le champ doit etre superieur ou égal à 0"
+        },
+        "v_max": {
+          "value": "10",
+          "err": "Le champ doit etre inférieur à 10"
+        }
+      },
+      {
+        "key": "bottles_full",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien de sachets PLEINS ont été RETOURNES par l'applicateur à la fin de la journée",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Le champ est mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Le champ doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Le champ doit etre un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Le champ doit etre superieur ou égal à 0"
+        },
+        "v_relative_max": {
+          "value": "bottles_start",
+          "err": "Doit etre inférieur ou égal au sachets reçus"
+        }
+      },
+      {
+        "key": "bottles_empty",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien de sachets VIDES ont été RETOURNES par l'appliacteur à la fin de la journée?",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Le champ est mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Doit etre un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Doit etre inférieur ou égal à 0"
+        }
+      },
+      {
+        "key": "bottles_empty_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Doit etre inférieur ou égal au nombre de sachets recus moins le nombre de sachets pleins",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "bottles_lostdamaged",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien de sachets sont perdus ou gatés",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Le champ est mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Doit etre un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Doit etre un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Doit etre inférieur ou égal à 0"
+        }
+      },
+      {
+        "key": "bottles_lostdamaged_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Doit etre inférieur ou égal au nombre de sachets recus moins le nombre de sachets pleins minus sachets empty",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "bottles_accounted",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "bottles_accounted_info",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Un total de {bottles_accounted} n'a pas été retrouvé",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "bottles_accounted_approve",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label_text_size": "8sp",
+        "label": "Merci de vérifier si c'est correct.",
+        "options": [
+          {
+            "key": "isConsented",
+            "text": "I Accept",
+            "value": false,
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_relevance.yml"
+            }
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_calculation.yml"
+            }
+          }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Merci de vérifier l'item"
+        }
+      },
+      {
+        "key": "bottles_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Selectionner une raison pour les sachte non retrouvés",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "lost",
+            "text": "Perdu"
+          },
+          {
+            "key": "damaged",
+            "text": "Endommagé"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "bottles_reasontext",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Merci de saisir la raison de la nom comptabilisation des sachets",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champ obligatoire"
+        },
+        "relevance": {
+          "step1:bottles_reason": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      }
+    ]
+  }
+}

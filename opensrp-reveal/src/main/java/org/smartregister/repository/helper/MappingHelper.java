@@ -1,0 +1,19 @@
+package org.smartregister.repository.helper;
+
+import android.location.Location;
+
+import androidx.annotation.NonNull;
+
+import org.smartregister.domain.Geometry;
+
+
+public interface MappingHelper {
+
+    /**
+     * Generates the center from the {@link Geometry} of  MultiPolygon, Polygon and @MultiPoint
+     *
+     * @param featureGeometry the geometry of structure
+     * @return Location of the center
+     */
+    Location getCenter(@NonNull String featureGeometry);
+}

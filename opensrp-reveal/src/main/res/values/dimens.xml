@@ -1,0 +1,236 @@
+<resources>
+    <dimen name="login_font_size">16sp</dimen>
+    <dimen name="login_view_component_height">48dp</dimen>
+    <dimen name="login_logo_height">120dp</dimen>
+    <dimen name="login_logo_top_padding">40dp</dimen>
+    <dimen name="login_horizontal_margin">30dp</dimen>
+    <dimen name="login_bottom_margin">15dp</dimen>
+    <dimen name="login_edit_text_textSize">16sp</dimen>
+
+    <dimen name="hamburger_padding">4dp</dimen>
+    <dimen name="status_label_vertical_padding">8dp</dimen>
+    <dimen name="status_label_horizontal_padding">16dp</dimen>
+    <dimen name="hamburger_margin">16dp</dimen>
+
+    <dimen name="drawer_margin">32dp</dimen>
+    <dimen name="drawer_second_margin">88dp</dimen>
+    <dimen name="divider_margin">27dp</dimen>
+    <dimen name="drawer_margin_vertical">10dp</dimen>
+    <dimen name="drawer_separator_margin">20dp</dimen>
+    <dimen name="drawer_drawable_padding">10dp</dimen>
+    <dimen name="dialog_min_width_major">90%</dimen>
+    <dimen name="operator_top_margin">50dp</dimen>
+
+    <dimen name="drawer_icon_margin">40dp</dimen>
+
+    <dimen name="structure_info_card_text_size">18sp</dimen>
+    <dimen name="structure_info_card_status_text_size">22sp</dimen>
+    <dimen name="mosquito_collection_card_view_title_text_size">20sp</dimen>
+    <dimen name="mosquito_collection_card_view_title_left_margin">25dp</dimen>
+    <dimen name="mosquito_collection_card_view_status_left_margin">60dp</dimen>
+    <dimen name="structure_info_card_scroll_layout_height">200dp</dimen>
+    <dimen name="change_spray_status_btn_bottom_margin">15dp</dimen>
+    <dimen name="my_location_btn_margin">16dp</dimen>
+    <dimen name="my_location_button_dimen">48dp</dimen>
+    <dimen name="task_register_launcher_horizontal_padding">12dp</dimen>
+    <dimen name="task_register_launcher_vertical_padding">8dp</dimen>
+    <dimen name="task_register_text_size">16sp</dimen>
+    <dimen name="task_register_padding">8dp</dimen>
+    <dimen name="task_register_action_width">120dp</dimen>
+    <dimen name="task_register_action_text">16sp</dimen>
+    <dimen name="task_register_vertical_padding">4dp</dimen>
+    <dimen name="task_toolbar_margin">20dp</dimen>
+    <dimen name="sync_badge_margin">35dp</dimen>
+
+    <dimen name="operational_area_boundary_text_size">10sp</dimen>
+    <dimen name="operational_area_boundary_width">1dp</dimen>
+    <dimen name="irs_lite_operational_area_boundary_width">0dp</dimen>
+    <dimen name="task_action_text">18sp</dimen>
+    <dimen name="case_section_margin">16dp</dimen>
+    <dimen name="case_details_margin">8dp</dimen>
+    <dimen name="detect_case_padding">40dp</dimen>
+
+    <dimen name="progress_height">80dp</dimen>
+    <dimen name="offline_map_label_text_size">18sp</dimen>
+    <dimen name="downloading_hint_text_size">12sp</dimen>
+
+    <dimen name="filter_toggle_end_margin">16dp</dimen>
+    <dimen name="filter_toggle_bottom_margin">8dp</dimen>
+    <dimen name="filter_toggle_padding">32dp</dimen>
+
+    <dimen name="distance_scale_text_size">14dp</dimen>
+    <dimen name="reveal_logo_margin_start">5dp</dimen>
+    <dimen name="partner_logo_height">80dp</dimen>
+    <dimen name="partner_logo_margin_top">20dp</dimen>
+    <dimen name="event_register_list_title_size">16sp</dimen>
+    <dimen name="event_register_row_title_size">15sp</dimen>
+
+    <dimen name="compass_top_margin">35dp</dimen>
+    <dimen name="compass_left_margin">8dp</dimen>
+    <dimen name="map_status_label">20sp</dimen>
+
+
+    <!-- from opensrp-client-core-->
+    <dimen name="list_profile_box_width">0dp</dimen>
+    <dimen name="list_ec_no_view_width">0dp</dimen>
+    <dimen name="list_risk_factors_view_width">0dp</dimen>
+    <dimen name="list_fp_alert_width">0dp</dimen>
+    <dimen name="list_gplsa_view_width">0dp</dimen>
+    <dimen name="list_fp_view_width">0dp</dimen>
+    <dimen name="list_hb_details_view_width">0dp</dimen>
+    <dimen name="list_ifa_details_view_width">0dp</dimen>
+    <dimen name="list_ifa_alert_view_width">0dp</dimen>
+    <dimen name="list_delivery_plan_alert_view_width">0dp</dimen>
+    <dimen name="list_delivery_plan_service_provided_view_width">0dp</dimen>
+    <dimen name="list_children_view_width">0dp</dimen>
+    <dimen name="list_status_view_width">0dp</dimen>
+    <dimen name="list_edit_icon_view_width">0dp</dimen>
+    <dimen name="list_delivery_info_view_width">0dp</dimen>
+
+    <dimen name="list_item_height">82dp</dimen>
+
+    <dimen name="client_profile_pic_width">80dp</dimen>
+    <dimen name="client_profile_pic_height">70dp</dimen>
+    <dimen name="client_profile_pic_margin_left">5dp</dimen>
+    <dimen name="client_profile_pic_margin_right">5dp</dimen>
+    <dimen name="client_profile_pic_margin_top">5dp</dimen>
+    <dimen name="client_profile_badge_width">30dp</dimen>
+    <dimen name="client_profile_badge_height">22dp</dimen>
+    <dimen name="client_profile_badge_layout_margin_top">5dp</dimen>
+    <dimen name="wife_name_padding_right_due_to_age_display">30dp</dimen>
+    <dimen name="client_profile_village_margin">3dp</dimen>
+    <dimen name="fp_register_follow_up_margin">5dp</dimen>
+
+    <dimen name="list_item_text_font_size">16sp</dimen>
+    <dimen name="list_main_text_font_size">19sp</dimen>
+
+    <dimen name="list_header_font_size">24sp</dimen>
+    <dimen name="list_service_mode_font_size">22sp</dimen>
+
+    <dimen name="ec_main_header_height">49dp</dimen>
+    <dimen name="smart_register_status_bar_height">30dp</dimen>
+
+    <dimen name="list_header_height">25dp</dimen>
+
+    <dimen name="pagination_bar_height">50dp</dimen>
+    <dimen name="pagination_bar_button_width">120dp</dimen>
+    <dimen name="pagination_bar_text_size">16sp</dimen>
+
+    <dimen name="ec_main_header_search_box_width">150dp</dimen>
+    <dimen name="ec_main_header_search_cancel_button_width">50dp</dimen>
+    <dimen name="ec_main_header_search_layout_width">200dp</dimen>
+    <dimen name="smart_register_client_divider_height">1dp</dimen>
+    <dimen name="list_item_text_padding_left_size">10dp</dimen>
+    <dimen name="client_age_padding">2dp</dimen>
+
+    <dimen name="list_main_header_size">22sp</dimen>
+
+    <dimen name="smart_register_dialog_list_item_height">50dp</dimen>
+    <dimen name="smart_register_dialog_list_item_width">540dp</dimen>
+    <dimen name="list_view_margin_left_and_right">10dp</dimen>
+    <dimen name="smart_register_nav_bar_separator">3dp</dimen>
+    <dimen name="gplsa_item_width">22dp</dimen>
+    <dimen name="fp_register_gplsa_item_width">22dp</dimen>
+    <dimen name="fp_modal_header_text_height">45dp</dimen>
+
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_width">15dp</dimen>
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_height">10dp</dimen>
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin">5dp</dimen>
+    <dimen name="anc_list_delivery_plan_service_mode_tick_view_height">25dp</dimen>
+    <dimen name="anc_list_delivery_plan_service_mode_tick_view_width">25dp</dimen>
+
+    <dimen name="daily_tallies_pic_dim">65dp</dimen>
+    <dimen name="sent_monthly_pic_dim">70dp</dimen>
+
+    <dimen name="login_opensrp_logo_height">32dp</dimen>
+    <dimen name="login_opensrp_logo_width">100dp</dimen>
+    <dimen name="login_text_build_margin">-32dp</dimen>
+    <dimen name="login_build_text_view_textSize">15sp</dimen>
+    <dimen name="login_show_password_dimen">20dp</dimen>
+    <item name="checkbox_scale" format="float" type="dimen">1.7</item>
+    <dimen name="checkbox_margin_top">10dp</dimen>
+    <dimen name="login_middle_section_padding_top">20dp</dimen>
+    <dimen name="login_title_text_size">35sp</dimen>
+    <dimen name="register_search_bar_margin">10dp</dimen>
+    <dimen name="register_search_bar_min_margin">5dp</dimen>
+    <dimen name="register_search_bar_max_margin">12dp</dimen>
+    <dimen name="register_search_bar_padding">10dp</dimen>
+    <dimen name="register_search_bar_button_padding">7.5dp</dimen>
+    <dimen name="register_search_bar_button_min_padding">2dp</dimen>
+    <dimen name="register_search_bar_min_padding">5dp</dimen>
+    <dimen name="ec_main_header_search_layout_height">43dp</dimen>
+    <dimen name="default_font_size_search_bar">16sp</dimen>
+    <dimen name="max_font_size_search_bar">19sp</dimen>
+    <dimen name="search_view_cancel_image_margin_right">3dp</dimen>
+    <dimen name="title_label_text_max_width">150dp</dimen>
+    <dimen name="register_sort_bar_left_padding">10dp</dimen>
+    <dimen name="register_sort_bar_right_padding">0dp</dimen>
+    <dimen name="min_padding_size">2dp</dimen>
+    <dimen name="search_bar_min_margin">1dp</dimen>
+
+    <dimen name="loc_picker_text_max_width">210dp</dimen>
+    <dimen name="loc_picker_text_min_width">130dp</dimen>
+    <dimen name="loc_picker_bottom_margin">20dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin">30dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin_top">10dp</dimen>
+    <dimen name="loc_picker_service_location_check_image_size">30dp</dimen>
+    <dimen name="loc_picker_service_location_check_margin_left">0dp</dimen>
+    <dimen name="loc_picker_service_location_text_item_margin_left">5dp</dimen>
+    <dimen name="loc_picker_title_textview_size">19sp</dimen>
+
+    <dimen name="me_page_initials_background_margin">20dp</dimen>
+    <dimen name="me_page_initials_text_size">25sp</dimen>
+    <dimen name="me_page_section_text_size">18sp</dimen>
+    <dimen name="me_page_section_square_dimension">30dp</dimen>
+    <dimen name="me_page_location_text_size">14sp</dimen>
+    <dimen name="me_page_section_text_right_margin">40dp</dimen>
+    <dimen name="me_page_build_text_view_size">15sp</dimen>
+    <dimen name="me_bottom_nav_bar_text_size">13sp</dimen>
+    <dimen name="barcode_toolbar_text_size">23sp</dimen>
+
+    <dimen name="activity_title_size">18sp</dimen>
+    <dimen name="activity_sub_title_size">14sp</dimen>
+
+    <dimen name="profile_btn_registration_info_padding">24dp</dimen>
+    <dimen name="profile_dot_separator_margin">10dp</dimen>
+
+
+    <!--from opensrp-client-family-->
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="app_bar_height">200dp</dimen>
+    <dimen name="item_width">200dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="register_list_item_width">130dp</dimen>
+    <dimen name="register_list_item_height">75dp</dimen>
+    <dimen name="register_list_item_margin">15dp</dimen>
+    <dimen name="register_list_member_icon_margin">10dp</dimen>
+    <dimen name="register_list_top_bottom_margin">7dp</dimen>
+    <dimen name="register_list_item_end_margin">5dp</dimen>
+
+    <dimen name="register_list_arrow_right_margin">20dp</dimen>
+    <dimen name="register_list_max_padding">15dp</dimen>
+    <dimen name="register_list_member_item_padding">10dp</dimen>
+    <dimen name="register_list_elevation">8dp</dimen>
+    <dimen name="register_list_item_padding">7dp</dimen>
+    <dimen name="register_list_top_bottom_padding">7dp</dimen>
+    <dimen name="register_list_next_arrow_padding">5dp</dimen>
+    <dimen name="register_list_top_bottom_min_padding">2dp</dimen>
+
+    <dimen name="register_list_title_size">19sp</dimen>
+    <dimen name="register_list_desc_size">17sp</dimen>
+    <dimen name="register_list_due_size">15sp</dimen>
+
+    <dimen name="register_member_title_size">17sp</dimen>
+    <dimen name="register_member_name_size">22sp</dimen>
+    <dimen name="register_member_village_size">15sp</dimen>
+    <dimen name="register_member_toolbar_margin">16dp</dimen>
+    <dimen name="register_member_nav_margin">10dp</dimen>
+
+    <dimen name="register_due_status_size">10dp</dimen>
+    <dimen name="register_due_status_top_margin">5dp</dimen>
+    <dimen name="register_last_visit_top_margin">5dp</dimen>
+</resources>
+
+
+

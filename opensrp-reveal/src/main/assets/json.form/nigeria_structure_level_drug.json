@@ -1,0 +1,323 @@
+{
+  "count": "1",
+  "encounter_type": "mda_drug_reconciliation",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": "",
+    "look_up": {
+      "entity_id": "",
+      "value": ""
+    }
+  },
+  "step1": {
+    "title": "Structure-Level Drug Recon",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "label_1",
+        "type": "label",
+        "text": "Structure-level Drug reconciliation",
+        "has_bg": true,
+        "top_padding": "10dp",
+        "left_padding": "20dp",
+        "right_padding": "20dp",
+        "text_size": "10sp",
+        "text_color": "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "confirmChildrenTreated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Confirm number of children that received ORIGINAL SPAQ dose",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes",
+            "extra_info": "Children that received dose: {childrenTreated} "
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "nigeria-structure-level-drug-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "childrenTreatedEdit",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter number of children that received ORIGINAL SPAQ dose:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number of children must be greater than or equal to 0!"
+        },
+        "relevance": {
+          "step1:confirmChildrenTreated": {
+            "type": "string",
+            "ex": "equalTo(., \"No\")"
+          }
+        },
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "childrenTreated",
+        "type": "hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "nigeria-structure-level-drug-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "confirmAdditionalDosesAdministered",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Confirm  number of children that were REDOSED with SPAQ:",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes",
+            "extra_info": "Children REDOSED: {additionalDosesAdministered} "
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "nigeria-structure-level-drug-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "additionalDosesAdministeredEdit",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter number of children that were REDOSED with SPAQ:",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "relevance": {
+          "step1:confirmAdditionalDosesAdministered": {
+            "type": "string",
+            "ex": "equalTo(., \"No\")"
+          }
+        },
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "additionalDosesAdministered",
+        "type": "hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "nigeria-structure-level-drug-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "blisterPacketsNumber",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "How many blisters that were dropped, damaged, or wasted?",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        }
+      },
+      {
+        "key": "confirmNumberSPAQBlistersUsed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Confirm TOTAL number of SPAQ blisters used:",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes",
+            "extra_info": "SPAQ blisters used: {SPAQBlistersUsed} "
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "nigeria-structure-level-drug-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "numberSPAQBlistersUsed",
+        "hint": "TOTAL number of SPAQ blisters used:",
+        "type": "edit_text",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "text_size": "8sp",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field is required"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number must be equal or greater than 0"
+        },
+        "relevance": {
+          "step1:confirmNumberSPAQBlistersUsed": {
+            "type": "string",
+            "ex": "equalTo(., \"No\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "value": "Complete"
+      },
+      {
+        "key": "totalAdministeredSpaq",
+        "type": "hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "totalNumberOfAdditionalDoses",
+        "type": "hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      }
+    ]
+  }
+}

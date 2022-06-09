@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#D400E2</color>
+    <color name="colorPrimaryDark">#B000AF</color>
+    <color name="colorAccent">#3797ca</color>
+    <color name="colorPrimaryBackground">#ddf0fa</color>
+
+    <color name="primary">#D400E2</color>
+    <color name="primaryDark">#B000AF</color>
+    <color name="accent">#3797ca</color>
+    <color name="primaryAccent">#3797ca</color>
+    <color name="primaryBackground">#a6d1e7</color>
+
+    <color name="text_gray">#A4A4A4</color>
+    <color name="button_blue">#2D75DE</color>
+
+    <color name="unsprayable">#000000</color>
+    <color name="sprayed">#6CBF0F</color>
+    <color name="unsprayed">#EE0427</color>
+    <color name="partially_sprayed">#ED8231</color>
+
+    <color name="toolbar_background">#007CD7</color>
+    <color name="sort_bar_grey">#E5E5E5</color>
+
+    <color name="task_not_done">#FAAB00</color>
+
+    <color name="structure_tasks_due">#FFCA16</color>
+    <color name="structure_tasks_complete">#68BB0C</color>
+
+    <color name="blood_screening_complete">#995EFF</color>
+    <color name="bednet_distributed">#3DA9DA</color>
+    <color name="family_registered">#FF96C2</color>
+    <color name="family_no_task_registered">#8B8B8B</color>
+
+    <color name="outside_area_mask">#313131</color>
+
+    <color name="transluscent_white">#80FFFFFF</color>
+    <color name="mda_adhered">#6CBF0F</color>
+    <color name="mda_dispensed">#ED8231</color>
+    <color name="mda_partially_received">#ED8231</color>
+    <color name="mda_none_received_bg">#EE0427</color>
+    <color name="mda_not_eligible_bg">#000000</color>
+
+    <color name="download_map">#68BB0C</color>
+    <color name="delete_map">#EE0427</color>
+
+    <!--used to override the theme from core dark theme -->
+    <color name="search_textfield_background_grey">@color/white</color>
+    <color name="task_filter_gray">#8B8B8B</color>
+
+    <color name="distance_scale_text">@color/white</color>
+    <color name="background_alert_red">#FFBDBD</color>
+    <color name="background_alert_green">#B3EDC3</color>
+
+
+    <!-- from openspr-client-core-->
+    <color name="light_blue">#1a93d2</color>
+
+    <color name="smart_register_client_divider_color">#d9d9d9</color>
+    <color name="status_bar_background_dark_grey">#494949</color>
+    <color name="status_bar_text_almost_white">#f5f5f5</color>
+    <color name="text_black">#333333</color>
+    <color name="text_blue">#389cc8</color>
+    <color name="client_list_header_dark_grey">#e6e6e6</color>
+    <color name="smart_register_blue">#389cc8</color>
+
+    <color name="transparent_gray">#44ffffff</color>
+    <color name="transparent_blue">#44389cc8</color>
+    <color name="transparent_blue_for_edit_button">#bb389cc8</color>
+    <color name="dialog_option_color">#1a1a1a</color>
+    <color name="client_list_header_text_color">#424242</color>
+
+    <color name="alert_upcoming_light_blue">#cae2ed</color>
+    <color name="alert_urgent_red">#f04646</color>
+    <color name="alert_in_progress_blue">#389cc8</color>
+    <color name="alert_complete_green">#25aa4a</color>
+
+    <color name="pnc_pp_fp_grey">#f5f5f5</color>
+
+    <color name="pnc_circle_yellow">#EDCA00</color>
+    <color name="pnc_circle_red">#d13f3f</color>
+    <color name="pnc_circle_green">#25aa4a</color>
+
+    <color name="hb_level_normal">#43ae23</color>
+    <color name="hb_level_dangerous">#d13f3f</color>
+    <color name="hb_level_high">#edca00</color>
+    <color name="transparent">#00000000</color>
+    <color name="dark_grey">#999999</color>
+
+    <color name="bottom_nav_bar_background">#FAFAFA</color>
+    <color name="bottom_nav_bar_unselected_background">#CBCBCB</color>
+    <color name="bottom_nav_bar_selected_background">#288CC4</color>
+
+    <color name="light_grey">#cccccc</color>
+    <color name="light_grey_text">#7f7f7f</color>
+    <color name="lighter_grey">#e5e5e5</color>
+    <color name="lighter_grey_text">#737373</color>
+    <color name="dark_grey_text">#727272</color>
+
+    <color name="customAppThemeBlue">#218CC5</color>
+
+    <color name="search_bar_background_black">#2E383D</color>
+    <color name="search_hint_white">#dbdbdb</color>
+
+    <color name="scan_qr_code_bg_st_grey">#585858</color>
+    <color name="scan_qr_code_bg_end_grey">#3e3e3e</color>
+    <color name="scan_qr_code_bg_stk_grey">#212121</color>
+
+    <color name="me_page_initials_background">#DBF2F9</color>
+    <color name="me_page_dark_blue">#278bc4</color>
+    <color name="me_page_line_separator">#DFDFDF</color>
+    <color name="me_page_arrow">#C7C7C7</color>
+
+    <color name="white">#FFFFFF</color>
+
+    <color name="translucent_yellow">#CCEDCA00</color>
+
+
+    <!--from openspr-client-family-->
+    <color name="vaccine_blue_bg_stk">#267ea5</color>
+    <color name="vaccine_blue_bg_st">#389cc8</color>
+    <color name="vaccine_blue_bg_end">#3495bf</color>
+
+    <color name="progress_orange">#fca917</color>
+
+    <color name="family_actionbar">#30383C</color>
+    <color name="family_navigation">#596468</color>
+
+    <color name="other_member_profile_bg">#FAFAFA</color>
+    <color name="due_profile_blue">#218CC5</color>
+
+
+</resources>

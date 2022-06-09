@@ -1,0 +1,497 @@
+{
+  "count": "1",
+  "encounter_type": "irs_sa_decision",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": ""
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": ""
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Entrez le formulaire de décision de la zone d'aspersion",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Veuillez écrire le nom du village pour cette zone d'aspersion",
+        "text_size": "7sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champs requis"
+        }
+      },
+      {
+        "key": "structures_ground",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien de structures y a-t-il dans cette zone de pulvérisation ? (structures au sol répertoriées sur le tableau de bord Reveal) »",
+        "is_mandatory": true,
+        "text_size": "7sp",
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        }
+      },
+      {
+        "key": "structures_toreach90",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structures_toreach90_info",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Pour atteindre 90 % d'efficacité d'aspersion, votre équipe doit pulvériser au moins {structures_toreach90} structures.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structures_sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "« Combien de structures ont été traitées ? (comme indiqué sur le tableau de bord Reveal) »",
+        "is_mandatory": true,
+        "text_size": "7sp",
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "v_relative_max": {
+          "value": "structures_ground",
+          "err": "Le nombre de structures pulvérisées doit être inférieur au nombre de structures au sol."
+        }
+      },
+      {
+        "key": "spray_effectiveness",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structures_remaining",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structures_tospray",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "display2",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "L'efficacité de la pulvérisation est de {spray_effectiveness} % et il reste encore {structures_remaining} structures éligibles. Cela comprend à la fois les structures qui n'ont pas été trouvées et les structures qui ont été trouvées mais non traitées. Au moins {structures_tospray} doivent encore être traitées pour atteindre 90 % d'efficacité de.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {
+        "key": "reason_noteffective",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "« Quelle était la principale raison pour laquelle le taux d'efficacité n'a pas été atteint à 90 % ? (Nonn trouvée ou non traitée ?)",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "lowCoverage",
+            "text": "Faible couverture trouvée"
+          },
+          {
+            "key": "lowSuccess",
+            "text": "Faible taux de réussite de pulvérisation"
+          },
+          {
+            "key": "both",
+            "text": "Les deux ci-dessus"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champs requis"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "reasonnotsprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Quelle est la principale raison qui a contribué au faible taux de réussite de pulvérisation ?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "sick",
+            "text": "Malade"
+          },
+          {
+            "key": "locked",
+            "text": "Fermé à clé"
+          },
+          {
+            "key": "funeral",
+            "text": "Funérailles"
+          },
+          {
+            "key": "refused",
+            "text": "Refusé"
+          },
+          {
+            "key": "noOneHome",
+            "text": "Personne à la maison/manqué"
+          },
+          {
+            "key": "other",
+            "text": "Autre"
+          },
+          {
+            "key": "na",
+            "text": "N/A"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champs requis"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "mobilize",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Veuillez vous assurer que la mobilisation a été bien faite pour s'assurer que les gens sont à la maison lors de la pulvérisation.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sensitize",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Veuillez vous assurer que vous avez pris les mesures appropriées pour promouvoir l'acceptation de la pulvérisation dans les zones qui ont connu un nombre élevé de refus.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "return",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Envisagez-vous de retourner dans cette zone de pulvérisation ?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Oui"
+          },
+          {
+            "key": "no",
+            "text": "Non"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Champs requis"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "selectnotfound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Veuillez vous assurer que les applicateurs savent où ils peuvent trouver toutes les structures restantes qui ont été manquées.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "number_returning_tlas",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Combien d'équipes d'applicateur doivent retourner dans cette zone de pulvérisation ?",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "reason_notreturning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Veuillez fournir une raison valable pour ne pas revenir pour vous assurer que cette zone de d'aspersion est traitée efficacement.",
+        "text_size": "7sp",
+        "v_required": {
+          "value": "true",
+          "err": "Champs requis"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+
+
+
+
+
+      {
+        "key": "display3",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "L'efficacité de la pulvérisation est de {spray_effectiveness} %. Félicitations, cette zone a été traitée efficacement !",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_calculation.yml"
+            }
+          }
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "senegal_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

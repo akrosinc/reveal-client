@@ -1,0 +1,467 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Actions -->
+    <string name="action_logout">sohokamo</string>
+    <!-- General -->
+    <string name="reveal_app_name" translatable="false">Reveal</string>
+    <string name="app_name" translatable="false">@string/reveal_app_name</string>
+    <!--Temp -->
+    <string name="unauthorized">rebaneza Ijambo Banga ryawe</string>
+    <string name="unauthorized_group">Itsinda uherereyemo ntabwo ryemerewe kwinjira kuri iki gikoresho</string>
+    <string name="unknown_response">Kwinjira ntibikunze. Ongera ugerageza mukanya</string>
+    <string name="no_internet_connectivity">Nta murongo wa interineti ufite, Nyamuneka suzuma neza wemeze guhuza amakuru</string>
+    <string name="login_text">Injiramo</string>
+    <string name="show_password_text">Erekana Ijambo Banga</string>
+    <string name="url_separator">/</string>
+
+    <string name="device_timezone_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
+    <string name="device_time_changed">"Igihe cyatelefone yawe cyahindutse. gerageza wongere winjire."</string>
+
+    <string name="prompt_password">Ijambo banga</string>
+    <string name="prompt_username">Injija izina ukoresha ryawe</string>
+    <string name="reveal">Reveal</string>
+    <string name="sync">Guhuza Amakuru</string>
+    <string name="campaign">Igenamigambi</string>
+    <string name="operational_area">Agace gakorerwamo</string>
+
+    <string name="offline_maps">Ikarita yo hanze ya murandasi</string>
+    <string name="app_version">Verisiyo ya porogaramu%1$s</string>
+    <string name="app_updated">Yavuguruwe %1$s</string>
+    <string name="district">Umurenge:</string>
+    <string name="facility">Aho Ivuriro riherereye:</string>
+    <string name="canton">Canton:</string>
+    <string name="operator">Uyikoresha cg Nyirayo:</string>
+
+
+    <string name="fetch_location_and_structures_failed">Aka gace gakorerwamo ntabwo kasobanuwe neza muri sisitemu. Nyamuneka gerageza guhuza igikoresho cyawe. Nyamuneka saba umuyobozi wa sisitemu kugufasha niba ibyo bidakemuye ikibazo hagaragazwe umubare wuduce dukorerwamo%1$s.</string>
+    <string name="fetch_structures_title">kugera kuntego ntibirigukunda</string>
+    <string name="fetching_structures_title">Kubona Inzego</string>
+    <string name="fetching_structures_message">Kubona Inzego Kubikorwa Byatoranijwe munsi yahatoranijwe gukorerwa na Gahunda</string>
+
+    <string name="select_campaign_operational_area_title">Igenamigambi n\'ahantu ho gukorera ntabwo byashyizwemo</string>
+    <string name="select_campaign_operational_area">Igenamigambi n\'ahantu ho gukorera ntabwo byashyizweho. Hitamo mububiko bwibikubiyemo</string>
+    <string name="revoked_plan_operational_area">Ibyatoranijwe mbere Gahunda cyangwa Ahantu ho gukorera ubu havanyweho. Hitamo mububiko bwibikubiyemo</string>
+
+    <string name="reveal_satellite_style" translatable="false">asset://reveal-streets-satellite.json</string>
+    <string name="reveal_select_jurisdiction_style" translatable="false">asset://reveal-select-jurisdiction-satellite.json</string>
+    <string name="reveal_streets_style" translatable="false">reveal-streets-style.json</string>
+    <string name="reveal_offline_map_download_style" translatable="false">map-download-style.json</string>
+    <string name="reveal_datasource_name" translatable="false">reveal-data-set</string>
+    <string name="reveal_layer_polygons" translatable="false">reveal-data-polygons</string>
+    <string name="reveal_layer_points" translatable="false">reveal-data-points</string>
+    <string name="base_map_feature_json" translatable="false">base_map_feature.json</string>
+
+
+    <string name="task_not_found">Iyi miterere yahantu ntabwo ifite inshingano yashinzwe kuri buri Gahunda ikorerwamo%1s</string>
+
+    <string name="error_fetching_location_hierarchy_title">Ikosa mugutunganya mugukurikiranya ahabugenewe gukorerwa</string>
+    <string name="error_fetching_location_hierarchy">Ikosa mugutunganya no mugukurikiranya ahabugenewe gukorerwa. sohokamo ukurure ahabugenerwe gukorera muburyo bunoze</string>
+
+    <string name="selected_datasource_name" translatable="false">select-data</string>
+
+    <string name="irs_task_description"> Visit the structure, assess and perform spray activities.</string>
+    <string name="poat_task_description"> Update Potential Areas of Transmission</string>
+    <string name="irs_verification_task_description"> Visit each structure in the operational area and verify status</string>
+
+    <string name="form_save_failure_title">Ifishi yokubika amakosa yakozwe</string>
+    <string name="spray_form_save_failure">Error saving spray form</string>
+    <string name="add_structure_form_save_failure">Error saving add structure form</string>
+    <string name="zoom_in_to_select">Gerageza Kwegera cyane kugirango uhitemo imiterere yaho gukorera</string>
+
+
+    <string name="details_sprayed">Sprayable, Sprayed</string>
+    <string name="details_not_sprayed">Sprayable, Not Sprayed</string>
+    <string name="details_not_sprayable">Not Sprayable</string>
+    <string name="no_structures_found">Nta habugenewe hogukorera hashyizwe kuri akagace gakorerwamo. Nyamuneka onge ushake uburyo bwiza bwogutangira usubiremo</string>
+    <string name="change_spray_status">Change Spray Status</string>
+    <string name="reveal_icon">Reveal Icon</string>
+
+    <string name="attribution_text">Powered by OpenSRP \nBuilt on mSpray and DiSARM</string>
+    <string name="thailand_attribution_text">Powered by Reveal</string>
+
+    <string name="request_password_title">You are not near the structure</string>
+    <string name="enter_admin_password"> Input admin password</string>
+    <string name="wrong_admin_password">Wrong admin password</string>
+
+    <string name="saving_title">Kubika</string>
+    <string name="saving_message">Kubika ifishi yamakuru biracyakorwa...nyabuneka komeza wihangane</string>
+
+    <string name="fetching_structure_title">Kubona Imiterere yahantu irambuye</string>
+    <string name="fetching_structure_message">Turigushakisha Imiterere irambuye yahantu. Nyamuneka tegereza</string>
+
+    <string name="fetching_mosquito_collection_points_title">Fetching Mosquito Collection Point Details</string>
+    <string name="fetching_mosquito_collection_points_message">Fetching Mosquito Collection Point Details. Please wait</string>
+
+    <string name="fetching_larval_dipping_points_title">Fetching Larval Dipping Point Details</string>
+    <string name="fetching_larval_dipping_points_message">Fetching Larval Dipping Point Details. Please wait</string>
+
+    <string name="fetching_paot_title">Fetching PAOT Details</string>
+    <string name="fetching_paot_message">Fetching PAOT Details. Please wait</string>
+
+    <string name="narrowing_location_title">Kugenzura aho uherereye</string>
+    <string name="narrowing_location_message">Kugenzura aho uherereye. Nyabuneka tegereza</string>
+
+    <string name="location_services_disabled">Serivisi zahantu zahagaritswe</string>
+    <string name="location_services_disabled_spray">Ntiwabashije guha uburenganzira serivisi zose kugikoresho cyawe kugirango ubone aho uherereye ubu. Ugomba kwinjiza ijambo banga rya admin wawe ubashe kugera muri buri gace gakorerwamo</string>
+    <string name="location_services_disabled_add">Ntiwabashije guha uburenganzira serivisi zose kugikoresho cyawe kugirango ubone aho uherereye ubu. Ugomba kwinjiza ijambo ryibanga rya admin kugirango wongereho aho gukorera</string>
+    <string name="mosquito_collection_task_description">Setup Mosquito Collection Point and Record Results</string>
+    <string name="larval_dipping_task_description">Perform Larval Dipping, Classify and Intervene</string>
+
+    <string name="register_family">Register Family</string>
+    <string name="list">Urutonde</string>
+    <string name="map">Ikarita</string>
+    <string name="hamburger_menu">Igice cyigize ibikubiyemo</string>
+    <string name="focus_investigation">Focus Investigation</string>
+    <string name="summary_forms">Izindi fishi</string>
+    <string name="irs">IRS</string>
+    <string name="mda">MDA</string>
+    <string name="mda_lite">MDA-Lite</string>
+    <string name="task_icon">Task Icon</string>
+    <string name="distance_from_structure">%1.0f m Kure...ya cg hanze ya...</string>
+    <string name="distance_from_center">%1.0f m from %2s center </string>
+
+    <string name="mosquito_collection_point">Mosquito collection point</string>
+    <string name="record_mosquito_collection">Record\nCollection</string>
+    <string name="larval_breeding_site">Larval breeding site</string>
+    <string name="record_larvacide">Record\nDipping</string>
+    <string name="bcc">Behaviour Change communication</string>
+    <string name="record_bcc">Record\nBCC</string>
+    <string name="record_status">Record\nStatus</string>
+    <string name="record_index">Record\nIndex</string>
+    <string name="opening_form_title">Ifishi irimo gufungurwa</string>
+    <string name="opening_form_message"> Nyamuneka tegereza, Ifishi irimo gufungurwa</string>
+    <string name="task_reason">Reason: %1s</string>
+
+    <plurals name="structures">
+        <item quantity="one">%1d structure within %2.0f m (%3$d total)</item>
+        <item quantity="other">%1d Imiterere yimbere mu... %2.0f m (%3$d total)</item>
+    </plurals>
+
+    <string name="card_view_record_mosquito_collection">Record mosquito collection</string>
+    <string name="record_larval_dipping">Record larval dipping</string>
+    <string name="card_view_mosquito_collection_point">Mosquito Collection Point</string>
+    <string name="mosquito_breeding_site">Mosquito Breeding Site</string>
+
+    <string name="mosquito_collection_status_test_text">Status: Inactive</string>
+    <string name="mosquito_collection_trap_set_date_test_text">Set Date: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_follow_up_date_test_text">Follow-up Date: DD/MM/YY</string>
+    <string name="mosquito_collection_trap_collected_date_test_text">Collected Date: DD/MM/YY</string>
+
+    <string name="larval_breeding_identified_date_test_text">Identified Date:&#160;</string>
+    <string name="larval_breeding_larvacide_date_test_text">Larvacide Date:&#160;</string>
+    <string name="mosquito_collection_trap_set_date">Set Date:&#160;</string>
+    <string name="mosquito_collection_trap_follow_up_date">Follow-up Date:&#160;</string>
+
+    <string name="paot_last_updated_date_test_text">Last Updated Date:&#160;</string>
+    <string name="card_view_edit_paot_details">Edit PAOT Details</string>
+    <string name="card_view_paot">Potential Area of Transmission</string>
+
+    <string name="residents">RESIDENTS</string>
+    <string name="return_to_all_families">Garuka inyuma</string>
+    <string name="tasks">TASKS (%1$d)</string>
+    <string name="comma">,</string>
+    <string name="distribute_llin">Distribute Bednet</string>
+    <string name="record_llin">Record\nDistribution</string>
+    <string name="record_test">Record\nScreening</string>
+    <string name="detect_case">Detect\nCase</string>
+    <string name="fetch_family_failed">Fetch Family Failed</string>
+    <string name="failed_to_find_family">Failed to get Family Details</string>
+    <string name="family_registration">Family Registration</string>
+
+    <string name="blood_screening_description">Perform blood screening on the family member</string>
+    <string name="bednet_distribution_description">Visit the residential structure and provide nets</string>
+    <string name="register_family_description">Visit the residential structure and register each family member</string>
+    <string name="mda_dispense_desciption">Visit all residential structures (100%) dispense prophylaxis to each registered person</string>
+    <string name="mda_adherence_desciption">"Visit all residential structures (100%) and confirm adherence of each registered person</string>
+    <string name="case_confirmation_description">Case Confirmation</string>
+    <string name="house">House</string>
+
+    <string name="unenumerated_structure">Unenumerated Structure</string>
+    <string name="form_not_found"> Ifishi ntiyabonetse</string>
+    <string name="edit_member_form_title">Edit Family Member</string>
+
+    <string name="view_tasks">Kureba igikorwa</string>
+    <string name="tasks_complete">Igikorwa cyashojwe</string>
+    <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
+
+    <string name="classification_details">Classification Details</string>
+    <string name="view">View</string>
+    <string name="family_details">Family Details</string>
+    <string name="family_name_format">Family name: %1s</string>
+    <string name="village_town_format">Village Town: %1s</string>
+    <string name="quarter_clan_format">Quarter/Clan: %1s</string>
+    <string name="street_format">Street: %1s</string>
+    <string name="landmark_format">Landmark : %1s</string>
+    <string name="family_member_data">Family Member Data</string>
+    <string name="surname_format">Surname : %1s</string>
+    <string name="first_name_format">First Name: %1s</string>
+    <string name="middle_name_format">Middle Name: %1s</string>
+    <string name="dob_format">Date of Birth(DOB) : %1s</string>
+    <string name="case_classification_data">Case Classification Data</string>
+    <string name="case_number_format">Case Number: %1s</string>
+    <string name="case_classification_format">Case Classification: %1s</string>
+    <string name="focus_reason_format">Focus Reason: %1s</string>
+    <string name="focus_status_format">Focus Status: %1s</string>
+    <string name="return_to_register">Garuka inyuma</string>
+    <string name="index_case_not_found">Index Case details not found</string>
+    <string name="detect_case_button">Detect Case</string>
+
+    <string name="not_visited">Ntiyasuwe</string>
+    <string name="not_sprayed">Not Sprayed</string>
+    <string name="sprayed">Sprayed</string>
+    <string name="not_sprayable">Not Sprayable</string>
+    <string name="complete">Ibyuzuye</string>
+    <string name="incomplete">Ibituzuye</string>
+    <string name="in_progress">Ibigikorwaho</string>
+    <string name="not_eligible">Ntabwo bujuje ibisabwa</string>
+    <string name="plans_download_on_progress_title">Ikurwamo ryamakuru rigikomeza</string>
+    <string name="plans_download_on_progress">Gahunda yogukuramo igenamigambi yuzuye irakomeje. Nyamuneka tegereza</string>
+    <string name="numero_sign">No.</string>
+    <string name="register_outside_boundary_title">Register structure outside area boundary?</string>
+    <string name="register_outside_boundary_warning">Warning: this location is beyond the boundaries of the selected operational area. If you continue, the structure may be added to an incorrect area</string>
+    <string name="register">Register</string>
+    <string name="cancel">Cancel</string>
+    <string name="partially_sprayed">Partially Sprayed</string>
+    <string name="daily_summary">Enter Daily Summary Form</string>
+    <string name="supervisor_daily_summary">Enter Supervisor Daily Summary Form</string>
+
+
+    <string name="team_leader_dos" translatable="false">Enter Team Leader DOS Form</string>
+    <string name="cb_spray_area" translatable="false">Enter CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision">Enter IRS SA Decision Form</string>
+    <string name="mobilization_form" translatable="false">Enter Mobilization Form</string>
+    <string name="irs_field_officer" translatable="false">Enter IRS Field Officer Form</string>
+    <string name="verification_form" translatable="false">Enter Verification Form</string>
+
+
+    <string name="last_edited">ibiheruka Guhindurwa %1s</string>
+    <string name="device_to_device_sync">P2P Sync</string>
+
+
+    <string name="found_coverage">Found Coverage</string>
+    <string name="spray_coverage">Spray Coverage</string>
+    <string name="structures_remaining_90">Structures Remaining 90%</string>
+    <string name="total_structures">Total Structures</string>
+    <string name="structures_not_visited">Structures Not Visited</string>
+    <string name="structures_visited_found">Structures Visited/Found</string>
+    <string name="structures_sprayed">Structures Sprayed</string>
+    <string name="structures_not_sprayed">Structures Not Sprayed</string>
+    <string name="room_coverage">Room coverage of sprayed</string>
+    <string name="target_coverage">Target coverage</string>
+    <string name="structures_targeted">Structures targeted</string>
+    <string name="n_percent">%1$d%%</string>
+    <string name="indicator">Ibipimo</string>
+    <string name="value">Agaciro mumibare</string>
+
+    <string name="spray_success_rate">Spray Success Rate</string>
+
+
+    <string name="do_not_edit_client_records_until_complete">Do not edit records until complete.</string>
+    <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit records until the process is complete.</string>
+
+    <string name="dispense_mda">Dispense MDA</string>
+    <string name="adhere_mda">Adhere MDA</string>
+
+    <string name="irs_verification">IRS Verification</string>
+    <string name="not_true_structure">Not True Structure</string>
+    <string name="structure_ineligible">Structure Ineligible</string>
+    <string name="reported_spray_status">Reported Spray Status</string>
+    <string name="chalk_spray_status">Chalk Spray Status</string>
+    <string name="sticker_spray_status">Sticker Spray Status</string>
+    <string name="card_spray_status">Card Spray Status</string>
+    <string name="structure_not_found_or_visited_during_campaign">Structure not found or visited during campaign</string>
+    <string name="other">Other</string>
+
+    <string name="synced_events">Ibintu byahujwe:</string>
+    <string name="unsynced_events">Ibintu bitahujwe:</string>
+    <string name="synced_clients">Abakiriya bahujwe:</string>
+    <string name="unsynced_clients">Abakiriya batahujwe:</string>
+    <string name="validated_events">Ibyabaye byemejwe::</string>
+    <string name="validated_clients">Abakiriya bemejwe:</string>
+    <string name="task_unprocessed_events">uzuza ibyabaye bidatunganijwe:</string>
+
+    <string name="refresh">Kubigarura</string>
+    <string name="export_db_notification">Kohereza Ububikoshingiro</string>
+    <string name="operational_area_not_selected">Agace gakorerwamo ntabwo katoranijwe</string>
+    <string name="archive_member">Archive Member</string>
+    <string name="confirm_archive_member">Are you sure you want archive family member? All tasks and events will be archived </string>
+    <string name="confirm">Confirm</string>
+    <string name="archive_member_failed">Archiving member %1s %2s failed</string>
+    <string name="archive_family">Archive Household</string>
+    <string name="confirm_archive_family">Confirm Household Archival</string>
+    <string name="confirm_archive_family_message">Please confirm that you want to archive this household. This will delete all information and can not be undone.</string>
+    <string name="archive_family_failed">Archiving family %1s failed</string>
+
+    <string name="mark_location_inactive">Mark Location Inactive</string>
+    <string name="confirm_mark_location_inactive">Please confirm that this location should be marked inactive</string>
+    <string name="cannot_make_structure_inactive">You can not make this structure inactive because tasks are completed against it</string>
+    <string name="mark_location_ineligible">Mark Location Ineligible</string>
+    <string name="is_structure_eligible_for_fam_reg">Is this location eligible to register a family?</string>
+    <string name="ineligible_location">Ineligible Location</string>
+    <string name="eligible">Eligible</string>
+    <string name="not_eligible_unoccupied">Not Eligible: Currently Unoccupied</string>
+    <string name="not_eligible_other">Not Eligible: Other</string>
+    <string name="available">Ibihari</string>
+    <string name="downloaded">Ibyakuruwe</string>
+    <string name="download">Kurura</string>
+    <string name="downloading">Ibirigukururwa</string>
+    <string name="delete">Hanaguru</string>
+    <string name="delete_caps">HANAGURU</string>
+    <string name="select_offline_map_to_delete">Nyamuneka hitamo ikarita hanze ya interineti kugirango uyisibe</string>
+    <string name="select_offline_map_to_download">Nyamuneka hitamo ikarita hanze ya interineti kugirango uyikurure</string>
+    <string name="offline_map_size">Ingano %1$s Ibyakuruwe %2$s </string>
+    <string name="download_finished_successfuly">Kuramo ibyarangiye neza</string>
+    <string name="map_download_progress">Birigukurwamo %,.2f %%</string>
+
+    <string name="menu">Ibikubiyemo</string>
+    <string name="add_structure">Register Structure</string>
+    <string name="filter">Muyunguruzi</string>
+    <string name="filters">Muyunguruzi (%1$d)</string>
+    <string name="clear">Biragaragara</string>
+    <string name="sort_by">Tondekanya na</string>
+    <string name="status">Imiterere</string>
+    <string name="structure">Structure</string>
+    <string name="person">Person</string>
+    <string name="family">Family</string>
+    <string name="task_type">Ubwoko bwibikorwa</string>
+    <string name="intervention_unit">Igice cyubutabazi</string>
+    <string name="apply_filters">Koresha muyunguruzi</string>
+    <string name="apply_filters_formatter">Koresha muyunguruzi (%1$d)</string>
+    <string name="bcc_code">BCC</string>
+    <string name="mosquito_collection">Mosquito Collection</string>
+    <string name="larval_dipping">Larval dipping</string>
+    <string name="bednet_distribution">Bednet Distribution</string>
+    <string name="blood_screening">Blood Screening</string>
+    <string name="case_confirmation">Case Confirmation</string>
+    <string name="paot">PAOT</string>
+    <string name="mda_dispense">MDA Dispense</string>
+    <string name="mda_adherence">MDA Adherence</string>
+    <string name="bednet_distributed">Bednet Distributed</string>
+    <string name="family_registered">Family Registered</string>
+    <string name="blood_screening_complete">Blood Screening Complete</string>
+
+    <!-- form -->
+    <string name="add_fam">Household Registration</string>
+
+    <string-array name="task_sort_options">
+        <item>Intera (ahambere cg hafi habanza)</item>
+        <item>Status</item>
+        <item>Andika</item>
+    </string-array>
+
+    <string-array name="form_sort_options">
+        <item>Itariki (Yavuba)</item>
+        <item>Izina ry\'ifishi</item>
+        <item>Imikorere isanzwe ihuriweho</item>
+    </string-array>
+
+    <string-array name="task_sort_options_namibia">
+        <item>Intera (ahambere cg hafi habanza)</item>
+        <item>Imimerere/imitere</item>
+    </string-array>
+
+    <string name="select_task_action">Select action to perform</string>
+    <string name="choose_action">Choose action</string>
+    <string name="view_details">View Details</string>
+    <string name="undo">Undo</string>
+    <string name="reseting_task_title">Resetting Task Information</string>
+    <string name="reseting_task_msg">Resetting Task Information. Please wait</string>
+    <string name="undo_task_title">Are you sure you want to clear all data associated with this event?</string>
+    <string name="undo_task_msg">You will not be able to recover this data and this task will be marked as incomplete</string>
+    <string name="localhost_url">http://localhost:%1$d/</string>
+    <string name="index_case_confirmed">Index Case Confirmed</string>
+
+    <string name="tested">Tested</string>
+    <string name="done">Done</string>
+    <string name="not_tested">Not Tested</string>
+    <string name="yes">Yego</string>
+
+    <string name="save_point">Save Point</string>
+    <string name="change_point">Change Point</string>
+    <string name="save_boundary">Save Boundary</string>
+    <string name="stop_drawing">Stop Drawing</string>
+    <string name="circle_clicked">Circle clicked</string>
+    <string name="circle_not_clicked">Circle not clicked</string>
+    <string name="start_drawing">Start Drawing</string>
+    <string name="edit_boundary">Edit Boundary</string>
+    <string name="discard">Discard</string>
+    <string name="delete_point_title">Delete Point?</string>
+    <string name="delete_point_msg">This will remove the point from the boundary</string>
+    <string name="discard_changes_title">Discard Changes?</string>
+    <string name="discard_changes_msg">This will undo any unsaved edits you have made on the boundary</string>
+    <string name="tap_point_msg">Tap black point to move or delete</string>
+    <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
+    <string name="progressBarLabel">Syncing %s : %d%% </string>
+    <string name="device_data_synced">Amakuru mashya yo mugikoresho cyawe yahujwe</string>
+    <string name="device_data_not_synced">Device data not synced</string>
+    <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
+
+    <string name="filled_forms">Ifishi zuzujwe</string>
+    <string name="event_date">Date</string>
+    <string name="form_name">Form Name</string>
+    <string name="sop">Imikorere isanzwe ihuriweho</string>
+    <string name="hh_village_name">HH/ village Name</string>
+    <string name="daily_summary_status">%1$dF/%2$dS/%3$dNS</string>
+    <string name="search">Shakisha</string>
+    <string name="hh_form">HH Form</string>
+    <string name="daily_summary_name">Daily Summary Form</string>
+    <string name="team_leader_dos_form">Team Leader DOS Form</string>
+    <string name="cb_spray_area_form">CB Spray Area Visit Form</string>
+    <string name="irs_sa_decision_form">IRS SA Decision Form</string>
+    <string name="mobilization_form_name">Mobilization Form</string>
+    <string name="irs_field_officer_form">IRS Field Officer Form</string>
+    <string name="verification_form_name"> Verification Form</string>
+    <string name="irs_lite_verification_form_name">IRS Lite Verification Form</string>
+
+    <string name="total_structures_targeted">Total structures targeted</string>
+
+    <string name="households_not_visited">Registered households not visited</string>
+    <string name="structure_is_inactive">This structure is inactive</string>
+    <string name="filter_by_date">Yungurura ukurikije Itariki</string>
+
+    <string name="date_format">DD-MM-YYYY</string>
+    <string name="view_all_events">Reba ibyabaye byose</string>
+    <string name="point_within_known_operational_area">This point falls within the boundaries of another operational area (%1$s). Would you like to add it to that operational area or undo</string>
+    <string name="add_point">Add Point</string>
+    <string name="add_structure_form_redirecting">Redirecting you to operational area (%1$s) so you can collect information against this point.</string>
+    <string name="error_occurred_saving_form">Error Occurred Saving form</string>
+    <string name="point_not_within_known_operational_area">This point falls outside of any operational area boundaries known at this time and will be added to an ‘other’ area (%1$s) for this HFCA.</string>
+    <string name="other_operational_area_not_defined">Operational area called ‘other’ for this HFCA does not exist. Please contact the system administrator noting operational area number %1$s.</string>
+    <string name="point_not_within_other_operational_area">This point falls outside of any operational area boundaries known. Add the point to current Operational area which is the ‘other’ area (%1$s) for this HFCA.</string>
+
+    <string name="p2p_locations">P2P Sync Locations</string>
+    <string name="start_p2p_syc">Start P2P Sync</string>
+
+    <string name="events">Events</string>
+    <string name="sync_started">Ihuzwa ryatangiye</string>
+    <string name="ok">Byatunganye</string>
+    <string name="locations">Ahantu</string>
+    <string name="plans">Gahunda</string>
+    <string name="structures">Imiterere</string>
+    <string name="tasks_text">Inshingano</string>
+    <string name="registration_info">Amakuru yo kwiyandikisha</string>
+    <string name="view_paot_details">Reba Ibisobanuro</string>
+    <string name="tablet_accountability_form">Injiza Ifishi yo Kubazwa</string>
+    <string name="edit_cdd_task_complete_status">Hindura inshingano wuzuze igikorwa</string>
+    <string name="confirm_edit_cdd_task_complete_status">Nyabuneka emezako igikorwa cyarangiye</string>
+    <string name="data_collection_date">Amakuru yakusanyijwe</string>
+    <string name="cancel_no">Subika</string>
+    <string name="health_education_ages_5_to_15_years">Inyigisho zubuzima zahawe abantu bimyaka 5-15 yrs</string>
+    <string name="health_education_16_years_and_above">Inyigisho zubuzima zahawe abantu bimyaka 16 kuzamura</string>
+    <string name="vitamina_total_6_to_11_months">Igiteranyo cya Vitamin A  zahawe abana hagati 06-11 Amezi</string>
+    <string name="vitamina_total_12_to_59_months">Igiteranyo cya Vitamin A  zahawe abana hagati 12-59 Amezi</string>
+    <string name="alb_meb_total_12_to_59_months">Igiteranyo cya ALB/MEB zahawe abana hagati 12-59 Amezi</string>
+    <string name="alb_meb_total_5_to_15_years">Igiteranyo cya ALB/MEB zahawe abana hagati 5-15 imyaka</string>
+    <string name="alb_meb_total_16_years_and_above">Igiteranyo cya ALB/MEB zahawe abana kuva imyaka 16 kuzamura</string>
+    <string name="pzq_total_5_to_15_years">Igiteranyo cya PZQ zahawe abana hagati 5-15 imyaka</string>
+    <string name="pzq_total_16_years_and_above">Igiteranyo cya PZQ zahawe abana kuva ku imyaka 16 kuzamura</string>
+    <string name="click_to_show_indicators">Kanda hano ubone ibipimo</string>
+    <string name="sync_complete">Ihuzwa ryashojwe</string>
+    <string name="search_hint">Shaka izina cg numero ndanga</string>
+    <string name="account_disabled">Konti yawe yahagaritswe</string>
+    <string name="account_new_assignment_logged_off">Ubu wasohowe hanze kuko konti yawe ifite inshingano nshya yawe. Ongera winjiremo kugirango imirimo mishya itangire gukurikizwa</string>
+    <string name="loading_client_settings">Itwarwa ryigenamiterere ryabakiriya…</string>
+    <string name="syncing">Ihuzwa ryamakuru...</string>
+    <string name="please_wait">Nyabuneka tegereza...</string>
+    <string name="fpp_form_name">FPP Form</string>
+
+</resources>

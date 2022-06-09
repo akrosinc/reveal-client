@@ -1,0 +1,586 @@
+{
+  "count": "1",
+  "encounter_type": "tablet_accountability",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Injiza Ifishi yo Kubazwa",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Izina ry'umudugudu",
+        "v_required": {
+          "value": "true",
+          "err": "Ningombwa kuzuza muruyu mwanya"
+        }
+      },
+      {
+        "key": "cell_coordinator",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "drug_distributed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Ni uwuhe muti watanzwe?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "PZQ",
+            "text": "Praziquantel (PZQ)"
+          },
+          {
+            "key": "ALB",
+            "text": "Albendazole (ALB)"
+          },
+          {
+            "key": "MBZ",
+            "text": "Mebendazole (MBZ)"
+          },
+          {
+            "key": "VITA",
+            "text": "Vitamin A"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Umwanya ukenewe"
+        }
+      },
+      {
+        "key": "pzq_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya PZQ wakiriwe",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "pzq_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya PZQ wakiriye byongeweho kubyo warufite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_pzq_received_and_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "pzq_returned",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya PZQ washubije",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:sum_pzq_received_and_top_up)",
+            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa PZQ wakiriwe ndetse na PZQ zongewe kuzo warufite"
+          }
+        ]
+      },
+      {
+        "key": "albendazole_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya Albendazole wakiriye",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "albendazole_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya Albendazole wakiriye byongewe kubyo warufite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_alb_received_and_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "albendazole_returned",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya Albendazole washubije",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:sum_alb_received_and_top_up)",
+            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa Albendazole wakiriwe ndetse na Albendazole zongewe kuzo warufite"
+          }
+        ]
+      },
+      {
+        "key": "mebendezole_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya AMebendazole wakiriye",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "mebendazole_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya Mebendazole wakiriye byongewe kubyo warufite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_mbz_received_and_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "mebendazole_returned",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya Mebendazole washubije",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:sum_mbz_received_and_top_up)",
+            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa Mebendazole wakiriwe ndetse na Mebendazole zongewe kuzo warufite"
+          }
+        ]
+      },
+      {
+        "key": "vita_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya VitA wakiriye",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "vita_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya VitA wakiriye byongewe kubyo warufite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sum_vita_received_and_top_up",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "vita_returned",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Umubare wibinini bya VitA washubije",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Uyu mwanya ni itegeko kuwuzuza"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba kujyamo umubare gusa"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare wuzuye"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Uyu mwanya ugomba gushyirwamo umubare urenze cyangwa ungana na 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "rwanda-tablet-accountability-relevance-rules.yml"
+            }
+          }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:sum_vita_received_and_top_up)",
+            "err": "Igiteranyo kigomba kuba munsi cyangwa kungana numubare wa VitA wakiriwe ndetse na VitA zongewe kuzo warufite"
+          }
+        ]
+      }
+    ]
+  }
+}
