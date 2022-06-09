@@ -2,6 +2,8 @@
 
 configure(allprojects) { project ->
     buildscript {
+        ext.kotlin_version = '1.4.32'
+
         repositories {
             mavenLocal()
             google()
@@ -13,6 +15,7 @@ configure(allprojects) { project ->
         dependencies {
             classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.2'
             classpath 'com.google.gms:google-services:4.3.8'
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         }
     }
 }
