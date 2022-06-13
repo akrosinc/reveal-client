@@ -54,8 +54,6 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
 // Apply the Performance Monitoring plugin
 //apply plugin: 'com.google.firebase.firebase-perf'
 
@@ -178,13 +176,13 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"http://10.0.2.2:8080/"'
+            resValue "string", 'opensrp_base_url', '"https://api-ops.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.NIGERIA"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.ZAMBIA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -406,15 +404,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'io.ona.rdt-capture', module: 'lib'
-    }
-
-
-    implementation('org.smartregister:opensrp-client-reporting:0.0.6-RVL-SNAPSHOT@aar') {
-        transitive = true
-        exclude group: 'org.smartregister', module: 'opensrp-client-core'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'com.github.lecho', module: 'hellocharts-library'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
     }
 
     implementation 'com.google.android:flexbox:1.0.0'

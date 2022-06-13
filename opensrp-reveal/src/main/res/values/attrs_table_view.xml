@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TableView">
+        <attr name="headerTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="italic" value="1" />
+            <enum name="bold" value="2" />
+        </attr>
+        <attr name="headerTextColor" format="color" />
+        <attr name="headerBackgroundColor" format="color" />
+        <attr name="rowTextColor" format="color" />
+        <attr name="borderColor" format="color" />
+        <attr name="rowBorderHidden" format="boolean" />
+    </declare-styleable>
+</resources>
