@@ -6,6 +6,11 @@ import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
 import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
+import static org.smartregister.family.util.DBConstants.KEY.DOB;
+import static org.smartregister.family.util.DBConstants.KEY.FIRST_NAME;
+import static org.smartregister.family.util.DBConstants.KEY.GENDER;
+import static org.smartregister.family.util.DBConstants.KEY.LAST_NAME;
 import static org.smartregister.reveal.api.RevealService.ADD_TASK_URL;
 import static org.smartregister.reveal.api.RevealService.SYNC_TASK_URL;
 import static org.smartregister.reveal.api.RevealService.UPDATE_STATUS_URL;
@@ -55,6 +60,7 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
+import org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -308,38 +314,7 @@ public class TaskServiceHelper extends BaseHelper {
     public void syncCreatedTaskToServer() {
         HTTPAgent httpAgent = getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
-        String[] personIdentifiers = tasks.stream().map(task -> task.getForEntity())
-                .toArray(String[]::new);
-        commonRepository = RevealApplication.getInstance().getContext()
-                .commonrepository("ec_family_member");
-        List<CommonPersonObject> commonPersonObjects = commonRepository
-                .findByBaseEntityIds(personIdentifiers);
-
-        commonPersonObjects.stream().forEach(commonPersonObject -> {
-            String baseEntityId = commonPersonObject.getColumnmaps().get("base_entity_id");
-            List<Task> personTasks = tasks.stream()
-                    .filter(task -> task.getForEntity().equals(baseEntityId)).collect(Collectors.toList());
-            String firstName = commonPersonObject.getColumnmaps().get("first_name");
-            String lastName = commonPersonObject.getColumnmaps().get("last_name");
-            String gender = commonPersonObject.getColumnmaps().get("gender").toUpperCase();
-            PersonName personName = PersonName.builder()
-                    .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
-                    .build();
-            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId))
-                    .name(personName).gender(gender).build();
-            String dob = commonPersonObject.getColumnmaps().get("dob");
-            LocalDateTime dateOfBirthAndTime;
-            if(!StringUtils.isBlank(dob)){
-                try {
-                    dateOfBirthAndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(org.joda.time.DateTime.parse(dob).getMillis()), ZoneId.systemDefault());
-                    personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
-                } catch (Exception e){
-                    Timber.e(e);
-                }
-            }
-
-            personTasks.forEach(task -> task.setPersonRequest(personRequest));
-        });
+        appendCreatedPersonDataToRequest(tasks);
         if (!tasks.isEmpty()) {
             startTaskTrace(PUSH, tasks.size());
             String jsonPayload = taskGson.toJson(tasks);
@@ -369,6 +344,42 @@ public class TaskServiceHelper extends BaseHelper {
             }
 
         }
+    }
+
+    private void appendCreatedPersonDataToRequest(final List<Task> tasks) {
+        String[] personIdentifiers = tasks.stream().map(task -> task.getForEntity())
+                .toArray(String[]::new);
+        commonRepository = RevealApplication.getInstance().getContext()
+                .commonrepository(TABLE_NAME.FAMILY_MEMBER);
+        List<CommonPersonObject> commonPersonObjects = commonRepository
+                .findByBaseEntityIds(personIdentifiers);
+
+        commonPersonObjects.stream().forEach(commonPersonObject -> {
+            String baseEntityId = commonPersonObject.getColumnmaps().get(BASE_ENTITY_ID);
+            List<Task> personTasks = tasks.stream()
+                    .filter(task -> task.getForEntity().equals(baseEntityId)).collect(Collectors.toList());
+            String firstName = commonPersonObject.getColumnmaps().get(FIRST_NAME);
+            String lastName = commonPersonObject.getColumnmaps().get(LAST_NAME);
+            String gender = commonPersonObject.getColumnmaps().get(GENDER).toUpperCase();
+            PersonName personName = PersonName.builder()
+                    .use("OFFICIAL").text(firstName).family(lastName).given("").prefix("").suffix("")
+                    .build();
+            PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(baseEntityId))
+                    .name(personName).gender(gender).build();
+            String dob = commonPersonObject.getColumnmaps().get(DOB);
+            LocalDateTime dateOfBirthAndTime;
+            if(!StringUtils.isBlank(dob)){
+                try {
+                    dateOfBirthAndTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(DateTime.parse(dob).getMillis()), ZoneId
+                            .systemDefault());
+                    personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
+                } catch (Exception e){
+                    Timber.e(e);
+                }
+            }
+
+            personTasks.forEach(task -> task.setPersonRequest(personRequest));
+        });
     }
 
     private HTTPAgent getHttpAgent() {
