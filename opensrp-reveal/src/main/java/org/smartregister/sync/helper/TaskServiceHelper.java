@@ -48,6 +48,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.domain.Geometry;
+import org.smartregister.domain.Location;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
@@ -56,8 +58,11 @@ import org.smartregister.domain.TaskUpdate;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
+import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.model.LocationProperty;
+import org.smartregister.reveal.model.LocationRequest;
 import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
 import org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
@@ -99,6 +104,8 @@ public class TaskServiceHelper extends BaseHelper {
 
     private CommonRepository commonRepository;
 
+    final private StructureRepository structureRepository;
+
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
      *
@@ -129,6 +136,7 @@ public class TaskServiceHelper extends BaseHelper {
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
         this.taskServiceProcessor = TaskServiceProcessor.getInstance();
+        this.structureRepository = RevealApplication.getInstance().getStructureRepository();
     }
 
     public List<Task> syncTasks() {
@@ -315,6 +323,7 @@ public class TaskServiceHelper extends BaseHelper {
         HTTPAgent httpAgent = getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
         appendCreatedPersonDataToRequest(tasks);
+        appendCreatedLocationDataToRequest(tasks);
         if (!tasks.isEmpty()) {
             startTaskTrace(PUSH, tasks.size());
             String jsonPayload = taskGson.toJson(tasks);
@@ -344,6 +353,19 @@ public class TaskServiceHelper extends BaseHelper {
             }
 
         }
+    }
+
+    private void appendCreatedLocationDataToRequest(final List<Task> tasks) {
+        List<String> structureIds = tasks.stream().filter(task -> task.getForEntity().equals(task.getStructureId())).map(Task::getStructureId).collect(Collectors.toList());
+        List<Location> structures = structureRepository.getLocationsByIds(structureIds);
+        structures.stream().forEach(structure -> {
+            List<Task> structureTasks = tasks.stream().filter(task -> task.getForEntity().equals(structure.getId())).collect(
+                    Collectors.toList());
+            Geometry geometry = structure.getGeometry();
+            LocationProperty locationProperty = new LocationProperty(structure.getId(),structure.getProperties().getStatus().name(),UUID.fromString(structure.getId()),"structure");
+            structureTasks.forEach(task -> task.setLocationRequest(new LocationRequest("Feature",geometry,locationProperty)));
+        });
+
     }
 
     private void appendCreatedPersonDataToRequest(final List<Task> tasks) {

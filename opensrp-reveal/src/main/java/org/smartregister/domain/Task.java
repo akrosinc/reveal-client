@@ -4,6 +4,7 @@ package org.smartregister.domain;
 import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
+import org.smartregister.reveal.model.LocationRequest;
 import org.smartregister.reveal.model.PersonRequest;
 
 import java.io.Serializable;
@@ -111,6 +112,8 @@ public class Task implements Serializable {
     private String forEntity;
 
     private PersonRequest personRequest;
+
+    private LocationRequest locationRequest;
 
     private Period executionPeriod;
 
