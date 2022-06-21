@@ -384,7 +384,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     jsonForm.put(DETAILS, eventDetails);
                     org.smartregister.domain.Event event = saveEvent(jsonForm, REGISTER_STRUCTURE_EVENT, STRUCTURE);
                     com.cocoahero.android.geojson.Feature feature = new com.cocoahero.android.geojson.Feature(new JSONObject(event.findObs(null, false, "structure").getValue().toString()));
-                    Date now = new Date();
                     Location structure = new Location();
                     structure.setId(event.getBaseEntityId());
                     structure.setType(feature.getType());
@@ -402,13 +401,15 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     if(structureTypeObs != null)
                        structureType = structureTypeObs.getValue().toString();
                     properties.setType(structureType);
-                    properties.setEffectiveStartDate(now);
                     properties.setParentId(operationalAreaId);
                     properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
                     properties.setUid(UUID.randomUUID().toString());
+                    properties.setGeographicLevel("structure");
                     Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
                     if (structureNameObs != null && structureNameObs.getValue() != null) {
                         properties.setName(structureNameObs.getValue().toString());
+                    } else {
+                        properties.setName(structure.getId());
                     }
                     Obs physicalTypeObs = event.findObs(null, false, PHYSICAL_TYPE);
                     if (physicalTypeObs != null && physicalTypeObs.getValue() != null) {

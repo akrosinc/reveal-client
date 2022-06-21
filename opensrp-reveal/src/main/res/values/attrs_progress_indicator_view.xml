@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ProgressIndicatorView">
+        <attr name="progressBarBackgroundColor" format="color" />
+        <attr name="progressBarForegroundColor" format="color" />
+        <attr name="title" format="string" />
+        <attr name="subTitle" format="string" />
+        <attr name="progress" format="integer" />
+        <attr name="progressDrawable" format="reference" />
+    </declare-styleable>
+</resources>

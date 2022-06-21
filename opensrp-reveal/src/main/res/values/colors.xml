@@ -129,5 +129,7 @@
     <color name="other_member_profile_bg">#FAFAFA</color>
     <color name="due_profile_blue">#218CC5</color>
 
+    <color name="colorSecondaryGreen">#00b253</color>
+    <color name="colorPastelGreen">#b2f395</color>
 
 </resources>
