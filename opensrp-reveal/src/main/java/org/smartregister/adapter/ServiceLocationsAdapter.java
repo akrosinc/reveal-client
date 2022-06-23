@@ -56,7 +56,7 @@ public class ServiceLocationsAdapter extends BaseAdapter {
             view.setId(position + 2321);
 
             TextView text1 = view.findViewById(android.R.id.text1);
-            text1.setText(LocationHelper.getInstance().getOpenMrsReadableName(locationNames.get(position)));
+            text1.setText(LocationHelper.getInstance().getReadableName(locationNames.get(position)));
             views.put(locationNames.get(position), view);
         }
 

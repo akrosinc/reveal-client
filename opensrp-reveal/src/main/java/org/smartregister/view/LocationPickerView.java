@@ -82,13 +82,13 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(serviceLocationsAdapter.getLocationAt(position));
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentDataStrategy(hasAdvancedDataStrategies &&
                     advancedStrategies.contains(serviceLocationsAdapter.getLocationAt(position)) ? AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED : AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
-            LocationPickerView.this.setText(LocationHelper.getInstance().getOpenMrsReadableName(serviceLocationsAdapter.getLocationAt(position)));
+            LocationPickerView.this.setText(LocationHelper.getInstance().getReadableName(serviceLocationsAdapter.getLocationAt(position)));
             if (onLocationChangeListener != null) {
                 onLocationChangeListener.onLocationChange(serviceLocationsAdapter.getLocationAt(position));
             }
             locationPickerDialog.dismiss();
         });
-        this.setText(LocationHelper.getInstance().getOpenMrsReadableName(getSelectedItem()));
+        this.setText(LocationHelper.getInstance().getReadableName(getSelectedItem()));
 
         setClickable(true);
         setOnClickListener(this);

@@ -24,8 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
@@ -287,27 +285,14 @@ public class LocationHelper {
         return formLocationList;
     }
 
-    public String getOpenMrsReadableName(String name) {
+    public String getReadableName(String name) {
         if (StringUtils.isBlank(name)) {
             return "";
         }
-
         String readableName = name;
-
-        try {
-            Pattern prefixPattern = Pattern.compile("^[a-z]{2} (.*)$");
-            Matcher prefixMatcher = prefixPattern.matcher(readableName);
-            if (prefixMatcher.find()) {
-                readableName = prefixMatcher.group(1);
-            }
-
-            if (readableName.contains(":")) {
-                String[] splitName = readableName.split(":");
-                readableName = splitName[splitName.length - 1].trim();
-            }
-
-        } catch (Exception e) {
-            Timber.e(e);
+        if (readableName.contains(":")) {
+            String[] splitName = readableName.split(":");
+            readableName = splitName[splitName.length - 1].trim();
         }
         return readableName;
     }
@@ -483,7 +468,7 @@ public class LocationHelper {
             }
 
             String name = node.getName();
-            formLocation.name = getOpenMrsReadableName(name);
+            formLocation.name = getReadableName(name);
             formLocation.key = idKey ? node.getLocationId() : name;
 
             Set<String> levels =  node.getTags() == null ? new HashSet<>(allowedLevels) : node.getTags();
