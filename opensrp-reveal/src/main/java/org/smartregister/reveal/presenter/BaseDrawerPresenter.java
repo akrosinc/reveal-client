@@ -2,21 +2,11 @@ package org.smartregister.reveal.presenter;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.reveal.util.Constants.Tags.CANTON;
-import static org.smartregister.reveal.util.Constants.Tags.CATCHMENT;
-import static org.smartregister.reveal.util.Constants.Tags.CELL;
-import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
 import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
-import static org.smartregister.reveal.util.Constants.Tags.LGA;
-import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL;
 import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Constants.Tags.PROVINCE;
-import static org.smartregister.reveal.util.Constants.Tags.REGION;
-import static org.smartregister.reveal.util.Constants.Tags.SECTOR;
-import static org.smartregister.reveal.util.Constants.Tags.STATE;
 import static org.smartregister.reveal.util.Constants.Tags.SUB_DISTRICT;
 import static org.smartregister.reveal.util.Constants.Tags.VILLAGE;
-import static org.smartregister.reveal.util.Constants.Tags.ZONE;
 import static org.smartregister.reveal.util.Constants.UseContextCode.INTERVENTION_TYPE;
 
 import android.app.Activity;
@@ -179,13 +169,20 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     @Override
     public void onShowOperationalAreaSelector() {
-        Pair<String, ArrayList<String>> locationHierarchy = extractLocationHierarchy();
+        if(StringUtils.isBlank(prefsUtil.getCurrentPlanId())){
+            view.displayNotification(R.string.campaign, R.string.plan_not_selected);
+            return;
+        }
+        PlanDefinition currentPlan = revealApplication.getPlanDefinitionRepository().findPlanDefinitionById(prefsUtil.getCurrentPlanId());
+        String targetGeographicLevel = currentPlan.getTargetGeographicLevel();
+        List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
+        Pair<String, ArrayList<String>> locationHierarchy = extractLocationHierarchy(hierarchyGeographicLevels,targetGeographicLevel);
         if (locationHierarchy == null) {//try to evict location hierachy in cache
             revealApplication.getContext().anmLocationController().evict();
-            locationHierarchy = extractLocationHierarchy();
+            locationHierarchy = extractLocationHierarchy(hierarchyGeographicLevels,targetGeographicLevel);
         }
         if (locationHierarchy != null) {
-            view.showOperationalAreaSelector(extractLocationHierarchy());
+            view.showOperationalAreaSelector(extractLocationHierarchy(hierarchyGeographicLevels,targetGeographicLevel));
         } else {
             view.displayNotification(R.string.error_fetching_location_hierarchy_title, R.string.error_fetching_location_hierarchy);
             revealApplication.getContext().userService().forceRemoteLogin(revealApplication.getContext().allSharedPreferences().fetchRegisteredANM());
@@ -193,28 +190,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     }
 
-    private Pair<String, ArrayList<String>> extractLocationHierarchy() {
+    private Pair<String, ArrayList<String>> extractLocationHierarchy(List<String> geographicLevels, String targetGeographicLevel) {
 
-        ArrayList<String> operationalAreaLevels = new ArrayList<>();
-        operationalAreaLevels.add(COUNTRY);
-        operationalAreaLevels.add(PROVINCE);
-        operationalAreaLevels.add(OPERATIONAL);
-        operationalAreaLevels.add(STATE);
-        operationalAreaLevels.add(LGA);
-        operationalAreaLevels.add(REGION);
-        operationalAreaLevels.add(DISTRICT);
-        operationalAreaLevels.add(SUB_DISTRICT);
-        operationalAreaLevels.add(OPERATIONAL_AREA);
-        operationalAreaLevels.add(HEALTH_CENTER);
-        operationalAreaLevels.add(VILLAGE);
-        operationalAreaLevels.add(ZONE);
-        operationalAreaLevels.add(SECTOR);
-        operationalAreaLevels.add(CELL);
-        operationalAreaLevels.add(CATCHMENT);
-
-
+        List<String> operationalAreaLevels = geographicLevels;
+        operationalAreaLevels.remove(targetGeographicLevel);
         List<String> defaultLocation = locationHelper.generateDefaultLocationHierarchy(operationalAreaLevels);
-
         if (defaultLocation != null) {
             List<FormLocation> entireTree = locationHelper.generateLocationHierarchyTree(false, operationalAreaLevels);
             if (!prefsUtil.isKeycloakConfigured()) { // Only required when fetching hierarchy from openmrs
@@ -265,7 +245,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                 prefsUtil.setCurrentFacility(facility.second);
                 prefsUtil.setCurrentFacilityLevel(facility.first);
             }
-            validateSelectedPlan(operationalArea);
         } catch (NullPointerException e) {
             Timber.e(e);
         }
@@ -319,11 +298,8 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
     @Override
     public void onShowPlanSelector() {
-        if (StringUtils.isBlank(prefsUtil.getCurrentOperationalArea())) {
-            view.displayNotification(R.string.operational_area, R.string.operational_area_not_selected);
-        } else {
-            interactor.fetchPlans(prefsUtil.getCurrentOperationalArea());
-        }
+        //TODO: tell user that plans are still being downloaded ....or update existing messages
+        interactor.fetchPlans();
     }
 
 
@@ -405,22 +381,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
     @Override
     public void onShowOfflineMaps() {
         getView().openOfflineMapsView();
-    }
-
-    private void validateSelectedPlan(String operationalArea) {
-        if (!prefsUtil.getCurrentPlanId().isEmpty()) {
-            interactor.validateCurrentPlan(operationalArea, prefsUtil.getCurrentPlanId());
-        }
-    }
-
-    @Override
-    public void onPlanValidated(boolean isValid) {
-        if (!isValid) {
-            prefsUtil.setCurrentPlanId("");
-            prefsUtil.setCurrentPlan("");
-            view.setPlan("");
-            view.lockNavigationDrawerForSelection();
-        }
     }
 
     /**

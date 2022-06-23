@@ -95,7 +95,6 @@ public interface BaseDrawerContract {
 
         boolean isPlanAndOperationalAreaSelected();
 
-        void onPlanValidated(boolean isValid);
 
         void updateSyncStatusDisplay(boolean synced);
 
@@ -104,9 +103,7 @@ public interface BaseDrawerContract {
 
     interface Interactor {
 
-        void fetchPlans(String jurisdictionName);
-
-        void validateCurrentPlan(String selectedOperationalArea, String currentPlanId);
+        void fetchPlans();
 
         void checkSynced();
     }
