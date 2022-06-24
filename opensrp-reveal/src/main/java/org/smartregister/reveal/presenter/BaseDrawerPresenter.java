@@ -396,7 +396,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         View headerView = navigationView.getHeaderView(0);
         syncLabel = headerView.findViewById(R.id.sync_label);
         syncBadge = activity.findViewById(R.id.sync_badge);
-        ProgressIndicatorView overallSyncProgressView = headerView.findViewById(R.id.overall_sync_progress_view);
         if (syncBadge != null && syncLabel != null) {
             if (synced && SyncUtils.getTotalSyncProgress() == 100) {
                 syncBadge.setBackground(ContextCompat.getDrawable(activity, R.drawable.badge_green_oval));

@@ -12,6 +12,7 @@ import static org.smartregister.reveal.util.Constants.Tables.TASK_TABLE;
 import java.util.Set;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.application.RevealApplication;
@@ -58,13 +59,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
     @Override
     public void checkSynced() {
 
-        String syncQuery = String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, CLIENT_TABLE, SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ?\n", TASK_SYNC_STATUS, TASK_TABLE, TASK_SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ?\n", STRUCTURE_SYNC_STATUS, STRUCTURE_TABLE, STRUCTURE_SYNC_STATUS);
+        String syncQuery = getSyncQuery();
 
         Runnable runnable = new Runnable() {
             @Override
@@ -104,5 +99,16 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
             }
         };
         appExecutors.diskIO().execute(runnable);
+    }
+
+    @NotNull
+    private String getSyncQuery() {
+        return String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, CLIENT_TABLE, SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", TASK_SYNC_STATUS, TASK_TABLE, TASK_SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", STRUCTURE_SYNC_STATUS, STRUCTURE_TABLE, STRUCTURE_SYNC_STATUS);
     }
 }
