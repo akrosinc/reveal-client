@@ -60,7 +60,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
 
         String syncQuery = String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, CLIENT_TABLE, SYNC_STATUS) +
                 "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ? AND %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
                 "UNION ALL\n" +
                 String.format("SELECT %s FROM %s WHERE %s <> ?\n", TASK_SYNC_STATUS, TASK_TABLE, TASK_SYNC_STATUS) +
                 "UNION ALL\n" +
@@ -72,7 +72,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
                 Cursor syncCursor = null;
                 try
                 {
-                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced});
+                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced});
                     Integer count = syncCursor.getCount();
 
                     if(count == 0)
