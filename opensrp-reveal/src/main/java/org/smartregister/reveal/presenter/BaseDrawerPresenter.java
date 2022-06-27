@@ -28,7 +28,6 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.PlanDefinition.PlanStatus;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -311,7 +310,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
         prefsUtil.setCurrentPlan(name.get(0));
         prefsUtil.setCurrentPlanId(value.get(0));
+        PlanDefinition planDefinition = revealApplication.getPlanDefinitionRepository().findPlanDefinitionById(value.get(0));
+        prefsUtil.setCurrentPlanTargetLevel(planDefinition.getTargetGeographicLevel());
         view.setPlan(name.get(0));
+        view.setOperationalArea("");
+        prefsUtil.setCurrentOperationalArea("");
         changedCurrentSelection = true;
         unlockDrawerLayout();
 

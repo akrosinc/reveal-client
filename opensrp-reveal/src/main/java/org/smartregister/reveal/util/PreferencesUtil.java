@@ -7,6 +7,7 @@ import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERAT
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_OPERATIONAL_AREA_ID;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_ID;
+import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_TARGET_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PROVINCE;
 import static org.smartregister.reveal.util.Constants.Preferences.FACILITY_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.TOTAL_SYNC_PROGRESS;
@@ -184,5 +185,12 @@ public class PreferencesUtil {
 
     public boolean isAllLocationsSynced(){
         return allSharedPreferences.getBooleanPreference(ALL_LOCATIONS_SYNCED);
+    }
+
+    public String getCurrentPlanTargetLevel(){
+        return allSharedPreferences.getPreference(CURRENT_PLAN_TARGET_LEVEL);
+    }
+    public void setCurrentPlanTargetLevel(String value){
+        allSharedPreferences.savePreference(CURRENT_PLAN_TARGET_LEVEL, value);
     }
 }

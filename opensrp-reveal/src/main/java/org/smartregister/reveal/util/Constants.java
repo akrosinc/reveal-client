@@ -168,6 +168,7 @@ public interface Constants {
         String GPS_ACCURACY = "GPS_ACCURACY";
         String ADMIN_PASSWORD_ENTERED = "ADMIN_PASSWORD_ENTERED";
         String TOTAL_SYNC_PROGRESS = "TOTAL_SYNC_PROGRESS";
+        String CURRENT_PLAN_TARGET_LEVEL = "CURRENT_PLAN_TARGET_LEVEL";
     }
 
     interface Tags {

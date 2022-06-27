@@ -239,7 +239,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         listTaskView.hideProgressDialog();
         setChangeMapPosition(drawerPresenter.isChangedCurrentSelection() || (drawerPresenter.isChangedCurrentSelection() && changeMapPosition));
         drawerPresenter.setChangedCurrentSelection(false);
-        if (structuresGeoJson.has(FEATURES)) {
+        if (structuresGeoJson.has(FEATURES) && StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
             featureCollection = FeatureCollection.fromJson(structuresGeoJson.toString());
             isTasksFiltered = false;
             if (filterParams != null && !filterParams.getCheckedFilters().isEmpty() && StringUtils.isBlank(searchPhrase)) {

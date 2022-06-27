@@ -291,10 +291,10 @@ public class ListTaskInteractor extends BaseInteractor {
                         Map<String, Set<Task>> tasks = taskRepository
                                 .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
                         List<Location> structures ;
-                        if(BuildConfig.SELECT_JURISDICTION){
-                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
-                        } else {
+                        if(Utils.isCurrentTargetLevelStructure()){
                             structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
+                        } else {
+                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
                         }
                         Map<String, StructureDetails> structureNames = getStructureName(
                                 operationalAreaLocation.getId());

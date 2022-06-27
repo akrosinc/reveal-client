@@ -252,7 +252,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
-                String satelliteStyle = BuildConfig.SELECT_JURISDICTION ? context.getString(R.string.reveal_select_jurisdiction_style) : context.getString(R.string.reveal_satellite_style);
+                String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ? context.getString(R.string.reveal_select_jurisdiction_style) : context.getString(R.string.reveal_satellite_style);
                 Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
 
                 mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {

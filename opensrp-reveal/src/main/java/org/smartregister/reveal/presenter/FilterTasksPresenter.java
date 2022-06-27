@@ -8,7 +8,6 @@ import android.widget.ToggleButton;
 import androidx.annotation.StringRes;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.FilterTasksContract;
 import org.smartregister.reveal.model.FilterConfiguration;
@@ -145,7 +144,7 @@ public class FilterTasksPresenter implements FilterTasksContract.Presenter {
 
     @Override
     public List<String> getBusinessStatusOptions() {
-        return  BuildConfig.SELECT_JURISDICTION ? BusinessStatus.MDA_LITE_BUSINESS_STATUS : filterConfiguration.getBusinessStatusList() != null ? filterConfiguration.getBusinessStatusList() :
+        return  !Utils.isCurrentTargetLevelStructure() ? BusinessStatus.MDA_LITE_BUSINESS_STATUS : filterConfiguration.getBusinessStatusList() != null ? filterConfiguration.getBusinessStatusList() :
                 Utils.isFocusInvestigation() ? BusinessStatus.FI_BUSINESS_STATUS : Utils.isMDA() ? BusinessStatus.MDA_BUSINESS_STATUS : BusinessStatus.IRS_BUSINESS_STATUS;
     }
 

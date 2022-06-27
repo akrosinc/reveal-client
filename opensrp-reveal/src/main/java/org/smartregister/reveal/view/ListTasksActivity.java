@@ -192,11 +192,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private boolean formOpening;
 
+    private Bundle savedInstanceState = new Bundle();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.savedInstanceState = savedInstanceState;
         if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
             setContentView(R.layout.thailand_activity_list_tasks);
         } else {
@@ -214,7 +216,15 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         initializeProgressIndicatorViews();
 
-        initializeMapView(savedInstanceState);
+        kujakuMapView = findViewById(R.id.kujakuMapView);
+
+        myLocationButton = findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+
+        layerSwitcherFab = findViewById(R.id.fab_mapview_layerSwitcher);
+
+        if(StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())){
+            initializeMapView(savedInstanceState);
+        }
 
         drawerView.initializeDrawerLayout();
         initializeProgressDialog();
@@ -225,6 +235,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         initializeCardViews();
 
         initializeToolbar();
+
     }
 
     private void initializeCardViews() {
@@ -286,7 +297,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         findViewById(R.id.register_family).setOnClickListener(this);
 
-        if(BuildConfig.SELECT_JURISDICTION) {
+        if(!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
             findViewById(R.id.btn_add_structure).setVisibility(View.GONE);
         }
         if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
@@ -326,12 +337,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     private void initializeMapView(Bundle savedInstanceState) {
-        kujakuMapView = findViewById(R.id.kujakuMapView);
-
-        myLocationButton = findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
-
-        layerSwitcherFab = findViewById(R.id.fab_mapview_layerSwitcher);
-
         kujakuMapView.getMapboxLocationComponentWrapper().setOnLocationComponentInitializedCallback(this);
 
         kujakuMapView.onCreate(savedInstanceState);
@@ -347,29 +352,29 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                String satelliteStyle = BuildConfig. SELECT_JURISDICTION ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
-                Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
-                mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
+                 String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()  ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                    Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
+                    mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
+                        @Override
+                        public void onStyleLoaded(@NonNull Style style) {
 
-                        enableCompass(mapboxMap);
+                            enableCompass(mapboxMap);
 
-                        geoJsonSource = style.getSourceAs(getString(R.string.reveal_datasource_name));
+                            geoJsonSource = style.getSourceAs(getString(R.string.reveal_datasource_name));
 
-                        selectedGeoJsonSource = style.getSourceAs(getString(R.string.selected_datasource_name));
-                        RevealMapHelper.addCustomLayers(style, ListTasksActivity.this);
+                            selectedGeoJsonSource = style.getSourceAs(getString(R.string.selected_datasource_name));
+                            RevealMapHelper.addCustomLayers(style, ListTasksActivity.this);
 
-                        RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
+                            RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
 
-                        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.NIGERIA) {
-                            layerSwitcherFab.setVisibility(View.GONE);
+                            if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.NIGERIA) {
+                                layerSwitcherFab.setVisibility(View.GONE);
+                            }
+
+                            initializeScaleBarPlugin(mapboxMap);
+
                         }
-
-                        initializeScaleBarPlugin(mapboxMap);
-
-                    }
-                });
+                    });
 
                 mMapboxMap = mapboxMap;
                 mapboxMap.setMinZoomPreference(10);
@@ -627,6 +632,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, boolean isChangeMapPosition) {
+        if(StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition){
+            initializeMapView(savedInstanceState);
+        }
+
         if (geoJsonSource != null) {
             geoJsonSource.setGeoJson(featureCollection);
 
@@ -648,7 +657,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                 Boolean drawOperationalAreaBoundaryAndLabel = getDrawOperationalAreaBoundaryAndLabel();
                 if (drawOperationalAreaBoundaryAndLabel) {
-                    if (boundaryLayer == null) {
+                    if (boundaryLayer == null || isChangeMapPosition) {
                         boundaryLayer = createBoundaryLayer(operationalArea);
                         kujakuMapView.addLayer(boundaryLayer);
 
@@ -666,7 +675,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                 Map<String, String> featureToLayerMapping = new HashMap<>();
 
-                if (BuildConfig.SELECT_JURISDICTION ) {
+                if (!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
                     RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
                         for (Feature feature : featureCollection.features()) {
                             BoundaryLayer boundaryLayer = createIRSLiteOABoundaryLayer(feature);
@@ -761,7 +770,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void displaySelectedFeature(Feature feature, LatLng clickedPoint, double zoomlevel) {
         adjustFocusPoint(clickedPoint);
         kujakuMapView.centerMap(clickedPoint, ANIMATE_TO_LOCATION_DURATION, zoomlevel);
-        if (selectedGeoJsonSource != null && !BuildConfig.SELECT_JURISDICTION) {
+        if (selectedGeoJsonSource != null && org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ) {
             selectedGeoJsonSource.setGeoJson(FeatureCollection.fromFeature(feature));
         }
     }
