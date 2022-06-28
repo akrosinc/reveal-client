@@ -5,9 +5,6 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.util.AttributeSet;
 
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -15,12 +12,11 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.rengwuxian.materialedittext.validation.METValidator;
 
-import org.smartregister.reveal.BuildConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import io.ona.kujaku.views.KujakuMapView;
+import org.smartregister.reveal.util.Utils;
 
 import static org.smartregister.reveal.util.Constants.MY_LOCATION_ZOOM_LEVEL;
 import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
@@ -52,7 +48,7 @@ public class RevealMapView extends KujakuMapView {
 
     @Override
     public void centerMap(@NonNull LatLng point, int animateToNewTargetDuration, double newZoom) {
-        if (BuildConfig.SELECT_JURISDICTION) {
+        if (!Utils.isCurrentTargetLevelStructure()) {
             super.centerMap(point, animateToNewTargetDuration, MAX_SELECT_ZOOM_LEVEL);
         } else {
             super.centerMap(point, animateToNewTargetDuration, newZoom > MY_LOCATION_ZOOM_LEVEL ? newZoom : MY_LOCATION_ZOOM_LEVEL);

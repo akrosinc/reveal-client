@@ -1,5 +1,8 @@
 package org.smartregister.reveal.view;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,15 +13,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.flexbox.FlexboxLayout;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.FilterTasksContract;
 import org.smartregister.reveal.model.FilterConfiguration;
@@ -27,18 +32,7 @@ import org.smartregister.reveal.presenter.FilterTasksPresenter;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.InterventionType;
 import org.smartregister.view.activity.MultiLanguageActivity;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
 import timber.log.Timber;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
 
 public class FilterTasksActivity extends MultiLanguageActivity implements FilterTasksContract.View, CompoundButton.OnCheckedChangeListener {
 
@@ -169,7 +163,7 @@ public class FilterTasksActivity extends MultiLanguageActivity implements Filter
     private void setUpToggleButtonGroups() {
         populateToggleButtons(businessStatusLayout, presenter.getBusinessStatusOptions());
         populateToggleButtons(taskCodeLayout, presenter.getIntentionTypes());
-        if(!BuildConfig.SELECT_JURISDICTION)
+        if(org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() )
             populateToggleButtons(interventionTypeLayout, InterventionType.FILTERABLE_INTERVENTION_TYPES);
         if (filterConfiguration.isFormsLayoutEnabled() && filterConfiguration.getEventTypeList() != null) {
             populateToggleButtons(formNameLayout, filterConfiguration.getEventTypeList());

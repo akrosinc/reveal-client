@@ -30,7 +30,6 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.smartregister.domain.Location;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.EditFociboundaryContract;
@@ -104,7 +103,7 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                String satelliteStyle = BuildConfig.SELECT_JURISDICTION ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()  ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
                 Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
                 mapboxMap.setStyle(builder,  new Style.OnStyleLoaded() {
                     @Override

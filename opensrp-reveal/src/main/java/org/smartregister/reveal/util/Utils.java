@@ -93,6 +93,8 @@ public class Utils {
 
     private static Cache<Location> cache = new Cache<>();
 
+    public static final String STRUCTURE = "structure";
+
     static {
         ALLOWED_LEVELS = new ArrayList<>();
         ALLOWED_LEVELS.add(DEFAULT_LOCATION_LEVEL);
@@ -565,25 +567,25 @@ public class Utils {
         return mapList;
     }
     public static boolean isZambiaIRSLite() {
-        return (BuildConfig.SELECT_JURISDICTION && Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY));
+        return (!isCurrentTargetLevelStructure()  && Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY));
     }
 
     public static int getMaxZoomLevel() {
-        return BuildConfig.SELECT_JURISDICTION ? getSelectJurisdictionMaxSelectZoomLevel()  : getMaxSelectZoomLevel();
+        return !isCurrentTargetLevelStructure()  ? getSelectJurisdictionMaxSelectZoomLevel()  : getMaxSelectZoomLevel();
     }
 
 
     public static boolean isKenyaMDALite() {
-        return (BuildConfig.SELECT_JURISDICTION && Country.KENYA.equals(BuildConfig.BUILD_COUNTRY));
+        return (!isCurrentTargetLevelStructure() && Country.KENYA.equals(BuildConfig.BUILD_COUNTRY));
 
     }
 
     public static boolean isRwandaMDALite(){
-        return (BuildConfig.SELECT_JURISDICTION && (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN));
+        return (!isCurrentTargetLevelStructure()  && (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN));
     }
 
     public static boolean isZambiaIRSFull(){
-        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && !BuildConfig.SELECT_JURISDICTION;
+        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && isCurrentTargetLevelStructure();
     }
     public static boolean isMDALite(){
        return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN;
@@ -615,5 +617,8 @@ public class Utils {
         bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
         sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
         FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
+    }
+    public static boolean isCurrentTargetLevelStructure(){
+        return STRUCTURE.equalsIgnoreCase(PreferencesUtil.getInstance().getCurrentPlanTargetLevel());
     }
 }

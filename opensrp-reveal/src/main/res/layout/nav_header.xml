@@ -264,6 +264,36 @@
         app:layout_constraintTop_toBottomOf="@id/btn_navMenu_offline_maps" />
 
 
+    <TextView
+        android:id="@+id/plan_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/drawer_margin"
+        android:layout_marginTop="@dimen/drawer_separator_margin"
+        android:text="@string/campaign"
+        android:textColor="@color/text_gray"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_separator"/>
+
+
+    <TextView
+        android:id="@+id/plan_selector"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/drawer_margin"
+        android:layout_marginTop="@dimen/drawer_margin_vertical"
+        android:layout_marginEnd="@dimen/drawer_margin"
+        android:background="@drawable/nav_border_bg"
+        android:drawableEnd="@drawable/ic_keyboard_arrow_down_small"
+        android:drawablePadding="@dimen/drawer_drawable_padding"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:textColor="@color/text_black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/plan_label" />
 
     <TextView
         android:id="@+id/operational_area_label"
@@ -274,8 +304,7 @@
         android:text="@string/operational_area"
         android:textColor="@color/text_gray"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_separator"
-
+        app:layout_constraintTop_toBottomOf="@id/plan_selector"
         />
 
 
@@ -296,37 +325,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/operational_area_label" />
 
-    <TextView
-        android:id="@+id/plan_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/drawer_margin"
-        android:layout_marginTop="@dimen/drawer_separator_margin"
-        android:text="@string/campaign"
-        android:textColor="@color/text_gray"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/operational_area_selector"/>
-
-
-    <TextView
-        android:id="@+id/plan_selector"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/drawer_margin"
-        android:layout_marginTop="@dimen/drawer_margin_vertical"
-        android:layout_marginEnd="@dimen/drawer_margin"
-        android:background="@drawable/nav_border_bg"
-        android:drawableEnd="@drawable/ic_keyboard_arrow_down_small"
-        android:drawablePadding="@dimen/drawer_drawable_padding"
-        android:gravity="center_vertical"
-        android:padding="10dp"
-        android:textColor="@color/text_black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/plan_label" />
-
 
     <TextView
         android:id="@+id/district_label"
@@ -338,7 +336,7 @@
         android:textColor="@color/text_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/plan_selector" />
+        app:layout_constraintTop_toBottomOf="@id/operational_area_selector" />
 
 
     <TextView
@@ -352,7 +350,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/district_label" />
-
 
     <TextView
         android:id="@+id/operator_label"

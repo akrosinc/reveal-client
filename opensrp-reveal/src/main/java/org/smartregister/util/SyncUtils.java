@@ -1,37 +1,5 @@
 package org.smartregister.util;
 
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.annotation.VisibleForTesting;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.CoreLibrary;
-import org.smartregister.reveal.R;
-import org.smartregister.account.AccountHelper;
-import org.smartregister.domain.Setting;
-import org.smartregister.repository.AllSettings;
-import org.smartregister.repository.BaseRepository;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.smartregister.reveal.util.PreferencesUtil;
-import timber.log.Timber;
-
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
@@ -41,6 +9,34 @@ import static org.smartregister.AllConstants.SETTINGS;
 import static org.smartregister.reveal.util.Constants.SYNC_ENTITY_COUNT;
 import static org.smartregister.util.Utils.getVersionCode;
 import static org.smartregister.util.Utils.isEmptyCollection;
+
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
+import java.io.IOException;
+import java.util.List;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
+import org.smartregister.account.AccountHelper;
+import org.smartregister.domain.Setting;
+import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.BaseRepository;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.util.PreferencesUtil;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 1/28/19.

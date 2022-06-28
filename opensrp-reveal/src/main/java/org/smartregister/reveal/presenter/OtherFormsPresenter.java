@@ -1,9 +1,7 @@
 package org.smartregister.reveal.presenter;
 
 import androidx.annotation.NonNull;
-
 import com.mapbox.geojson.Feature;
-
 import org.json.JSONArray;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Task;

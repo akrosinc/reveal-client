@@ -1,14 +1,15 @@
 package org.smartregister.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.joda.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
-
+@Getter
+@Setter
 public class PlanDefinition implements Comparable<PlanDefinition> , Serializable {
 
     private static final long serialVersionUID = 7928849685467336510L;
@@ -54,117 +55,11 @@ public class PlanDefinition implements Comparable<PlanDefinition> , Serializable
     @JsonProperty
     private boolean experimental;
 
-    public String getIdentifier() {
-        return identifier;
-    }
+    @JsonProperty
+    private String targetGeographicLevel;
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public PlanStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PlanStatus status) {
-        this.status = status;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Period getEffectivePeriod() {
-        return effectivePeriod;
-    }
-
-    public void setEffectivePeriod(Period effectivePeriod) {
-        this.effectivePeriod = effectivePeriod;
-    }
-
-    public List<UseContext> getUseContext() {
-        return useContext;
-    }
-
-    public void setUseContext(List<UseContext> useContext) {
-        this.useContext = useContext;
-    }
-
-    public List<Jurisdiction> getJurisdiction() {
-        return jurisdiction;
-    }
-
-    public void setJurisdiction(List<Jurisdiction> jurisdiction) {
-        this.jurisdiction = jurisdiction;
-    }
-
-    public List<Goal> getGoals() {
-        return goals;
-    }
-
-    public void setGoals(List<Goal> goals) {
-        this.goals = goals;
-    }
-
-    public List<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<Action> actions) {
-        this.actions = actions;
-    }
-
-    public Long getServerVersion() {
-        return serverVersion;
-    }
-
-    public void setServerVersion(Long serverVersion) {
-        this.serverVersion = serverVersion;
-    }
-
-    public boolean isExperimental() {
-        return experimental;
-    }
-
-    public void setExperimental(boolean experimental) {
-        this.experimental = experimental;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @JsonProperty
+    private List<String> hierarchyGeographicLevels;
 
     @Override
     public int compareTo(PlanDefinition o) {

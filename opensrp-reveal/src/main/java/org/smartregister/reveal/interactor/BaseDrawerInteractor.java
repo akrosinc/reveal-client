@@ -12,13 +12,12 @@ import static org.smartregister.reveal.util.Constants.Tables.TASK_TABLE;
 import java.util.Set;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
-import org.smartregister.domain.Location;
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.domain.PlanDefinition;
-import org.smartregister.repository.PlanDefinitionSearchRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
 import org.smartregister.reveal.util.AppExecutors;
-import org.smartregister.reveal.util.Utils;
 import timber.log.Timber;
 
 /**
@@ -30,7 +29,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
 
     private BaseDrawerContract.Presenter presenter;
 
-    private PlanDefinitionSearchRepository planDefinitionSearchRepository;
+    private PlanDefinitionRepository planDefinitionRepository;
 
     private RevealApplication revealApplication;
 
@@ -41,57 +40,26 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
         revealApplication = RevealApplication.getInstance();
         database = revealApplication.getRepository().getReadableDatabase();
         appExecutors = RevealApplication.getInstance().getAppExecutors();
-        planDefinitionSearchRepository = RevealApplication.getInstance().getPlanDefinitionSearchRepository();
+        planDefinitionRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
     }
 
     @Override
-    public void fetchPlans(String jurisdictionName) {
+    public void fetchPlans() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Location operationalArea = Utils.getOperationalAreaLocation(jurisdictionName);
-                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getId() : null;
-                Set<PlanDefinition> planDefinitionSet = planDefinitionSearchRepository.findActivePlansByJurisdiction(jurisdictionIdentifier);
-                appExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        presenter.onPlansFetched(planDefinitionSet);
-                    }
-                });
-
+                Set<PlanDefinition> planDefinitionSet = planDefinitionRepository.findAllPlanDefinitions();
+                appExecutors.mainThread().execute(() -> presenter.onPlansFetched(planDefinitionSet));
             }
         };
 
         appExecutors.diskIO().execute(runnable);
-    }
-
-    @Override
-    public void validateCurrentPlan(String selectedOperationalArea, String currentPlanId) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Location operationalArea = Utils.getOperationalAreaLocation(selectedOperationalArea);
-                String jurisdictionIdentifier = operationalArea != null ? operationalArea.getId() : null;
-                boolean isValid = planDefinitionSearchRepository.planExists(currentPlanId, jurisdictionIdentifier);
-                appExecutors.mainThread().execute(() -> presenter.onPlanValidated(isValid));
-
-            }
-        };
-
-        appExecutors.diskIO().execute(runnable);
-
     }
 
     @Override
     public void checkSynced() {
 
-        String syncQuery = String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, CLIENT_TABLE, SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ? AND %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ?\n", TASK_SYNC_STATUS, TASK_TABLE, TASK_SYNC_STATUS) +
-                "UNION ALL\n" +
-                String.format("SELECT %s FROM %s WHERE %s <> ?\n", STRUCTURE_SYNC_STATUS, STRUCTURE_TABLE, STRUCTURE_SYNC_STATUS);
+        String syncQuery = getSyncQuery();
 
         Runnable runnable = new Runnable() {
             @Override
@@ -99,7 +67,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
                 Cursor syncCursor = null;
                 try
                 {
-                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced});
+                    syncCursor  = database.rawQuery(syncQuery, new String[]{TYPE_Synced, TYPE_Synced, TYPE_Synced, TYPE_Synced});
                     Integer count = syncCursor.getCount();
 
                     if(count == 0)
@@ -131,5 +99,16 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
             }
         };
         appExecutors.diskIO().execute(runnable);
+    }
+
+    @NotNull
+    private String getSyncQuery() {
+        return String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, CLIENT_TABLE, SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", SYNC_STATUS, EVENT_TABLE, SYNC_STATUS, SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", TASK_SYNC_STATUS, TASK_TABLE, TASK_SYNC_STATUS) +
+                "UNION ALL\n" +
+                String.format("SELECT %s FROM %s WHERE %s <> ?\n", STRUCTURE_SYNC_STATUS, STRUCTURE_TABLE, STRUCTURE_SYNC_STATUS);
     }
 }

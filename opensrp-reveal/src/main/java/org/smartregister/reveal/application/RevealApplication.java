@@ -283,7 +283,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
                 String value = jsonObject.optString(VALUE, null);
                 String key = jsonObject.optString(KEY, null);
                 JSONArray values = jsonObject.optJSONArray(VALUES);
-                if (value != null && key != null) {
+                if ((value != null && StringUtils.isNotBlank(value)) && key != null) {
                     serverConfigs.put(key, value);
                 } else if (values != null && key != null) {
                     serverConfigs.put(key, values);
