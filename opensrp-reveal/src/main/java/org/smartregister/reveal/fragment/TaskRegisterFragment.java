@@ -213,6 +213,11 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
 
     }
 
+    @Override
+    protected boolean onViewLongClicked(final View view) {
+        return false;
+    }
+
     public void displayTaskActionDialog(TaskDetails details, View view) {
         int viewDetailsStringResource =  PAOT.equals(details.getTaskCode()) ? R.string.view_paot_details : R.string.view_details;
         AlertDialogUtils.displayNotificationWithCallback(getContext(), R.string.select_task_action,

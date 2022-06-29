@@ -67,6 +67,11 @@ public class FamilyProfileMemberFragment extends BaseFamilyProfileMemberFragment
         }
     }
 
+    @Override
+    protected boolean onViewLongClicked(final View view) {
+        return false;
+    }
+
     public void goToOtherMemberProfileActivity(CommonPersonObjectClient patient) {
         Intent intent = new Intent(getActivity(), FamilyOtherMemberProfileActivity.class);
         intent.putExtras(getArguments());

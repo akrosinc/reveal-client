@@ -39,6 +39,11 @@ public class FamilyRegisterFragment extends BaseFamilyRegisterFragment {
         return presenter().getDefaultSortQuery();
     }
 
+    @Override
+    protected boolean onViewLongClicked(final View view) {
+        return false;
+    }
+
 
     @Override
     public void setupViews(View view) {

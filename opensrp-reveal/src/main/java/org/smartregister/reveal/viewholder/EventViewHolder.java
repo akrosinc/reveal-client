@@ -36,12 +36,14 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
     public static final String CELL_COORDINATOR_DAILY_SUMMARY = "Cell Coordinator Daily Summary";
     private final Context context;
     private final View.OnClickListener registerClickListener;
+    private final View.OnLongClickListener deleteActionLongClickListener;
     private final View.OnClickListener paginationClickListener;
 
-    public EventViewHolder(Context context, View.OnClickListener registerClickListener, View.OnClickListener paginationClickListener) {
+    public EventViewHolder(Context context, View.OnClickListener registerClickListener, View.OnClickListener paginationClickListener,View.OnLongClickListener deleteActionLongClickListener) {
         this.context = context;
         this.registerClickListener = registerClickListener;
         this.paginationClickListener = paginationClickListener;
+        this.deleteActionLongClickListener = deleteActionLongClickListener;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
         registerViewHolder.householdTextView.setText(Utils.getValue(pc.getColumnmaps(), DatabaseKeys.ENTITY, false));
         registerViewHolder.statusTextView.setText(getStatus(Utils.getValue(pc.getColumnmaps(), DatabaseKeys.EVENT_TYPE, false)
                 , Utils.getValue(pc.getColumnmaps(), DatabaseKeys.STATUS, false), pc.getColumnmaps()));
-        setClickHandler(registerClickListener, eventRegisterDetails, registerViewHolder.itemView);
+        setClickHandler(registerClickListener,deleteActionLongClickListener,eventRegisterDetails, registerViewHolder.itemView);
     }
 
     private String getStatus(String eventType, String status, Map<String, String> columnMaps) {
@@ -157,8 +159,9 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
         }
     }
 
-    private void setClickHandler(View.OnClickListener onClickListener, EventRegisterDetails registerDetails, View view) {
+    private void setClickHandler(View.OnClickListener onClickListener,View.OnLongClickListener onLongClickListener, EventRegisterDetails registerDetails, View view) {
         view.setOnClickListener(onClickListener);
+        view.setOnLongClickListener(onLongClickListener);
         view.setTag(R.id.patient_column, registerDetails);
     }
 

@@ -32,4 +32,9 @@ public class EventRegisterFragmentInteractor implements EventRegisterContract.In
             });
         });
     }
+
+    @Override
+    public void deleteEvent(final String formSubmissionId) {
+        //TODO: mark event as delete and notify user via alert
+    }
 }

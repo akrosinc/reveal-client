@@ -1,5 +1,6 @@
 package org.smartregister.reveal.presenter;
 
+import android.content.DialogInterface;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import org.smartregister.reveal.contract.EventRegisterContract;
 import org.smartregister.reveal.interactor.EventRegisterFragmentInteractor;
 import org.smartregister.reveal.model.EventRegisterDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
+import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.DatabaseKeys;
@@ -31,6 +33,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.DETAILS;
 import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 
@@ -154,6 +157,11 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
     }
 
     @Override
+    public void onEventDeleted(final Event event) {
+        System.out.println("TEsting");
+    }
+
+    @Override
     public void onOpenMapClicked() {
         view.startMapActivity();
     }
@@ -162,6 +170,21 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
         view.showProgressDialog(R.string.opening_form_title, R.string.opening_form_message);
         this.eventRegisterDetails = details;
         interactor.findEvent(details.getFormSubmissionId());
+    }
+
+    @Override
+    public void onEventSelectedForDeletion(final EventRegisterDetails details) {
+        this.eventRegisterDetails = details;
+        AlertDialogUtils.displayNotificationWithCallback(view.getContext(), R.string.delete_event,
+                R.string.delete_event_confirmation, R.string.yes, R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == BUTTON_POSITIVE) {
+                         interactor.deleteEvent(details.getFormSubmissionId());
+                        }
+                        dialog.dismiss();
+                    }
+                });
     }
 
     @Override

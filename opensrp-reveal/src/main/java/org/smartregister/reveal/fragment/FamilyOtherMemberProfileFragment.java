@@ -46,5 +46,10 @@ public class FamilyOtherMemberProfileFragment extends BaseFamilyOtherMemberProfi
         }
     }
 
+    @Override
+    protected boolean onViewLongClicked(final View view) {
+        return false;
+    }
+
 
 }

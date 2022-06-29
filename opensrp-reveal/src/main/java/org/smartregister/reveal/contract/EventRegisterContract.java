@@ -41,9 +41,14 @@ public interface EventRegisterContract {
     interface Presenter extends BaseRegisterFragmentContract.Presenter {
         void onEventFound(Event event);
 
+        void onEventDeleted(Event event);
+
         void onOpenMapClicked();
 
         void onEventSelected(EventRegisterDetails details);
+
+        void onEventSelectedForDeletion(EventRegisterDetails details);
+
 
         void onFilterTasksClicked();
 
@@ -56,5 +61,6 @@ public interface EventRegisterContract {
 
     interface Interactor {
         void findEvent(String formSubmissionId);
+        void deleteEvent(String formSubmissionId);
     }
 }
