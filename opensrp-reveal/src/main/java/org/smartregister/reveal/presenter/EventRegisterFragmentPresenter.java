@@ -157,8 +157,8 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
     }
 
     @Override
-    public void onEventDeleted(final Event event) {
-        System.out.println("TEsting");
+    public void onEventDeleted() {
+        AlertDialogUtils.displayNotification(view.getContext(),R.string.event_deleted_title,R.string.event_deleted_message);
     }
 
     @Override

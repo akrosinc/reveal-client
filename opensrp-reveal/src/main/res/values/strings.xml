@@ -240,6 +240,8 @@
     <string name="irs_field_officer" translatable="false">IRS Field Officer Form</string>
     <string name="verification_form" translatable="false">Verification Form</string>
 
+    <string name="event_deleted_title">Event Deleted</string>
+    <string name="event_deleted_message">Event successfully deleted</string>
 
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
