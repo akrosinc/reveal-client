@@ -42,6 +42,8 @@ import static org.smartregister.reveal.util.Constants.ENTITY_ID;
  */
 public class EventRegisterFragmentPresenter implements EventRegisterContract.Presenter {
 
+    public static final String DELETED = "DELETED";
+
     private String viewConfigurationIdentifier;
 
     private ConfigurableViewsHelper viewsHelper;
@@ -115,7 +117,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 tableName + "." + DatabaseKeys.FORM_SUBMISSION_ID,
                 tableName + "." + DatabaseKeys.BASE_ENTITY_ID,
                 tableName + "." + DatabaseKeys.SPRAYED,
-                tableName + "." + DatabaseKeys.FOUND
+                tableName + "." + DatabaseKeys.FOUND,
         };
         return columns;
     }
@@ -201,6 +203,8 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
     @Override
     public String getMainCondition() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("%s <> '%s'", DatabaseKeys.STATUS,DELETED));
+        stringBuilder.append(" AND ");
         if (filterParams == null || !filterParams.isViewAllEvents()) {
             stringBuilder.append(String.format("%s = '%s'", DatabaseKeys.PROVIDER_ID, allSharedPreferences.fetchRegisteredANM()));
             stringBuilder.append(" AND ");
@@ -226,7 +230,6 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 stringBuilder.append(" AND ");
             }
         }
-
         return stringBuilder.length() == 0 ? "" : stringBuilder.substring(0, stringBuilder.length() - 5);
     }
 

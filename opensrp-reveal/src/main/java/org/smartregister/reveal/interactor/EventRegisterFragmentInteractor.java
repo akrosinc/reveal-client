@@ -1,5 +1,6 @@
 package org.smartregister.reveal.interactor;
 
+import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.domain.Event;
@@ -11,6 +12,8 @@ import timber.log.Timber;
 
 
 public class EventRegisterFragmentInteractor implements EventRegisterContract.Interactor {
+
+    public static final String DELETED = "DELETED";
 
     private EventRegisterContract.Presenter presenter;
 
@@ -40,13 +43,13 @@ public class EventRegisterFragmentInteractor implements EventRegisterContract.In
         appExecutors.diskIO().execute(() -> {
             JSONObject eventJSON = eventClientRepository.getEventsByFormSubmissionId(formSubmissionId);
             Event event = eventClientRepository.convert(eventJSON.toString(), Event.class);
-            JSONObject details =   eventJSON.optJSONObject("details");
+            event.setStatus(DELETED);
             try {
-                details.put("entityStatus","DELETED");
+                Gson gson = new Gson();
+                eventClientRepository.addEvent(event.getBaseEntityId(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
                 Timber.e(e);
             }
-            eventClientRepository.addEvent(event.getBaseEntityId(),eventJSON);
             appExecutors.mainThread().execute(() -> presenter.onEventDeleted());
         });
     }
