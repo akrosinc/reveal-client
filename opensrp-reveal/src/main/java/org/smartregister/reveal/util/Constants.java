@@ -637,6 +637,8 @@ public interface Constants {
 
         String SPRAY_OPERATOR_CODE = "sprayop_code";
 
+        String SPRAY_OPERATOR_CODE_CONFIRMATION ="sprayop_code_confirm";
+
         String DATA_COLLECTOR = "datacollector";
 
         String DISTRICT_MANAGER = "district_manager";
@@ -947,6 +949,8 @@ public interface Constants {
         String JOB_AID = "job_aid";
 
         String LAST_INTERACTED_WITH = "last_interacted_with";
+
+        String ENTITY_STATUS = "entity_status";
 
     }
 

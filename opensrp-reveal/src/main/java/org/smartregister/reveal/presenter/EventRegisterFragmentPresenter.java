@@ -1,6 +1,14 @@
 package org.smartregister.reveal.presenter;
 
+import static android.content.DialogInterface.BUTTON_POSITIVE;
+import static org.smartregister.reveal.util.Constants.DETAILS;
+import static org.smartregister.reveal.util.Constants.ENTITY_ID;
+
 import android.content.DialogInterface;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONException;
@@ -25,17 +33,7 @@ import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.DatabaseKeys;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import timber.log.Timber;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-import static org.smartregister.reveal.util.Constants.DETAILS;
-import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 
 /**
  * Created by samuelgithengi on 7/30/20.
@@ -118,6 +116,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 tableName + "." + DatabaseKeys.BASE_ENTITY_ID,
                 tableName + "." + DatabaseKeys.SPRAYED,
                 tableName + "." + DatabaseKeys.FOUND,
+                tableName + "." + DatabaseKeys.ENTITY_STATUS
         };
         return columns;
     }
@@ -160,6 +159,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
 
     @Override
     public void onEventDeleted() {
+        initializeQueries(getMainCondition());
         AlertDialogUtils.displayNotification(view.getContext(),R.string.event_deleted_title,R.string.event_deleted_message);
     }
 
@@ -203,7 +203,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
     @Override
     public String getMainCondition() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("%s <> '%s'", DatabaseKeys.STATUS,DELETED));
+        stringBuilder.append(String.format("IFNULL(%s,'%s') <> '%s'",DatabaseKeys.ENTITY_STATUS,"NOSTATUS", DELETED));
         stringBuilder.append(" AND ");
         if (filterParams == null || !filterParams.isViewAllEvents()) {
             stringBuilder.append(String.format("%s = '%s'", DatabaseKeys.PROVIDER_ID, allSharedPreferences.fetchRegisteredANM()));

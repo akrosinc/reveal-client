@@ -64,6 +64,8 @@ public class EventClientRepository extends BaseRepository {
     private static final String _ID = "_id";
 
     public static final String VARCHAR = "VARCHAR";
+    public static final String DELETED = "DELETED";
+
 
     protected Table clientTable;
     protected Table eventTable;
@@ -2323,22 +2325,5 @@ public class EventClientRepository extends BaseRepository {
                 + " WHERE "
                 + event_column.taskId.name()
                 + " IN (" + StringUtils.repeat("?", ",", taskIds.size()) + ")", taskIds.toArray(new String[0]));
-    }
-
-    public void markEventAsDeleted(String formSubmissionId) {
-        try {
-
-            ContentValues values = new ContentValues();
-            values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-            values.put("status","DELETED");
-
-            getWritableDatabase().update(eventTable.name(),
-                    values,
-                    event_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
-
-        } catch (Exception e) {
-            Timber.e(e);
-        }
     }
 }
