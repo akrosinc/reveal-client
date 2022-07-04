@@ -244,20 +244,36 @@
         }
       },
       {
-        "key": "location_zone",
+        "key": "village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "What is the name of the village this structure is in",
+        "hint": "Select the village",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Please select the village"
+        }
+      },
+      {
+        "key": "village_other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "What is the name of the location (zone) this structure is in?",
+        "hint": "Please type name of the village",
         "text_size": "8sp",
-        "v_regex": {
-          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Please enter a valid name"
-        },
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:village_selected": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
         }
       },
       {
@@ -266,16 +282,57 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Select the spray operator code who collected data against this structure",
+        "hint": "Spray operator name",
         "v_required": {
           "value": "true",
-          "err": "Please enter the spray operator code"
+          "err": "Please enter the spray operator name"
         },
         "relevance": {
           "step1:eligibility": {
             "type": "string",
             "ex": "equalTo(., \"eligible\")"
           }
+        }
+      },
+      {
+        "key": "sprayop_code_confirm",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Confirm this is the correct spray operator",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the spray operator name"
+        },
+        "relevance": {
+          "step1:eligibility": {
+            "type": "string",
+            "ex": "equalTo(., \"eligible\")"
+          }
+        }
+      },
+      {
+        "key": "mopup_main",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this part of the main spray or mop up?",
+        "options": [
+          {
+            "key": "Main Spray",
+            "text": "Main Spray"
+          },
+          {
+            "key": "Main Spray",
+            "text": "Mop Up"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -323,6 +380,30 @@
         "v_regex": {
           "value": "[A-Za-z\\s]*",
           "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:compoundheadstructure": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_phone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please enter head of household phone number",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "v_regex": {
+          "value": "^$|0[0-9]{8,9}",
+          "err": "Please enter a valid number"
         },
         "relevance": {
           "step1:compoundheadstructure": {
@@ -2020,9 +2101,40 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
+        "type": "spinner",
+        "label": "Who provided this education/information at your home?",
         "hint": "Who provided this education/information at your home?",
         "text_size": "6sp",
+        "options": [
+          {
+            "key": "Health care worker",
+            "text": "Health care worker"
+          },
+          {
+            "key": "Community health worker",
+            "text": "Community health worker"
+          },
+          {
+            "key": "Friends/Family",
+            "text": "Friends/Family"
+          },
+          {
+            "key": "Employer",
+            "text": "Employer"
+          },
+          {
+            "key": "Peer educators",
+            "text": "Peer educators"
+          },
+          {
+            "key": "Don't know",
+            "text": "Don't know"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -2031,6 +2143,24 @@
           "step1:malaria_education": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "education_provider_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other source:",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:education_provider": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
           }
         }
       },
@@ -2111,6 +2241,44 @@
         },
         "relevance": {
           "step1:hfc_seek": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_belong",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "In which health facility catchment area do you reside?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hfc_belong_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other health facility:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "false",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:hfc_belong": {
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }
