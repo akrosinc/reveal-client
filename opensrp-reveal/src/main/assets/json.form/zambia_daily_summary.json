@@ -65,31 +65,17 @@
         }
       },
       {
-        "key": "zone",
+        "key": "village",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "name",
-        "hint": "Please write the name of the Zone",
+        "hint": "Please write the name of the village",
         "v_regex": {
           "value": "[A-Za-z\\s\.\-]*",
           "err": "Please enter a valid name"
         },
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
-        "key": "spray_areas",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "multi_select_list",
-        "buttonText": "Select the SA(s) that this spray operator worked in today",
-        "dialogTitle": "Select the SA(s) that this spray operator worked in today",
-        "searchHint": "Type Spray Area Name",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -129,6 +115,18 @@
         "v_required": {
           "value": "true",
           "err": "Please enter the spray operator code"
+        }
+      },
+      {
+        "key": "sprayop_code_confirm",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Confirm this is the correct spray operator",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the spray operator name"
         }
       },
       {
@@ -496,6 +494,38 @@
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }
+        }
+      },
+      {
+        "key": "education_provider",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "label": "What type of insecticides was used?",
+        "hint": "What type of insecticides was used?",
+        "text_size": "6sp",
+        "options": [
+          {
+            "key": "Fludora Fusion",
+            "text": "Fludora Fusionr"
+          },
+          {
+            "key": "SumiShield",
+            "text": "SumiShield"
+          },
+          {
+            "key": "DDT",
+            "text": "DDT"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       }
     ]

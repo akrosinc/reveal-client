@@ -723,6 +723,9 @@ public class RevealJsonFormUtils {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
                             dataCollector);
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
+                            dataCollector);
                 }
                 if (isZambiaIRSLite()) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA));
@@ -904,6 +907,9 @@ public class RevealJsonFormUtils {
         }
     }
     public void populateSprayAreasField(JSONObject form){
+        JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
+        if(sprayAreaField == null)
+            return;
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
         List<String> locationNames;
@@ -934,7 +940,6 @@ public class RevealJsonFormUtils {
                 option.put(JsonFormConstants.MultiSelectUtils.PROPERTY,property);
                 options.put(option);
             }
-            JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
             sprayAreaField.put(OPTIONS,options);
         } catch (JSONException e){
             e.printStackTrace();
