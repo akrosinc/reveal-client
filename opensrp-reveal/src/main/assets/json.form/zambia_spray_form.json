@@ -326,10 +326,10 @@
           },
           {
             "key": "Main Spray",
-            "text": "Mop Up"
+            "text": "Main Spray"
           }
         ],
-        "value": "no",
+        "value": "Main Spray",
         "v_required": {
           "value": "true",
           "err": "Required field"

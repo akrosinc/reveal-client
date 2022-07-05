@@ -497,7 +497,7 @@
         }
       },
       {
-        "key": "education_provider",
+        "key": "insec_type",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

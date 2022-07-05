@@ -645,6 +645,8 @@ public interface Constants {
 
         String SUPERVISOR = "supervisor";
 
+        String SUPERVISOR_CONFIRMATION = "supervisor_confirmation";
+
         String TEAM_LEADER = "teamLeader";
 
         String FIELD_OFFICER = "fieldOfficer";
