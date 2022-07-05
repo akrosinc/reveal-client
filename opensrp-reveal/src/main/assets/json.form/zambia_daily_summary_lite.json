@@ -120,6 +120,100 @@
         }
       },
       {
+        "key": "supervisor_confirmation",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Please confirm this is the correct supervisor who filled out this paper form",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "mopup_main",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this part of the main spray or mop up?",
+        "options": [
+          {
+            "key": "Main Spray",
+            "text": "Main Spray"
+          },
+          {
+            "key": "Mop Up",
+            "text": "Mop Up"
+          }
+        ],
+        "value": "Main Spray",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "insec_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "label": "What type of insecticides was used?",
+        "hint": "What type of insecticides was used?",
+        "text_size": "6sp",
+        "options": [
+          {
+            "key": "Fludora Fusion",
+            "text": "Fludora Fusionr"
+          },
+          {
+            "key": "SumiShield",
+            "text": "SumiShield"
+          },
+          {
+            "key": "DDT",
+            "text": "DDT"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "dtt_refills",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many DDT refills were used?",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
         "key": "found",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -212,7 +306,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many FULL sachets were RECEIVED at the beginning of the day",
+        "hint": "How many total sachets were RECEIVED at the beginning of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -243,7 +337,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many FULL sachets were RETURNED at the end of the day",
+        "hint": "How many total sachets were RETURNED FULL at the end of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -274,7 +368,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many EMPTY sachets were RETURNED at the end of the day",
+        "hint": "How many total sachets were USED by the end of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -404,6 +498,592 @@
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
           }
+        }
+      },
+      {
+        "key": "sprayed_males",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Male Population",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Please specify male population"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Male population must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Male population must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Male population must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "sprayed_females",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Female Population",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Please specify female population"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Female population must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Female population must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Female population must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "sprayed_totalpop",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_pregwomen",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Pregnant Women",
+        "is_mandatory": true,
+        "text_size": "8sp",
+        "v_required": {
+          "value": true,
+          "err": "Pregnant Women is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Pregnant Women must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Pregnant Women must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Pregnant Women must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "sprayed_females",
+          "err": "Pregnant Women must be less than female population"
+        }
+      },
+      {
+        "key": "sprayed_childrenU5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Children <5 years",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Children <5 years is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Children <5 years must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Children <5 years must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Children <5 years must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "struc_notsprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many STRUCTURES were not sprayed",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_sick",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - SICK",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_locked",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - LOCKED",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_funeral",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - FUNERAL",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_refused",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - REFUSED",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_nothome",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - NO ONE HOME",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprayed_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "STRUCTURES not sprayed reason - OTHER",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "rooms_notsprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many ROOMS were not sprayed",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprrooms_sick",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "ROOMS not sprayed reason - SICK",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprrooms_locked",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "ROOMS not sprayed reason - LOCKED",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprrooms_refused",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "ROOMS not sprayed reason - REFUSED",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "notsprrooms_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "ROOMS not sprayed reason - OTHER",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "sprayed_nets_available",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total Number of Nets Available",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Total Number of Nets Available is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Total Number of Nets Available must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Total Number of Nets Available must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Total Number of Nets Available must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "sprayed_nets_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total Number of Nets Hanging and in Use",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field  must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "total_uNet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total Number of Residents Sleeping Under Nets",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field  must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "pregwomen_uNet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of Pregnant Women Sleeping Under Net",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field  must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "u5_uNet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of Children Under 5 Yrs Sleeping Under Net",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field  must be greater than or equal to 0"
         }
       }
     ]
