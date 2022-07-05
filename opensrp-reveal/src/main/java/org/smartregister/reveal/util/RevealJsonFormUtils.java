@@ -690,6 +690,9 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_FACILITIES, fieldsMap.get(JsonForm.HEALTH_FACILITY),
                         PreferencesUtil.getInstance().getCurrentDistrict());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SPRAY_AREAS, fieldsMap.get(JsonForm.SPRAY_AREAS),
+                        PreferencesUtil.getInstance().getCurrentDistrict());
                 break;
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
