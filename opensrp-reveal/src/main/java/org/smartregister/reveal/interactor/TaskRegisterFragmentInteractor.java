@@ -90,7 +90,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
     private int structuresWithinBuffer = 0;
 
     public TaskRegisterFragmentInteractor(TaskRegisterFragmentContract.Presenter presenter) {
-        this(presenter, Utils.getLocationBuffer());
+        this(presenter, Utils.getLocationBuffer(Utils.isCurrentTargetLevelStructure()));
     }
 
     @VisibleForTesting

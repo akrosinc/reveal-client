@@ -19,6 +19,7 @@ import java.util.TimerTask;
 
 import timber.log.Timber;
 
+import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
 import static org.smartregister.reveal.util.Utils.validateFarStructures;
 
@@ -54,8 +55,8 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
         locationView.hideProgressDialog();
             double offset = callback.getTargetCoordinates().distanceTo(
                     new LatLng(location.getLatitude(), location.getLongitude()));
-         appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location,offset > Utils.getLocationBuffer() && validateFarStructures()));
-         if (offset > Utils.getLocationBuffer() && validateFarStructures()) {
+         appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location,offset > Utils.getLocationBuffer(isCurrentTargetLevelStructure()) && validateFarStructures()));
+         if (offset > Utils.getLocationBuffer(isCurrentTargetLevelStructure()) && validateFarStructures()) {
                 callback.requestUserPassword();
             } else {
                 callback.onLocationValidated();

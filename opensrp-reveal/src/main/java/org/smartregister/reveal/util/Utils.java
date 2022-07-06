@@ -191,8 +191,9 @@ public class Utils {
         return val == null ? defaultValue : val.toString();
     }
 
-    public static Float getLocationBuffer() {
-        return Float.valueOf(getGlobalConfig(CONFIGURATION.LOCATION_BUFFER_RADIUS_IN_METRES, BuildConfig.MY_LOCATION_BUFFER + ""));
+    public static Float getLocationBuffer(boolean isTargetLevelStructure) {
+        return isTargetLevelStructure ? Float.valueOf(getGlobalConfig(CONFIGURATION.LOCATION_BUFFER_RADIUS_IN_METRES, BuildConfig.MY_LOCATION_BUFFER + "")) :
+                Float.valueOf(getGlobalConfig(CONFIGURATION.LOCATION_BUFFER_RADIUS_IN_METRES_FOR_LITE, BuildConfig.MY_LOCATION_BUFFER + ""));
     }
 
     public static long getSyncInterval() {

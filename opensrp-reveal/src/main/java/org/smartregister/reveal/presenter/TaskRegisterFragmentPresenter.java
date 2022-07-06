@@ -293,7 +293,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
                         Utils.matchesSearchPhrase(task.getHouseNumber(), searchText) ||
                         Utils.matchesSearchPhrase(task.getFamilyMemberNames(), searchText)) {
                     filteredTasks.add(task);
-                    if (task.getDistanceFromUser() > 0 && task.getDistanceFromUser() <= Utils.getLocationBuffer())
+                    if (task.getDistanceFromUser() > 0 && task.getDistanceFromUser() <= Utils.getLocationBuffer(Utils.isCurrentTargetLevelStructure()))
                         withinBuffer++;
                 }
             }
@@ -323,7 +323,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
         for (TaskDetails taskDetails : tasks) {
             if (matchesTask(taskDetails, pattern, filterStatus, filterTaskCode, filterInterventionUnitTasks)) {
                 filteredTasks.add(taskDetails);
-                if (taskDetails.getDistanceFromUser() > 0 && taskDetails.getDistanceFromUser() <= Utils.getLocationBuffer())
+                if (taskDetails.getDistanceFromUser() > 0 && taskDetails.getDistanceFromUser() <= Utils.getLocationBuffer(Utils.isCurrentTargetLevelStructure()))
                     withinBuffer++;
             }
         }

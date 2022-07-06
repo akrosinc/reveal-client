@@ -273,7 +273,7 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
     public void setTotalTasks(int structuresWithinBuffer) {
         if (isAdded() && headerTextDisplay != null) {
             headerTextDisplay.setText(getResources().getQuantityString(R.plurals.structures,
-                    taskAdapter.getItemCount(), structuresWithinBuffer, Utils.getLocationBuffer(), taskAdapter.getItemCount()));
+                    taskAdapter.getItemCount(), structuresWithinBuffer, Utils.getLocationBuffer(Utils.isCurrentTargetLevelStructure()), taskAdapter.getItemCount()));
 
             filterRelativeLayout.setVisibility(View.GONE);
         }
