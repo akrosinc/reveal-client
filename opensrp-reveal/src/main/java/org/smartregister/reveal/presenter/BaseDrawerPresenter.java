@@ -358,6 +358,8 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                     || !prefsUtil.getCurrentOperationalArea().equals(view.getOperationalArea())) {
                 changedCurrentSelection = true;
                 onDrawerClosed();
+            } else if(StringUtils.isBlank(prefsUtil.getCurrentPlan())){
+                view.lockNavigationDrawerForSelection(R.string.select_campaign_operational_area_title, R.string.select_campaign_operational_area);
             }
         } else {
             initializeDrawerLayout();

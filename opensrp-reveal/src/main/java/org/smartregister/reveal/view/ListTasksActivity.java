@@ -194,6 +194,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private Bundle savedInstanceState = new Bundle();
 
+    private ImageButton addStructureButton;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,7 +232,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         drawerView.initializeDrawerLayout();
         initializeProgressDialog();
 
-        findViewById(R.id.btn_add_structure).setOnClickListener(this);
+        addStructureButton = findViewById(R.id.btn_add_structure);
+        addStructureButton.setOnClickListener(this);
         findViewById(R.id.drawerMenu).setOnClickListener(this);
 
         initializeCardViews();
@@ -634,6 +638,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, boolean isChangeMapPosition) {
         if(StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition){
             initializeMapView(savedInstanceState);
+            if (org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
+                addStructureButton.setVisibility(View.VISIBLE);
+            } else {
+                addStructureButton.setVisibility(View.GONE);
+            }
         }
 
         if (geoJsonSource != null) {

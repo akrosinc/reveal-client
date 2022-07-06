@@ -64,6 +64,8 @@ public class EventClientRepository extends BaseRepository {
     private static final String _ID = "_id";
 
     public static final String VARCHAR = "VARCHAR";
+    public static final String DELETED = "DELETED";
+
 
     protected Table clientTable;
     protected Table eventTable;

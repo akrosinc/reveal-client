@@ -1,15 +1,23 @@
 package org.smartregister.reveal.fragment;
 
 
+import static android.app.Activity.RESULT_OK;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
+import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.StringRes;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import org.json.JSONObject;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.reveal.BuildConfig;
@@ -31,18 +39,6 @@ import org.smartregister.reveal.view.EventRegisterActivity;
 import org.smartregister.reveal.view.FilterTasksActivity;
 import org.smartregister.reveal.view.ListTasksActivity;
 import org.smartregister.reveal.viewholder.EventViewHolder;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import static android.app.Activity.RESULT_OK;
-import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
-import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
 
 
 public class EventRegisterFragment extends BaseDrawerRegisterFragment implements EventRegisterContract.View, BaseDrawerContract.DrawerActivity {
@@ -72,7 +68,7 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
 
     @Override
     public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
-        EventViewHolder eventViewHolder = new EventViewHolder(getContext(), registerActionHandler, paginationViewHandler);
+        EventViewHolder eventViewHolder = new EventViewHolder(getContext(), registerActionHandler, paginationViewHandler, deleteEventActionHandler);
         clientAdapter = new RecyclerViewPaginatedAdapter(null, eventViewHolder, context().commonrepository(this.tablename));
         clientAdapter.setCurrentlimit(20);
         clientsView.setAdapter(clientAdapter);
@@ -135,6 +131,13 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
     protected void onViewClicked(View view) {
         EventRegisterDetails details = (EventRegisterDetails) view.getTag(R.id.patient_column);
         getPresenter().onEventSelected(details);
+    }
+
+    @Override
+    protected boolean onViewLongClicked(final View view) {
+        EventRegisterDetails details = (EventRegisterDetails) view.getTag(R.id.patient_column);
+        getPresenter().onEventSelectedForDeletion(details);
+        return true;
     }
 
     @Override
@@ -211,7 +214,6 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
         getActivity().startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
 
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

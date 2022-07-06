@@ -256,8 +256,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 listTaskView.displayNotification(R.string.fetching_structures_title, R.string.no_structures_found);
             }
         } else {
-            listTaskView.displayNotification(R.string.fetching_structures_title,
-                    R.string.fetch_location_and_structures_failed, prefsUtil.getCurrentOperationalArea());
             try {
                 structuresGeoJson.put(FEATURES, new JSONArray());
                 listTaskView.setGeoJsonSource(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, isChangeMapPosition());

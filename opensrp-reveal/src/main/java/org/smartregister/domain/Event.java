@@ -195,6 +195,14 @@ public class Event extends BaseDataObject {
         obs.add(observation);
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
     public String getBaseEntityId() {
         return baseEntityId;
     }

@@ -229,7 +229,7 @@
     <string name="register">Register</string>
     <string name="cancel">Cancel</string>
     <string name="partially_sprayed">Partially Sprayed</string>
-    <string name="daily_summary">Daily Summary Form</string>
+    <string name="daily_summary">Daily Spray Operator Summary</string>
     <string name="supervisor_daily_summary">Supervisor Daily Summary Form</string>
 
 
@@ -240,6 +240,8 @@
     <string name="irs_field_officer" translatable="false">IRS Field Officer Form</string>
     <string name="verification_form" translatable="false">Verification Form</string>
 
+    <string name="event_deleted_title">Event Deleted</string>
+    <string name="event_deleted_message">Event successfully deleted</string>
 
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
@@ -319,6 +321,7 @@
     <string name="download">Download</string>
     <string name="downloading">Downloading</string>
     <string name="delete">Delete</string>
+    <string name="delete_event">Delete Event</string>
     <string name="delete_caps">DELETE</string>
     <string name="select_offline_map_to_delete">Please select an offline map to delete</string>
     <string name="select_offline_map_to_download">Please select an offline map to download</string>
@@ -476,6 +479,7 @@
     <string name="registration_info">Registration info</string>
     <string name="view_paot_details">View Details</string>
     <string name="tablet_accountability_form">Tablet Accountability Form</string>
+    <string name="delete_event_confirmation">Please confirm Delete</string>
 
     <string name="edit_cdd_task_complete_status">Edit Task Complete Status</string>
     <string name="confirm_edit_cdd_task_complete_status">Please confirm that the task is complete</string>

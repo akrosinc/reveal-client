@@ -645,6 +645,13 @@
           }
         },
         {
+          "column_name": "entity_status",
+          "type": "Event",
+          "json_mapping": {
+            "field": "details.entity_status"
+          }
+        },
+        {
           "column_name": "event_type",
           "type": "Event",
           "json_mapping": {

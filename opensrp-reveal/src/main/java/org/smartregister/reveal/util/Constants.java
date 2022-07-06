@@ -151,7 +151,7 @@ public interface Constants {
         String VILLAGES = "villages";
         String SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = "select_jurisdiction_max_select_zoom_level";
         String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
-
+        String SPRAY_AREAS = "spray_areas";
     }
 
     interface Preferences {
@@ -637,11 +637,15 @@ public interface Constants {
 
         String SPRAY_OPERATOR_CODE = "sprayop_code";
 
+        String SPRAY_OPERATOR_CODE_CONFIRMATION ="sprayop_code_confirm";
+
         String DATA_COLLECTOR = "datacollector";
 
         String DISTRICT_MANAGER = "district_manager";
 
         String SUPERVISOR = "supervisor";
+
+        String SUPERVISOR_CONFIRMATION = "supervisor_confirmation";
 
         String TEAM_LEADER = "teamLeader";
 
@@ -947,6 +951,8 @@ public interface Constants {
         String JOB_AID = "job_aid";
 
         String LAST_INTERACTED_WITH = "last_interacted_with";
+
+        String ENTITY_STATUS = "entity_status";
 
     }
 

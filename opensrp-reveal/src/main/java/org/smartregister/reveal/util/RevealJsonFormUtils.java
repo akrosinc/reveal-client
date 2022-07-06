@@ -1,58 +1,5 @@
 package org.smartregister.reveal.util;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.core.util.Pair;
-
-import com.mapbox.geojson.Feature;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-import com.vijay.jsonwizard.utils.FormUtils;
-
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.commonregistry.CommonPersonObject;
-import org.smartregister.domain.Event;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.Obs;
-import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.StructureRepository;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.activity.RevealJsonFormActivity;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.model.FamilySummaryModel;
-import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
-import org.smartregister.reveal.model.TaskDetails;
-import org.smartregister.reveal.util.Constants.CONFIGURATION;
-import org.smartregister.reveal.util.Constants.Intervention;
-import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.Constants.Properties;
-import org.smartregister.util.JsonFormUtils;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import timber.log.Timber;
-
 import static com.vijay.jsonwizard.constants.JsonFormConstants.CHECK_BOX;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEY;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.KEYS;
@@ -92,6 +39,53 @@ import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import androidx.core.util.Pair;
+import com.mapbox.geojson.Feature;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+import com.vijay.jsonwizard.utils.FormUtils;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.Obs;
+import org.smartregister.location.helper.LocationHelper;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.activity.RevealJsonFormActivity;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.model.BaseTaskDetails;
+import org.smartregister.reveal.model.FamilySummaryModel;
+import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants.CONFIGURATION;
+import org.smartregister.reveal.util.Constants.Intervention;
+import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.Constants.Properties;
+import org.smartregister.util.JsonFormUtils;
+import timber.log.Timber;
 
 
 /**
@@ -696,6 +690,9 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_FACILITIES, fieldsMap.get(JsonForm.HEALTH_FACILITY),
                         PreferencesUtil.getInstance().getCurrentDistrict());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SPRAY_AREAS, fieldsMap.get(JsonForm.SPRAY_AREAS),
+                        PreferencesUtil.getInstance().getCurrentDistrict());
                 break;
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
@@ -723,11 +720,17 @@ public class RevealJsonFormUtils {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR),
                             PreferencesUtil.getInstance().getCurrentDistrict());
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR_CONFIRMATION),
+                            PreferencesUtil.getInstance().getCurrentDistrict());
                 }
                 String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
                 if (StringUtils.isNotBlank(dataCollector)) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
+                            dataCollector);
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
                             dataCollector);
                 }
                 if (isZambiaIRSLite()) {
@@ -790,8 +793,13 @@ public class RevealJsonFormUtils {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
                             dataCollector);
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                            CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
+                            dataCollector);
                 }
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DISTRICTS, fieldsMap.get(JsonForm.DISTRICT), PreferencesUtil.getInstance().getCurrentProvince());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fieldsMap.get(JsonForm.VILLAGE),
+                        PreferencesUtil.getInstance().getCurrentDistrict());
                 break;
 
             case JsonForm.TABLET_ACCOUNTABILITY_FORM:
@@ -905,6 +913,9 @@ public class RevealJsonFormUtils {
         }
     }
     public void populateSprayAreasField(JSONObject form){
+        JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
+        if(sprayAreaField == null)
+            return;
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
         List<String> locationNames;
@@ -935,7 +946,6 @@ public class RevealJsonFormUtils {
                 option.put(JsonFormConstants.MultiSelectUtils.PROPERTY,property);
                 options.put(option);
             }
-            JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
             sprayAreaField.put(OPTIONS,options);
         } catch (JSONException e){
             e.printStackTrace();

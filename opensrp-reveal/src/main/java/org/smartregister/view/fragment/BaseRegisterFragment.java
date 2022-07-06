@@ -55,6 +55,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     public static String TOOLBAR_TITLE = BaseRegisterActivity.class.getPackage() + ".toolbarTitle";
 
     protected RegisterActionHandler registerActionHandler = new RegisterActionHandler();
+    protected DeleteEventActionHandler deleteEventActionHandler = new DeleteEventActionHandler();
     protected BaseRegisterFragmentContract.Presenter presenter;
     protected View rootView;
     protected TextView headerTextDisplay;
@@ -356,21 +357,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         return false;
     }
 
-    /*protected void updateLocationText() {
-        if (facilitySelection != null) {
-            facilitySelection.setText(LocationHelper.getInstance().getOpenMrsReadableName(
-                    facilitySelection.getSelectedItem()));
-            String locationId = LocationHelper.getInstance().getOpenMrsLocationId(facilitySelection.getSelectedItem());
-            context().allSharedPreferences().savePreference(Constants.CURRENT_LOCATION_ID, locationId);
-
-        }
-    }
-
-    public LocationPickerView getFacilitySelection() {
-        return facilitySelection;
-    }*/
-
     protected abstract void onViewClicked(View view);
+    
+    protected abstract boolean onViewLongClicked(View view);
 
     private void registerSyncStatusBroadcastReceiver() {
         SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
@@ -487,6 +476,14 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         @Override
         public void onClick(View view) {
             onViewClicked(view);
+        }
+    }
+
+    private class DeleteEventActionHandler implements View.OnLongClickListener {
+
+        @Override
+        public boolean onLongClick(final View view) {
+          return onViewLongClicked(view);
         }
     }
 }
