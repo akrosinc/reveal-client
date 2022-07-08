@@ -361,12 +361,6 @@ dependencies {
     def fragmentVersion = "1.2.5"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
 
-
-
-    implementation group: 'com.ibm.fhir', name: 'fhir-model', version: '4.7.0'
-
-
-
     implementation('com.github.akrosinc:android-p2p-sync:0.3.7-SNAPSHOT') {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -385,7 +379,6 @@ dependencies {
 
     //*****End temp fix*****
 
-    testImplementation 'com.ibm.fhir:fhir-model:4.7.0'
     implementation('org.smartregister:opensrp-client-configurable-views:1.1.5-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'org.smartregister', module: 'opensrp-client-core'

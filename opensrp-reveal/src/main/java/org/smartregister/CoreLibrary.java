@@ -1,41 +1,30 @@
 package org.smartregister;
 
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
-import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
-import org.smartregister.repository.TaskNotesRepository;
-import org.smartregister.repository.dao.ClientDaoImpl;
-import org.smartregister.repository.dao.EventDaoImpl;
-import org.smartregister.repository.dao.LocationDaoImpl;
-import org.smartregister.repository.dao.TaskDaoImpl;
+import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-
-
-import java.util.Map;
-import java.util.Set;
-
 import timber.log.Timber;
-
-import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
@@ -160,11 +149,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
         this.p2POptions = p2POptions;
-
         initP2pLibrary(null);
-        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
-            PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
-        }
     }
 
     public void initP2pLibrary(@Nullable String username) {
