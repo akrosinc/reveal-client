@@ -636,7 +636,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     @Override
-    public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, boolean isChangeMapPosition) {
+    public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean isChangeMapPosition) {
         if(StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition){
             initializeMapView(savedInstanceState);
             if (org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
@@ -671,6 +671,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                         boundaryLayer = createBoundaryLayer(operationalArea);
                         kujakuMapView.addLayer(boundaryLayer);
 
+
                         kujakuMapView.setOnFeatureLongClickListener(new OnFeatureLongClickListener() {
                             @Override
                             public void onFeatureLongClick(List<Feature> features) {
@@ -678,8 +679,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                             }
                         }, boundaryLayer.getLayerIds());
 
+                        adjacentOperationalAreas.stream().forEach(oa -> kujakuMapView.addLayer(createBoundaryLayer(oa)));
+
                     } else {
                         boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
+                        boundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
                     }
                 }
 
