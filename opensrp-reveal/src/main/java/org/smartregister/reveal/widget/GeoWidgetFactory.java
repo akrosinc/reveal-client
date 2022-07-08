@@ -74,6 +74,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONEN
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 
 
 public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
@@ -282,7 +283,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
 
                 mapView.setMapboxMap(mapboxMap);
-                float bufferRadius = getLocationBuffer() / getPixelsPerDPI(context.getResources());
+                float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure()) / getPixelsPerDPI(context.getResources());
                 mapView.setLocationBufferRadius(bufferRadius);
 
 

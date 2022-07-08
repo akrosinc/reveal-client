@@ -31,6 +31,7 @@ import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
+import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
 import android.app.ProgressDialog;
@@ -349,7 +350,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         kujakuMapView.setDisableMyLocationOnMapMove(true);
 
-        Float locationBufferRadius = getLocationBuffer();
+        Float locationBufferRadius = getLocationBuffer(isCurrentTargetLevelStructure());
 
         kujakuMapView.setLocationBufferRadius(locationBufferRadius / getPixelsPerDPI(getResources()));
 
@@ -1104,7 +1105,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             Bundle extras = intent.getExtras();
             boolean localSyncDone;
             if (extras != null && extras.getBoolean(UPDATE_LOCATION_BUFFER_RADIUS)) {
-                float bufferRadius = getLocationBuffer() / getPixelsPerDPI(getResources());
+                float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure()) / getPixelsPerDPI(getResources());
                 kujakuMapView.setLocationBufferRadius(bufferRadius);
             }
             localSyncDone = extras != null && extras.getBoolean(LOCAL_SYNC_DONE);

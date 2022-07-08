@@ -50,6 +50,7 @@ import io.ona.kujaku.manager.DrawingManager;
 import static org.smartregister.reveal.util.Utils.getCoordsFromGeometry;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 
 /**
  * Created by Richard Kareko on 5/13/20.
@@ -131,7 +132,7 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
                 mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
 
                 kujakuMapView.setMapboxMap(mapboxMap);
-                float bufferRadius = getLocationBuffer() / getPixelsPerDPI(getResources());
+                float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure()) / getPixelsPerDPI(getResources());
                 kujakuMapView.setLocationBufferRadius(bufferRadius);
 
 

@@ -109,6 +109,7 @@ public interface Constants {
         String VALUES = "values";
         String SETTINGS = "settings";
         String LOCATION_BUFFER_RADIUS_IN_METRES = "location_buffer_radius_in_metres";
+        String LOCATION_BUFFER_RADIUS_IN_METRES_FOR_LITE = "location_buffer_radius_in_metres_for_lite";
         String UPDATE_LOCATION_BUFFER_RADIUS = "update_location_buffer_radius";
         String INDEX_CASE_CIRCLE_RADIUS_IN_METRES = "index_case_circle_radius_in_metres";
         Float DEFAULT_INDEX_CASE_CIRCLE_RADIUS_IN_METRES = 1000f;
