@@ -798,7 +798,7 @@ public class RevealJsonFormUtils {
                 }
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DISTRICTS, fieldsMap.get(JsonForm.DISTRICT), PreferencesUtil.getInstance().getCurrentProvince());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fieldsMap.get(JsonForm.VILLAGE),
-                        PreferencesUtil.getInstance().getCurrentDistrict());
+                        PreferencesUtil.getInstance().getCurrentFacility());
                 break;
 
             case JsonForm.TABLET_ACCOUNTABILITY_FORM:
