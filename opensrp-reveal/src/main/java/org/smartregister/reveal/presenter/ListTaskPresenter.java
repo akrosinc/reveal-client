@@ -586,6 +586,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE),
                         dataCollector);
+                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
+                        dataCollector);
             }
 
             jsonFormUtils.populateCompoundStructureOptions(formJson, org.smartregister.reveal.util.Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()));
