@@ -70,6 +70,7 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
@@ -690,9 +691,7 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_FACILITIES, fieldsMap.get(JsonForm.HEALTH_FACILITY),
                         PreferencesUtil.getInstance().getCurrentDistrict());
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        CONFIGURATION.SPRAY_AREAS, fieldsMap.get(JsonForm.SPRAY_AREAS),
-                        PreferencesUtil.getInstance().getCurrentDistrict());
+                populateSprayAreasField(formJSON);
                 break;
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
@@ -913,17 +912,22 @@ public class RevealJsonFormUtils {
         }
     }
     public void populateSprayAreasField(JSONObject form){
-        JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),"spray_areas");
+        JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),SPRAY_AREAS);
         if(sprayAreaField == null)
             return;
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
         List<String> locationNames;
+        List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
+
         if(Utils.isZambiaIRSFull()){
             //TODO: might just use this for both ZAMBIA and SENeGAL, check preferences first.
-            locationNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
+            String currentTargetLevel = PreferencesUtil.getInstance().getCurrentPlanTargetLevel();
+            PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository().findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
+            List<String> geographicLevels = currentPlan.getHierarchyGeographicLevels();
+            String operationalLevel = geographicLevels.get(geographicLevels.indexOf(currentTargetLevel) - 1) ;
+            locationNames = operationalAreaNames.stream().map(name -> locationRepository.getLocationByName(name)).filter(location -> location.getProperties().getGeographicLevel().equals(operationalLevel)).map(location -> location.getProperties().getName()).collect(Collectors.toList());
         } else if(Utils.isZambiaIRSLite()){
-            List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
             locationNames = operationalAreaNames.stream()
                     .map(name -> locationRepository.getLocationByName(name))
                     .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
@@ -936,8 +940,10 @@ public class RevealJsonFormUtils {
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
-            property.put("presumed-id","err");
-            property.put("confirmed-id","err");
+            if(MULTI_SELECT_LIST.equals(sprayAreaField.getString(TYPE))){
+                property.put("presumed-id","err");
+                property.put("confirmed-id","err");
+            }
             JSONObject option;
             for(String name:locationNames){
                 option = new JSONObject();

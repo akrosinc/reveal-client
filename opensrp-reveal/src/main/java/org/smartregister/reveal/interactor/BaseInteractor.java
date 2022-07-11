@@ -72,6 +72,8 @@ import java.util.UUID;
 import timber.log.Timber;
 
 import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
+import static org.smartregister.AllConstants.MULTI_SELECT_LIST;
+import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
@@ -273,7 +275,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         }
         if(DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
             JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
-            if (sprayArea != null) {
+            if (sprayArea != null && MULTI_SELECT_LIST.equals(sprayArea.optString(TYPE))) {
                 for (int i = 0; i < obsList.length(); i++) {
                     JSONObject obs = (JSONObject) obsList.get(i);
                     if (obs.get("formSubmissionField").equals(SPRAY_AREAS)) {
