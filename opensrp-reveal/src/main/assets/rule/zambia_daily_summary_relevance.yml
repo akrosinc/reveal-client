@@ -69,3 +69,17 @@ priority: 1
 condition: "step1_u5_uNet > step1_sprayed_childrenU5"
 actions:
   - "isRelevant = true"
+---
+name: step1_num_pregwomen_validation_err
+description: step1_num_pregwomen_validation_err
+priority: 1
+condition: "step1_pregwomen_uNet > step1_sprayed_pregwomen"
+actions:
+  - "isRelevant = true"
+---
+name: step1_total_pop_err
+description: step1_total_pop_err
+priority: 1
+condition: "Integer.valueOf(helper.ifNull(step1_total_uNet,0)) > (Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0)))"
+actions:
+  - "isRelevant = true"
