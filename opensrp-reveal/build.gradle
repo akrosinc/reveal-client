@@ -294,8 +294,8 @@ dependencies {
 
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
 

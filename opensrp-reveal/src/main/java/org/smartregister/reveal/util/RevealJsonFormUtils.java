@@ -916,27 +916,23 @@ public class RevealJsonFormUtils {
         if(sprayAreaField == null)
             return;
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
-        StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
         List<String> locationNames;
         List<String> operationalAreaNames = Arrays.asList(PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
 
-        if(Utils.isZambiaIRSFull()){
-            //TODO: might just use this for both ZAMBIA and SENeGAL, check preferences first.
-            String currentTargetLevel = PreferencesUtil.getInstance().getCurrentPlanTargetLevel();
-            PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository().findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
-            List<String> geographicLevels = currentPlan.getHierarchyGeographicLevels();
-            String operationalLevel = geographicLevels.get(geographicLevels.indexOf(currentTargetLevel) - 1) ;
-            locationNames = operationalAreaNames.stream().map(name -> locationRepository.getLocationByName(name)).filter(location -> location.getProperties().getGeographicLevel().equals(operationalLevel)).map(location -> location.getProperties().getName()).collect(Collectors.toList());
-        } else if(Utils.isZambiaIRSLite()){
-            locationNames = operationalAreaNames.stream()
-                    .map(name -> locationRepository.getLocationByName(name))
-                    .map(parentLocation -> structureRepository.getLocationsByParentId(parentLocation.getId())).flatMap(Collection::stream)
-                    .map(childLocation -> childLocation.getProperties().getName()).filter(name -> !name.isEmpty()).collect(Collectors.toList());
+        String currentTargetLevel = PreferencesUtil.getInstance().getCurrentPlanTargetLevel();
+        PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository().findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
+        List<String> geographicLevels = currentPlan.getHierarchyGeographicLevels();
+        String operationalLevel;
+        if(Utils.isCurrentTargetLevelStructure()){
+            operationalLevel = geographicLevels.get(geographicLevels.indexOf(currentTargetLevel) - 1) ;
         } else {
-            final String currentFacility = PreferencesUtil.getInstance().getCurrentFacility();
-            locationNames = LocationHelper.getInstance().locationNamesFromHierarchy(currentFacility).stream().filter(name -> !name.equals(currentFacility)).collect(Collectors.toList());
+           operationalLevel = currentTargetLevel;
         }
-
+        final String finalOperationalLevel = operationalLevel;
+        locationNames = operationalAreaNames.stream()
+                                            .map(name -> locationRepository.getLocationByName(name))
+                                            .filter(location -> location.getProperties().getGeographicLevel().equals(finalOperationalLevel))
+                                            .map(location -> location.getProperties().getName()).collect(Collectors.toList());
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
