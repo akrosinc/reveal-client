@@ -1,16 +1,28 @@
 package org.smartregister.reveal.application;
 
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.GLOBAL_CONFIGS;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.SETTINGS;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.TEAM_CONFIGS;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUES;
+import static org.smartregister.reveal.util.FamilyConstants.CONFIGURATION;
+import static org.smartregister.reveal.util.FamilyConstants.EventType;
+import static org.smartregister.reveal.util.FamilyConstants.JSON_FORM;
+import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
+
 import android.content.Intent;
 import androidx.annotation.NonNull;
-
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
 import com.evernote.android.job.JobManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
-
+import io.ona.kujaku.KujakuLibrary;
+import io.ona.kujaku.data.realm.RealmDatabase;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,26 +71,7 @@ import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import io.fabric.sdk.android.Fabric;
-import io.ona.kujaku.KujakuLibrary;
-import io.ona.kujaku.data.realm.RealmDatabase;
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.GLOBAL_CONFIGS;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.SETTINGS;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.TEAM_CONFIGS;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUES;
-import static org.smartregister.reveal.util.FamilyConstants.CONFIGURATION;
-import static org.smartregister.reveal.util.FamilyConstants.EventType;
-import static org.smartregister.reveal.util.FamilyConstants.JSON_FORM;
-import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 
 public class RevealApplication extends DrishtiApplication implements TimeChangedBroadcastReceiver.OnTimeChangedListener, ValidateAssignmentReceiver.UserAssignmentListener {
 
@@ -123,7 +116,6 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         context.updateApplicationContext(getApplicationContext());
         context.updateCommonFtsObject(createCommonFtsObject());
         // Initialize Modules
-        Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
         P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, new RevealSyncConfiguration(), BuildConfig.BUILD_TIMESTAMP, p2POptions);
         forceRemoteLoginForInConsistentUsername();
