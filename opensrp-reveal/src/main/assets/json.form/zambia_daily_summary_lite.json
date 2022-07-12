@@ -214,92 +214,6 @@
         }
       },
       {
-        "key": "found",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of eligible structures FOUND",
-        "text_size": "7sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Number of eligible structures FOUND is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Number of eligible structures FOUND must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Number of eligible structures FOUND must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Number of eligible structures FOUND must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "99999999",
-          "err": "Number of eligible structures FOUND must be less than 99999999"
-        }
-      },
-      {
-        "key": "found_hint",
-        "type": "label",
-        "text": "Check this matches with the total number recorded on the supervisor paper form",
-        "read_only": false,
-        "hint_on_text": true,
-        "text_color": "#B9A000",
-        "text_size": "6sp",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
-        "key": "sprayed",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of eligible structures SPRAYED",
-        "text_size": "7sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Number of eligible structures SPRAYED is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Number of eligible structures SPRAYED must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Number of eligible structures SPRAYED must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Number of eligible structures SPRAYED must be greater than or equal to 0"
-        },
-        "v_relative_max": {
-          "value": "found",
-          "err": "Number of eligible structures SPRAYED must be less than eligible structures found."
-        }
-      },
-      {
-        "key": "sprayed_hint",
-        "type": "label",
-        "text": "Check this matches with the total number recorded on the supervisor paper form",
-        "read_only": false,
-        "hint_on_text": true,
-        "text_color": "#B9A000",
-        "text_size": "6sp",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": ""
-      },
-      {
         "key": "bottles_start",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -455,6 +369,136 @@
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
           }
+        }
+      },
+      {
+        "key": "found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of eligible structures FOUND",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Number of eligible structures FOUND is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Number of eligible structures FOUND must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Number of eligible structures FOUND must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number of eligible structures FOUND must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "99999999",
+          "err": "Number of eligible structures FOUND must be less than 99999999"
+        }
+      },
+      {
+        "key": "found_hint",
+        "type": "label",
+        "text": "Check this matches with the total number recorded on the supervisor paper form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of eligible structures SPRAYED",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Number of eligible structures SPRAYED is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Number of eligible structures SPRAYED must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Number of eligible structures SPRAYED must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Number of eligible structures SPRAYED must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "found",
+          "err": "Number of eligible structures SPRAYED must be less than eligible structures found."
+        }
+      },
+      {
+        "key": "sprayed_hint",
+        "type": "label",
+        "text": "Check this matches with the total number recorded on the supervisor paper form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "rooms_found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of eligible ROOMS FOUND",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Must be a number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "rooms_sprayed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Number of eligible ROOMS SPRAYED",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Must be a number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Must be greater than or equal to 0"
         }
       },
       {
@@ -817,6 +861,27 @@
         }
       },
       {
+        "key": "struc_notsprayed_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Structures not sprayed must match reasons.",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "rooms_notsprayed",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -952,6 +1017,27 @@
         }
       },
       {
+        "key": "rooms_notsprayed_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Rooms not sprayed must match reasons.",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "sprayed_nets_available",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1003,6 +1089,27 @@
         "v_min": {
           "value": "0",
           "err": "Field  must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "sprayed_nets_use_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Total Number of Nets Hanging and in Use must be less than or equal total available nets.",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
         }
       },
       {
@@ -1084,6 +1191,27 @@
         "v_min": {
           "value": "0",
           "err": "Field  must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "num_childeren_u5_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Number of Children Under 5 Yrs Sleeping Under Net must be less or equal to Children recorded",
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
         }
       }
     ]
