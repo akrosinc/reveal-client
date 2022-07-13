@@ -411,79 +411,6 @@
         }
       },
       {
-        "key": "received_when",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Did you receive your initial balance today, top up or no pills today?",
-        "options": [
-          {
-            "key": "Initial balance",
-            "text": "Initial balance"
-          },
-          {
-            "key": "Top Up",
-            "text": "Top Up"
-          },
-          {
-            "key": "None",
-            "text": "None"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        }
-      },
-      {
-        "key": "received_number",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "How many tablets did you receive?",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "total_tablet_admin_max",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-calculation.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "adminstered",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -511,10 +438,6 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
-        },
-        "v_relative_max": {
-          "value": "total_tablet_admin_max",
-          "err": "You selected Initial balance, therefore  the total administered today must be less than or equal initial tablets received"
         }
       },
       {
