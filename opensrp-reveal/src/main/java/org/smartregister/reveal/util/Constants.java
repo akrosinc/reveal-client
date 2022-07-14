@@ -746,6 +746,8 @@ public interface Constants {
         String TOTAL_ADMINISTERED_SPAQ = "totalAdministeredSpaq";
 
         String TOTAL_NUMBER_OF_ADDITIONAL_DOSES = "totalNumberOfAdditionalDoses";
+
+        String DRUG_REALLOCATEE = "drug_reallocatee";
     }
 
     interface DateFormat {
