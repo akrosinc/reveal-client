@@ -1,39 +1,10 @@
 package org.smartregister.sync;
 
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+
 import android.content.ContentValues;
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-
-import com.ibm.fhir.model.resource.QuestionnaireResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.smartregister.CoreLibrary;
-import org.smartregister.commonregistry.AllCommonsRepository;
-import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.converters.ClientConverter;
-import org.smartregister.converters.EventConverter;
-import org.smartregister.domain.Address;
-import org.smartregister.domain.Client;
-import org.smartregister.domain.Event;
-import org.smartregister.domain.Obs;
-import org.smartregister.domain.PlanDefinition;
-import org.smartregister.domain.db.EventClient;
-import org.smartregister.domain.jsonmapping.ClassificationRule;
-import org.smartregister.domain.jsonmapping.ClientClassification;
-import org.smartregister.domain.jsonmapping.ClientField;
-import org.smartregister.domain.jsonmapping.Column;
-import org.smartregister.domain.jsonmapping.ColumnType;
-import org.smartregister.domain.jsonmapping.JsonMapping;
-import org.smartregister.domain.jsonmapping.Rule;
-import org.smartregister.domain.jsonmapping.Table;
-import org.smartregister.pathevaluator.plan.PlanEvaluator;
-import org.smartregister.repository.DetailsRepository;
-import org.smartregister.util.AppExecutors;
-import org.smartregister.util.AssetHandler;
-
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,10 +16,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.smartregister.CoreLibrary;
+import org.smartregister.commonregistry.AllCommonsRepository;
+import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.domain.Address;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.db.EventClient;
+import org.smartregister.domain.jsonmapping.ClassificationRule;
+import org.smartregister.domain.jsonmapping.ClientClassification;
+import org.smartregister.domain.jsonmapping.ClientField;
+import org.smartregister.domain.jsonmapping.Column;
+import org.smartregister.domain.jsonmapping.ColumnType;
+import org.smartregister.domain.jsonmapping.JsonMapping;
+import org.smartregister.domain.jsonmapping.Rule;
+import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.repository.DetailsRepository;
+import org.smartregister.util.AppExecutors;
+import org.smartregister.util.AssetHandler;
 import timber.log.Timber;
-
-import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
 
@@ -108,33 +98,8 @@ public class ClientProcessorForJava {
                         processEvent(event, client, clientClassification);
                     }
                 }
-
-                if (localSubmission && CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
-                    processPlanEvaluation(eventClient);
-                }
             }
         }
-    }
-
-    /**
-     * Process plan evaluation for an event client
-     *
-     * @param eventClient
-     */
-    public void processPlanEvaluation(EventClient eventClient) {
-        appExecutors.diskIO().execute(() -> {
-            String planIdentifier = eventClient.getEvent().getDetails().get("planIdentifier");
-
-            if (StringUtils.isNotBlank(planIdentifier)) {
-                PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
-                PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
-                QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
-                if (eventClient.getClient() != null) {
-                    questionnaireResponse = questionnaireResponse.toBuilder().contained(ClientConverter.convertClientToPatientResource(eventClient.getClient())).build();
-                }
-                planEvaluator.evaluatePlan(plan, questionnaireResponse);
-            }
-        });
     }
 
     /**

@@ -175,13 +175,13 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"http://10.0.2.2:8080/"'
+            resValue "string", 'opensrp_base_url', '"https://api-qa.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.ZAMBIA"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -234,18 +234,15 @@ tasks.withType(Test) {
 dependencies {
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.test.ext:junit-ktx:1.1.3'
+    androidTestImplementation 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.12'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
     implementation('io.ona.kujaku:library:0.9.0') {
         exclude group: 'com.android.volley'
         exclude group: 'stax', module: 'stax-api'
     }
-
-    //Introducing Retrofit:
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
-
 
     //*****Tempfix Required by org.smartregister.* classes******
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
@@ -267,10 +264,6 @@ dependencies {
 
     implementation('com.github.johnkil.print:print:1.3.1') {
         exclude group: 'com.google.android', module: 'android'
-    }
-
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
-        transitive = true
     }
 
     implementation('ch.acra:acra:4.5.0') {
@@ -304,8 +297,8 @@ dependencies {
 
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
 
 
@@ -338,8 +331,6 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    androidTestImplementation 'junit:junit:4.13'
-
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.1.0'
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
@@ -361,12 +352,6 @@ dependencies {
     def fragmentVersion = "1.2.5"
     testImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
 
-
-
-    implementation group: 'com.ibm.fhir', name: 'fhir-model', version: '4.7.0'
-
-
-
     implementation('com.github.akrosinc:android-p2p-sync:0.3.7-SNAPSHOT') {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -385,7 +370,6 @@ dependencies {
 
     //*****End temp fix*****
 
-    testImplementation 'com.ibm.fhir:fhir-model:4.7.0'
     implementation('org.smartregister:opensrp-client-configurable-views:1.1.5-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'org.smartregister', module: 'opensrp-client-core'
@@ -419,7 +403,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-    testImplementation 'junit:junit:4.13'
     testImplementation group: 'org.hamcrest', name: 'hamcrest-core', version: '2.2'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
@@ -439,6 +422,10 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation "org.powermock:powermock-classloading-xstream:$powerMockVersion"
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
 }
 
 task clearJar(type: Delete) {

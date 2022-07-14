@@ -1787,7 +1787,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Can I ask you questions on malaria information?",
+        "label": "Do you have time to ask SBC questions on malaria information to the Household Head?",
         "text_size": "8sp",
         "options": [
           {
@@ -1846,7 +1846,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "check_box",
-        "label": "What type of message / information did you see or hear?",
+        "label": "What types of messages and information did you see or hear? (Do not read out the options)",
         "text_size": "8sp",
         "options": [
           {
@@ -1991,7 +1991,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "check_box",
-        "label": "What is your preferred source(s) of malaria messages / information?",
+        "label": "What is your preferred source(s) of malaria messages and information? (Do not read out the options)",
         "text_size": "8sp",
         "options": [
           {
@@ -2102,8 +2102,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "label": "Who provided this education/information at your home?",
-        "hint": "Who provided this education/information at your home?",
+        "label": "Who provided this education/information at your home? (Do not read out the options)",
+        "hint": "Who provided this education/information at your home? (Do not read out the options)",
         "text_size": "6sp",
         "options": [
           {
@@ -2170,7 +2170,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Can you ask questions on health seeking behaviour?",
+        "label": "Do you have time to ask questions on health seeking behaviour to the Household Head?",
         "text_size": "8sp",
         "options": [
           {

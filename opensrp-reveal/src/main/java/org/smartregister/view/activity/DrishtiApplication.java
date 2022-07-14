@@ -1,36 +1,29 @@
 package org.smartregister.view.activity;
 
+import static org.smartregister.util.Log.logError;
+
 import android.app.Application;
 import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
-
-import net.sqlcipher.database.SQLiteDatabase;
-
-import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
-import org.smartregister.reveal.R;
-import org.smartregister.repository.DrishtiRepository;
-import org.smartregister.repository.Repository;
-import org.smartregister.sync.ClientProcessorForJava;
-import org.smartregister.sync.P2PClassifier;
-import org.smartregister.util.BitmapImageCache;
-import org.smartregister.util.CrashLyticsTree;
-import org.smartregister.util.CredentialsHelper;
-import org.smartregister.util.OpenSRPImageLoader;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
-
+import net.sqlcipher.database.SQLiteDatabase;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
+import org.smartregister.repository.DrishtiRepository;
+import org.smartregister.repository.Repository;
+import org.smartregister.reveal.R;
+import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.sync.P2PClassifier;
+import org.smartregister.util.BitmapImageCache;
+import org.smartregister.util.CredentialsHelper;
+import org.smartregister.util.OpenSRPImageLoader;
 import timber.log.Timber;
-
-import static org.smartregister.util.Log.logError;
 
 public abstract class DrishtiApplication extends Application {
 
@@ -83,8 +76,6 @@ public abstract class DrishtiApplication extends Application {
     public void onCreate() {
         try {
             super.onCreate();
-            initializeCrashLyticsTree();
-
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
@@ -92,16 +83,6 @@ public abstract class DrishtiApplication extends Application {
         }
     }
 
-    /**
-     * Plant the crashlytics tree fro every application to use
-     */
-    public void initializeCrashLyticsTree() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            Timber.plant(new CrashLyticsTree());
-        }
-    }
 
     public abstract void logoutCurrentUser();
 

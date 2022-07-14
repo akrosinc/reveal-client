@@ -41,3 +41,45 @@ priority: 1
 condition: "step1_bottles_accounted > 0"
 actions:
   - "isRelevant = true"
+---
+name: step1_sprayed_nets_use_validation_err
+description: step1_sprayed_nets_use_validation_err
+priority: 1
+condition: "step1_sprayed_nets_used > step1_sprayed_nets_available"
+actions:
+  - "isRelevant = true"
+---
+name: step1_struc_notsprayed_err
+description: step1_struc_notsprayed_err
+priority: 1
+condition: "Integer.valueOf(helper.ifNull(step1_struc_notsprayed,0)) != (Integer.valueOf(helper.ifNull(step1_notsprayed_sick,0)) + Integer.valueOf(helper.ifNull(step1_notsprayed_locked,0)) + Integer.valueOf(helper.ifNull(step1_notsprayed_funeral,0)) + Integer.valueOf(helper.ifNull(step1_notsprayed_refused,0)) + Integer.valueOf(helper.ifNull(step1_notsprayed_nothome,0))  + Integer.valueOf(helper.ifNull(step1_notsprayed_other,0)))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_rooms_notsprayed_err
+description: step1_rooms_notsprayed_err
+priority: 1
+condition: "Integer.valueOf(helper.ifNull(step1_rooms_notsprayed,0)) != (Integer.valueOf(helper.ifNull(step1_notsprrooms_sick,0))  + Integer.valueOf(helper.ifNull(step1_notsprrooms_locked,0)) + Integer.valueOf(helper.ifNull(step1_notsprrooms_refused,0)) + Integer.valueOf(helper.ifNull(step1_notsprrooms_other,0)))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_num_childeren_u5_validation_err
+description: step1_num_childeren_u5_validation_err
+priority: 1
+condition: "step1_u5_uNet > step1_sprayed_childrenU5"
+actions:
+  - "isRelevant = true"
+---
+name: step1_num_pregwomen_validation_err
+description: step1_num_pregwomen_validation_err
+priority: 1
+condition: "step1_pregwomen_uNet > step1_sprayed_pregwomen"
+actions:
+  - "isRelevant = true"
+---
+name: step1_total_pop_err
+description: step1_total_pop_err
+priority: 1
+condition: "Integer.valueOf(helper.ifNull(step1_total_uNet,0)) > (Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0)))"
+actions:
+  - "isRelevant = true"

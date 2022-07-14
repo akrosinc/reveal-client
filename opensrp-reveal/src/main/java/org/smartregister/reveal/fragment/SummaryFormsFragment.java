@@ -20,6 +20,7 @@ import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.OtherFormsfragmentContract;
 import org.smartregister.reveal.presenter.OtherFormsFragmentPresenter;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.LocationUtils;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
@@ -65,6 +66,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     private Button btnCDDSupervisorChecklist;
 
     private Button btnHFWSupervisorChecklist;
+
+    private Button btnDrugAllocationForm;
 
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
@@ -113,6 +116,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnCDDSupervisorChecklist = view.findViewById(R.id.cdd_supervisor_checklist);
         btnHFWSupervisorChecklist = view.findViewById(R.id.hfw_supervisor_checklist);
 
+        btnDrugAllocationForm = view.findViewById(R.id.cdd_drug_allocation_form);
+
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
         } else if(Utils.isZambiaIRSFull()){
@@ -129,6 +134,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnFPPForm.setVisibility(View.VISIBLE);
         } else if(Utils.isMDALite()){
             btnTabletAccountabilityForm.setVisibility(View.VISIBLE);
+            btnDrugAllocationForm.setVisibility(View.VISIBLE);
         } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
@@ -164,6 +170,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnHfwLevelReferral.setOnClickListener(this);
             btnCDDSupervisorChecklist.setOnClickListener(this);
             btnHFWSupervisorChecklist.setOnClickListener(this);
+            btnDrugAllocationForm.setOnClickListener(this);
     }
 
     @Override
@@ -305,6 +312,9 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 break;
             case R.id.fpp_form:
                 presenter.showBasicForm(Constants.JsonForm.FPP_FORM_ZAMBIA);
+                break;
+            case R.id.cdd_drug_allocation_form:
+                presenter.showBasicForm(JsonForm.CDD_DRUG_ALLOCAITON_FORM);
                 break;
             default:
                 break;

@@ -422,6 +422,7 @@
     <string name="family_information">Family Information</string>
     <string name="cdd_supervisor_checklist">CDD Supervisor checklist</string>
     <string name="hfw_supervisor_checklist">HFW Supervisor checklist</string>
+    <string name="cdd_drug_allocation_form">CDD Drug Allocation Form</string>
     <string name="distribution_coverage">Distribution coverage</string>
     <string name="and_individuals_complete">And Individuals complete</string>
     <string name="structure_total">Structure: TOTAL</string>
@@ -478,7 +479,7 @@
     <string name="tasks_text">Tasks</string>
     <string name="registration_info">Registration info</string>
     <string name="view_paot_details">View Details</string>
-    <string name="tablet_accountability_form">Tablet Accountability Form</string>
+    <string name="tablet_accountability_form">Reverse Cascade for Drugs</string>
     <string name="delete_event_confirmation">Please confirm Delete</string>
 
     <string name="edit_cdd_task_complete_status">Edit Task Complete Status</string>

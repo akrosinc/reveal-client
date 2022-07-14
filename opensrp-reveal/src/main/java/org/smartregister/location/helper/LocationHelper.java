@@ -1,10 +1,16 @@
 package org.smartregister.location.helper;
 
 import android.util.Pair;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -15,16 +21,6 @@ import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import timber.log.Timber;
 
 

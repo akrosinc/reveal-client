@@ -635,6 +635,13 @@
           }
         },
         {
+          "column_name": "entity_status",
+          "type": "Event",
+          "json_mapping": {
+            "field": "details.entity_status"
+          }
+        },
+        {
           "column_name": "sop",
           "type": "Event",
           "json_mapping": {

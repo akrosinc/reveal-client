@@ -134,6 +134,8 @@ import timber.log.Timber;
 public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRequestCallback,
         UserLocationCallback {
 
+    private List<Feature> adjacentOperationAreas;
+
     private ListTaskView listTaskView;
 
     private ListTaskInteractor listTaskInteractor;
@@ -227,15 +229,15 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     @Override
-    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive) {
+    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive) {
         prefsUtil.setCurrentOperationalArea(operationalArea.getStringProperty(Constants.Properties.LOCATION_NAME));
         listTaskView.setOperationalArea(prefsUtil.getCurrentOperationalArea());
-        onStructuresFetched(structuresGeoJson, operationalArea, taskDetailsList);
+        onStructuresFetched(structuresGeoJson, operationalArea, adjacentOperationalAreas, taskDetailsList);
         onAddStructureClicked(locationComponentActive, point);
     }
 
     @Override
-    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList) {
+    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList) {
         listTaskView.hideProgressDialog();
         setChangeMapPosition(drawerPresenter.isChangedCurrentSelection() || (drawerPresenter.isChangedCurrentSelection() && changeMapPosition));
         drawerPresenter.setChangedCurrentSelection(false);
@@ -249,16 +251,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 searchFeatureCollection = null;
                 searchTasks(searchPhrase);
             } else {
-                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, isChangeMapPosition());
+                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
             }
             this.operationalArea = operationalArea;
+            this.adjacentOperationAreas = adjacentOperationalAreas;
             if (Utils.isEmptyCollection(getFeatureCollection().features())) {
                 listTaskView.displayNotification(R.string.fetching_structures_title, R.string.no_structures_found);
             }
         } else {
             try {
                 structuresGeoJson.put(FEATURES, new JSONArray());
-                listTaskView.setGeoJsonSource(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, isChangeMapPosition());
+                listTaskView.setGeoJsonSource(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
                 listTaskView.clearSelectedFeature();
                 listTaskView.closeCardView(R.id.btn_collapse_spray_card_view);
             } catch (JSONException e) {
@@ -577,10 +580,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.HEALTH_FACILITIES, fields.get(JsonForm.HFC_BELONG), prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DISTRICTS, fields.get(JsonForm.DISTRICT), prefsUtil.getCurrentProvince());
             jsonFormUtils.populateForm(event, formJson);
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.VILLAGES,fields.get(JsonForm.VILLAGE),prefsUtil.getCurrentFacility());
             String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
             if (StringUtils.isNotBlank(dataCollector)) {
                 jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE),
+                        dataCollector);
+                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
                         dataCollector);
             }
 
@@ -649,7 +656,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null, isChangeMapPosition());
+        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
        if(!isKenyaMDALite() && !isRwandaMDALite()){
            listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
        }
@@ -669,7 +676,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null, isChangeMapPosition());
+        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
     }
 
     @Override
@@ -678,7 +685,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         listTaskView.hideProgressDialog();
         getFeatureCollection().features().add(feature);
         setChangeMapPosition(false);
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null, isChangeMapPosition());
+        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
         try {
             clickedPoint = new LatLng(featureCoordinates.getDouble(1), featureCoordinates.getDouble(0));
             listTaskView.displaySelectedFeature(feature, clickedPoint, zoomlevel);
@@ -810,7 +817,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
+        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea,adjacentOperationAreas, false);
         new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
     }
 
@@ -850,7 +857,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 || !listTaskView.isMyLocationComponentActive()) {
             listTaskView.focusOnUserLocation(false);
             if (!isTasksFiltered && StringUtils.isBlank(searchPhrase)) {
-                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
+                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationAreas,false);
             }
         }
     }
@@ -918,7 +925,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 filterFeatureCollection.add(feature);
             }
         }
-        listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, false);
+        listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas,false);
         listTaskView.setNumberOfFilters(filterParams.getCheckedFilters().size());
         listTaskView.setSearchPhrase("");
         isTasksFiltered = true;
@@ -938,7 +945,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void searchTasks(String searchPhrase) {
         if (searchPhrase.isEmpty()) {
             searchFeatureCollection = null;
-            listTaskView.setGeoJsonSource(filterFeatureCollection == null ? getFeatureCollection() : FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, false);
+            listTaskView.setGeoJsonSource(filterFeatureCollection == null ? getFeatureCollection() : FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas, false);
         } else {
             List<Feature> features = new ArrayList<>();
             for (Feature feature : !Utils.isEmptyCollection(searchFeatureCollection) && searchPhrase.length() > this.searchPhrase.length() ? searchFeatureCollection : Utils.isEmptyCollection(filterFeatureCollection) ? getFeatureCollection().features() : filterFeatureCollection) {
@@ -949,7 +956,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                     features.add(feature);
             }
             searchFeatureCollection = features;
-            listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(searchFeatureCollection), operationalArea, false);
+            listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(searchFeatureCollection), operationalArea, adjacentOperationAreas,false);
         }
         this.searchPhrase = searchPhrase;
     }
@@ -981,7 +988,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
 
-        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, false);
+        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationAreas,false);
     }
     private void logStructureInteractionEvent(Feature feature){
         Bundle bundle = new Bundle();

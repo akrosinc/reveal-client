@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,7 +58,6 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.reveal.api.RevealService;
-import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -104,7 +101,6 @@ import org.smartregister.service.formsubmissionhandler.PNCVisitHandler;
 import org.smartregister.service.formsubmissionhandler.RenewFPProductHandler;
 import org.smartregister.service.formsubmissionhandler.TTHandler;
 import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
-import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -122,8 +118,6 @@ import org.smartregister.view.contract.Villages;
 import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import timber.log.Timber;
 
 public class Context {
@@ -1117,25 +1111,6 @@ public class Context {
         return httpAgent();
     }
 
-    public RevealService getRevealService(){
-        if(revealService == null){
-            String baseURL = configuration.dristhiBaseURL();
-            if(!baseURL.endsWith("/"))
-                 baseURL = baseURL.concat("/");
-
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.level(HttpLoggingInterceptor.Level.BODY);
-            OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(RevealApplication.getInstance().getApplicationContext(), configuration);
-            OkHttpClient httpClient = new OkHttpClient.Builder().sslSocketFactory(opensrpSSLHelper.getSSLSocketFactory()).addInterceptor(logging).build();
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(baseURL)
-                    .client(httpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            revealService = retrofit.create(RevealService.class);
-        }
-        return revealService;
-    }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {
         this.commonFtsObject = commonFtsObject;

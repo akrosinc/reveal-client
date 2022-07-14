@@ -44,7 +44,7 @@ public interface ListTaskContract {
 
         void registerFamily();
 
-        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, boolean changeMapPosition);
+        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition);
 
         void displayNotification(int title, @StringRes int message, Object... formatArgs);
 
@@ -83,9 +83,9 @@ public interface ListTaskContract {
 
     interface Presenter extends BaseContract.BasePresenter {
 
-        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList);
+        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationAreas, List<TaskDetails> taskDetailsList);
 
-        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive);
+        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas,List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive);
 
         void onDrawerClosed();
 

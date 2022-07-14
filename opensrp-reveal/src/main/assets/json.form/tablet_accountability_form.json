@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "tablet_accountability",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Enter Tablet Accountability Form",
+    "title": "Reverse Cascade for Drugs",
     "display_back_button": "true",
     "fields": [
       {
@@ -106,8 +106,8 @@
             "text": "Albendazole (ALB)"
           },
           {
-            "key": "MBZ",
-            "text": "Mebendazole (MBZ)"
+            "key": "MEB",
+            "text": "Mebendazole (MEB)"
           }
         ],
         "v_required": {

@@ -193,6 +193,13 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "cdd_drug_allocation",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

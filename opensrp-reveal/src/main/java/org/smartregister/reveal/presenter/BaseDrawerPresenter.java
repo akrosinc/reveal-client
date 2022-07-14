@@ -239,11 +239,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
             if (StringUtils.isNotBlank(currentOperationalAreaId)) {
                 sharedPreferences.saveDefaultLocalityId(sharedPreferences.fetchRegisteredANM(), currentOperationalAreaId);
             }
-            Pair<String, String> facility = getFacilityFromOperationalArea(name.get(name.size() - districtOffset), name.get(name.size() - 1), entireTree);
-            if (facility != null) {
-                prefsUtil.setCurrentFacility(facility.second);
-                prefsUtil.setCurrentFacilityLevel(facility.first);
-            }
+            prefsUtil.setCurrentFacility(name.get(name.size() - 2)); //TODO: generalize for all interventions
         } catch (NullPointerException e) {
             Timber.e(e);
         }
@@ -311,7 +307,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         prefsUtil.setCurrentPlan(name.get(0));
         prefsUtil.setCurrentPlanId(value.get(0));
         PlanDefinition planDefinition = revealApplication.getPlanDefinitionRepository().findPlanDefinitionById(value.get(0));
+       List<String> planGeographicLevels =  planDefinition.getHierarchyGeographicLevels();
         prefsUtil.setCurrentPlanTargetLevel(planDefinition.getTargetGeographicLevel());
+        if("structure".equals(planDefinition.getTargetGeographicLevel())){
+            prefsUtil.setCurrentFacilityLevel(planGeographicLevels.get(planGeographicLevels.indexOf("structure") - 2));
+        }
         view.setPlan(name.get(0));
         view.setOperationalArea("");
         prefsUtil.setCurrentOperationalArea("");

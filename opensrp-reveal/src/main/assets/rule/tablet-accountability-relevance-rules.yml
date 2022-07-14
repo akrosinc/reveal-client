@@ -44,20 +44,20 @@ actions:
 name: step1_mebendezole_received
 description: step1_mebendezole_received
 priority: 1
-condition: "step1_drug_distributed.contains('MBZ')"
+condition: "step1_drug_distributed.contains('MEB')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_mebendazole_top_up
 description: step1_mebendazole_top_up
 priority: 1
-condition: "step1_drug_distributed.contains('MBZ')"
+condition: "step1_drug_distributed.contains('MEB')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_mebendazole_returned
 description: step1_albendazole_returned
 priority: 1
-condition: "step1_drug_distributed.contains('MBZ')"
+condition: "step1_drug_distributed.contains('MEB')"
 actions:
   - "isRelevant = true"

@@ -319,6 +319,19 @@
             android:textSize="20sp"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/cdd_drug_allocation_form"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/cdd_drug_allocation_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

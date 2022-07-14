@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import net.sqlcipher.Cursor;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -284,6 +285,7 @@ public class ListTaskInteractor extends BaseInteractor {
 
                 Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
                 List<TaskDetails> taskDetailsList = null;
+                List<Location> adjacentOperationalAreaLocations  = null;
 
                 try {
                     featureCollection = createFeatureCollection();
@@ -307,27 +309,31 @@ public class ListTaskInteractor extends BaseInteractor {
                                 .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
                         featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
 
+                        adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
                     }
                 } catch (Exception e) {
                     Timber.e(e);
                 }
                 JSONObject finalFeatureCollection = featureCollection;
                 List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+                final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         if (operationalAreaLocation != null) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
+                           List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
+                                   gson.toJson(location))).collect(Collectors.toList());
                             if (locationComponentActive != null) {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature,
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
                                         finalTaskDetailsList, point, locationComponentActive);
                             } else  {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature,
+                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
                                         finalTaskDetailsList);
                             }
                         } else {
-                            getPresenter().onStructuresFetched(finalFeatureCollection, null, null);
+                            getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
                         }
                     }
                 });
