@@ -48,7 +48,6 @@ import com.mapbox.geojson.Feature;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.FormUtils;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,6 +81,7 @@ import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
+import org.smartregister.reveal.util.Constants.EventType;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Constants.Properties;
@@ -437,6 +437,8 @@ public class RevealJsonFormUtils {
             }
         } else if(Constants.EventType.FPP_EVENT.equals(encounterType)){
             formName = JsonForm.FPP_FORM_ZAMBIA;
+        } else if(EventType.CDD_DRUG_ALLOCATION_EVENT.equals(encounterType)){
+            formName = JsonForm.CDD_DRUG_ALLOCAITON_FORM;
         }
         return formName;
     }

@@ -193,7 +193,7 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
         intent.putExtra(FILTER_SORT_PARAMS, filterParams);
         List<String> forms = new ArrayList<>();
         if(Utils.isKenyaMDALite()){
-            forms.addAll(Arrays.asList(EventType.TABLET_ACCOUNTABILITY_EVENT,EventType.CDD_SUPERVISOR_DAILY_SUMMARY));
+            forms.addAll(Arrays.asList(EventType.TABLET_ACCOUNTABILITY_EVENT,EventType.CDD_SUPERVISOR_DAILY_SUMMARY,EventType.CDD_DRUG_ALLOCATION_EVENT));
         } else if(Utils.isRwandaMDALite()){
             forms.addAll(Arrays.asList(EventType.TABLET_ACCOUNTABILITY_EVENT, EventType.CELL_COORDINATOR_DAILY_SUMMARY));
         } else {

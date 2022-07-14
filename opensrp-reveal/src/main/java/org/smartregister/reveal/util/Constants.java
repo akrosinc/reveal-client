@@ -327,8 +327,11 @@ public interface Constants {
 
         String FPP_EVENT = "FPP";
 
+        String CDD_DRUG_ALLOCATION_EVENT = "cdd_drug_allocation";
+
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
-                IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT);
+                IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
+                CDD_DRUG_ALLOCATION_EVENT);
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
 
@@ -633,6 +636,8 @@ public interface Constants {
         String TABLET_ACCOUNTABILITY_FORM_RWANDA = "json.form/rwanda_tablet_accountability_form.json";
 
         String TABLET_ACCOUNTABILITY_FORM_RWANDA_EN = "json.form/rwanda_en_tablet_accountability_form.json";
+
+        String CDD_DRUG_ALLOCAITON_FORM = "json.form/cdd_drug_allocation_form.json";
 
         String FPP_FORM_ZAMBIA = "json.form/zambia_fpp_form.json";
 
