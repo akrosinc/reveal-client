@@ -313,6 +313,27 @@
         }
       },
       {
+        "key": "sprayop_code_confirm_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Confirmation does not match",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "mopup_main",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

@@ -280,3 +280,10 @@ priority: 1
 condition: "step1_eligibility.equals('eligible') && !step1_nonresidential_type.equals('toilet')"
 actions:
   - "isRelevant = true"
+---
+name: step1_sprayop_code_confirm_toaster_error
+description: step1_sprayop_code_confirm_toaster_error
+priority: 1
+condition: "step1_sprayop_code != step1_sprayop_code_confirm"
+actions:
+  - "isRelevant = true"
