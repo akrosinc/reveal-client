@@ -1103,27 +1103,6 @@
         }
       },
       {
-        "key": "sprayed_total_uNet_validation_err",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "toaster_notes",
-        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
-        "v_required": {
-          "value": "true"
-        },
-        "text_size": "8sp",
-        "text_color": "#CF0800",
-        "toaster_type": "problem",
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia-spray-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "sprayed_total_uNet",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1140,6 +1119,27 @@
           "value": "true",
           "err": "Must be a whole number"
         },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_total_uNet_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Total Number of Residents Sleeping Under Nets must be equal to or less than Total Population AND equal to or more than Total Nets in Use.",
+        "v_required": {
+          "value": "true"
+        },
+        "text_size": "8sp",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
         "relevance": {
           "rules-engine": {
             "ex-rules": {
