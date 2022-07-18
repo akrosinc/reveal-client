@@ -243,7 +243,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
         JSONArray obsList = (JSONArray) eventJson.get("obs");
-        if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN)){
+        if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN) || BuildConfig.BUILD_COUNTRY.equals(Country.ZAMBIA)){
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields,COMPOUND_STRUCTURE);
             if(compoundStructureField != null) {
                 for(int i =0; i < obsList.length();i++){
