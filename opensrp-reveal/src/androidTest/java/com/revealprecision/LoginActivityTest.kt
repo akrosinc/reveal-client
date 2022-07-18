@@ -31,12 +31,13 @@ class LoginActivityTest {
         clickLoginButton()
         onView(withId(R.id.kujakuMapView)).check(matches(isDisplayed()))
     }
+
     @Test
     fun invalidUserLogin(){
         onView(withId(R.id.login_user_name_edit_text)).perform(typeText(SampleData.INVALID_USER), closeSoftKeyboard())
         onView(withId(R.id.login_password_edit_text)).perform(typeText(SampleData.INVALID_PASSWORD), closeSoftKeyboard())
         clickLoginButton()
-        onView(withText("Log In Failed")).check(matches(isDisplayed()))
+        onView(withText(SampleData.LOGIN_FAILED_MESSAGE)).check(matches(isDisplayed()))
     }
 
     private fun clickLoginButton() {
