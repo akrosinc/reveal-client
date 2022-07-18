@@ -132,6 +132,27 @@
         }
       },
       {
+        "key": "supervisor_confirmation_toast_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Confirmation does not match",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "mopup_main",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
