@@ -1,11 +1,18 @@
 package org.smartregister.reveal.widget;
 
+import static android.content.DialogInterface.BUTTON_POSITIVE;
+import static org.smartregister.reveal.interactor.BaseInteractor.gson;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
+import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
+import static org.smartregister.reveal.util.Utils.getLocationBuffer;
+import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
 import com.cocoahero.android.geojson.Feature;
 import com.cocoahero.android.geojson.Point;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -39,7 +46,12 @@ import com.vijay.jsonwizard.interfaces.LifeCycleListener;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.utils.ValidationStatus;
 import com.vijay.jsonwizard.views.JsonFormFragmentView;
-
+import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
+import io.ona.kujaku.layers.BoundaryLayer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,22 +71,7 @@ import org.smartregister.reveal.validators.MinZoomValidator;
 import org.smartregister.reveal.view.RevealMapView;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
 import timber.log.Timber;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-import static org.smartregister.reveal.interactor.BaseInteractor.gson;
-import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
-import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
-import static org.smartregister.reveal.util.Utils.getLocationBuffer;
-import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
-import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 
 
 public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
@@ -359,7 +356,11 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> {
             String parentId = locationRepository.getLocationById(operationalAreaFeature.id()).getProperties().getParentId();
-            for (Location location : locationRepository.getAllLocations()) {
+            String operationalLevel = operationalAreaFeature.getStringProperty("geographicLevel");
+            List<Location> allLocations = locationRepository.getAllLocations().stream()
+                                                                              .filter(location -> (operationalLevel.equals(location.getProperties().getGeographicLevel()) || location.getProperties().getName().toLowerCase().contains(OTHER)))
+                                                                              .collect(Collectors.toList());
+            for (Location location : allLocations) {
                 if (!location.getId().equals(operationalAreaFeature.id())) {
                     com.mapbox.geojson.Feature feature = convertFromLocation(location);
                     if (feature != null) {
