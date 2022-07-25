@@ -130,6 +130,27 @@
         }
       },
       {
+        "key": "sprayop_code_confirm_toaster_error",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Confirmation does not match",
+        "text_color": "#CF0800",
+        "toaster_type": "problem",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "found",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -216,13 +237,45 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "insec_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "label": "What type of insecticides was used?",
+        "hint": "What type of insecticides was used?",
+        "text_size": "6sp",
+        "options": [
+          {
+            "key": "Fludora Fusion",
+            "text": "Fludora Fusionr"
+          },
+          {
+            "key": "SumiShield",
+            "text": "SumiShield"
+          },
+          {
+            "key": "DDT",
+            "text": "DDT"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
         "key": "bottles_start",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many full sachets were RECEIVED by the SOP at the begining of the day?",
+        "hint": "How many sachets were RECEIVED at the beginning of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -253,7 +306,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many FULL sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "How many sachets were RETURNED FULL at the end of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -284,7 +337,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "How many EMPTY sachets were RETURNED by the SOP at the end of the day?",
+        "hint": "How many sachets were USED at the end of the day?",
         "text_size": "7sp",
         "is_mandatory": true,
         "v_required": {
@@ -494,38 +547,6 @@
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }
-        }
-      },
-      {
-        "key": "insec_type",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "label": "What type of insecticides was used?",
-        "hint": "What type of insecticides was used?",
-        "text_size": "6sp",
-        "options": [
-          {
-            "key": "Fludora Fusion",
-            "text": "Fludora Fusionr"
-          },
-          {
-            "key": "SumiShield",
-            "text": "SumiShield"
-          },
-          {
-            "key": "DDT",
-            "text": "DDT"
-          },
-          {
-            "key": "other",
-            "text": "Other"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
         }
       }
     ]

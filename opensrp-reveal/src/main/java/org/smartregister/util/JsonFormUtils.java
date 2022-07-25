@@ -142,12 +142,8 @@ public class JsonFormUtils {
                 encounterDate = dateTime;
             }
         }
-        
-        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
-        if (StringUtils.isBlank(encounterLocation)) {
-            encounterLocation = formTag.locationId;
-        }
+        encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
         String formSubmissionId = formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString();
         Event event =

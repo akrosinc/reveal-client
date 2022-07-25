@@ -83,3 +83,11 @@ priority: 1
 condition: "Integer.valueOf(helper.ifNull(step1_total_uNet,0)) > (Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0)))"
 actions:
   - "isRelevant = true"
+---
+name: step1_supervisor_confirmation_toast_err
+description: step1_supervisor_confirmation_toast_err
+priority: 1
+condition: "step1_supervisor != step1_supervisor_confirmation"
+actions:
+  - "isRelevant = true"
+

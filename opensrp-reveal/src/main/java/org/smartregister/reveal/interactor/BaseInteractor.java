@@ -194,7 +194,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         try {
             JSONObject jsonForm = new JSONObject(json);
             encounterType = jsonForm.optString(ENCOUNTER_TYPE);
-            boolean refreshMapOnEventSaved = true;
             switch (encounterType) {
                 case REGISTER_STRUCTURE_EVENT:
                     saveRegisterStructureForm(jsonForm);
@@ -217,12 +216,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     break;
                 default:
                     saveLocationInterventionForm(jsonForm);
-                    if (!encounterType.equals(BEDNET_DISTRIBUTION_EVENT) && !encounterType.equals(EventType.IRS_VERIFICATION)) {
-                        refreshMapOnEventSaved = false;
-                    }
                     break;
             }
-            revealApplication.setRefreshMapOnEventSaved(refreshMapOnEventSaved);
+            revealApplication.setRefreshMapOnEventSaved(true);
         } catch (Exception e) {
             Timber.e(e);
             presenterCallBack.onFormSaveFailure(encounterType);
@@ -243,7 +239,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
         JSONArray obsList = (JSONArray) eventJson.get("obs");
-        if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN)){
+        if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN) || BuildConfig.BUILD_COUNTRY.equals(Country.ZAMBIA)){
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields,COMPOUND_STRUCTURE);
             if(compoundStructureField != null) {
                 for(int i =0; i < obsList.length();i++){

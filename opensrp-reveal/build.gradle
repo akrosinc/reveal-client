@@ -75,7 +75,7 @@ android {
 
     defaultConfig {
         applicationId "org.smartregister.reveal"
-        minSdkVersion 26   //updated to 23 due to androidx.security package
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 34
         versionName "BUILD_NUMBER"
@@ -181,7 +181,7 @@ android {
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.ZAMBIA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -378,7 +378,7 @@ dependencies {
 
     ///Upgrade to latest native forms issue tracked here
     //https://github.com/OpenSRP/opensrp-client-reveal/issues/1235
-    implementation('org.smartregister:opensrp-client-native-form:1.14.7.5-FORM-CONFIG-RULES-FIX-SNAPSHOT@aar') {
+    implementation('com.github.akrosinc:reveal-forms:1.14.7.5-FORM-CONFIG-RULES-FIX-SNAPSHOT') {
         transitive = true
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'cardview-v7'

@@ -138,12 +138,6 @@ priority: 1
 condition: "step1_structure_sprayed.equals('yes') && step1_eligibility.equals('eligible') && step1_new_sachet.equals('yes')"
 actions:
   - "isRelevant = true"
-
-
-
-
-
-
 ---
 name: step1_notsprayed_pregwomen
 description: step1_notsprayed_pregwomen
@@ -284,5 +278,12 @@ name: step1_genderHoH
 description: step1_genderHoH
 priority: 1
 condition: "step1_eligibility.equals('eligible') && !step1_nonresidential_type.equals('toilet')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_sprayop_code_confirm_toaster_error
+description: step1_sprayop_code_confirm_toaster_error
+priority: 1
+condition: "step1_sprayop_code != step1_sprayop_code_confirm"
 actions:
   - "isRelevant = true"
