@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.smartregister.reveal.util.Constants.BusinessStatus;
+import org.smartregister.reveal.util.Constants.Intervention;
 import timber.log.Timber;
 
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
@@ -395,34 +397,28 @@ public class IndicatorUtils {
     private static int calculateDrugCompletion(List<TaskDetails> tasks ) {
         boolean dispenseComplete = false;
         boolean adherenceComplete = false;
-        boolean  reconComplete = false;
 
         for(TaskDetails task : tasks){
             if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
                 dispenseComplete = true;
-            }else if(Constants.Intervention.MDA_DRUG_RECON.equals(task.getTaskCode()) && Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
-                reconComplete = true;
-            }else if(Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())){
+            } else if(Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())){
                 adherenceComplete = true;
             }
         }
-        return (dispenseComplete  && reconComplete && adherenceComplete) ? 1 : 0;
+        return (dispenseComplete && adherenceComplete) ? 1 : 0;
     }
 
     private  static int calculatePartialDrugDistribution(List<TaskDetails> tasks){
         boolean dispenseComplete = false;
         boolean adherenceComplete = false;
-        boolean reconComplete = false;
         for(TaskDetails task : tasks){
             if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
                 dispenseComplete = true;
-            }else if(Constants.Intervention.MDA_DRUG_RECON.equals(task.getTaskCode()) && Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
-                reconComplete = true;
             }else if(Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())){
                 adherenceComplete = true;
             }
         }
-        return (dispenseComplete && (!adherenceComplete || !reconComplete)) ? 1 : 0;
+        return (dispenseComplete && (!adherenceComplete)) ? 1 : 0;
     }
 
     private static int calculateChildrenEligible(List<TaskDetails> tasks){
@@ -437,17 +433,17 @@ public class IndicatorUtils {
 
     private static int calculateChildrenTreated(List<TaskDetails> tasks) {
         int treated = 0;
-        boolean reconComplete = false;
+        boolean adherenceComplete = false;
 
         for(TaskDetails task : tasks){
-            if(Constants.Intervention.MDA_DRUG_RECON.equals(task.getTaskCode()) && Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
-                reconComplete = true;
+            if(Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())) {
+                adherenceComplete = true;
             }
             if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
                 treated++;
             }
         }
-        return reconComplete ? treated : 0;
+        return adherenceComplete ? treated : 0;
     }
 
     private static int calculateStructuresNotFamilyRegistered(List<TaskDetails> tasks){
