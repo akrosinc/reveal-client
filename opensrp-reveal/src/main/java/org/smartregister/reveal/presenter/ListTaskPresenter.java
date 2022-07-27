@@ -830,6 +830,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onStructureMarkedIneligible() {
         updateFeatureTaskBusinessStatus(NOT_ELIGIBLE);
         drawerPresenter.updateSyncStatusDisplay(false);
+        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
     }
 
     @Override
