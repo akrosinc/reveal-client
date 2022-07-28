@@ -395,19 +395,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void onFeatureSelectedByLongClick(Feature feature) {
-        String businessStatus = getPropertyValue(feature, TASK_BUSINESS_STATUS);
         String code = getPropertyValue(feature, TASK_CODE);
-        String status = getPropertyValue(feature, LOCATION_STATUS);
-
         selectedFeatureInterventionType = code;
-        if (INACTIVE.name().equals(status)) {
-            listTaskView.displayToast(R.string.structure_is_inactive);
-        } if (isKenyaMDALite() || isRwandaMDALite()) {
+        if (isKenyaMDALite() || isRwandaMDALite()) {
             listTaskView.displayEditCDDTaskCompleteDialog();
-        } else if (NOT_VISITED.equals(businessStatus) || !feature.hasProperty(TASK_IDENTIFIER)) {
-            listTaskView.displayMarkStructureInactiveDialog();
-        } else {
-            listTaskView.displayToast(R.string.cannot_make_structure_inactive);
         }
     }
 
