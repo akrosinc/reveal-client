@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Enter IRS SA Decision Form",
+    "title": "IRS SA Decision Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -225,22 +225,6 @@
           }
         }
       },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       {
         "key": "reason_noteffective",
         "openmrs_entity_parent": "",
