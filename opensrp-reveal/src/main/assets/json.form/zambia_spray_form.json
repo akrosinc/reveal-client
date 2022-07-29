@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "Spray",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -423,7 +423,7 @@
           "err": "Required field"
         },
         "v_regex": {
-          "value": "^$|0[0-9]{8,9}",
+          "value": "^$|0[0-9]{9}",
           "err": "Please enter a valid number"
         },
         "relevance": {
@@ -592,6 +592,10 @@
         "v_min": {
           "value": "0",
           "err": "Number of eligible rooms must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "20",
+          "err": "This field must be less that or equal to 20"
         },
         "relevance": {
           "step1:structure_sprayed": {
@@ -1349,8 +1353,8 @@
             "text": "Refused"
           },
           {
-            "key": "adultNotPresent",
-            "text": "Adult not present"
+            "key": "noOneHome",
+            "text": "No one home"
           },
           {
             "key": "other",
@@ -1916,7 +1920,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "check_box",
+        "type": "native_radio",
         "label": "What types of messages and information did you see or hear? (Do not read out the options)",
         "text_size": "8sp",
         "options": [
@@ -1997,66 +2001,6 @@
         }
       },
       {
-        "key": "malaria_ends_with_me_sign_seen",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Have you seen this \"Malaria Ends With Me\" picture before? (show image)",
-        "label_text_style": "bold",
-        "text_color": "#000000",
-        "label_info_text": "",
-        "label_info_title": "",
-        "label_info_image_src": "img/malaria_ends_with_me_sign.png",
-        "label_info_has_image": true,
-        "options": [
-          {
-            "key": "1",
-            "text": "Yes"
-          },
-          {
-            "key": "0",
-            "text": "No"
-          }
-        ],
-        "relevance": {
-          "step1:about_malaria": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "test_for_life_sign_seen",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Have you seen this \"Test 4 Life\" picture before?(show image)",
-        "label_text_style": "bold",
-        "text_color": "#000000",
-        "label_info_text": "",
-        "label_info_title": "",
-        "label_info_image_src": "img/test_for_life_sign.jpeg",
-        "label_info_has_image": true,
-        "options": [
-          {
-            "key": "1",
-            "text": "Yes"
-          },
-          {
-            "key": "0",
-            "text": "No"
-          }
-        ],
-        "relevance": {
-          "step1:about_malaria": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
         "key": "preferred_source",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2096,6 +2040,10 @@
           {
             "key": "tv",
             "text": "TV"
+          },
+          {
+            "key": "phone",
+            "text": "Phone"
           },
           {
             "key": "other",
@@ -2299,63 +2247,6 @@
         }
       },
       {
-        "key": "hfc_seek_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify other health facility:",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "false",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:hfc_seek": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
-          }
-        }
-      },
-      {
-        "key": "hfc_belong",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "In which health facility catchment area do you reside?",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "hfc_belong_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify other health facility:",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "false",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:hfc_belong": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
-          }
-        }
-      },
-      {
         "key": "chw",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2383,39 +2274,6 @@
         },
         "relevance": {
           "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "chw_location",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Do you know where the community health worker is located in your community?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          },
-          {
-            "key": "dontKnow",
-            "text": "Don't Know"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:chw": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
