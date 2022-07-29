@@ -153,6 +153,7 @@ public interface Constants {
         String SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = "select_jurisdiction_max_select_zoom_level";
         String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
         String SPRAY_AREAS = "spray_areas";
+        String ZONES = "zones";
     }
 
     interface Preferences {
