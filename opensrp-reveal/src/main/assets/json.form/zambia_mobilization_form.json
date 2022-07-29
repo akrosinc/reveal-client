@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "mobilization",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Enter Mobilization Form",
+    "title": "Mobilization Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -75,16 +75,38 @@
         }
       },
       {
-        "key": "date",
-        "type": "date_picker",
+        "key": "mobilization_activity",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Date of mobilization",
-        "max_date": "today",
+        "type": "native_radio",
+        "label": "What type of mobilisation activity was done?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Community mobiliser door to door visits",
+            "text": "Community mobiliser door to door visits"
+          },
+          {
+            "key": "Specific community IRS mobilisation meeting",
+            "text": "Specific community IRS mobilisation meeting"
+          },
+          {
+            "key": "Existing community meetings to discuss IRS dates",
+            "text": "Existing community meetings to discuss IRS dates"
+          },
+          {
+            "key": "Existing community meetings to discuss IRS dates",
+            "text": "Existing community meetings to discuss IRS dates"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
         "v_required": {
-          "value": true,
-          "err": "This field is required"
+          "value": "true",
+          "err": "Required field"
         },
         "relevance": {
           "step1:mobilized": {
@@ -94,12 +116,31 @@
         }
       },
       {
-        "key": "dateComm",
+        "key": "mobilization_activity_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify what mobilisation activity happened",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:mobilization_activity": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "date",
         "type": "date_picker",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Communicated date of spray:",
+        "hint": "What date did this mobilization activity happen on?",
         "max_date": "today",
         "v_required": {
           "value": true,
@@ -117,7 +158,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
+        "type": "spinner",
         "hint": "What is the name of the zone/location that this spray area belongs to?",
         "text_size": "6sp",
         "v_required": {
@@ -126,12 +167,31 @@
         }
       },
       {
+        "key": "zone_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please type the zone name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:zone": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
         "key": "supervisor",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Supervisor",
+        "hint": "Name of Coordinator/Decision Maker/Supervisor",
         "v_required": {
           "value": "true",
           "err": "This field is required."
@@ -157,57 +217,34 @@
         }
       },
       {
-        "key": "Villagename",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Name of the Village",
-        "text_size": "6sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
-        "key": "anothervillage",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Is there another Village in this spray area?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes"
-          },
-          {
-            "key": "no",
-            "text": "No"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
         "key": "village",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Enter additional Village Name",
+        "type": "spinner",
+        "hint": "Name of the Village/Section",
         "text_size": "6sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "village_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please type the village name",
+        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
         },
         "relevance": {
-          "step1:anothervillage": {
+          "step1:village": {
             "type": "string",
-            "ex": "equalTo(., \"yes\")"
+            "ex": "equalTo(., \"Other\")"
           }
         }
       },
@@ -217,7 +254,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Name of Headman",
+        "hint": "Name of influential community/section leader/headman",
         "text_size": "6sp",
         "v_required": {
           "value": "true",
@@ -225,45 +262,20 @@
         }
       },
       {
-        "key": "anotherHeadMan",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Is there another Headman in this spray area?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes"
-          },
-          {
-            "key": "no",
-            "text": "No"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
-        "key": "headMan2",
+        "key": "hmphone",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Name of additional Headman",
-        "text_size": "6sp",
-        "v_required": {
+        "hint": "Please enter their phone number",
+        "text_size": "8sp",
+        "v_numeric": {
           "value": "true",
-          "err": "Required field"
+          "err": "Please enter a number"
         },
-        "relevance": {
-          "step1:anotherHeadMan": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
+        "v_regex": {
+          "value": "^$|0[0-9]{9}",
+          "err": "Number must be 9-10 digits and must start with 0."
         }
       }
     ]
