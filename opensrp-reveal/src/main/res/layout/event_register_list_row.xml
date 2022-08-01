@@ -1,95 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="@dimen/register_list_item_margin"
     android:layout_marginEnd="@dimen/register_list_item_end_margin"
     android:background="@color/white"
     android:paddingTop="@dimen/register_list_max_padding"
     android:paddingBottom="@dimen/register_list_max_padding"
-    tools:ignore="RtlSymmetry">
+    tools:ignore="RtlSymmetry"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="5dp"
+    card_view:cardCornerRadius="10dp">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/event_date"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingStart="0dp"
-        android:singleLine="true"
-        android:text="Event Date"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/event_type"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/register_list_top_bottom_padding"
-        android:text="Event Date"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+        <TextView
+            android:id="@+id/event_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/event_date"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
+        <TextView
+            android:id="@+id/event_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:visibility="gone"
+            android:textSize="@dimen/structure_info_card_text_size" />
+        <TextView
+            android:id="@+id/event_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/form_name"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/sop"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/register_list_top_bottom_padding"
-        android:text="SOP"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+        <TextView
+            android:id="@+id/event_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
+        <TextView
+            android:id="@+id/event_sop_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/sop"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
+        <TextView
+            android:id="@+id/sop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/entity"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_weight="1"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/register_list_top_bottom_padding"
-        android:text="HH/ VillageName"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+        <TextView
+            android:id="@+id/event_entity_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/hh_village_name"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
+        <TextView
+            android:id="@+id/entity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
+        <TextView
+            android:id="@+id/event_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/status"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/status"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/register_list_top_bottom_padding"
-        android:text="status"
-        android:layout_weight="1"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
-    <org.smartregister.view.customcontrols.CustomFontTextView
-        android:id="@+id/data_collection_date"
-        style="@style/CustomFontTextViewStyle.ClientList.Light"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingStart="0dp"
-        android:singleLine="true"
-        android:text=""
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+        <TextView
+            android:id="@+id/data_collection_date_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:text="@string/data_collection_date"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
+        <TextView
+            android:id="@+id/data_collection_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="@dimen/structure_info_card_text_size" />
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>
 

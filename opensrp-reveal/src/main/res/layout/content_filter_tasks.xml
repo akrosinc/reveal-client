@@ -311,6 +311,22 @@
             app:alignItems="stretch"
             app:flexWrap="wrap" />
 
+        <TextView
+            style="@style/FilterTaskStyle.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spray_operator"
+            android:textStyle="bold" />
+
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/spray_operator_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/spinner_background"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

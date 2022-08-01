@@ -60,6 +60,7 @@ public class FilterTasksActivity extends MultiLanguageActivity implements Filter
 
     private DatePickerDialog datePickerDialog;
 
+    private  AppCompatSpinner sprayOperatorFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class FilterTasksActivity extends MultiLanguageActivity implements Filter
 
 
         sortBySpinner = findViewById(R.id.sort_by);
+        sprayOperatorFilter = findViewById(R.id.spray_operator_filter);
         businessStatusLayout = findViewById(R.id.business_status_layout);
         taskCodeLayout = findViewById(R.id.task_code_layout);
         interventionTypeLayout = findViewById(R.id.intervention_type_layout);

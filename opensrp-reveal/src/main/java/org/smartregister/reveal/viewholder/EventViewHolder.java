@@ -143,6 +143,7 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
         protected TextView householdTextView;
         protected TextView statusTextView;
         protected TextView dataCollectionDateTextView;
+        protected TextView dataCollectionDateLabel;
 
         public RegisterViewHolder(View itemView) {
             super(itemView);
@@ -152,9 +153,11 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
             householdTextView = itemView.findViewById(R.id.entity);
             statusTextView = itemView.findViewById(R.id.status);
             dataCollectionDateTextView = itemView.findViewById(R.id.data_collection_date);
+            dataCollectionDateLabel = itemView.findViewById(R.id.data_collection_date_label);
 
             if(!Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA_EN.equals(BuildConfig.BUILD_COUNTRY) ){
                 dataCollectionDateTextView.setVisibility(View.GONE);
+                dataCollectionDateLabel.setVisibility(View.GONE);
             }
         }
     }

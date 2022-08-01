@@ -967,5 +967,6 @@
     <string name="abbrv_weeks">w</string>
     <string name="abbrv_months">m</string>
     <string name="abbrv_years">y</string>
+    <string name="spray_operator">Spray Operator</string>
 
 </resources>
