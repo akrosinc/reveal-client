@@ -574,6 +574,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.VILLAGES,fields.get(JsonForm.VILLAGE),prefsUtil.getCurrentFacility());
             String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
             if (StringUtils.isNotBlank(dataCollector)) {
+                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.SUPERVISORS,fields.get(JsonForm.SUPERVISOR),dataCollector);
                 jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE),
                         dataCollector);

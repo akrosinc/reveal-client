@@ -263,7 +263,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please type name of the village",
+        "hint": "Type the name of the village",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
@@ -272,8 +272,20 @@
         "relevance": {
           "step1:village_selected": {
             "type": "string",
-            "ex": "equalTo(., \"other\")"
+            "ex": "equalTo(., \"Other\")"
           }
+        }
+      },
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Supervisor name",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
         }
       },
       {
@@ -1856,7 +1868,7 @@
           }
         }
       },
-	  {
+      {
         "key": "sbc",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1886,7 +1898,7 @@
           }
         }
       },
-	   {
+      {
         "key": "about_malaria",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2276,6 +2288,274 @@
           "step1:health_service": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "malaria_services",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What malaria services does your CHW provide to people in this community/village? (Do not read out the options)",
+        "options": [
+          {
+            "key": "Health_education_promotion_sensitisation",
+            "text": "Health education/ promotion/ sensitisation"
+          },
+          {
+            "key": "Malaria testing",
+            "text": "Malaria testing"
+          },
+          {
+            "key": "Malaria treatment",
+            "text": "Malaria treatment"
+          },
+          {
+            "key": "Referrals of patients to HF",
+            "text": "Referrals of patients to HF"
+          },
+          {
+            "key": "Door to door visitations",
+            "text": "Door to door visitations"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "step1:chw": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "malaria_services_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other services",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:malaria_services": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "irs_poster_seen_before",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Have you seen this IRS Poster before? (Show image of poster)",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "where_irs_poster_seen",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Where have you seen this poster? (Do not read out the options)",
+        "options": [
+          {
+            "key": "Health Facility",
+            "text": "Health Facility"
+          },
+          {
+            "key": "Schools",
+            "text": "Schools"
+          },
+          {
+            "key": "Places of worship",
+            "text": "Places of worship"
+          },
+          {
+            "key": "Market",
+            "text": "Market"
+          },
+          {
+            "key": "Bus Stops",
+            "text": "Bus Stops"
+          },
+          {
+            "key": "Can't remember",
+            "text": "Can't remember"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "step1:irs_poster_seen_before": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "where_irs_poster_seen_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify where else this poster was seen",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:where_irs_poster_seen": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "irs_poster_message",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What messages do you remember from this IRS poster? (Do not read out the options)",
+        "options": [
+          {
+            "key": "IRS protects your family",
+            "text": "IRS protects your family"
+          },
+          {
+            "key": "IRS protects your community",
+            "text": "IRS protects your community"
+          },
+          {
+            "key": "IRS kills mosquitos",
+            "text": "IRS kills mosquitos"
+          },
+          {
+            "key": "Allow your house to be sprayed",
+            "text": "Allow your house to be sprayed"
+          },
+          {
+            "key": "None of the above",
+            "text": "None of the above"
+          }
+        ],
+        "relevance": {
+          "step1:irs_poster_seen_before": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "healthcare_seek",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "When you or someone in your household is ill with a fever, do you seek care from a health facility?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "healthcare_not_seek_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "Are there reasons that sometimes prevent you from seeking care from a health facility? (Do not read out the options)",
+        "options": [
+          {
+            "key": "Behaviour of the health providers",
+            "text": "Behaviour of the health providers"
+          },
+          {
+            "key": "Lack of commodities",
+            "text": "Lack of commodities"
+          },
+          {
+            "key": "Distance to health facility",
+            "text": "Distance to health facility"
+          },
+          {
+            "key": "Long waiting times",
+            "text": "Long waiting times"
+          },
+          {
+            "key": "Long waiting times, Diagnosis doesn't yield expected results",
+            "text": "Long waiting times, Diagnosis doesn't yield expected results"
+          },
+          {
+            "key": "No reasons that prevent me from seeking care",
+            "text": "No reasons that prevent me from seeking care"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
+        "key": "healthcare_not_seek_reason_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify any other reasons",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:healthcare_not_seek_reason": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
           }
         }
       },
