@@ -175,6 +175,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private BoundaryLayer boundaryLayer;
 
+    private BoundaryLayer adjacentOperationalBoundaryLayer;
+
     private RevealMapHelper revealMapHelper;
 
     private ImageButton myLocationButton;
@@ -679,11 +681,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                             }
                         }, boundaryLayer.getLayerIds());
 
-                        adjacentOperationalAreas.stream().forEach(oa -> kujakuMapView.addLayer(createBoundaryLayer(oa)));
+                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
+                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
 
                     } else {
                         boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
-                        boundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
+
+                        adjacentOperationalBoundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
                     }
                 }
 
@@ -729,10 +733,18 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
-                .setLabelColorInt(Color.WHITE)
-                .setBoundaryColor(Color.WHITE)
-                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+                                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                                .setLabelColorInt(Color.WHITE)
+                                .setBoundaryColor(Color.YELLOW)
+                                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+    }
+
+    private BoundaryLayer createNeighbouringBoundaryLayer(List<Feature> operationalArea) {
+        return new BoundaryLayer.Builder(FeatureCollection.fromFeatures(operationalArea))
+                                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                                .setLabelColorInt(Color.WHITE)
+                                .setBoundaryColor(Color.WHITE)
+                                .setBoundaryWidth(getResources().getDimension(R.dimen.adjacent_operational_area_boundary_width)).build();
     }
 
     private BoundaryLayer createIRSLiteOABoundaryLayer(Feature operationalArea) {

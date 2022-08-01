@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "daily_summary",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -65,20 +65,40 @@
         }
       },
       {
-        "key": "zone",
+        "key": "location_zone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "edit_type": "name",
+        "hint": "What zone was the data collected in?",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "location_zone_other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
+        "hint": "Please type the zone name",
         "edit_type": "name",
-        "hint": "Please write the name of the Zone",
         "v_regex": {
           "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
           "err": "Please enter a valid name"
         },
+        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:location_zone": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
         }
       },
       {
@@ -158,7 +178,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is this part of the main spray or mop up?",
+        "label": "Is this part of the main spray, mop up or responsive IRS?",
         "options": [
           {
             "key": "Main Spray",
@@ -167,6 +187,10 @@
           {
             "key": "Mop Up",
             "text": "Mop Up"
+          },
+          {
+            "key": "Responsive IRS",
+            "text": "Responsive IRS"
           }
         ],
         "value": "Main Spray",
@@ -187,7 +211,7 @@
         "options": [
           {
             "key": "Fludora Fusion",
-            "text": "Fludora Fusionr"
+            "text": "Fludora Fusion"
           },
           {
             "key": "SumiShield",
@@ -390,6 +414,37 @@
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
           }
+        }
+      },
+      {
+        "key": "spray_operator_forms_aggregated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many Spray Operator Forms are aggregated on this form?",
+        "text_size": "7sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "99999999",
+          "err": "Field must be less than 99999999"
         }
       },
       {
@@ -1276,6 +1331,18 @@
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
           }
+        }
+      },
+      {
+        "key": "paper_form_image",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_image",
+        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
         }
       }
     ]

@@ -43,7 +43,8 @@
     <dimen name="sync_badge_margin">35dp</dimen>
 
     <dimen name="operational_area_boundary_text_size">10sp</dimen>
-    <dimen name="operational_area_boundary_width">1dp</dimen>
+    <dimen name="operational_area_boundary_width">2dp</dimen>
+    <dimen name="adjacent_operational_area_boundary_width">1dp</dimen>
     <dimen name="irs_lite_operational_area_boundary_width">0dp</dimen>
     <dimen name="task_action_text">18sp</dimen>
     <dimen name="case_section_margin">16dp</dimen>

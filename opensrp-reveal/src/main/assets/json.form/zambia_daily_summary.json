@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "daily_summary",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -62,23 +62,6 @@
         "v_required": {
           "value": true,
           "err": "Please specify the date data collection was done"
-        }
-      },
-      {
-        "key": "village",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "name",
-        "hint": "Please write the name of the village",
-        "v_regex": {
-          "value": "[A-Za-z\\s\.\-]*",
-          "err": "Please enter a valid name"
-        },
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
         }
       },
       {
@@ -241,14 +224,14 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "spinner",
+        "type": "native_radio",
         "label": "What type of insecticides was used?",
         "hint": "What type of insecticides was used?",
         "text_size": "6sp",
         "options": [
           {
             "key": "Fludora Fusion",
-            "text": "Fludora Fusionr"
+            "text": "Fludora Fusion"
           },
           {
             "key": "SumiShield",
@@ -295,7 +278,7 @@
           "err": "This field must be greater than or equal to 0"
         },
         "v_max": {
-          "value": "10",
+          "value": "9",
           "err": "This field must be less than 10"
         }
       },
@@ -460,92 +443,50 @@
         }
       },
       {
-        "key": "bottles_accounted_approve",
+        "key": "paper_form_image",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "check_box",
-        "label_text_size": "8sp",
-        "label": "Please confirm if this is correct.",
-        "options": [
-          {
-            "key": "isConsented",
-            "text": "I Accept",
-            "value": false,
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": ""
-          }
-        ],
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_daily_summary_relevance.yml"
-            }
-          }
-        },
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_daily_summary_calculation.yml"
-            }
-          }
-        },
+        "type": "choose_image",
+        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
         "v_required": {
-          "value": "true",
-          "err": "Please check the item"
+          "value": true,
+          "err": "This field is required"
         }
       },
       {
-        "key": "bottles_reason",
+        "key": "location_zone",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select a reason for the unaccounted sachets",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "lost",
-            "text": "Lost"
-          },
-          {
-            "key": "damaged",
-            "text": "Damaged"
-          },
-          {
-            "key": "other",
-            "text": "Other"
-          }
-        ],
+        "type": "spinner",
+        "hint": "What zone was this data collected in?",
         "v_required": {
           "value": "true",
           "err": "Required field"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_daily_summary_relevance.yml"
-            }
-          }
         }
       },
       {
-        "key": "bottles_reasontext",
+        "key": "location_zone_other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please write the reason for the unaccounted sachets",
+        "hint": "Please type the zone name",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Please enter a valid name"
+        },
         "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
         },
         "relevance": {
-          "step1:bottles_reason": {
+          "step1:location_zone": {
             "type": "string",
-            "ex": "equalTo(., \"other\")"
+            "ex": "equalTo(., \"Other\")"
           }
         }
       }

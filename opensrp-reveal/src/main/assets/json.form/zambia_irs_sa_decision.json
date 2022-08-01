@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "irs_sa_decision",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Enter IRS SA Decision Form",
+    "title": "IRS SA Decision Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,38 +57,9 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Please fill this form out for any spray areas visited that has not reached 90% spray coverage",
+        "text": "Please fill this form out for any spray area visited that has not reached 90% spray progress (effectiveness)",
         "text_color": "#CF0800",
         "toaster_type": "info"
-      },
-      {
-        "key": "village",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Please write the name of the Village for this Spray Area",
-        "text_size": "7sp",
-        "v_regex": {
-          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Please enter a valid name"
-        },
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
-        "key": "health_facility",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Select Catchment name",
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
-        }
       },
       {
         "key": "spray_areas",
@@ -96,7 +67,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Select Spray area name",
+        "hint": "Select Spray area name (Ensure the correct catchment is selected in the hamburger menu)",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -263,22 +234,6 @@
           }
         }
       },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       {
         "key": "reason_noteffective",
         "openmrs_entity_parent": "",
@@ -294,7 +249,7 @@
           },
           {
             "key": "lowSuccess",
-            "text": "Low Spray Success Rate"
+            "text": "Many structures found but not sprayed"
           },
           {
             "key": "both",
@@ -345,10 +300,6 @@
           {
             "key": "other",
             "text": "Other"
-          },
-          {
-            "key": "na",
-            "text": "N/A"
           }
         ],
         "v_required": {
@@ -453,10 +404,17 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Who is making this decision?",
+        "hint": "Name of Coordinator/Decision Maker/Supervisor",
         "v_required": {
           "value": "true",
           "err": "This field is required."
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
         }
       },
       {
@@ -512,18 +470,13 @@
           }
         }
       },
-
-
-
-
-
       {
         "key": "display3",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": " Spray effectiveness is {spray_effectiveness}%. Congratulations this area was sprayed effectively!",
+        "text": "Spray effectiveness is {spray_effectiveness}%. This form only needs to be filled out for spray areas that DID NOT REACH 90% Spray Progress!",
         "text_color": "#CF0800",
         "toaster_type": "info",
         "text_size": "8sp",

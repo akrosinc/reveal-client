@@ -75,3 +75,12 @@ priority: 1
 condition: "step1_sprayop_code != step1_sprayop_code_confirm"
 actions:
   - "isRelevant = true"
+---
+name: step1_supervisor
+description: step1_supervisor
+priority: 1
+condition: "Integer.valueOf(step1_spray_effectiveness) < 90"
+actions:
+  - "isRelevant = true"
+
+
