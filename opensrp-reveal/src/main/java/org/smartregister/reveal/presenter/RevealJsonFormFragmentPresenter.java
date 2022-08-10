@@ -9,11 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Pair;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -24,17 +22,18 @@ import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 import com.vijay.jsonwizard.presenters.JsonFormFragmentPresenter;
 import com.vijay.jsonwizard.utils.ValidationStatus;
-
+import io.ona.kujaku.listeners.BaseLocationListener;
+import java.util.List;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
-import org.smartregister.family.util.DBConstants;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.PasswordRequestCallback;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationCallback;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.LocationUtils;
 import org.smartregister.reveal.util.PasswordDialogUtils;
@@ -45,11 +44,6 @@ import org.smartregister.reveal.widget.GeoWidgetFactory;
 import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
 import org.smartregister.util.JsonFormUtils;
-
-import java.util.List;
-import java.util.Map;
-
-import io.ona.kujaku.listeners.BaseLocationListener;
 
 /**
  * Created by samuelgithengi on 1/30/19.
@@ -236,6 +230,8 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         cascadeSelect(key, JsonForm.CATCHMENT_AREA, Constants.CONFIGURATION.MDA_ADHERENCE_OFFICERS, fields.get(JsonForm.ADHERENCE_NAME));
         cascadeSelect(key,JsonForm.LOCATION,Constants.CONFIGURATION.HEALTH_WORKER_SUPERVISORS,fields.get(JsonForm.HEALTH_WORKER_SUPERVISOR));
         cascadeSelect(key,JsonForm.HEALTH_WORKER_SUPERVISOR,Constants.CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,fields.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME));
+        cascadeSelect(key,JsonForm.SUPERVISOR, CONFIGURATION.SPRAY_OPERATORS,fields.get(JsonForm.SPRAY_OPERATOR_CODE));
+        cascadeSelect(key,JsonForm.SUPERVISOR, CONFIGURATION.SPRAY_OPERATORS,fields.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION));
     }
 
     private void cascadeSelect(String key, String parentWidget, String configurationKey, JSONObject childWidget) {
