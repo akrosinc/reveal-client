@@ -67,9 +67,6 @@ public class LocationServiceHelper extends BaseHelper {
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
-
-    public static final String CURRENT_PLAN_ID_PARAM_TEMPLATE = "?current_plan_id=%s";
-
     protected final Context context;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private LocationRepository locationRepository;
@@ -237,12 +234,10 @@ public class LocationServiceHelper extends BaseHelper {
             String jsonPayload = locationGson.toJson(locations);
             startLocationTrace(PUSH, STRUCTURE, locations.size());
             String baseUrl = getFormattedBaseUrl();
-            String currentPlanIdParam = String.format(CURRENT_PLAN_ID_PARAM_TEMPLATE,PreferencesUtil.getInstance().getCurrentPlanId());
             Response<String> response = getHttpAgent().postWithJsonResponse(
-                    MessageFormat.format("{0}/{1}/{2}",
+                    MessageFormat.format("{0}/{1}",
                             baseUrl,
-                            CREATE_STRUCTURE_URL,
-                            currentPlanIdParam),
+                            CREATE_STRUCTURE_URL),
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
@@ -279,13 +274,11 @@ public class LocationServiceHelper extends BaseHelper {
             String baseUrl = getFormattedBaseUrl();
 
             String isJurisdictionParam = "?" + IS_JURISDICTION + "=true";
-            String currentPlanIdParam = String.format(CURRENT_PLAN_ID_PARAM_TEMPLATE,PreferencesUtil.getInstance().getCurrentPlanId());
             Response<String> response = httpAgent.postWithJsonResponse(
-                    MessageFormat.format("{0}{1}{2}{3}",
+                    MessageFormat.format("{0}{1}{2}",
                             baseUrl,
                             CREATE_STRUCTURE_URL,
-                            isJurisdictionParam,
-                            currentPlanIdParam),
+                            isJurisdictionParam),
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
