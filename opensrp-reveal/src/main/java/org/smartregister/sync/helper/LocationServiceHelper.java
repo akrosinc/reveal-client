@@ -19,7 +19,6 @@ import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 import android.content.Context;
-import android.preference.Preference;
 import android.text.TextUtils;
 import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
@@ -49,7 +48,6 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.util.FirebaseLogger;
-import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
