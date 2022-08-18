@@ -351,7 +351,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Is this part of the main spray or mop up?",
+        "label": "Is this part of the main spray, mop up or responsive IRS?",
         "options": [
           {
             "key": "Main Spray",
@@ -360,6 +360,10 @@
           {
             "key": "Mop up",
             "text": "Mop up"
+          },
+          {
+            "key": "Responsive IRS",
+            "text": "Responsive IRS"
           }
         ],
         "value": "Main Spray",
@@ -2002,13 +2006,8 @@
         },
         "relevance": {
           "step1:information": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "other"
-                ]
-              }
-            ]
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
           }
         }
       },
@@ -2132,7 +2131,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "spinner",
+        "type": "native_radio",
         "label": "Who provided this education/information at your home? (Do not read out the options)",
         "hint": "Who provided this education/information at your home? (Do not read out the options)",
         "text_size": "6sp",
@@ -2373,6 +2372,12 @@
         "v_required": {
           "value": true,
           "err": "This field is required"
+        },
+        "relevance": {
+          "step1:sbc": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
         }
       },
       {
