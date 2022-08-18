@@ -52,6 +52,18 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of Coordinator/Decision Maker/Supervisor",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
         "key": "mobilized",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -183,18 +195,6 @@
             "type": "string",
             "ex": "equalTo(., \"Other\")"
           }
-        }
-      },
-      {
-        "key": "supervisor",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Coordinator/Decision Maker/Supervisor",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
         }
       },
       {
