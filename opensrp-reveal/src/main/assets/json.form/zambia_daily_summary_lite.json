@@ -114,6 +114,19 @@
         }
       },
       {
+        "key": "selectedOpAreaName",
+        "type": "toaster_notes",
+        "text": "",
+        "toaster_type": "info",
+        "text_color": "#CF0800",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color" : "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
         "key": "spray_areas",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

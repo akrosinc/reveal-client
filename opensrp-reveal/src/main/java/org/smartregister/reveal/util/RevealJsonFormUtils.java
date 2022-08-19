@@ -74,6 +74,7 @@ import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.BuildConfig;
+import org.smartregister.reveal.R;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.BaseTaskDetails;
@@ -787,6 +788,12 @@ public class RevealJsonFormUtils {
                     }
                 }
                 populateSprayAreasField(formJSON);
+                try {
+                    String labelText = RevealApplication.getInstance().getApplicationContext().getString(R.string.current_selected_operation_label_for_supervisor_form,PreferencesUtil.getInstance().getCurrentOperationalArea());
+                    populateField(formJSON, JsonForm.SELECTED_OPERATIONAL_AREA_NAME, labelText, JsonFormConstants.TEXT);
+                } catch (JSONException e) {
+                    Timber.e(e);
+                }
                 break;
 
             case JsonForm.TEAM_LEADER_DOS_ZAMBIA:
