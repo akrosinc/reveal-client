@@ -595,6 +595,10 @@
         "v_min": {
           "value": "0",
           "err": "Must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "rooms_found",
+          "err": "Number of rooms sprayed cannot be greater Number of eligible ROOMS FOUND."
         }
       },
       {
@@ -768,6 +772,27 @@
         }
       },
       {
+        "key": "sprayed_childrenU5_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Children <5 years must be less than Total Population AND Less than the Total Population minus Pregnant Women",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "struc_notsprayed",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -819,6 +844,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -846,6 +877,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -873,6 +910,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -900,6 +943,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -927,6 +976,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -954,6 +1009,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1029,6 +1090,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1056,6 +1123,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1083,6 +1156,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1110,6 +1189,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
