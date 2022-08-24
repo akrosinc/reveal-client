@@ -19,3 +19,17 @@ priority: 1
 condition: "true"
 actions:
   - "calculation = Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0))"
+---
+name: step1_structures_eligible_less_found
+description: step1_structures_eligible_less_found
+priority: 1
+condition: "true"
+actions:
+  - "calculation = Integer.valueOf(helper.ifNull(step1_found,0)) - Integer.valueOf(helper.ifNull(step1_sprayed,0))"
+---
+name: step1_rooms_eligible_less_found
+description: step1_rooms_eligible_less_found
+priority: 1
+condition: "true"
+actions:
+  - "calculation = Integer.valueOf(helper.ifNull(step1_rooms_found,0)) - Integer.valueOf(helper.ifNull(step1_rooms_sprayed,0))"

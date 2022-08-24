@@ -567,6 +567,21 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "structures_eligible_less_found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_calculation.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "rooms_found",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -612,6 +627,21 @@
         "v_relative_max": {
           "value": "rooms_found",
           "err": "Number of rooms sprayed cannot be greater Number of eligible ROOMS FOUND."
+        }
+      },
+      {
+        "key": "rooms_eligible_less_found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_calculation.yml"
+            }
+          }
         }
       },
       {
@@ -830,6 +860,10 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "structures_eligible_less_found",
+          "err": " must be less than or equal to Number of eligible STRUCTURES FOUND minus Number of eligible STRUCTURES SPRAYED"
         }
       },
       {
@@ -1076,6 +1110,10 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "rooms_eligible_less_found",
+          "err": "must be less than or equal to Number of eligible ROOMS FOUND minus Number of eligible ROOMS SPRAYED"
         }
       },
       {
