@@ -790,7 +790,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Children <5 years must be less than Total Population AND Less than the Total Population minus Pregnant Women",
+        "text": "Children <5 years must be equal or less than (male pop + female pop) - pregnant women",
         "text_color": "#CF0800",
         "text_size": "8sp",
         "toaster_type": "problem",
