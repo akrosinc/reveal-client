@@ -766,6 +766,8 @@ public class RevealJsonFormUtils {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR_CONFIRMATION),
                             PreferencesUtil.getInstance().getCurrentDistrict());
+                    populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
+                            fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
                 }
                 String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences()
                         .fetchRegisteredANM();
