@@ -791,8 +791,11 @@ public class RevealJsonFormUtils {
                 }
                 populateSprayAreasField(formJSON);
                 try {
-                    String labelText = RevealApplication.getInstance().getApplicationContext().getString(R.string.current_selected_operation_label_for_supervisor_form,PreferencesUtil.getInstance().getCurrentOperationalArea());
-                    populateField(formJSON, JsonForm.SELECTED_OPERATIONAL_AREA_NAME, labelText, JsonFormConstants.TEXT);
+                    String labelText = RevealApplication.getInstance().getApplicationContext()
+                            .getString(R.string.current_selected_operation_label_for_supervisor_form,
+                                    PreferencesUtil.getInstance().getCurrentOperationalArea());
+                    populateField(formJSON, JsonForm.SELECTED_OPERATIONAL_AREA_NAME, labelText,
+                            JsonFormConstants.TEXT);
                 } catch (JSONException e) {
                     Timber.e(e);
                 }
@@ -996,26 +999,10 @@ public class RevealJsonFormUtils {
         if (sprayAreaField == null) {
             return;
         }
+        String currentOperationalAreaId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
-        List<String> locationNames;
-        List<String> operationalAreaNames = Arrays.asList(
-                PreferencesUtil.getInstance().getPreferenceValue(AllConstants.OPERATIONAL_AREAS).split(","));
-
-        String currentTargetLevel = PreferencesUtil.getInstance().getCurrentPlanTargetLevel();
-        PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
-                .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
-        List<String> geographicLevels = currentPlan.getHierarchyGeographicLevels();
-        String operationalLevel;
-        if (Utils.isCurrentTargetLevelStructure()) {
-            operationalLevel = geographicLevels.get(geographicLevels.indexOf(currentTargetLevel) - 1);
-        } else {
-            operationalLevel = currentTargetLevel;
-        }
-        final String finalOperationalLevel = operationalLevel;
-        locationNames = operationalAreaNames.stream()
-                .map(name -> locationRepository.getLocationByName(name))
-                .filter(location -> location.getProperties().getGeographicLevel().equals(finalOperationalLevel))
-                .map(location -> location.getProperties().getName()).collect(Collectors.toList());
+        List<Location> childrenLocations = locationRepository.getLocationsByParentId(currentOperationalAreaId);
+        List<String> locationNames = childrenLocations.stream().map(location -> location.getProperties().getName()).collect(Collectors.toList());
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
