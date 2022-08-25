@@ -270,7 +270,7 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:village_selected": {
+          "step1:village": {
             "type": "string",
             "ex": "equalTo(., \"Other\")"
           }
