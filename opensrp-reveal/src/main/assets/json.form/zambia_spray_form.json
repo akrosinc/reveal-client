@@ -1208,7 +1208,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Children <5 years and Total Population Sleeping Under Nets",
+        "text": "Number of Pregnant Women Sleeping Under Net must be equal or less than Pregnant Women and Total Population Sleeping Under Nets",
         "v_required": {
           "value": "true"
         },
@@ -2195,6 +2195,36 @@
         }
       },
       {
+        "key": "irs_poster_seen_before",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Have you seen this IRS Poster before? (Show image of poster)",
+        "label_info_image_src": "img/IRS_NMEP_Poster.png",
+        "label_info_has_image": true,
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "step1:sbc": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
         "key": "health_service",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2347,36 +2377,13 @@
         },
         "relevance": {
           "step1:malaria_services": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
-          }
-        }
-      },
-      {
-        "key": "irs_poster_seen_before",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Have you seen this IRS Poster before? (Show image of poster)",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
-        },
-        "relevance": {
-          "step1:sbc": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
           }
         }
       },
@@ -2571,8 +2578,13 @@
         },
         "relevance": {
           "step1:healthcare_not_seek_reason": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
           }
         }
       },
