@@ -733,7 +733,7 @@ public class RevealJsonFormUtils {
                         PreferencesUtil.getInstance().getCurrentDistrict());
                 populateSprayAreasField(formJSON);
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,
-                        fieldsMap.get(JsonForm.VILLAGE), PreferencesUtil.getInstance().getCurrentDistrict());
+                        fieldsMap.get(JsonForm.VILLAGE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
                         fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
                 break;
