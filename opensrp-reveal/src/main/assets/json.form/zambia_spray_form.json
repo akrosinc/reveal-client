@@ -2225,169 +2225,6 @@
         }
       },
       {
-        "key": "health_service",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Do you have time to ask questions on health seeking behaviour to the Household Head?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia-spray-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "districtName",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden"
-      },
-      {
-        "key": "provinceName",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden"
-      },
-      {
-        "key": "hfc_seek",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "When you or someone in your household is ill with a fever, which facility do you seek care from?",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "chw",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Do you have a community health worker working in your community?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          },
-          {
-            "key": "dontKnow",
-            "text": "Don't Know"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "malaria_services",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "check_box",
-        "label": "What malaria services does your CHW provide to people in this community/village? (Do not read out the options)",
-        "options": [
-          {
-            "key": "Health_education_promotion_sensitisation",
-            "text": "Health education/ promotion/ sensitisation"
-          },
-          {
-            "key": "Malaria testing",
-            "text": "Malaria testing"
-          },
-          {
-            "key": "Malaria treatment",
-            "text": "Malaria treatment"
-          },
-          {
-            "key": "Referrals of patients to HF",
-            "text": "Referrals of patients to HF"
-          },
-          {
-            "key": "Door to door visitations",
-            "text": "Door to door visitations"
-          },
-          {
-            "key": "Other",
-            "text": "Other"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
-        },
-        "relevance": {
-          "step1:chw": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "malaria_services_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Specify other services",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:malaria_services": {
-            "ex-checkbox": [
-              {
-                "or": [
-                  "Other"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      {
         "key": "where_irs_poster_seen",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2490,6 +2327,36 @@
         }
       },
       {
+        "key": "health_service",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you have time to ask questions on health seeking behaviour to the Household Head?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "healthcare_seek",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -2578,6 +2445,120 @@
         },
         "relevance": {
           "step1:healthcare_not_seek_reason": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "districtName",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "provinceName",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "chw",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you have a community health worker working in your community?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          },
+          {
+            "key": "dontKnow",
+            "text": "Don't Know"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:health_service": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "malaria_services",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What malaria services does your CHW provide to people in this community/village? (Do not read out the options)",
+        "options": [
+          {
+            "key": "Health_education_promotion_sensitisation",
+            "text": "Health education/ promotion/ sensitisation"
+          },
+          {
+            "key": "Malaria testing",
+            "text": "Malaria testing"
+          },
+          {
+            "key": "Malaria treatment",
+            "text": "Malaria treatment"
+          },
+          {
+            "key": "Referrals of patients to HF",
+            "text": "Referrals of patients to HF"
+          },
+          {
+            "key": "Door to door visitations",
+            "text": "Door to door visitations"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        },
+        "relevance": {
+          "step1:chw": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "malaria_services_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other services",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:malaria_services": {
             "ex-checkbox": [
               {
                 "or": [
