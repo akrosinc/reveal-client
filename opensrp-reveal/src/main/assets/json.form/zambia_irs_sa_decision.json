@@ -52,6 +52,25 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of Coordinator/Decision Maker/Supervisor",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "form_description_info",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -351,6 +370,24 @@
         }
       },
       {
+        "key": "selectnotfound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Please make sure the SOPs know where they can find all remaining structures that were missed.",
+        "text_color": "#CF0800",
+        "toaster_type": "info",
+        "text_size": "8sp",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_irs_sa_decision_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "return",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -371,43 +408,6 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_irs_sa_decision_relevance.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "selectnotfound",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "toaster_notes",
-        "text": "Please make sure the SOPs know where they can find all remaining structures that were missed.",
-        "text_color": "#CF0800",
-        "toaster_type": "info",
-        "text_size": "8sp",
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia_irs_sa_decision_relevance.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "supervisor",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Coordinator/Decision Maker/Supervisor",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
         },
         "relevance": {
           "rules-engine": {

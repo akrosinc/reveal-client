@@ -52,6 +52,18 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "paper_form_image",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_image",
+        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
+      {
         "key": "collection_date",
         "type": "date_picker",
         "openmrs_entity_parent": "",
@@ -62,6 +74,42 @@
         "v_required": {
           "value": true,
           "err": "Please specify the date data collection was done"
+        }
+      },
+      {
+        "key": "location_zone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "What zone was this data collected in?",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "location_zone_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please type the zone name",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Please enter a valid name"
+        },
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:location_zone": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
         }
       },
       {
@@ -439,54 +487,6 @@
             "ex-rules": {
               "rules-file": "zambia_daily_summary_calculation.yml"
             }
-          }
-        }
-      },
-      {
-        "key": "paper_form_image",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "choose_image",
-        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
-        }
-      },
-      {
-        "key": "location_zone",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "What zone was this data collected in?",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
-        "key": "location_zone_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Please type the zone name",
-        "edit_type": "name",
-        "v_regex": {
-          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Please enter a valid name"
-        },
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:location_zone": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
           }
         }
       }

@@ -572,17 +572,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DISTRICTS, fields.get(JsonForm.DISTRICT), prefsUtil.getCurrentProvince());
             jsonFormUtils.populateForm(event, formJson);
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.VILLAGES,fields.get(JsonForm.VILLAGE),prefsUtil.getCurrentFacility());
-            String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
-            if (StringUtils.isNotBlank(dataCollector)) {
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.SUPERVISORS,fields.get(JsonForm.SUPERVISOR),dataCollector);
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE),
-                        dataCollector);
-                jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        CONFIGURATION.SPRAY_OPERATORS, fields.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
-                        dataCollector);
-            }
-
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.SUPERVISORS,fields.get(JsonForm.SUPERVISOR),prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateCompoundStructureOptions(formJson, org.smartregister.reveal.util.Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()));
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fields.get(JsonForm.LOCATION_ZONE),prefsUtil.getCurrentFacility());
         } else if (JsonForm.SPRAY_FORM_REFAPP.equals(formName)) {

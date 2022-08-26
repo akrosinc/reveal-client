@@ -48,9 +48,21 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Supervisor Daily Summary Form",
+    "title": "Daily Supervisor Summary Form",
     "display_back_button": "true",
     "fields": [
+      {
+        "key": "paper_form_image",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_image",
+        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
+        "v_required": {
+          "value": true,
+          "err": "This field is required"
+        }
+      },
       {
         "key": "collection_date",
         "type": "date_picker",
@@ -100,6 +112,19 @@
             "ex": "equalTo(., \"Other\")"
           }
         }
+      },
+      {
+        "key": "selectedOpAreaName",
+        "type": "toaster_notes",
+        "text": "",
+        "toaster_type": "info",
+        "text_color": "#CF0800",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color" : "#000000",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
       },
       {
         "key": "spray_areas",
@@ -204,7 +229,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "spinner",
+        "type": "native_radio",
         "label": "What type of insecticides was used?",
         "hint": "What type of insecticides was used?",
         "text_size": "6sp",
@@ -256,6 +281,10 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Field must be less than or equal to 100"
         }
       },
       {
@@ -285,8 +314,8 @@
           "err": "This field must be greater than or equal to 0"
         },
         "v_max": {
-          "value": "99999999",
-          "err": "This field must be less than 99999999"
+          "value": "100",
+          "err": "This field must be less than  or equal 100"
         }
       },
       {
@@ -345,6 +374,10 @@
         "v_min": {
           "value": "0",
           "err": "Must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "100",
+          "err": "Must be less than or equal to 100"
         }
       },
       {
@@ -534,6 +567,21 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "structures_eligible_less_found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_calculation.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "rooms_found",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -575,6 +623,25 @@
         "v_min": {
           "value": "0",
           "err": "Must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "rooms_found",
+          "err": "Number of rooms sprayed cannot be greater Number of eligible ROOMS FOUND."
+        }
+      },
+      {
+        "key": "rooms_eligible_less_found",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "text_size": "8sp",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_calculation.yml"
+            }
+          }
         }
       },
       {
@@ -748,6 +815,27 @@
         }
       },
       {
+        "key": "sprayed_childrenU5_validation_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Children <5 years must be equal or less than (male pop + female pop) - pregnant women",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia_daily_summary_relevance.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "struc_notsprayed",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -772,6 +860,10 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "structures_eligible_less_found",
+          "err": " must be less than or equal to Number of eligible STRUCTURES FOUND minus Number of eligible STRUCTURES SPRAYED"
         }
       },
       {
@@ -799,6 +891,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -826,6 +924,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -853,6 +957,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -880,6 +990,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -907,6 +1023,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -934,6 +1056,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:struc_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -982,6 +1110,10 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "v_relative_max": {
+          "value": "rooms_eligible_less_found",
+          "err": "must be less than or equal to Number of eligible ROOMS FOUND minus Number of eligible ROOMS SPRAYED"
         }
       },
       {
@@ -1009,6 +1141,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1036,6 +1174,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1063,6 +1207,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1090,6 +1240,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:rooms_notsprayed": {
+            "type": "numeric",
+            "ex": "greaterThan(., \"0\")"
+          }
         }
       },
       {
@@ -1331,18 +1487,6 @@
               "rules-file": "zambia_daily_summary_relevance.yml"
             }
           }
-        }
-      },
-      {
-        "key": "paper_form_image",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "choose_image",
-        "uploadButtonText": "Please take a clear photo of the daily supervisor summary paper form",
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
         }
       }
     ]

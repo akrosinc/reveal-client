@@ -90,4 +90,11 @@ priority: 1
 condition: "step1_supervisor != step1_supervisor_confirmation"
 actions:
   - "isRelevant = true"
+---
+name: step1_sprayed_childrenU5_validation_err
+description: step1_sprayed_childrenU5_validation_err
+priority: 1
+condition: "(Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0))) > 0 && (step1_sprayed_childrenU5 > (Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0))) || step1_sprayed_childrenU5 > (Integer.valueOf(helper.ifNull(step1_sprayed_males,0)) + Integer.valueOf(helper.ifNull(step1_sprayed_females,0)) - Integer.valueOf(helper.ifNull(step1_sprayed_pregwomen,0))))"
+actions:
+  - "isRelevant = true"
 

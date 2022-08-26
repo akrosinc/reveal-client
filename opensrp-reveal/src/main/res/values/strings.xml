@@ -968,4 +968,5 @@
     <string name="abbrv_months">m</string>
     <string name="abbrv_years">y</string>
 
+    <string name="current_selected_operation_label_for_supervisor_form">"You have (%1s) selected on the menu. Please ensure it is the correct facility you are entering data for before selecting spray areas drop down question"</string>
 </resources>

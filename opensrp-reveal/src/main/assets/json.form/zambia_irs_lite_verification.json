@@ -158,7 +158,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Specify what mobilisation activity happened",
+        "hint": "Why was this area not mobilized?",
         "text_size": "8sp",
         "v_required": {
           "value": "true",
@@ -169,18 +169,6 @@
             "type": "string",
             "ex": "equalTo(., \"no\")"
           }
-        }
-      },
-      {
-        "key": "dateComm",
-        "type": "date_picker",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "hint": "Communicated date of spray:",
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
         }
       },
       {
@@ -260,7 +248,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Why was this area not sprayed?",
+        "hint": "Why was this area visited but not sprayed?",
         "text_size": "8sp",
         "v_required": {
           "value": "true",

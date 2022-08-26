@@ -52,6 +52,18 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of Coordinator/Decision Maker/Supervisor",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
         "key": "mobilized",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -154,6 +166,25 @@
         }
       },
       {
+        "key": "notmobilized_reason",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Why was this area not mobilized?",
+        "text_size": "6sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:mobilized": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
         "key": "zone",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -182,37 +213,6 @@
           "step1:zone": {
             "type": "string",
             "ex": "equalTo(., \"Other\")"
-          }
-        }
-      },
-      {
-        "key": "supervisor",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Coordinator/Decision Maker/Supervisor",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
-        }
-      },
-      {
-        "key": "notmobilized_reason",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Why was this area not mobilized?",
-        "text_size": "6sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:mobilized": {
-            "type": "string",
-            "ex": "equalTo(., \"no\")"
           }
         }
       },
