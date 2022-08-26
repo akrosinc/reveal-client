@@ -736,6 +736,7 @@ public class RevealJsonFormUtils {
                         fieldsMap.get(JsonForm.VILLAGE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
                         fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                populateSprayAreasField(formJSON);
                 break;
 
             case JsonForm.IRS_FIELD_OFFICER_ZAMBIA:
@@ -1000,25 +1001,35 @@ public class RevealJsonFormUtils {
         if (sprayAreaField == null) {
             return;
         }
-        String currentOperationalAreaId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
+        String parentId;
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
-        List<Location> childrenLocations = locationRepository.getLocationsByParentId(currentOperationalAreaId);
-        List<String> locationNames = childrenLocations.stream().map(location -> location.getProperties().getName()).collect(Collectors.toList());
+
+        if (PreferencesUtil.getInstance().getCurrentPlanTargetLevel().equals("structure")) {
+            Location parentLocation = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentFacility());
+            parentId = parentLocation.getId();
+        } else {
+            parentId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
+        }
+        List<Location> childrenLocations = locationRepository.getLocationsByParentId(parentId);
+        List<String> locationNames = childrenLocations.stream().map(location -> location.getProperties().getName())
+                .collect(Collectors.toList());
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
-            if (MULTI_SELECT_LIST.equals(sprayAreaField.getString(TYPE))) {
-                property.put("presumed-id", "err");
-                property.put("confirmed-id", "err");
-            }
+            property.put("presumed-id", "err");
+            property.put("confirmed-id", "err");
+
             JSONObject option;
             for (String name : locationNames) {
                 option = new JSONObject();
                 option.put(KEY, name);
                 option.put(TEXT, name);
-                option.put(JsonFormConstants.MultiSelectUtils.PROPERTY, property);
+                if (MULTI_SELECT_LIST.equals(sprayAreaField.getString(TYPE))) {
+                    option.put(JsonFormConstants.MultiSelectUtils.PROPERTY, property);
+                }
                 options.put(option);
             }
+
             sprayAreaField.put(OPTIONS, options);
         } catch (JSONException e) {
             e.printStackTrace();
