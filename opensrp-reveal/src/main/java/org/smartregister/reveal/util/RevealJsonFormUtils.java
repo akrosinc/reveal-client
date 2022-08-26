@@ -830,7 +830,8 @@ public class RevealJsonFormUtils {
                 } else {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
-
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
+                        fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
                 break;
 
             case JsonForm.VERIFICATION_FORM_ZAMBIA:

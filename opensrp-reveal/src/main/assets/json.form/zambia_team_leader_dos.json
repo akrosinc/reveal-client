@@ -48,11 +48,11 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Enter Team Leader DOS",
+    "title": "Team Leader DOS",
     "display_back_button": "true",
     "fields": [
       {
-        "key": "zone",
+        "key": "location_zone",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
