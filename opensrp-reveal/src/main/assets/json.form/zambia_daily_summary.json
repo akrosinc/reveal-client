@@ -89,6 +89,30 @@
         }
       },
       {
+        "key": "location_zone_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please type the zone name",
+        "edit_type": "name",
+        "v_regex": {
+          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
+          "err": "Please enter a valid name"
+        },
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:location_zone": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
         "key": "district_manager",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -463,30 +487,6 @@
             "ex-rules": {
               "rules-file": "zambia_daily_summary_calculation.yml"
             }
-          }
-        }
-      },
-      {
-        "key": "location_zone_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Please type the zone name",
-        "edit_type": "name",
-        "v_regex": {
-          "value": "^(?![0-9\\s_-]*$)[a-zA-Z0-9\\s_-]+$",
-          "err": "Please enter a valid name"
-        },
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:location_zone": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
           }
         }
       }
