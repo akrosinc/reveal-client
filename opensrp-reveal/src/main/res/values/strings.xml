@@ -37,7 +37,7 @@
     <string name="fetching_structures_message">Fetching Structures for Selected Operational Area and Plan</string>
 
     <string name="select_campaign_operational_area_title">Plan and Operational area not set</string>
-    <string name="select_campaign_operational_area">Plan and Operational area not set. Select from the hamburger menu</string>
+    <string name="select_campaign_operational_area">Plan and or Operational area not set. Select from the hamburger menu</string>
     <string name="revoked_plan_operational_area">Previously selected Plan and/or Operational area revoked. Select from the hamburger menu</string>
 
     <string name="location_and_plan_sync_in_progress">Location and Plan Sync in Progress</string>
