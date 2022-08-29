@@ -61,6 +61,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.sqlcipher.Cursor;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,7 +134,7 @@ public class ListTaskInteractor extends BaseInteractor {
         String sql = "SELECT status, start_date, end_date FROM %s WHERE id=?";
         if (IRS.equals(interventionType)) {
             sql = "SELECT spray_status, not_sprayed_reason, not_sprayed_other_reason, property_type, spray_date," +
-                    " spray_operator, family_head_name FROM sprayed_structures WHERE id=?";
+                    " spray_operator, family_head_name,compound_head_name FROM sprayed_structures WHERE id=?";
         } else if (MOSQUITO_COLLECTION.equals(interventionType)) {
             sql = String.format(sql, MOSQUITO_COLLECTIONS_TABLE);
         } else if (LARVAL_DIPPING.equals(interventionType)) {
@@ -220,12 +221,16 @@ public class ListTaskInteractor extends BaseInteractor {
         if ("other".equals(reason)) {
             reason = cursor.getString(cursor.getColumnIndex("not_sprayed_other_reason"));
         }
+        String householdHead = cursor.getString(cursor.getColumnIndex("compound_head_name"));
+        if (StringUtils.isBlank(householdHead)) {
+            householdHead = cursor.getString(cursor.getColumnIndex("family_head_name"));
+        }
         return new SprayCardDetails(
                 CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("spray_status"))),
                 cursor.getString(cursor.getColumnIndex("property_type")),
                 cursor.getString(cursor.getColumnIndex("spray_date")),
                 cursor.getString(cursor.getColumnIndex("spray_operator")),
-                cursor.getString(cursor.getColumnIndex("family_head_name")),
+                householdHead,
                 reason
         );
     }

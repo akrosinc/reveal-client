@@ -73,6 +73,14 @@
           }
         },
         {
+          "column_name": "compound_head_name",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "compoundheadname"
+          }
+        },
+        {
           "column_name": "family_head_sex",
           "type": "Event",
           "json_mapping": {
