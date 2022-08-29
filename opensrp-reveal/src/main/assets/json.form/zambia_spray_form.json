@@ -1936,7 +1936,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
+        "type": "check_box",
         "label": "What types of messages and information did you see or hear? (Do not read out the options)",
         "text_size": "8sp",
         "options": [
@@ -2006,8 +2006,13 @@
         },
         "relevance": {
           "step1:information": {
-            "type": "string",
-            "ex": "equalTo(., \"other\")"
+            "ex-checkbox": [
+              {
+                "or": [
+                  "other"
+                ]
+              }
+            ]
           }
         }
       },
