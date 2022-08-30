@@ -21,6 +21,7 @@ public class Location extends BaseDataObject {
     private Location parentLocation;
     private Set<String> tags;
     private Map<String, Object> attributes;
+    private Set<String> planIds;
 
     public Location() {
     }
@@ -42,6 +43,14 @@ public class Location extends BaseDataObject {
         this.parentLocation = parentLocation;
         this.tags = tags;
         this.attributes = attributes;
+    }
+
+    public Set<String> getPlanIds() {
+        return planIds;
+    }
+
+    public void setPlanIds(final Set<String> planIds) {
+        this.planIds = planIds;
     }
 
     public String getLocationId() {

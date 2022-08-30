@@ -19,6 +19,7 @@ import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
@@ -459,10 +460,13 @@ public class LocationHelper {
             }
 
             Location node = openMrsLocationData.getNode();
-            if (node == null) {
+            if (node == null ) {
                 return null;
             }
 
+           boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
+                    .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
+                    .isPresent();
             String name = node.getName();
             formLocation.name = getReadableName(name);
             formLocation.key = idKey ? node.getLocationId() : name;
@@ -495,7 +499,7 @@ public class LocationHelper {
             }
 
             for (String level : levels) {
-                if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
+                if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                     allLocationData.add(formLocation);
                 }
             }
