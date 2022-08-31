@@ -421,10 +421,14 @@ public class LocationHelper {
                 return null;
             }
 
+           boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
+                    .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
+                    .isPresent();
+
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
-                    if (allowedLevels.stream().filter(allowedLevel -> allowedLevel.equalsIgnoreCase(level)).findAny().isPresent()) {
+                    if (allowedLevels.stream().filter(allowedLevel -> allowedLevel.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                         hierarchy.add(idValue? node.getLocationId(): node.getName());
                     }
                 }
@@ -464,7 +468,7 @@ public class LocationHelper {
                 return null;
             }
 
-           boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
+          boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
                     .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
                     .isPresent();
             String name = node.getName();
@@ -487,7 +491,7 @@ public class LocationHelper {
 
                 boolean allowed = false;
                 for (String level : levels) {
-                    if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
+                    if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                         formLocation.nodes = children;
                         allowed = true;
                     }

@@ -190,8 +190,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
             locationHierarchy = extractLocationHierarchy(hierarchyGeographicLevels, targetGeographicLevel);
         }
         if (locationHierarchy != null) {
-            view.showOperationalAreaSelector(
-                    extractLocationHierarchy(hierarchyGeographicLevels, targetGeographicLevel));
+            view.showOperationalAreaSelector(locationHierarchy);
         } else {
             view.displayNotification(R.string.error_fetching_location_hierarchy_title,
                     R.string.error_fetching_location_hierarchy);
