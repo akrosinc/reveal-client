@@ -1,11 +1,16 @@
 package org.smartregister.reveal.interactor;
 
+import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
+import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
+import static org.smartregister.repository.EventClientRepository.client_column.syncStatus;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
+
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Years;
@@ -37,22 +42,7 @@ import org.smartregister.reveal.util.TaskUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.JsonFormUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
-import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
-import static org.smartregister.repository.EventClientRepository.client_column.syncStatus;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_NAME;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 
 
 /**
