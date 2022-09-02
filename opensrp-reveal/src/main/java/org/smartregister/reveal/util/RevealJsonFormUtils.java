@@ -954,6 +954,7 @@ public class RevealJsonFormUtils {
     }
 
     public void populateCompoundStructureOptions(JSONObject form, Location currentOperationalArea) {
+        Timber.d("Populating compound Structure options : start");
         SQLiteDatabase database = RevealApplication.getInstance().getRepository().getReadableDatabase();
         JSONObject option;
         JSONObject property;
@@ -992,6 +993,8 @@ public class RevealJsonFormUtils {
         } catch (JSONException e) {
             Timber.e(e, "Error populating %s Options", COMPOUND_STRUCTURE);
         }
+        Timber.d("Populating compound Structure options : end");
+
     }
 
     public void populateSprayAreasField(JSONObject form) {
