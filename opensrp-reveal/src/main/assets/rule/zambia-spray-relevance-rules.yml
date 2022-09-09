@@ -237,27 +237,6 @@ condition: "step1_notsprayed_reason.equals('refused') && ( step1_provinceName.eq
 actions:
   - "isRelevant = true"
 ---
-name: step1_sbc
-description: step1_sbc
-priority: 1
-condition: "step1_eligibility.equals('eligible') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
-name: step1_health_service
-description: step1_health_service
-priority: 1
-condition: "step1_eligibility.equals('eligible') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
-name: step1_preferred_source
-description: step1_preferred_source
-priority: 1
-condition: "step1_sbc.equals('Yes') && step1_about_malaria.equals('Yes') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
 name: step1_compoundheadstructure
 description: step1_compoundheadstructure
 priority: 1
