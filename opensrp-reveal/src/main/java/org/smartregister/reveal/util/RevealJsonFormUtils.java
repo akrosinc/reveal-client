@@ -48,6 +48,7 @@ import com.mapbox.geojson.Feature;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.FormUtils;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,8 +69,9 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
+import org.smartregister.domain.PlanDefinition;
+import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -1002,18 +1004,22 @@ public class RevealJsonFormUtils {
         if (sprayAreaField == null) {
             return;
         }
-        String parentId;
-        LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
 
+        PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
+                .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
+        String targetGeographicLevel = currentPlan.getTargetGeographicLevel();
+        List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
+        hierarchyGeographicLevels.remove(targetGeographicLevel);
+        List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false,hierarchyGeographicLevels);
+
+        String parentName;
         if (PreferencesUtil.getInstance().getCurrentPlanTargetLevel().equals("structure")) {
-            Location parentLocation = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentFacility());
-            parentId = parentLocation.getId();
+            parentName = PreferencesUtil.getInstance().getCurrentFacility();
         } else {
-            parentId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
+            parentName = PreferencesUtil.getInstance().getCurrentOperationalArea();
         }
-        List<Location> childrenLocations = locationRepository.getLocationsByParentId(parentId);
-        List<String> locationNames = childrenLocations.stream().map(location -> location.getProperties().getName())
-                .collect(Collectors.toList());
+        List<String> locationNames = formLocations.get(0).flattened().filter(formLocation -> parentName.equals(formLocation.key)).map(formLocation -> formLocation.nodes).flatMap(
+                Collection::stream).map(formLocation -> formLocation.name).collect(Collectors.toList());
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
@@ -1030,7 +1036,6 @@ public class RevealJsonFormUtils {
                 }
                 options.put(option);
             }
-
             sprayAreaField.put(OPTIONS, options);
         } catch (JSONException e) {
             e.printStackTrace();
