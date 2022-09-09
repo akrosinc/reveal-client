@@ -1,6 +1,5 @@
 package org.smartregister.reveal.presenter;
 
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.reveal.util.Constants.Tags.CANTON;
 import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
@@ -19,7 +18,6 @@ import androidx.core.util.Pair;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
@@ -183,11 +181,11 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                 .findPlanDefinitionById(prefsUtil.getCurrentPlanId());
         String targetGeographicLevel = currentPlan.getTargetGeographicLevel();
         List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
-        Pair<String, ArrayList<String>> locationHierarchy = extractLocationHierarchy(hierarchyGeographicLevels,
+        Pair<String, ArrayList<String>> locationHierarchy = locationHelper.extractLocationHierarchy(hierarchyGeographicLevels,
                 targetGeographicLevel);
         if (locationHierarchy == null) {//try to evict location hierachy in cache
             revealApplication.getContext().anmLocationController().evict();
-            locationHierarchy = extractLocationHierarchy(hierarchyGeographicLevels, targetGeographicLevel);
+            locationHierarchy = locationHelper.extractLocationHierarchy(hierarchyGeographicLevels, targetGeographicLevel);
         }
         if (locationHierarchy != null) {
             view.showOperationalAreaSelector(locationHierarchy);
@@ -199,33 +197,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         }
 
     }
-
-    private Pair<String, ArrayList<String>> extractLocationHierarchy(List<String> geographicLevels,
-            String targetGeographicLevel) {
-
-        List<String> operationalAreaLevels = geographicLevels;
-        operationalAreaLevels.remove(targetGeographicLevel);
-        List<String> defaultLocation = locationHelper.generateDefaultLocationHierarchy(operationalAreaLevels);
-        if (defaultLocation != null) {
-            List<FormLocation> entireTree = locationHelper.generateLocationHierarchyTree(false,
-                    operationalAreaLevels);
-            if (!prefsUtil.isKeycloakConfigured()) { // Only required when fetching hierarchy from openmrs
-                List<String> authorizedOperationalAreas = Arrays.asList(
-                        StringUtils.split(prefsUtil.getPreferenceValue(OPERATIONAL_AREAS), ','));
-                removeUnauthorizedOperationalAreas(authorizedOperationalAreas, entireTree);
-            }
-
-            String entireTreeString = AssetHandler.javaToJsonString(entireTree,
-                    new TypeToken<List<FormLocation>>() {
-                    }.getType());
-
-            return new Pair<>(entireTreeString, new ArrayList<>(defaultLocation));
-        } else {
-            return null;
-        }
-    }
-
-
     public void onOperationalAreaSelectorClicked(ArrayList<String> name) {
 
         Timber.d("Selected Location Hierarchy: " + TextUtils.join(",", name));
@@ -268,35 +239,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         populateLocationsFromPreferences();
         unlockDrawerLayout();
 
-    }
-
-
-    private void removeUnauthorizedOperationalAreas(List<String> operationalAreas, List<FormLocation> entireTree) {
-
-        for (FormLocation countryLocation : entireTree) {
-            for (FormLocation provinceLocation : countryLocation.nodes) {
-                if (provinceLocation.nodes == null) {
-                    return;
-                }
-                for (FormLocation districtLocation : provinceLocation.nodes) {
-                    if (districtLocation.nodes == null) {
-                        return;
-                    }
-                    for (FormLocation healthFacilityLocation : districtLocation.nodes) {
-                        if (healthFacilityLocation.nodes == null) {
-                            return;
-                        }
-                        List<FormLocation> toRemove = new ArrayList<>();
-                        for (FormLocation operationalAreaLocation : healthFacilityLocation.nodes) {
-                            if (!operationalAreas.contains(operationalAreaLocation.name)) {
-                                toRemove.add(operationalAreaLocation);
-                            }
-                        }
-                        healthFacilityLocation.nodes.removeAll(toRemove);
-                    }
-                }
-            }
-        }
     }
 
     private Pair<String, String> getFacilityFromOperationalArea(String district, String operationalArea,
