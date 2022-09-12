@@ -735,7 +735,7 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,
                         fieldsMap.get(JsonForm.VILLAGE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                        fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                        fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateSprayAreasField(formJSON);
                 break;
 
@@ -768,7 +768,7 @@ public class RevealJsonFormUtils {
                             CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR_CONFIRMATION),
                             PreferencesUtil.getInstance().getCurrentDistrict());
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                            fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                            fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 }
                 String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences()
                         .fetchRegisteredANM();
@@ -832,7 +832,7 @@ public class RevealJsonFormUtils {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                        fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                        fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 break;
 
             case JsonForm.VERIFICATION_FORM_ZAMBIA:
