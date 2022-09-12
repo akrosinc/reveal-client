@@ -454,6 +454,7 @@
     <string name="irs_field_officer_form">IRS Field Officer Form</string>
     <string name="verification_form_name"> Verification Form</string>
     <string name="irs_lite_verification_form_name">IRS Lite Verification Form</string>
+    <string name="general_supervision_form">General Supervision Form</string>
 
 
     <string name="filter_by_date">Filter By Date</string>

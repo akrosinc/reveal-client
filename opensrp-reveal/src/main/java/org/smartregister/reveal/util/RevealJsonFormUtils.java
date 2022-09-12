@@ -754,6 +754,7 @@ public class RevealJsonFormUtils {
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
             case JsonForm.DAILY_SUMMARY_ZAMBIA_LITE:
+            case JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),

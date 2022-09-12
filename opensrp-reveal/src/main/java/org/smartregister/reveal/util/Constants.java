@@ -555,6 +555,10 @@ public interface Constants {
 
         String HFW_SUPERVISOR_CHECKLIST = "json.form/nigeria_hfw_supervisor_checklist.json";
 
+
+        String ZAMBIA_GENERAL_SUPERVISION_FORM = "json.form/zambia_general_supervision_form.json";
+
+
         String OPERATIONAL_AREA_TAG = "operational_area";
 
         String STRUCTURES_TAG = "structures";

@@ -331,6 +331,24 @@
             android:textColor="@color/text_black"
             android:textSize="20sp"
             android:visibility="gone"/>
+        <View
+            android:id="@+id/separator15"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey" />
+        <Button
+            android:id="@+id/general_supervision_form"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/general_supervision_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
