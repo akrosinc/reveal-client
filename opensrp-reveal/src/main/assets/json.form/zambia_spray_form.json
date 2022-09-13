@@ -1893,6 +1893,13 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -2033,6 +2040,13 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -2178,6 +2192,13 @@
         "v_required": {
           "value": true,
           "err": "This field is required"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -2307,6 +2328,13 @@
         "v_required": {
           "value": true,
           "err": "This field is required"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -2349,6 +2377,13 @@
         "v_required": {
           "value": true,
           "err": "This field is required"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -2413,6 +2448,13 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
+          }
         }
       },
       {
