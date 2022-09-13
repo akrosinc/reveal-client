@@ -2185,7 +2185,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
+        "type": "check_box",
         "label": "Where have you seen this poster? (Do not read out the options)",
         "options": [
           {
@@ -2241,8 +2241,13 @@
         },
         "relevance": {
           "step1:where_irs_poster_seen": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
           }
         }
       },
