@@ -200,6 +200,13 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "general_supervision",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

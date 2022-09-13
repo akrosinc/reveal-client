@@ -455,6 +455,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.FPP_FORM_ZAMBIA;
         } else if (EventType.CDD_DRUG_ALLOCATION_EVENT.equals(encounterType)) {
             formName = JsonForm.CDD_DRUG_ALLOCAITON_FORM;
+        } else if(EventType.GENERAL_SUPERVISION.equals(encounterType)){
+            formName = JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM;
         }
         return formName;
     }

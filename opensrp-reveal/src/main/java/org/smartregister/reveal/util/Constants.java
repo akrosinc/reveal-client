@@ -330,13 +330,13 @@ public interface Constants {
 
         String CDD_DRUG_ALLOCATION_EVENT = "cdd_drug_allocation";
 
+        String GENERAL_SUPERVISION = "general_supervision";
+
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
-                CDD_DRUG_ALLOCATION_EVENT);
+                CDD_DRUG_ALLOCATION_EVENT,GENERAL_SUPERVISION);
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
-
-
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
 
     }
