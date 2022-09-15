@@ -753,6 +753,9 @@ public interface Constants {
         String TOTAL_NUMBER_OF_ADDITIONAL_DOSES = "totalNumberOfAdditionalDoses";
 
         String DRUG_REALLOCATEE = "drug_reallocatee";
+
+
+        String SPRAYOP_NAME = "sprayop_name";
     }
 
     interface DateFormat {
