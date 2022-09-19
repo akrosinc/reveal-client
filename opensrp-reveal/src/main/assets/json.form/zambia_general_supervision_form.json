@@ -52,6 +52,14 @@
     "display_back_button": "true",
     "fields": [
       {
+        "key": "user_gps",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "text",
+        "type": "gps"
+      },
+      {
         "key": "form_selection",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -627,7 +635,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "What type of issue are you reporting?",
+        "label": "What type of point of interest are you collecting?",
         "text_size": "8sp",
         "options": [
           {
