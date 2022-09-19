@@ -1390,7 +1390,7 @@
           }
         ],
         "v_required": {
-          "value": "false",
+          "value": "true",
           "err": "Required field"
         },
         "relevance": {
