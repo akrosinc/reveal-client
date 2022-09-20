@@ -716,6 +716,10 @@
               "rules-file": "zambia-spray-relevance-rules.yml"
             }
           }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -1145,6 +1149,10 @@
               "rules-file": "zambia-spray-relevance-rules.yml"
             }
           }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -1301,6 +1309,10 @@
             "type": "string",
             "ex": "equalTo(., \"yes\")"
           }
+        },
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -1378,7 +1390,7 @@
           }
         ],
         "v_required": {
-          "value": "false",
+          "value": "true",
           "err": "Required field"
         },
         "relevance": {
@@ -1443,7 +1455,7 @@
         "hint": "Specify other reason:",
         "text_size": "8sp",
         "v_required": {
-          "value": "false",
+          "value": "true",
           "err": "Required field"
         },
         "relevance": {
@@ -1873,36 +1885,6 @@
         }
       },
       {
-        "key": "sbc",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Do you have time to ask SBC questions on malaria information to the Household Head?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia-spray-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "about_malaria",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1925,9 +1907,10 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:sbc": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },
@@ -2223,9 +2206,10 @@
           "err": "This field is required"
         },
         "relevance": {
-          "step1:sbc": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },
@@ -2234,7 +2218,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
+        "type": "check_box",
         "label": "Where have you seen this poster? (Do not read out the options)",
         "options": [
           {
@@ -2290,8 +2274,13 @@
         },
         "relevance": {
           "step1:where_irs_poster_seen": {
-            "type": "string",
-            "ex": "equalTo(., \"Other\")"
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
           }
         }
       },
@@ -2329,36 +2318,10 @@
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
-        }
-      },
-      {
-        "key": "health_service",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Do you have time to ask questions on health seeking behaviour to the Household Head?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          }
-        ],
+        },
         "v_required": {
           "value": "true",
           "err": "Required field"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "zambia-spray-relevance-rules.yml"
-            }
-          }
         }
       },
       {
@@ -2383,9 +2346,10 @@
           "err": "This field is required"
         },
         "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },
@@ -2431,9 +2395,10 @@
           "err": "This field is required"
         },
         "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },
@@ -2501,9 +2466,10 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:health_service": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-spray-relevance-rules.yml"
+            }
           }
         }
       },

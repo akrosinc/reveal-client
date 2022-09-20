@@ -45,6 +45,7 @@ import org.smartregister.reveal.presenter.BaseDrawerPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants.Tags;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
@@ -371,8 +372,13 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             RevealApplication.getInstance().logoutCurrentUser();
         else if (v.getId() == R.id.btn_navMenu_p2pSyncBtn)
             startP2PActivity();
-        else if (v.getId() == R.id.btn_navMenu_summaryForms)
+        else if (v.getId() == R.id.btn_navMenu_summaryForms){
+            if (StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentPlan()) || StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentFacility())) {
+                AlertDialogUtils.displayNotification(v.getContext(),R.string.select_campaign_operational_area_title,R.string.select_campaign_operational_area);
+                return;
+            }
             startOtherFormsActivity();
+        }
         else if (v.getId() == R.id.btn_navMenu_offline_maps)
             presenter.onShowOfflineMaps();
         else if (v.getId() == R.id.btn_navMenu_filled_forms)

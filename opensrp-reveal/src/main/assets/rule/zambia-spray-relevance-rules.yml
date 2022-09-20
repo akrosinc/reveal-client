@@ -237,27 +237,6 @@ condition: "step1_notsprayed_reason.equals('refused') && ( step1_provinceName.eq
 actions:
   - "isRelevant = true"
 ---
-name: step1_sbc
-description: step1_sbc
-priority: 1
-condition: "step1_eligibility.equals('eligible') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
-name: step1_health_service
-description: step1_health_service
-priority: 1
-condition: "step1_eligibility.equals('eligible') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
-name: step1_preferred_source
-description: step1_preferred_source
-priority: 1
-condition: "step1_sbc.equals('Yes') && step1_about_malaria.equals('Yes') && ( step1_provinceName.equals('Western') || step1_provinceName.equals('Southern') || step1_provinceName.equals('Lusaka') )"
-actions:
-  - "isRelevant = true"
----
 name: step1_compoundheadstructure
 description: step1_compoundheadstructure
 priority: 1
@@ -285,5 +264,47 @@ name: step1_sprayop_code_confirm_toaster_error
 description: step1_sprayop_code_confirm_toaster_error
 priority: 1
 condition: "step1_sprayop_code != step1_sprayop_code_confirm"
+actions:
+  - "isRelevant = true"
+---
+name: step1_preferred_source
+description: step1_preferred_source
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_about_malaria
+description: step1_about_malaria
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_healthcare_seek
+description: step1_healthcare_seek
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_healthcare_not_seek_reason
+description: step1_healthcare_not_seek_reason
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_irs_poster_seen_before
+description: step1_irs_poster_seen_before
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
+actions:
+  - "isRelevant = true"
+---
+name: step1_chw
+description: step1_chw
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
 actions:
   - "isRelevant = true"

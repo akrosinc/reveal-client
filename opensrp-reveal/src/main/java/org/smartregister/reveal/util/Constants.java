@@ -330,13 +330,13 @@ public interface Constants {
 
         String CDD_DRUG_ALLOCATION_EVENT = "cdd_drug_allocation";
 
+        String GENERAL_SUPERVISION = "general_supervision";
+
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
-                CDD_DRUG_ALLOCATION_EVENT);
+                CDD_DRUG_ALLOCATION_EVENT,GENERAL_SUPERVISION);
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
-
-
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
 
     }
@@ -555,6 +555,10 @@ public interface Constants {
 
         String HFW_SUPERVISOR_CHECKLIST = "json.form/nigeria_hfw_supervisor_checklist.json";
 
+
+        String ZAMBIA_GENERAL_SUPERVISION_FORM = "json.form/zambia_general_supervision_form.json";
+
+
         String OPERATIONAL_AREA_TAG = "operational_area";
 
         String STRUCTURES_TAG = "structures";
@@ -749,6 +753,9 @@ public interface Constants {
         String TOTAL_NUMBER_OF_ADDITIONAL_DOSES = "totalNumberOfAdditionalDoses";
 
         String DRUG_REALLOCATEE = "drug_reallocatee";
+
+
+        String SPRAYOP_NAME = "sprayop_name";
     }
 
     interface DateFormat {

@@ -1,9 +1,13 @@
 package org.smartregister.location.helper;
 
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+
 import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +23,7 @@ import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Utils;
 import timber.log.Timber;
@@ -420,10 +425,14 @@ public class LocationHelper {
                 return null;
             }
 
+           boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
+                    .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
+                    .isPresent();
+
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
-                    if (allowedLevels.stream().filter(allowedLevel -> allowedLevel.equalsIgnoreCase(level)).findAny().isPresent()) {
+                    if (allowedLevels.stream().filter(allowedLevel -> allowedLevel.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                         hierarchy.add(idValue? node.getLocationId(): node.getName());
                     }
                 }
@@ -459,10 +468,13 @@ public class LocationHelper {
             }
 
             Location node = openMrsLocationData.getNode();
-            if (node == null) {
+            if (node == null ) {
                 return null;
             }
 
+          boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
+                    .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
+                    .isPresent();
             String name = node.getName();
             formLocation.name = getReadableName(name);
             formLocation.key = idKey ? node.getLocationId() : name;
@@ -483,7 +495,7 @@ public class LocationHelper {
 
                 boolean allowed = false;
                 for (String level : levels) {
-                    if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
+                    if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                         formLocation.nodes = children;
                         allowed = true;
                     }
@@ -495,7 +507,7 @@ public class LocationHelper {
             }
 
             for (String level : levels) {
-                if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent()) {
+                if (allowedLevels.stream().filter(l -> l.equalsIgnoreCase(level)).findAny().isPresent() && isNodeWithinCurrentPlan) {
                     allLocationData.add(formLocation);
                 }
             }
@@ -696,5 +708,58 @@ public class LocationHelper {
      */
     public List<String> getAdvancedDataCaptureStrategies() {
         return ADVANCED_DATA_CAPTURE_LEVELS;
+    }
+
+    public androidx.core.util.Pair<String, ArrayList<String>> extractLocationHierarchy(List<String> geographicLevels,
+            String targetGeographicLevel) {
+
+        List<String> operationalAreaLevels = geographicLevels;
+        operationalAreaLevels.remove(targetGeographicLevel);
+        List<String> defaultLocation =  generateDefaultLocationHierarchy(operationalAreaLevels);
+        if (defaultLocation != null) {
+            List<FormLocation> entireTree = generateLocationHierarchyTree(false,
+                    operationalAreaLevels);
+            if (!PreferencesUtil.getInstance().isKeycloakConfigured()) { // Only required when fetching hierarchy from openmrs
+                List<String> authorizedOperationalAreas = Arrays.asList(
+                        StringUtils.split(PreferencesUtil.getInstance().getPreferenceValue(OPERATIONAL_AREAS), ','));
+                removeUnauthorizedOperationalAreas(authorizedOperationalAreas, entireTree);
+            }
+
+            String entireTreeString = AssetHandler.javaToJsonString(entireTree,
+                    new TypeToken<List<FormLocation>>() {
+                    }.getType());
+
+            return new androidx.core.util.Pair<>(entireTreeString, new ArrayList<>(defaultLocation));
+        } else {
+            return null;
+        }
+    }
+
+    private void removeUnauthorizedOperationalAreas(List<String> operationalAreas, List<FormLocation> entireTree) {
+
+        for (FormLocation countryLocation : entireTree) {
+            for (FormLocation provinceLocation : countryLocation.nodes) {
+                if (provinceLocation.nodes == null) {
+                    return;
+                }
+                for (FormLocation districtLocation : provinceLocation.nodes) {
+                    if (districtLocation.nodes == null) {
+                        return;
+                    }
+                    for (FormLocation healthFacilityLocation : districtLocation.nodes) {
+                        if (healthFacilityLocation.nodes == null) {
+                            return;
+                        }
+                        List<FormLocation> toRemove = new ArrayList<>();
+                        for (FormLocation operationalAreaLocation : healthFacilityLocation.nodes) {
+                            if (!operationalAreas.contains(operationalAreaLocation.name)) {
+                                toRemove.add(operationalAreaLocation);
+                            }
+                        }
+                        healthFacilityLocation.nodes.removeAll(toRemove);
+                    }
+                }
+            }
+        }
     }
 }

@@ -48,6 +48,7 @@ import com.mapbox.geojson.Feature;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.FormUtils;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,14 +65,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Obs;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.domain.form.FormLocation;
 import org.smartregister.location.helper.LocationHelper;
-import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -455,6 +455,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.FPP_FORM_ZAMBIA;
         } else if (EventType.CDD_DRUG_ALLOCATION_EVENT.equals(encounterType)) {
             formName = JsonForm.CDD_DRUG_ALLOCAITON_FORM;
+        } else if(EventType.GENERAL_SUPERVISION.equals(encounterType)){
+            formName = JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM;
         }
         return formName;
     }
@@ -735,7 +737,7 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,
                         fieldsMap.get(JsonForm.VILLAGE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                        fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                        fieldsMap.get(JsonForm.ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateSprayAreasField(formJSON);
                 break;
 
@@ -754,6 +756,7 @@ public class RevealJsonFormUtils {
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
             case JsonForm.DAILY_SUMMARY_ZAMBIA_LITE:
+            case JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM:
                 if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
@@ -768,7 +771,7 @@ public class RevealJsonFormUtils {
                             CONFIGURATION.SUPERVISORS, fieldsMap.get(JsonForm.SUPERVISOR_CONFIRMATION),
                             PreferencesUtil.getInstance().getCurrentDistrict());
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                            fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                            fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 }
                 String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences()
                         .fetchRegisteredANM();
@@ -832,7 +835,7 @@ public class RevealJsonFormUtils {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                 }
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
-                        fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentDistrict());
+                        fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 break;
 
             case JsonForm.VERIFICATION_FORM_ZAMBIA:
@@ -956,6 +959,7 @@ public class RevealJsonFormUtils {
     }
 
     public void populateCompoundStructureOptions(JSONObject form, Location currentOperationalArea) {
+        Timber.d("Populating compound Structure options : start");
         SQLiteDatabase database = RevealApplication.getInstance().getRepository().getReadableDatabase();
         JSONObject option;
         JSONObject property;
@@ -994,6 +998,8 @@ public class RevealJsonFormUtils {
         } catch (JSONException e) {
             Timber.e(e, "Error populating %s Options", COMPOUND_STRUCTURE);
         }
+        Timber.d("Populating compound Structure options : end");
+
     }
 
     public void populateSprayAreasField(JSONObject form) {
@@ -1001,18 +1007,22 @@ public class RevealJsonFormUtils {
         if (sprayAreaField == null) {
             return;
         }
-        String parentId;
-        LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
 
+        PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
+                .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
+        String targetGeographicLevel = currentPlan.getTargetGeographicLevel();
+        List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
+        hierarchyGeographicLevels.remove(targetGeographicLevel);
+        List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false,hierarchyGeographicLevels);
+
+        String parentName;
         if (PreferencesUtil.getInstance().getCurrentPlanTargetLevel().equals("structure")) {
-            Location parentLocation = locationRepository.getLocationByName(PreferencesUtil.getInstance().getCurrentFacility());
-            parentId = parentLocation.getId();
+            parentName = PreferencesUtil.getInstance().getCurrentFacility();
         } else {
-            parentId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
+            parentName = PreferencesUtil.getInstance().getCurrentOperationalArea();
         }
-        List<Location> childrenLocations = locationRepository.getLocationsByParentId(parentId);
-        List<String> locationNames = childrenLocations.stream().map(location -> location.getProperties().getName())
-                .collect(Collectors.toList());
+        List<String> locationNames = formLocations.get(0).flattened().filter(formLocation -> parentName.equals(formLocation.key)).map(formLocation -> formLocation.nodes).flatMap(
+                Collection::stream).map(formLocation -> formLocation.name).collect(Collectors.toList());
         try {
             JSONArray options = new JSONArray();
             JSONObject property = new JSONObject();
@@ -1029,7 +1039,6 @@ public class RevealJsonFormUtils {
                 }
                 options.put(option);
             }
-
             sprayAreaField.put(OPTIONS, options);
         } catch (JSONException e) {
             e.printStackTrace();

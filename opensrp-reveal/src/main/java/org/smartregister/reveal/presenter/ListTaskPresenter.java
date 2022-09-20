@@ -190,10 +190,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private final String USER_INTERACTS_WITH_STRUCTURE = "user_interacts_with_structure";
 
-    private final PlanDefinitionRepository planDefinitionRepository;
-
-    private final LocationRepository locationRepository;
-
 
     public ListTaskPresenter(ListTaskView listTaskView, BaseDrawerContract.Presenter drawerPresenter) {
         this.listTaskView = listTaskView;
@@ -206,8 +202,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         setChangeMapPosition(true);
         revealApplication = RevealApplication.getInstance();
         mappingHelper = new RevealMappingHelper();
-        planDefinitionRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
-        locationRepository = RevealApplication.getInstance().getLocationRepository();
     }
 
     @Override

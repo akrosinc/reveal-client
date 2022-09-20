@@ -232,6 +232,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         cascadeSelect(key,JsonForm.HEALTH_WORKER_SUPERVISOR,Constants.CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,fields.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME));
         cascadeSelect(key,JsonForm.SUPERVISOR, CONFIGURATION.SPRAY_OPERATORS,fields.get(JsonForm.SPRAY_OPERATOR_CODE));
         cascadeSelect(key,JsonForm.SUPERVISOR, CONFIGURATION.SPRAY_OPERATORS,fields.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION));
+        cascadeSelect(key,JsonForm.SUPERVISOR, CONFIGURATION.SPRAY_OPERATORS,fields.get(JsonForm.SPRAYOP_NAME));
     }
 
     private void cascadeSelect(String key, String parentWidget, String configurationKey, JSONObject childWidget) {

@@ -713,18 +713,25 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     public void onCameraMove() {
                         final FeatureCollection lambdaFeatureCollection = featureCollection;
                         final Map<String,String> lambdaFeatureToLayersMapping = featureToLayerMapping;
-                       if(mMapboxMap.getCameraPosition().zoom  > getMaxZoomLevel()){
-                          mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+                        if(mMapboxMap.getStyle()!= null) {
+                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
+                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
 
-                                Optional<Feature> feature = lambdaFeatureCollection.features().stream().filter(f-> f.id().equals(lambdaFeatureToLayersMapping.get(layer.getId()))).findAny();
-                                if(feature.isPresent()){
-                                      layer.setProperties(PropertyFactory.textField(feature.get().getStringProperty("name")));
-                                }
-                            });
-                       } else {
-                           mMapboxMap.getStyle().getLayers().stream().filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId())).forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
-                       }
-
+                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
+                                            .filter(f -> f.id()
+                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
+                                            .findAny();
+                                    if (feature.isPresent()) {
+                                        layer.setProperties(
+                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
+                                    }
+                                });
+                            } else {
+                                mMapboxMap.getStyle().getLayers().stream()
+                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
+                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+                            }
+                        }
                     }
                 });
             }

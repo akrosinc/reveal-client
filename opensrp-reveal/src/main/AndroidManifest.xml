@@ -155,6 +155,9 @@
         <service android:name="org.smartregister.sync.intent.ValidateIntentService" />
         <service android:name="org.smartregister.sync.intent.ExtendedSyncIntentService" />
         <service android:name="org.smartregister.sync.intent.DocumentConfigurationIntentService" />
+        <service android:name="org.smartregister.sync.intent.P2pProcessRecordsService" />
+
+
         <!--from base -->
 
         <service
