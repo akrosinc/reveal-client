@@ -454,9 +454,13 @@ public class RevealJsonFormUtils {
         } else if (Constants.EventType.FPP_EVENT.equals(encounterType)) {
             formName = JsonForm.FPP_FORM_ZAMBIA;
         } else if (EventType.CDD_DRUG_ALLOCATION_EVENT.equals(encounterType)) {
-            formName = JsonForm.CDD_DRUG_ALLOCAITON_FORM;
+            formName = JsonForm.CDD_DRUG_ALLOCATION_FORM;
         } else if(EventType.GENERAL_SUPERVISION.equals(encounterType)){
             formName = JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM;
+        } else if(EventType.CDD_DRUG_WITHDRAWAL_EVENT.equals(encounterType)){
+            formName = JsonForm.CDD_DRUG_WITHDRAWAL_FORM;
+        } else if(EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)){
+            formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
         }
         return formName;
     }
@@ -869,7 +873,7 @@ public class RevealJsonFormUtils {
                 break;
 
             case JsonForm.TABLET_ACCOUNTABILITY_FORM:
-            case JsonForm.CDD_DRUG_ALLOCAITON_FORM:
+            case JsonForm.CDD_DRUG_ALLOCATION_FORM:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());

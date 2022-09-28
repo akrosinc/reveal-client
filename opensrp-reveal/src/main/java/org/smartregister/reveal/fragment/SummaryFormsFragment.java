@@ -68,6 +68,10 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     private Button btnDrugAllocationForm;
 
     private Button btnGeneralSupervisionForm;
+
+    private  Button btnDrugReceivedForm;
+
+    private  Button btnDrugWithdrawalForm;
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -117,6 +121,10 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnHFWSupervisorChecklist = view.findViewById(R.id.hfw_supervisor_checklist);
 
         btnDrugAllocationForm = view.findViewById(R.id.cdd_drug_allocation_form);
+        btnDrugReceivedForm = view.findViewById(R.id.cdd_drug_received_form);
+        btnDrugWithdrawalForm = view.findViewById(R.id.cdd_drug_withdrawal_form);
+
+
 
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
@@ -138,6 +146,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         } else if(Utils.isMDALite()){
             btnTabletAccountabilityForm.setVisibility(View.VISIBLE);
             btnDrugAllocationForm.setVisibility(View.VISIBLE);
+            btnDrugReceivedForm.setVisibility(View.VISIBLE);
+            btnDrugWithdrawalForm.setVisibility(View.VISIBLE);
         } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
@@ -175,6 +185,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnHFWSupervisorChecklist.setOnClickListener(this);
             btnDrugAllocationForm.setOnClickListener(this);
             btnGeneralSupervisionForm.setOnClickListener(this);
+            btnDrugReceivedForm.setOnClickListener(this);
+            btnDrugWithdrawalForm.setOnClickListener(this);
     }
 
     @Override
@@ -318,7 +330,13 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 presenter.showBasicForm(Constants.JsonForm.FPP_FORM_ZAMBIA);
                 break;
             case R.id.cdd_drug_allocation_form:
-                presenter.showBasicForm(JsonForm.CDD_DRUG_ALLOCAITON_FORM);
+                presenter.showBasicForm(JsonForm.CDD_DRUG_ALLOCATION_FORM);
+                break;
+            case R.id.cdd_drug_received_form:
+                presenter.showBasicForm(JsonForm.CDD_DRUG_RECEIVED_FORM);
+                break;
+            case R.id.cdd_drug_withdrawal_form:
+                presenter.showBasicForm(JsonForm.CDD_DRUG_WITHDRAWAL_FORM);
                 break;
             case R.id.general_supervision_form:
                 presenter.showBasicForm(JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM);

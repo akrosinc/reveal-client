@@ -330,6 +330,9 @@ public interface Constants {
 
         String CDD_DRUG_ALLOCATION_EVENT = "cdd_drug_allocation";
 
+        String CDD_DRUG_WITHDRAWAL_EVENT = "cdd_drug_withdrawal";
+
+        String CDD_DRUG_RECEIVED_EVENT = "cdd_drug_received";
         String GENERAL_SUPERVISION = "general_supervision";
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
@@ -642,7 +645,12 @@ public interface Constants {
 
         String TABLET_ACCOUNTABILITY_FORM_RWANDA_EN = "json.form/rwanda_en_tablet_accountability_form.json";
 
-        String CDD_DRUG_ALLOCAITON_FORM = "json.form/cdd_drug_allocation_form.json";
+        String CDD_DRUG_ALLOCATION_FORM = "json.form/cdd_drug_allocation_form.json";
+
+        String CDD_DRUG_RECEIVED_FORM = "json.form/cdd_drug_received_form.json";
+
+        String CDD_DRUG_WITHDRAWAL_FORM = "json.form/cdd_drug_withdrawal_form.json";
+
 
         String FPP_FORM_ZAMBIA = "json.form/zambia_fpp_form.json";
 
