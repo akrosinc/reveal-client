@@ -148,6 +148,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnDrugAllocationForm.setVisibility(View.VISIBLE);
             btnDrugReceivedForm.setVisibility(View.VISIBLE);
             btnDrugWithdrawalForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator16).setVisibility(View.GONE);
         } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
