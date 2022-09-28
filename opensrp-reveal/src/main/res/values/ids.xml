@@ -11,8 +11,5 @@
 
 <!--from opensrp-client-family-->
     <item name="VIEW_ID" type="id" />
-    <item name="cdd_drug_received_form" type="id">Drug Received Form</item>
-    <item name="cdd_drug_withdrawal_form" type="id">Drug Withdrawal Form</item>
-
 </resources>
 

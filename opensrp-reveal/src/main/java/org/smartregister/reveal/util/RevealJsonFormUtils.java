@@ -874,6 +874,8 @@ public class RevealJsonFormUtils {
 
             case JsonForm.TABLET_ACCOUNTABILITY_FORM:
             case JsonForm.CDD_DRUG_ALLOCATION_FORM:
+            case JsonForm.CDD_DRUG_RECEIVED_FORM:
+            case JsonForm.CDD_DRUG_WITHDRAWAL_FORM:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());

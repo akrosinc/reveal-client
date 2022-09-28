@@ -203,6 +203,20 @@
           },
           {
             "field": "eventType",
+            "field_value": "cdd_drug_withdrawal",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "cdd_drug_received",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
             "field_value": "general_supervision",
             "creates_case": [
               "ec_events"
