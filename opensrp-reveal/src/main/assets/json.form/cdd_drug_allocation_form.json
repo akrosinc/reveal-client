@@ -154,7 +154,7 @@
         "label": "Please select drug",
         "options": [
           {
-            "key": "Praziquantel (PZQ)",
+            "key": "pzq",
             "text": "Praziquantel (PZQ)"
           },
           {
@@ -199,6 +199,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
+            }
+          }
         }
       },
       {
@@ -229,6 +236,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
+            }
+          }
         }
       },
       {
@@ -274,7 +288,7 @@
         "label": "Please select drug reallocated",
         "options": [
           {
-            "key": "Praziquantel (PZQ)",
+            "key": "pzq",
             "text": "Praziquantel (PZQ)"
           },
           {
@@ -319,6 +333,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
+            }
+          }
         }
       },
       {
@@ -349,6 +370,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
+            }
+          }
         }
       }
     ]
