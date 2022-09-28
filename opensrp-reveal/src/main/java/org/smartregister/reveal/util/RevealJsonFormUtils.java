@@ -1010,9 +1010,7 @@ public class RevealJsonFormUtils {
 
         PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
                 .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
-        String targetGeographicLevel = currentPlan.getTargetGeographicLevel();
         List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
-        hierarchyGeographicLevels.remove(targetGeographicLevel);
         List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false,hierarchyGeographicLevels);
 
         String parentName;
