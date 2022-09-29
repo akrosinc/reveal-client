@@ -195,8 +195,15 @@ condition: "!step1_ntd_treated.equals('SCH')"
 actions:
   - "isRelevant = true"
 ---
-name: step1_street_snake_bite_hospital_female_5_to_14
-description: step1_snake_bite_hospital_female_5_to_14
+name: step1_snake_bite_hospital_male_above_15
+description: step1_snake_bite_hospital_male_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_female_above_15
+description: step1_snake_bite_hospital_female_above_15
 priority: 1
 condition: "!step1_ntd_treated.equals('SCH')"
 actions:

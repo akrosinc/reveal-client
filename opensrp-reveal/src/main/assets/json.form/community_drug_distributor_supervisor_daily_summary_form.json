@@ -374,7 +374,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number males aged 5 to 14 years bitten by snake",
+        "hint": "Number of males aged 5 to 14 years bitten by snake",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -559,7 +559,7 @@
         }
       },
       {
-        "key": "snake_bite_hospital_male_5_to_14",
+        "key": "snake_bite_hospital_male_above_15",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -582,6 +582,13 @@
         "v_min": {
           "value": "0",
           "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -1031,39 +1038,6 @@
         }
       },
       {
-        "key": "pwd_female_above_15",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of females aged 15 years and above living with disability",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "snake_bite_female_above_15",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1097,7 +1071,7 @@
         }
       },
       {
-        "key": "snake_bite_hospital_female_5_to_14",
+        "key": "snake_bite_hospital_female_above_15",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
