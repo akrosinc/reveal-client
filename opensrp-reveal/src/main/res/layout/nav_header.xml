@@ -252,6 +252,19 @@
         app:layout_constraintTop_toBottomOf="@id/btn_navMenu_filled_forms" />
 
 
+    <TextView
+        android:id="@+id/btn_link_dashboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/drawer_margin"
+        android:layout_marginTop="@dimen/drawer_margin_vertical"
+        android:text="@string/link_to_dashboard"
+        android:textColor="@color/button_blue"
+        android:textSize="18sp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_navMenu_offline_maps" />
+
     <View
         android:id="@+id/header_separator"
         android:layout_width="match_parent"
@@ -261,7 +274,7 @@
         android:background="#DEDEDE"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_navMenu_offline_maps" />
+        app:layout_constraintTop_toBottomOf="@id/btn_link_dashboard" />
 
 
     <TextView
