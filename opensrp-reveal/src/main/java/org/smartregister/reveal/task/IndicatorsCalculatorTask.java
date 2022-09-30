@@ -49,6 +49,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     private TableView tableView;
     private TableLayout tempTableLayoutView;
     private TableLayout tempTableLayoutViewNG;
+    private TableLayout tempTableLayoutViewKenya;
+
 
 
     public IndicatorsCalculatorTask(Activity context, List<TaskDetails> tasks) {
@@ -68,8 +70,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         tableView = activity.findViewById(R.id.tableView);
         tempTableLayoutView = activity.findViewById(R.id.tempTableView);
         tempTableLayoutViewNG = activity.findViewById(R.id.tempTableViewNG);
-
-
+        tempTableLayoutViewKenya = activity.findViewById(R.id.tempTableViewKenya);
     }
 
     @Override
@@ -90,6 +91,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
             indicatorDetails = IndicatorUtils.processIndicatorsNigeria(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNigeriaIndicators(this.activity,indicatorDetails));
+        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+            indicatorDetails = IndicatorUtils.processIndicatorsKenya(tasks);
+            indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateKenyaIndicators(activity,indicatorDetails));
         }
         return indicatorDetails;
 
@@ -127,87 +131,29 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         if(Utils.isZambiaIRSLite()) {
             indicatorParentView.setVisibility(View.GONE);
         }
-
         if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
-            progressIndicator.setProgress(indicatorDetails.getProgress());
-            progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getProgress()));
-
-            int totalFound = indicatorDetails.getSprayed() + indicatorDetails.getNotSprayed();
-            int progress2 = indicatorDetails.getTotalStructures() > 0 ? Math.round(totalFound * 100 / indicatorDetails.getTotalStructures()) : 0;
-
-            progressIndicator2.setProgress(progress2);
-            progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, progress2));
-
-            int progress3 = totalFound > 0 ? Math.round((indicatorDetails.getSprayed() * 100 / totalFound)) : 0;
-
-            progressIndicator3.setProgress(progress3);
-            progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, progress3));
+            setIRSProgressIndicators(indicatorDetails);
         } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
-
-            progressIndicator3.setSubTitle(activity.getString(R.string.target_coverage));
-            int targetCoverage = indicatorDetails.getTarget() == 0 ? 100 : (int) (indicatorDetails.getSprayed() * 100.0 / indicatorDetails.getTarget());
-            progressIndicator3.setProgress(targetCoverage);
-            progressIndicator3.setTitle(activity.getString(R.string.n_percent, targetCoverage));
-
-            progressIndicator2.setSubTitle(activity.getString(R.string.found_coverage));
-            int coverage = (int) (indicatorDetails.getSprayed() * 100.0 / indicatorDetails.getFoundStructures());
-            progressIndicator2.setProgress(coverage);
-            progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, coverage));
-
-            progressIndicator.setVisibility(View.GONE);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
-            progressIndicator.setVisibility(View.GONE);
-            progressIndicator2.setVisibility(View.GONE);
-
-
-            progressIndicator3.setTitle(activity.getString(R.string.click_to_show_indicators));
-            progressIndicator3.setSubTitle("");
+            setNamibiaProgressIndicators(indicatorDetails);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || BuildConfig.BUILD_COUNTRY == Country.KENYA){
+            hideProgressIndicators();
         } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
-
-        int totalStructures = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
-        int  visited = totalStructures - indicatorDetails.getNotVisited();
-        int foundCoverage = totalStructures > 0 ? Math.round(visited * 100 / totalStructures) : 0;
-        progressIndicator.setSubTitle(this.activity.getString(R.string.found_coverage));
-        progressIndicator.setProgress(foundCoverage);
-        progressIndicator.setTitle(this.activity.getString(R.string.n_percent,foundCoverage));
-
-
-        int distributionCoverage = indicatorDetails.getFoundStructures() > 0 ? Math.round(indicatorDetails.getCompleteDrugDistribution() * 100 / indicatorDetails.getFoundStructures()):0;
-        progressIndicator2.setSubTitle(this.activity.getString(R.string.distribution_coverage));
-        progressIndicator2.setProgress(distributionCoverage);
-        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent,distributionCoverage));
-
-
-        int individualsComplete =  indicatorDetails.getChildrenEligible() > 0 ? Math.round(indicatorDetails.getTotalIndividualTreated()* 100 /indicatorDetails.getChildrenEligible()): 0;
-        progressIndicator3.setSubTitle(this.activity.getString(R.string.and_individuals_complete));
-        progressIndicator3.setProgress(individualsComplete);
-        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent,individualsComplete));
-
-    }
+            setNigeriaProgressIndicators(indicatorDetails);
+        }
 
         if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || BuildConfig.BUILD_COUNTRY == Country.RWANDA){
             tempTableLayoutViewNG.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
-            populateTableView(Arrays.asList(R.id.health_education_ages_5_to_15_years_cell,
-                                            R.id.health_education_16_years_and_above_cell,
-                                            R.id.vitamina_total_6_to_11_months_cell,
-                                            R.id.vitamina_total_12_to_59_months_cell,
-                                            R.id.alb_meb_total_12_to_59_months_cell,
-                                            R.id.alb_meb_total_5_to_15_years_cell,
-                                            R.id.alb_meb_total_16_years_and_above_cell,
-                                            R.id.pzq_total_5_to_15_years_cell,
-                                            R.id.pzq_total_16_years_and_above_cell),indicatorDetails.getSprayIndicatorList(),tempTableLayoutView);
+            populateTableView(getTableRowsRwanda(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutView);
         } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
             tempTableLayoutView.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
-            populateTableView(Arrays.asList(R.id.total_structures_cell,
-                    R.id.structures_visited_cell,
-                    R.id.structures_not_visited_cell,
-                    R.id.structure_confirmed_eligible_cell,
-                    R.id.structure_complete_drug_distribution_cell,
-                    R.id.structure_partial_drug_distribution_cell,
-                    R.id.individual_total_number_of_children_eligible_3_to_49_mos_cell,
-                    R.id.individual_total_treated_3_to_59_mos_cell),indicatorDetails.getSprayIndicatorList(),tempTableLayoutViewNG);
+            populateTableView(getTableRowsNigeria(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutViewNG);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+            tempTableLayoutView.setVisibility(View.GONE);
+            tempTableLayoutViewNG.setVisibility(View.GONE);
+            tableView.setVisibility(View.GONE);
+            populateTableView(getTableRowsKenya(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutViewKenya);
         } else {
             tempTableLayoutView.setVisibility(View.GONE);
             tempTableLayoutViewNG.setVisibility(View.GONE);
@@ -215,13 +161,107 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         }
 
         //Show or hide depending on plan
-
-        ((View) progressIndicator.getParent()).setVisibility(Utils.getInterventionLabel() == R.string.irs || BuildConfig.BUILD_COUNTRY == Country.RWANDA  || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || Country.NIGERIA == BuildConfig.BUILD_COUNTRY  ? View.VISIBLE : View.GONE);
-
+        ((View) progressIndicator.getParent()).setVisibility( shouldIndicatorsBeVisible() ? View.VISIBLE : View.GONE);
         if (activity instanceof ListTasksActivity)
             ((ListTasksActivity) activity).positionMyLocationAndLayerSwitcher();
     }
 
+    private void setIRSProgressIndicators(final IndicatorDetails indicatorDetails) {
+        progressIndicator.setProgress(indicatorDetails.getProgress());
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getProgress()));
+
+        int totalFound = indicatorDetails.getSprayed() + indicatorDetails.getNotSprayed();
+        int progress2 = indicatorDetails.getTotalStructures() > 0 ? Math.round(totalFound * 100 / indicatorDetails.getTotalStructures()) : 0;
+
+        progressIndicator2.setProgress(progress2);
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, progress2));
+
+        int progress3 = totalFound > 0 ? Math.round((indicatorDetails.getSprayed() * 100 / totalFound)) : 0;
+
+        progressIndicator3.setProgress(progress3);
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, progress3));
+    }
+
+    private void setNamibiaProgressIndicators(final IndicatorDetails indicatorDetails) {
+        progressIndicator3.setSubTitle(activity.getString(R.string.target_coverage));
+        int targetCoverage = indicatorDetails.getTarget() == 0 ? 100 : (int) (
+                indicatorDetails.getSprayed() * 100.0 / indicatorDetails.getTarget());
+        progressIndicator3.setProgress(targetCoverage);
+        progressIndicator3.setTitle(activity.getString(R.string.n_percent, targetCoverage));
+
+        progressIndicator2.setSubTitle(activity.getString(R.string.found_coverage));
+        int coverage = (int) (indicatorDetails.getSprayed() * 100.0 / indicatorDetails.getFoundStructures());
+        progressIndicator2.setProgress(coverage);
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, coverage));
+
+        progressIndicator.setVisibility(View.GONE);
+    }
+
+    private void setNigeriaProgressIndicators(final IndicatorDetails indicatorDetails) {
+        int totalStructures = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
+        int  visited = totalStructures - indicatorDetails.getNotVisited();
+        int foundCoverage = totalStructures > 0 ? Math.round(visited * 100 / totalStructures) : 0;
+        progressIndicator.setSubTitle(this.activity.getString(R.string.found_coverage));
+        progressIndicator.setProgress(foundCoverage);
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent,foundCoverage));
+
+        int distributionCoverage = indicatorDetails.getFoundStructures() > 0 ? Math.round(
+                indicatorDetails.getCompleteDrugDistribution() * 100 / indicatorDetails.getFoundStructures()):0;
+        progressIndicator2.setSubTitle(this.activity.getString(R.string.distribution_coverage));
+        progressIndicator2.setProgress(distributionCoverage);
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent,distributionCoverage));
+
+        int individualsComplete =  indicatorDetails.getChildrenEligible() > 0 ? Math.round(
+                indicatorDetails.getTotalIndividualTreated()* 100 / indicatorDetails.getChildrenEligible()): 0;
+        progressIndicator3.setSubTitle(this.activity.getString(R.string.and_individuals_complete));
+        progressIndicator3.setProgress(individualsComplete);
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent,individualsComplete));
+    }
+
+    private void hideProgressIndicators() {
+        progressIndicator.setVisibility(View.GONE);
+        progressIndicator2.setVisibility(View.GONE);
+        progressIndicator3.setTitle(activity.getString(R.string.click_to_show_indicators));
+        progressIndicator3.setSubTitle("");
+    }
+
+    private List<Integer> getTableRowsRwanda() {
+        return Arrays.asList(R.id.health_education_ages_5_to_15_years_cell,
+                R.id.health_education_16_years_and_above_cell,
+                R.id.vitamina_total_6_to_11_months_cell,
+                R.id.vitamina_total_12_to_59_months_cell,
+                R.id.alb_meb_total_12_to_59_months_cell,
+                R.id.alb_meb_total_5_to_15_years_cell,
+                R.id.alb_meb_total_16_years_and_above_cell,
+                R.id.pzq_total_5_to_15_years_cell,
+                R.id.pzq_total_16_years_and_above_cell);
+    }
+
+    private List<Integer> getTableRowsKenya() {
+      return   Arrays.asList(R.id.number_of_people_treated_for_sth,
+                R.id.number_of_people_treated_for_sch,
+                R.id.mbz_tablets_remaining,
+                R.id.pzq_tablets_remaining,
+                R.id.mbz_dispensed,
+                R.id.pzq_dispensed,
+                R.id.mbz_damaged,
+                R.id.pzq_damaged);
+    }
+
+    private List<Integer> getTableRowsNigeria() {
+       return Arrays.asList(R.id.total_structures_cell,
+                R.id.structures_visited_cell,
+                R.id.structures_not_visited_cell,
+                R.id.structure_confirmed_eligible_cell,
+                R.id.structure_complete_drug_distribution_cell,
+                R.id.structure_partial_drug_distribution_cell,
+                R.id.individual_total_number_of_children_eligible_3_to_49_mos_cell,
+                R.id.individual_total_treated_3_to_59_mos_cell);
+    }
+
+    private boolean shouldIndicatorsBeVisible() {
+        return Utils.getInterventionLabel() == R.string.irs || BuildConfig.BUILD_COUNTRY == Country.RWANDA  || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || Country.NIGERIA == BuildConfig.BUILD_COUNTRY || Country.KENYA == BuildConfig.BUILD_COUNTRY  ;
+    }
 
 
     private void populateTableView(List<Integer> cellResourceIdentifiers,List<String> sprayIndicatorList,TableLayout tableLayout){

@@ -50,6 +50,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
 import static org.smartregister.reveal.util.Utils.formatDate;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
@@ -263,16 +264,12 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
 
-        if (taskDetailsList != null && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN
-                || BuildConfig.BUILD_COUNTRY == Country.NIGERIA)) {
+        if (taskDetailsList != null && buildCountryHasIndicators()) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
+
+
 
     public void onMapReady() {
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
@@ -794,7 +791,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea,adjacentOperationAreas, false);
-        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        if(buildCountryHasIndicators()){
+            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        }
     }
 
     @Override
@@ -806,7 +805,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onStructureMarkedIneligible() {
         updateFeatureTaskBusinessStatus(NOT_ELIGIBLE);
         drawerPresenter.updateSyncStatusDisplay(false);
-        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        if(buildCountryHasIndicators()){
+            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        }
     }
 
     @Override

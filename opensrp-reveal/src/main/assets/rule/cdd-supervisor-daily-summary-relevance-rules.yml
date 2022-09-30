@@ -23,7 +23,7 @@ actions:
 name: step1_sch_drug_validation_err
 description: step1_sch_drug_validation_err
 priority: 1
-condition: "step1_ntd_treated.equals('SCH') && (step1_drugs.equals('ALB') || step1_drugs.equals('MEB'))"
+condition: "step1_ntd_treated.equals('SCH') && (step1_drugs.equals('ALB') || step1_drugs.equals('MBZ'))"
 actions:
   - "isRelevant = true"
 ---

@@ -622,4 +622,15 @@ public class Utils {
     public static boolean isCurrentTargetLevelStructure(){
         return STRUCTURE.equalsIgnoreCase(PreferencesUtil.getInstance().getCurrentPlanTargetLevel());
     }
+
+    public static boolean buildCountryHasIndicators() {
+        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
+                || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
+                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
+                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN
+                || BuildConfig.BUILD_COUNTRY == Country.NIGERIA
+                || BuildConfig.BUILD_COUNTRY == Country.KENYA;
+    }
 }

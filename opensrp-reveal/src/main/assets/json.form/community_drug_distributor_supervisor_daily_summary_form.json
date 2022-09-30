@@ -1165,8 +1165,8 @@
             "text": "ALB"
           },
           {
-            "key": "MEB",
-            "text": "MEB"
+            "key": "MBZ",
+            "text": "MBZ"
           }
         ],
         "v_required": {
@@ -1201,7 +1201,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Only ALB or MEB drug is used for this NTD you selected earlier",
+        "text": "Only ALB or MBZ drug is used for this NTD you selected earlier",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",

@@ -32,6 +32,16 @@ public class IndicatorDetails {
     private int totalIndividualTreated;
     private int childrenEligible;
 
+    //Kenya indicators
+    private int peopleTreatedForSTH;
+    private int peopleTreatedForSCH;
+    private int pzqTabletsRemaining;
+    private int mbzTabletsRemaining;
+    private int mbzDispensed;
+    private int pzqDispensed;
+    private int mbzDamaged;
+    private int pzqDamaged;
+
     public int getSprayed() {
         return sprayed;
     }
@@ -215,5 +225,69 @@ public class IndicatorDetails {
 
     public void setChildrenEligible(int childrenEligible) {
         this.childrenEligible = childrenEligible;
+    }
+
+    public int getPeopleTreatedForSTH() {
+        return peopleTreatedForSTH;
+    }
+
+    public void setPeopleTreatedForSTH(final int peopleTreatedForSTH) {
+        this.peopleTreatedForSTH = peopleTreatedForSTH;
+    }
+
+    public int getPeopleTreatedForSCH() {
+        return peopleTreatedForSCH;
+    }
+
+    public void setPeopleTreatedForSCH(final int peopleTreatedForSCH) {
+        this.peopleTreatedForSCH = peopleTreatedForSCH;
+    }
+
+    public int getPzqTabletsRemaining() {
+        return pzqTabletsRemaining;
+    }
+
+    public void setPzqTabletsRemaining(final int pzqTabletsRemaining) {
+        this.pzqTabletsRemaining = pzqTabletsRemaining;
+    }
+
+    public int getMbzTabletsRemaining() {
+        return mbzTabletsRemaining;
+    }
+
+    public void setMbzTabletsRemaining(final int mbzTabletsRemaining) {
+        this.mbzTabletsRemaining = mbzTabletsRemaining;
+    }
+
+    public int getMbzDispensed() {
+        return mbzDispensed;
+    }
+
+    public void setMbzDispensed(final int mbzDispensed) {
+        this.mbzDispensed = mbzDispensed;
+    }
+
+    public int getPzqDispensed() {
+        return pzqDispensed;
+    }
+
+    public void setPzqDispensed(final int pzqDispensed) {
+        this.pzqDispensed = pzqDispensed;
+    }
+
+    public int getMbzDamaged() {
+        return mbzDamaged;
+    }
+
+    public void setMbzDamaged(final int mbzDamaged) {
+        this.mbzDamaged = mbzDamaged;
+    }
+
+    public int getPzqDamaged() {
+        return pzqDamaged;
+    }
+
+    public void setPzqDamaged(final int pzqDamaged) {
+        this.pzqDamaged = pzqDamaged;
     }
 }

@@ -972,4 +972,12 @@
     <string name="abbrv_years">y</string>
     <string name="current_selected_operation_label_for_supervisor_form">"You have (%1s) selected on the menu. Please ensure it is the correct facility you are entering data for before selecting spray areas drop down question"</string>
     <string name="link_to_dashboard">Web App</string>
+    <string name="number_of_people_treated_for_sth">Number of people treated for STH</string>
+    <string name="number_of_people_treated_for_sch">Number of people treated for SCH</string>
+    <string name="mbz_tablets_remaining">Number of MZB tablets remaining with CDDs</string>
+    <string name="pzq_tablets_remaining">Number of PZQ tablets remaining with CDDs</string>
+    <string name="mbz_dispensed">Number of MZB dispensed</string>
+    <string name="mbz_damaged">Number of spoilt or damaged MBZ tablets</string>
+    <string name="pzq_damaged">Number of spoilt or damaged PZQ tablets</string>
+    <string name="pzq_dispensed">"Number of PZQ dispensed"</string>
 </resources>
