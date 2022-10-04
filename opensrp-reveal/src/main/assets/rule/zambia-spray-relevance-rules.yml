@@ -308,3 +308,11 @@ priority: 1
 condition: "step1_eligibility.equals('eligible') && step1_compoundheadstructure.equals('Yes') && (step1_structure_sprayed.equals('yes') || (step1_structure_sprayed.equals('no') && step1_notsprayed_reason.equals('refused')))"
 actions:
   - "isRelevant = true"
+---
+name: step1_coverage_survey
+description: step1_coverage_survey
+priority: 1
+condition: "step1_eligibility.equals('eligible') && step1_districtName.equals('Luanshya')"
+actions:
+  - "isRelevant = true"
+
