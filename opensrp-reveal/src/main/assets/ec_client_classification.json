@@ -221,6 +221,13 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "county_cdd_supervisory",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

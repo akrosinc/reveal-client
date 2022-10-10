@@ -77,7 +77,6 @@
           "err": "Required field"
         }
       },
-
       {
         "key": "health_worker_supervisor",
         "openmrs_entity_parent": "",

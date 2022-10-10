@@ -461,6 +461,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.CDD_DRUG_WITHDRAWAL_FORM;
         } else if(EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)){
             formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
+        } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
+            formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
         }
         return formName;
     }
@@ -876,6 +878,7 @@ public class RevealJsonFormUtils {
             case JsonForm.CDD_DRUG_ALLOCATION_FORM:
             case JsonForm.CDD_DRUG_RECEIVED_FORM:
             case JsonForm.CDD_DRUG_WITHDRAWAL_FORM:
+            case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());
@@ -887,6 +890,12 @@ public class RevealJsonFormUtils {
                         fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.DRUG_REALLOCATEE),
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.COUNTY_LIST, fieldsMap.get(JsonForm.COUNTY),
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SUB_COUNTY_LIST, fieldsMap.get(JsonForm.SUB_COUNTY),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());
                 break;
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA:
