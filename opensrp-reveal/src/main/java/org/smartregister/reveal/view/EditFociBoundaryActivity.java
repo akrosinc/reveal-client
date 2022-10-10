@@ -50,6 +50,7 @@ import io.ona.kujaku.manager.DrawingManager;
 import static org.smartregister.reveal.util.Utils.getCoordsFromGeometry;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 
 /**
@@ -104,7 +105,7 @@ public class EditFociBoundaryActivity extends BaseMapActivity implements EditFoc
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()  ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                String satelliteStyle = getSatelliteStyle(getContext());
                 Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
                 mapboxMap.setStyle(builder,  new Style.OnStyleLoaded() {
                     @Override
