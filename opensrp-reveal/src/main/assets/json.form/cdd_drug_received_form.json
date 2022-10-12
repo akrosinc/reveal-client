@@ -90,56 +90,12 @@
         }
       },
       {
-        "key": "drug_allocation",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select the drug allocation type (Initial balance or top up)",
-        "options": [
-          {
-            "key": "Initial balance",
-            "text": "Initial balance"
-          },
-          {
-            "key": "Top Up",
-            "text": "Top Up"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        }
-      },
-      {
-        "key": "drug_received_from",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Drugs received from Sub County Pharmacist or CDD Supervisor?",
-        "options": [
-          {
-            "key": "Sub County Pharmacists",
-            "text": "Sub County Pharmacists"
-          },
-          {
-            "key": "CDD Supervisor",
-            "text": "CDD Supervisor"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        }
-      },
-      {
         "key": "cdd_name",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of CDD Receiving Drug",
+        "hint": "Name of CDD issued drugs",
         "v_required": {
           "value": "true",
           "err": "This field is required."
@@ -151,15 +107,15 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Please select drug",
+        "label": "Which drug did CDD receive?",
         "options": [
           {
-            "key": "pzq",
+            "key": "PZQ",
             "text": "Praziquantel (PZQ)"
           },
           {
-            "key": "Albendazole",
-            "text": "Albendazole"
+            "key": "MBZ",
+            "text": "Mebendazole"
           },
           {
             "key": "Both",
@@ -209,13 +165,13 @@
         }
       },
       {
-        "key": "albendazole_received",
+        "key": "mbz_received",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Received",
+        "hint": "Number of Mebendazole  tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -243,6 +199,62 @@
               "rules-file": "cdd_drug_received_relevance_rules.yml"
             }
           }
+        }
+      },
+      {
+        "key": "drug_allocation",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Select the drug allocation type (Initial balance or top up)",
+        "options": [
+          {
+            "key": "Initial balance",
+            "text": "Initial balance"
+          },
+          {
+            "key": "Top Up",
+            "text": "Top Up"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        }
+      },
+      {
+        "key": "drug_received_from",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Drugs received from Sub County Pharmacist or CDD Supervisor?",
+        "options": [
+          {
+            "key": "Sub County Pharmacists",
+            "text": "Sub County Pharmacists"
+          },
+          {
+            "key": "CDD Supervisor",
+            "text": "CDD Supervisor"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        }
+      },
+      {
+        "key": "cdd_borrowed_from",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD who you borrowed drugs from",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
         }
       }
     ]

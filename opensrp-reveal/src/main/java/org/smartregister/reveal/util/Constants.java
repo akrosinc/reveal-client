@@ -770,6 +770,7 @@ public interface Constants {
         String SPRAYOP_NAME = "sprayop_name";
         String COUNTY = "county";
         String SUB_COUNTY = "sub_county";
+        String CDD_BORROWED_FORM = "cdd_borrowed_from" ;
     }
 
     interface DateFormat {
