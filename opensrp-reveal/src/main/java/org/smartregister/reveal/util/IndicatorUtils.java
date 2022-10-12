@@ -79,6 +79,10 @@ public class IndicatorUtils {
 
     public static final String PZQ_WITHDRAWN = "pzq_withdrawn";
 
+    public static final String DAMAGED_PZQ = "damaged_pzq";
+
+    public static final String DAMAGED_MBZ = "damaged_mbz";
+
     /**
      * Process task details from map of tasks (key : structureId)
      */
@@ -494,14 +498,14 @@ public class IndicatorUtils {
     private static int calculateDamagedPZQ(final List<Event> events) {
         return events.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED)).findFirst().get())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_PZQ)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
     private static int calculateDamagedMBZ(final List<Event> events) {
         return events.stream().map(Event::getObs)
                 .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED)).findFirst().get())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_MBZ)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
