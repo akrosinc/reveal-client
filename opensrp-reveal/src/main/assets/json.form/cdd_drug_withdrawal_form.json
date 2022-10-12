@@ -111,12 +111,12 @@
         "label": "Please select drug",
         "options": [
           {
-            "key": "pzq",
+            "key": "PZQ",
             "text": "Praziquantel (PZQ)"
           },
           {
-            "key": "Albendazole",
-            "text": "Albendazole"
+            "key": "MBZ",
+            "text": "Mebendazole"
           },
           {
             "key": "Both",
@@ -166,7 +166,7 @@
         }
       },
       {
-        "key": "albendazole_withdrawn",
+        "key": "mbz_withdrawn",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

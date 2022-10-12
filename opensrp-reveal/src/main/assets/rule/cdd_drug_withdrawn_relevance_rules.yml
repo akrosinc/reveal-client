@@ -2,14 +2,14 @@
 name: step1_pzq_withdrawn
 description: pzq_withdrawn relevance
 priority: 1
-condition: "step1_drug_withdrawn.equals('pzq') || step1_drug_withdrawn.equals('Both')"
+condition: "step1_drug_withdrawn.equals('PZQ') || step1_drug_withdrawn.equals('Both')"
 actions:
   - "isRelevant = true"
 ---
-name: step1_albendazole_withdrawn
-description: albendazole_withdrawn relevance
+name: step1_mbz_withdrawn
+description: mbz_withdrawn relevance
 priority: 1
-condition: "step1_drug_withdrawn.equals('Albendazole') || step1_drug_withdrawn.equals('Both')"
+condition: "step1_drug_withdrawn.equals('MBZ') || step1_drug_withdrawn.equals('Both')"
 actions:
   - "isRelevant = true"
 
