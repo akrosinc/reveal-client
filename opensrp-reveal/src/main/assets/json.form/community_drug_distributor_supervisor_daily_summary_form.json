@@ -144,6 +144,58 @@
         }
       },
       {
+        "key": "treated_male_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated males aged 5 to 14 years",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "treated_male_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated males aged 15 years and above",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
         "key": "street_male_1_to_4",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -151,6 +203,72 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number of males aged 1 to 4 years living in the street",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "street_male_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of males aged 5 to 14 years living in the street",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "street_male_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of males aged 15 years and above living in the street",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -210,131 +328,6 @@
         }
       },
       {
-        "key": "snake_bite_male_1_to_4",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number males aged 1 to 4 years bitten by snake",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_hospital_male_1_to_4",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number males aged 1 to 4 years who visited health facility after getting a snake bite",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "treated_male_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of treated males aged 5 to 14 years",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        }
-      },
-      {
-        "key": "street_male_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of males aged 5 to 14 years living in the street",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "pwd_male_5_to_14",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -342,131 +335,6 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number of males aged 5 to 14 years living with disability",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_male_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of males aged 5 to 14 years bitten by snake",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_hospital_male_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number males aged 5 to 14 years who visited health facility after getting a snake bite",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "treated_male_above_15",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of treated males aged 15 years and above",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        }
-      },
-      {
-        "key": "street_male_above_15",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of males aged 15 years and above living in the street",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -526,6 +394,72 @@
         }
       },
       {
+        "key": "snake_bite_male_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number males aged 1 to 4 years bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_male_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of males aged 5 to 14 years bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "snake_bite_male_above_15",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -533,6 +467,72 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number males aged 15 years and above bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_hospital_male_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number males aged 1 to 4 years who visited health facility after getting a snake bite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_hospital_male_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number males aged 5 to 14 years who visited health facility after getting a snake bite",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -656,6 +656,58 @@
         }
       },
       {
+        "key": "treated_female_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated females aged 5 to 14 years",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "treated_female_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated females aged 15 years and above",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
         "key": "street_female_1_to_4",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -663,6 +715,72 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number of females aged 1 to 4 years living in the street",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "street_female_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of females aged 5 to 14 years living in the street",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "street_female_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of females aged 15 years and above living on the street",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -722,131 +840,6 @@
         }
       },
       {
-        "key": "snake_bite_female_1_to_4",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number females aged 1 to 4 years bitten by snake",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_hospital_female_1_to_4",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number females aged 1 to 4 years who visited health facility after getting a snake bite",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "treated_female_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of treated females aged 5 to 14 years",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        }
-      },
-      {
-        "key": "street_female_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of females aged 5 to 14 years living in the street",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "pwd_female_5_to_14",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -854,131 +847,6 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number of females aged 5 to 14 years living with disability",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_female_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number females aged 5 to 14 years bitten by snake",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "snake_bite_hospital_female_5_to_14",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number females aged 5 to 14 years who visited health facility after getting a snake bite",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "treated_female_above_15",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of treated females aged 15 years and above",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        }
-      },
-      {
-        "key": "street_female_above_15",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of females aged 15 years and above living on the street",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -1038,6 +906,72 @@
         }
       },
       {
+        "key": "snake_bite_female_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number females aged 1 to 4 years bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_female_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number females aged 5 to 14 years bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
         "key": "snake_bite_female_above_15",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1045,6 +979,72 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Number females aged 15 years and above bitten by snake",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_hospital_female_1_to_4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number females aged 1 to 4 years who visited health facility after getting a snake bite",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "snake_bite_hospital_female_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number females aged 5 to 14 years who visited health facility after getting a snake bite",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -1244,6 +1244,58 @@
         "v_relative_min": {
           "value": "total_male_and_female",
           "err": "Cannot be less than total males and females"
+        }
+      },
+      {
+        "key": "damaged_mbz",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total damaged/spoilt mebendazole tablets",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "damaged_pzq",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total damaged/spoilt praziquantel tablets",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
         }
       },
       {
