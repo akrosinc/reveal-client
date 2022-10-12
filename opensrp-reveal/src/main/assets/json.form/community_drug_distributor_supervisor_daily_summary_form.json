@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "cdd_supervisor_daily_summary",
-  "form_version": "0.0.3",
+  "form_version": "0.0.4",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -1161,10 +1161,6 @@
             "text": "PZQ"
           },
           {
-            "key": "ALB",
-            "text": "ALB"
-          },
-          {
             "key": "MBZ",
             "text": "MBZ"
           }
@@ -1201,7 +1197,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "toaster_notes",
-        "text": "Only ALB or MBZ drug is used for this NTD you selected earlier",
+        "text": "Only MBZ drug is used for this NTD you selected earlier",
         "text_size": "8sp",
         "text_color": "#CF0800",
         "toaster_type": "problem",
