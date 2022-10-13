@@ -30,6 +30,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.JsonForm.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
@@ -387,8 +388,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private void onFeatureSelectedByLongClick(Feature feature) {
         String code = getPropertyValue(feature, TASK_CODE);
+       String taskBusinessStatus = getPropertyValue(feature,TASK_BUSINESS_STATUS);
         selectedFeatureInterventionType = code;
-        if (isKenyaMDALite() || isRwandaMDALite()) {
+        if (COMPLETE.equals(taskBusinessStatus) && (isKenyaMDALite() || isRwandaMDALite())) {
             listTaskView.displayEditCDDTaskCompleteDialog();
         }
     }

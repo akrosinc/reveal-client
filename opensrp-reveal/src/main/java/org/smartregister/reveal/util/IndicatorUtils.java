@@ -1,6 +1,7 @@
 package org.smartregister.reveal.util;
 
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
@@ -461,7 +462,7 @@ public class IndicatorUtils {
     public static IndicatorDetails processIndicatorsKenya(final List<TaskDetails> tasks) {
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         List<TaskDetails> validTasks = tasks.stream()
-                .filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(IN_PROGRESS) || taskDetails.getBusinessStatus().equals(COMPLETE)))
+                .filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(INCOMPLETE) || taskDetails.getBusinessStatus().equals(COMPLETE)))
                 .collect(Collectors.toList());
 
         Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
