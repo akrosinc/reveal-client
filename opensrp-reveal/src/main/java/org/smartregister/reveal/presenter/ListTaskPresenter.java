@@ -377,7 +377,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private boolean shouldOpenCDDSupervisionForm(String businessStatus, String code) {
-        return CDD_SUPERVISION.equals(code) && isKenyaMDALite() && (NOT_VISITED.equals(businessStatus) || IN_PROGRESS.equals(businessStatus));
+        return CDD_SUPERVISION.equals(code) && isKenyaMDALite() && (NOT_VISITED.equals(businessStatus) || INCOMPLETE.equals(businessStatus));
     }
 
 
