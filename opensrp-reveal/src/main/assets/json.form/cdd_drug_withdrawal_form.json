@@ -172,7 +172,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Received",
+        "hint": "Number of Mebendazole  tablets Received",
         "is_mandatory": true,
         "v_required": {
           "value": true,
