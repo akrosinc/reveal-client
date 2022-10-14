@@ -23,7 +23,7 @@ actions:
 name: step1_sch_drug_validation_err
 description: step1_sch_drug_validation_err
 priority: 1
-condition: "step1_ntd_treated.equals('SCH') && (step1_drugs.equals('ALB') || step1_drugs.equals('MEB'))"
+condition: "step1_ntd_treated.equals('SCH') && (step1_drugs.equals('ALB') || step1_drugs.equals('MBZ'))"
 actions:
   - "isRelevant = true"
 ---
@@ -33,4 +33,178 @@ priority: 1
 condition: "step1_ntd_treated.equals('STH') && step1_drugs.equals('PZQ')"
 actions:
   - "isRelevant = true"
-
+---
+name: step1_street_male_1_to_4
+description: step1_street_male_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_male_1_to_4
+description: step1_pwd_male_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_male_1_to_4
+description: step1_snake_bite_male_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_male_1_to_4
+description: step1_snake_bite_hospital_male_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_street_male_5_to_14
+description: step1_street_male_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_male_5_to_14
+description: step1_pwd_male_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_male_5_to_14
+description: step1_snake_bite_male_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_male_5_to_14
+description: step1_snake_bite_hospital_male_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_street_male_above_15
+description: step1_street_male_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_male_above_15
+description: step1_pwd_male_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_male_above_15
+description: step1_snake_bite_male_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_male_5_to_14
+description: step1_snake_bite_hospital_male_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_street_female_1_to_4
+description: step1_street_female_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_female_1_to_4
+description: step1_pwd_female_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_female_1_to_4
+description: step1_snake_bite_female_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_female_1_to_4
+description: step1_snake_bite_hospital_female_1_to_4
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_street_female_5_to_14
+description: step1_street_female_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_female_5_to_14
+description: step1_pwd_female_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_female_5_to_14
+description: step1_snake_bite_female_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_female_5_to_14
+description: step1_snake_bite_hospital_female_5_to_14
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_street_female_above_15
+description: step1_street_female_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pwd_female_above_15
+description: step1_pwd_female_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_female_above_15
+description: step1_snake_bite_female_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_male_above_15
+description: step1_snake_bite_hospital_male_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_snake_bite_hospital_female_above_15
+description: step1_snake_bite_hospital_female_above_15
+priority: 1
+condition: "!step1_ntd_treated.equals('SCH')"
+actions:
+  - "isRelevant = true"

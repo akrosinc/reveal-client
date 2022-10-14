@@ -6,6 +6,7 @@ import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.DBConstants.KEY.RELATIONAL_ID;
 import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.AUTHORED_ON;
@@ -578,7 +579,7 @@ public class ListTaskInteractor extends BaseInteractor {
         details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
         details.put(Constants.Properties.LOCATION_ID, feature.id());
         details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-        String businessStatus = isTaskComplete ? COMPLETE : IN_PROGRESS;
+        String businessStatus = isTaskComplete ? COMPLETE : INCOMPLETE;
         task.setBusinessStatus(businessStatus);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());

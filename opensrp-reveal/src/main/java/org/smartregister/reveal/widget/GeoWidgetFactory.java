@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONEN
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 
 import android.app.Activity;
@@ -250,7 +251,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
-                String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ? context.getString(R.string.reveal_select_jurisdiction_style) : context.getString(R.string.reveal_satellite_style);
+                String satelliteStyle = getSatelliteStyle(context);
                 Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
 
                 mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
@@ -473,6 +474,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         geoFencingValidator = new GeoFencingValidator(context.getString(R.string.register_outside_boundary_warning), mapView, operationalArea);
         mapView.addValidator(geoFencingValidator);
     }
+
 
     @Override
     public void onLocationComponentInitialized() {

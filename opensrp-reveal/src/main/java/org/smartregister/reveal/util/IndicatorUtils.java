@@ -1,35 +1,11 @@
 package org.smartregister.reveal.util;
 
-import android.content.Context;
-
-import net.sqlcipher.Cursor;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteException;
-
-import org.joda.time.DateTime;
-import org.smartregister.domain.Event;
-import org.smartregister.domain.Task;
-import org.smartregister.repository.EventClientRepository;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.model.IndicatorDetails;
-import org.smartregister.reveal.model.TaskDetails;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.smartregister.reveal.util.Constants.BusinessStatus;
-import org.smartregister.reveal.util.Constants.Intervention;
-import timber.log.Timber;
-
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
+import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
+import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
 import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_EDUCATION_5_TO_15;
 import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_EDUCATION_ABOVE_16;
@@ -37,6 +13,32 @@ import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_1_TO_
 import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_5_TO_15;
 import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_6_TO_11_MOS;
 import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_ABOVE_16;
+
+import android.content.Context;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteException;
+import org.joda.time.DateTime;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Task;
+import org.smartregister.domain.db.EventClient;
+import org.smartregister.repository.EventClientRepository;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.model.IndicatorDetails;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants.BusinessStatus;
+import org.smartregister.reveal.util.Constants.Intervention;
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 2019-09-27.
@@ -48,6 +50,39 @@ public class IndicatorUtils {
     public static final String ALB_MEB = "ALB/MEB";
     public static final String PZQ = "PZQ";
     public static final String NTD_TREATED = "ntd_treated";
+
+    public static final String STH = "STH";
+
+    public static final String TOTAL_MALE_AND_FEMALE = "total_male_and_female";
+
+    public static final String SCH = "SCH";
+
+    public static final String DRUGS = "drugs";
+
+    public static final String ADMINSTERED = "adminstered";
+
+    public static final String MBZ = "MBZ";
+
+    public static final String DAMAGED = "damaged";
+
+    public static final String DRUG_ISSUED = "drug_issued";
+
+    public static final String BOTH = "Both";
+
+    public static final String MBZ_RECEIVED = "mbz_received";
+
+
+    public static final String DRUG_WITHDRAWN = "drug_withdrawn";
+
+    public static final String PZQ_RECEIVED = "pzq_received";
+
+    public static final String MBZ_WITHDRAWN = "mbz_withdrawn";
+
+    public static final String PZQ_WITHDRAWN = "pzq_withdrawn";
+
+    public static final String DAMAGED_PZQ = "damaged_pzq";
+
+    public static final String DAMAGED_MBZ = "damaged_mbz";
 
     /**
      * Process task details from map of tasks (key : structureId)
@@ -393,6 +428,152 @@ public class IndicatorUtils {
         return indicatorDetails;
     }
 
+
+    public static List<String> populateKenyaIndicators(Context  context, final IndicatorDetails indicatorDetails) {
+         List<String> indicators = new ArrayList<>();
+        indicators.add(context.getResources().getString(R.string.number_of_people_treated_for_sth));
+        indicators.add(String.valueOf(indicatorDetails.getPeopleTreatedForSTH()));
+
+        indicators.add(context.getResources().getString(R.string.number_of_people_treated_for_sch));
+        indicators.add(String.valueOf(indicatorDetails.getPeopleTreatedForSCH()));
+
+
+        indicators.add(context.getResources().getString(R.string.mbz_tablets_remaining));
+        indicators.add(String.valueOf(indicatorDetails.getMbzTabletsRemaining()));
+
+        indicators.add(context.getResources().getString(R.string.pzq_tablets_remaining));
+        indicators.add(String.valueOf(indicatorDetails.getPzqTabletsRemaining()));
+
+        indicators.add(context.getResources().getString(R.string.mbz_dispensed));
+        indicators.add(String.valueOf(indicatorDetails.getMbzDispensed()));
+
+        indicators.add(context.getResources().getString(R.string.pzq_dispensed));
+        indicators.add(String.valueOf(indicatorDetails.getPzqDispensed()));
+
+        indicators.add(context.getResources().getString(R.string.mbz_damaged));
+        indicators.add(String.valueOf(indicatorDetails.getMbzDamaged()));
+
+
+        indicators.add(context.getResources().getString(R.string.pzq_damaged));
+        indicators.add(String.valueOf(indicatorDetails.getPzqDamaged()));
+         return indicators;
+    }
+
+    public static IndicatorDetails processIndicatorsKenya(final List<TaskDetails> tasks) {
+        IndicatorDetails indicatorDetails = new IndicatorDetails();
+        List<TaskDetails> validTasks = tasks.stream()
+                .filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(INCOMPLETE) || taskDetails.getBusinessStatus().equals(COMPLETE)))
+                .collect(Collectors.toList());
+
+        Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
+                .collect(Collectors.toSet());
+
+        EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
+
+        List<Event> eventsFromTasks = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
+        List<Event> latestCddSupervisionEvents = validTasks.stream().map(taskDetails -> {
+            Map<DateTime,Event> eachTaskEventAndDateMap = eventsFromTasks.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
+            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(Collectors.toList());
+            DateTime maxDatTime = Collections.max(eventDates);
+            return eachTaskEventAndDateMap.get(maxDatTime);
+        }).collect(Collectors.toList());
+
+      List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypes(Arrays.asList(
+              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT));
+        List<Event> drugReceivedFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_RECEIVED_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
+                Collectors.toList());
+        List<Event> drugWithdrawalFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_WITHDRAWAL_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
+                Collectors.toList());
+
+        indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(latestCddSupervisionEvents));
+        indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(latestCddSupervisionEvents));
+        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setMbzDispensed(calculateDispensedMBZ(latestCddSupervisionEvents));
+        indicatorDetails.setPzqDispensed(calculateDispensedPZQ(latestCddSupervisionEvents));
+        indicatorDetails.setMbzDamaged(calculateDamagedMBZ(latestCddSupervisionEvents));
+        indicatorDetails.setPzqDamaged(calculateDamagedPZQ(latestCddSupervisionEvents));
+        return indicatorDetails;
+    }
+
+    private static int calculateDamagedPZQ(final List<Event> events) {
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_PZQ)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
+
+    private static int calculateDamagedMBZ(final List<Event> events) {
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_MBZ)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
+
+    private static int calculateDispensedPZQ(final List<Event> events) {
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
+
+    private static int calculateDispensedMBZ(final List<Event> events) {
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
+
+    private static int calculateRemainingPZQ(final List<Event> events,final List<Event> drugReceivedFormEvents, final List<Event> drugWithdrawalFormEvents) {
+        return calculateReceivedPZQ(drugReceivedFormEvents) - (calculateDispensedPZQ(events) + calculateWithdrawnPZQ(drugWithdrawalFormEvents));
+    }
+
+    private static int calculateRemainingMBZ(final List<Event> events, List<Event> drugReceivedFormEvents, List<Event> drugWithdrawalFormEvents) {
+        int mbzAdministered = calculateDispensedMBZ(events);
+        int mbzWithdrawn = calculateWithdrawnMBZ(drugWithdrawalFormEvents);
+        int mbzReceived = calculateReceivedMBZ(drugReceivedFormEvents);
+        return mbzReceived - ( mbzAdministered + mbzWithdrawn );
+    }
+
+    private static int calculateReceivedMBZ(final List<Event> drugReceivedFormEvents) {
+        return drugReceivedFormEvents.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+    }
+
+    private static int calculateReceivedPZQ(final List<Event> drugReceivedFormEvents) {
+        return drugReceivedFormEvents.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(PZQ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_RECEIVED)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+    }
+    private static int calculateWithdrawnMBZ(List<Event> events){
+        return events.stream().map(Event::getObs)
+                              .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                              .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_WITHDRAWN)).findFirst().get())
+                              .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+    }
+    private static int calculateWithdrawnPZQ(List<Event> events){
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(PZQ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_WITHDRAWN)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+    }
+
+    private static int calculatePeopleTreatedForSCH(final List<Event> events) {
+        return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(SCH)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
+
+    private static int calculatePeopleTreatedForSTH(final List<Event> events) {
+       return events.stream().map(Event::getObs)
+                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(STH)).findAny().isPresent())
+                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get())
+                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+    }
 
     private static int calculateDrugCompletion(List<TaskDetails> tasks ) {
         boolean dispenseComplete = false;

@@ -30,6 +30,7 @@ import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundary
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
+import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
 import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
@@ -359,7 +360,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         kujakuMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                 String satelliteStyle = !org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()  ? getString(R.string.reveal_select_jurisdiction_style) : getString(R.string.reveal_satellite_style);
+                 String satelliteStyle = getSatelliteStyle(getContext());
                     Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
                     mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
                         @Override

@@ -1,0 +1,29 @@
+---
+name: step1_pzq_reallocated
+description: pzq_reallocated relevance
+priority: 1
+condition: "step1_drug_reallocated.equals('pzq') || step1_drug_reallocated.equals('Both')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_albendazole_reallocated
+description: albendazole_reallocated relevance
+priority: 1
+condition: "step1_drug_reallocated.equals('Albendazole') || step1_drug_reallocated.equals('Both')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pzq_received
+description: pzq_received relevance
+priority: 1
+condition: "step1_drug_distributed.equals('pzq') || step1_drug_distributed.equals('Both')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_albendazole_received
+description: albendazole_received relevance
+priority: 1
+condition: "step1_drug_distributed.equals('Albendazole') || step1_drug_distributed.equals('Both')"
+actions:
+  - "isRelevant = true"
+

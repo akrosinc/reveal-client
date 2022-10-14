@@ -154,6 +154,8 @@ public interface Constants {
         String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
         String SPRAY_AREAS = "spray_areas";
         String ZONES = "zones";
+        String COUNTY_LIST = "county_list";
+        String SUB_COUNTY_LIST = "sub_county_list";
     }
 
     interface Preferences {
@@ -330,11 +332,15 @@ public interface Constants {
 
         String CDD_DRUG_ALLOCATION_EVENT = "cdd_drug_allocation";
 
+        String CDD_DRUG_WITHDRAWAL_EVENT = "cdd_drug_withdrawal";
+
+        String CDD_DRUG_RECEIVED_EVENT = "cdd_drug_received";
         String GENERAL_SUPERVISION = "general_supervision";
+        String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
-                CDD_DRUG_ALLOCATION_EVENT,GENERAL_SUPERVISION);
+                CDD_DRUG_ALLOCATION_EVENT,GENERAL_SUPERVISION,COUNTY_CDD_SUPERVISORY_EVENT);
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
@@ -642,7 +648,13 @@ public interface Constants {
 
         String TABLET_ACCOUNTABILITY_FORM_RWANDA_EN = "json.form/rwanda_en_tablet_accountability_form.json";
 
-        String CDD_DRUG_ALLOCAITON_FORM = "json.form/cdd_drug_allocation_form.json";
+        String CDD_DRUG_ALLOCATION_FORM = "json.form/cdd_drug_allocation_form.json";
+
+        String CDD_DRUG_RECEIVED_FORM = "json.form/cdd_drug_received_form.json";
+
+        String CDD_DRUG_WITHDRAWAL_FORM = "json.form/cdd_drug_withdrawal_form.json";
+
+        String COUNTY_CDD_SUPERVISORY_FORM = "json.form/county_cdd_supervisory_form.json" ;
 
         String FPP_FORM_ZAMBIA = "json.form/zambia_fpp_form.json";
 
@@ -756,6 +768,9 @@ public interface Constants {
 
 
         String SPRAYOP_NAME = "sprayop_name";
+        String COUNTY = "county";
+        String SUB_COUNTY = "sub_county";
+        String CDD_BORROWED_FORM = "cdd_borrowed_from" ;
     }
 
     interface DateFormat {

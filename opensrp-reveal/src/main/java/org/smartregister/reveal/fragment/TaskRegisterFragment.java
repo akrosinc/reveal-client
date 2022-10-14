@@ -71,6 +71,7 @@ import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.TASK_RESET_INTERVENTIONS;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
+import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
 
 /**
  * Created by samuelgithengi on 3/11/19.
@@ -281,12 +282,7 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
 
     public void setTaskDetails(List<TaskDetails> tasks) {
         taskAdapter.setTaskDetails(tasks);
-        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN) {
+        if (buildCountryHasIndicators()) {
             new IndicatorsCalculatorTask(getActivity(), tasks).execute();
         }
     }

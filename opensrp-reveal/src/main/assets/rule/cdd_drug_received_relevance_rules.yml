@@ -1,0 +1,21 @@
+---
+name: step1_pzq_received
+description: pzq_received relevance
+priority: 1
+condition: "step1_drug_issued.equals('PZQ') || step1_drug_issued.equals('Both')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_albendazole_received
+description: albendazole_received relevance
+priority: 1
+condition: "step1_drug_issued.equals('MBZ') || step1_drug_issued.equals('Both')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_cdd_borrowed_from
+description: cdd_borrowed_from relevance
+priority: 1
+condition: "step1_drug_received_from.equals('CDD Supervisor')"
+actions:
+  - "isRelevant = true"

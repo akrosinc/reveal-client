@@ -349,6 +349,60 @@
             android:textColor="@color/text_black"
             android:textSize="20sp"
             android:visibility="gone"/>
+        <View
+            android:id="@+id/separator16"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey" />
+        <Button
+            android:id="@+id/cdd_drug_withdrawal_form"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/cdd_drug_withdrawal_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator17"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey" />
+        <Button
+            android:id="@+id/cdd_drug_received_form"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/cdd_drug_received_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator18"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey" />
+        <Button
+            android:id="@+id/county_cdd_supervisory_form"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/county_cdd_supervisory_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

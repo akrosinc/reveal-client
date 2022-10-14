@@ -1,7 +1,7 @@
 {
   "count": "1",
-  "encounter_type": "cdd_drug_allocation",
-  "form_version": "0.0.1",
+  "encounter_type": "cdd_drug_received",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "CDD Drug Allocation",
+    "title": "Drug Received Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,11 +57,11 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Date of data collection",
+        "hint": "Date of drug issuing",
         "max_date": "today",
         "v_required": {
           "value": true,
-          "err": "Please specify the date of data collection"
+          "err": "Please specify the date of drug issuing"
         }
       },
       {
@@ -87,6 +87,118 @@
         "v_required": {
           "value": "true",
           "err": "This field is required."
+        }
+      },
+      {
+        "key": "cdd_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD issued drugs",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
+        "key": "drug_issued",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Which drug did CDD receive?",
+        "options": [
+          {
+            "key": "PZQ",
+            "text": "Praziquantel (PZQ)"
+          },
+          {
+            "key": "MBZ",
+            "text": "Mebendazole"
+          },
+          {
+            "key": "Both",
+            "text": "Both"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please select drug"
+        }
+      },
+      {
+        "key": "pzq_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of PZQ tablets Received",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_received_relevance_rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "mbz_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of Mebendazole  tablets Received",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd_drug_received_relevance_rules.yml"
+            }
+          }
         }
       },
       {
@@ -134,249 +246,15 @@
         }
       },
       {
-        "key": "cdd_name",
+        "key": "cdd_borrowed_from",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Drug Issuer",
+        "hint": "Name of CDD who you borrowed drugs from",
         "v_required": {
           "value": "true",
           "err": "This field is required."
-        }
-      },
-      {
-        "key": "drug_distributed",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Please select drug",
-        "options": [
-          {
-            "key": "pzq",
-            "text": "Praziquantel (PZQ)"
-          },
-          {
-            "key": "Albendazole",
-            "text": "Albendazole"
-          },
-          {
-            "key": "Both",
-            "text": "Both"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select drug"
-        }
-      },
-      {
-        "key": "pzq_received",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of PZQ tablets Received",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "albendazole_received",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Received",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "drug_reallocated_to",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Drugs received from Sub County Pharmacist or CDD Supervisor?",
-        "options": [
-          {
-            "key": "Sub County Pharmacists",
-            "text": "Sub County Pharmacists"
-          },
-          {
-            "key": "CDD Supervisor",
-            "text": "CDD Supervisor"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select option"
-        }
-      },
-      {
-        "key": "drug_reallocatee",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Drug Reallocatee",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
-        }
-      },
-      {
-        "key": "drug_reallocated",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Please select drug reallocated",
-        "options": [
-          {
-            "key": "pzq",
-            "text": "Praziquantel (PZQ)"
-          },
-          {
-            "key": "Albendazole",
-            "text": "Albendazole"
-          },
-          {
-            "key": "Both",
-            "text": "Both"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select option"
-        }
-      },
-      {
-        "key": "pzq_reallocated",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of PZQ tablets Reallocated",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "albendazole_reallocated",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Reallocated",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
         }
       }
     ]

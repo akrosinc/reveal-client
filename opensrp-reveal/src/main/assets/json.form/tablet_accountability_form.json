@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "tablet_accountability",
-  "form_version": "0.0.2",
+  "form_version": "0.0.3",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -474,6 +474,32 @@
             "err": "Value should be less than or equal to sum of Mebendezole received and Mebendezole top-ups"
           }
         ]
+      },
+      {
+        "key": "number_households_visited",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total number of households visited",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
       }
     ]
   }

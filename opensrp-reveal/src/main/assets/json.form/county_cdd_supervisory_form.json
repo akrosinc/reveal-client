@@ -1,6 +1,6 @@
 {
   "count": "1",
-  "encounter_type": "cdd_drug_allocation",
+  "encounter_type": "county_cdd_supervisory",
   "form_version": "0.0.1",
   "entity_id": "",
   "metadata": {
@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "CDD Drug Allocation",
+    "title": "County/CDD supervisory Form",
     "display_back_button": "true",
     "fields": [
       {
@@ -57,23 +57,10 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "hint": "Date of data collection",
+        "hint": "Date of supervision",
         "max_date": "today",
         "v_required": {
           "value": true,
-          "err": "Please specify the date of data collection"
-        }
-      },
-      {
-        "key": "location",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Select the Location ( ward or health facility)",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
           "err": "Required field"
         }
       },
@@ -83,237 +70,253 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Health worker Supervisor",
+        "hint": "Name of Supervisor",
         "v_required": {
           "value": "true",
           "err": "This field is required."
         }
       },
       {
-        "key": "drug_allocation",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Select the drug allocation type (Initial balance or top up)",
-        "options": [
-          {
-            "key": "Initial balance",
-            "text": "Initial balance"
-          },
-          {
-            "key": "Top Up",
-            "text": "Top Up"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        }
-      },
-      {
-        "key": "drug_received_from",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Drugs received from Sub County Pharmacist or CDD Supervisor?",
-        "options": [
-          {
-            "key": "Sub County Pharmacists",
-            "text": "Sub County Pharmacists"
-          },
-          {
-            "key": "CDD Supervisor",
-            "text": "CDD Supervisor"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        }
-      },
-      {
-        "key": "cdd_name",
+        "key": "county",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Drug Issuer",
+        "hint": "County",
         "v_required": {
           "value": "true",
           "err": "This field is required."
         }
       },
       {
-        "key": "drug_distributed",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Please select drug",
-        "options": [
-          {
-            "key": "pzq",
-            "text": "Praziquantel (PZQ)"
-          },
-          {
-            "key": "Albendazole",
-            "text": "Albendazole"
-          },
-          {
-            "key": "Both",
-            "text": "Both"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select drug"
-        }
-      },
-      {
-        "key": "pzq_received",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of PZQ tablets Received",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "albendazole_received",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Received",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
-        "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "drug_reallocated_to",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Drugs received from Sub County Pharmacist or CDD Supervisor?",
-        "options": [
-          {
-            "key": "Sub County Pharmacists",
-            "text": "Sub County Pharmacists"
-          },
-          {
-            "key": "CDD Supervisor",
-            "text": "CDD Supervisor"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Please select option"
-        }
-      },
-      {
-        "key": "drug_reallocatee",
+        "key": "sub_county",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of Drug Reallocatee",
+        "hint": "Sub County",
         "v_required": {
           "value": "true",
           "err": "This field is required."
         }
       },
       {
-        "key": "drug_reallocated",
+        "key": "location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of ward",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "correct_pages",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many pages were correctly filled",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "incorrect_pages",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many pages were incorrectly filled (incomplete)",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "number_treated_tallysheet_register_match",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number treated in tally sheet and register matching",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "number_treated_tallysheet_register_not_matching",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number treated in tally sheet and register not matching",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "number_meds_cdd",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of medicines received by the CDD",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "drug_shortage",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Please select drug reallocated",
+        "label": "Have you experienced medicine shortage during the MDA?",
         "options": [
           {
-            "key": "pzq",
-            "text": "Praziquantel (PZQ)"
+            "key": "yes",
+            "text": "Yes"
           },
           {
-            "key": "Albendazole",
-            "text": "Albendazole"
-          },
-          {
-            "key": "Both",
-            "text": "Both"
+            "key": "no",
+            "text": "No"
           }
         ],
+        "value": "no",
         "v_required": {
-          "value": true,
-          "err": "Please select option"
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
-        "key": "pzq_reallocated",
+        "key": "adverse_drug_event",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Have you witnessed/received adverse drug event reports",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "number_adverse_events",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of PZQ tablets Reallocated",
-        "is_mandatory": true,
+        "hint": "Number of severe adverse events encountered",
         "v_required": {
           "value": true,
           "err": "This field is mandatory"
@@ -335,47 +338,24 @@
           "err": "This field must be less that or equal to 999999999"
         },
         "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
+          "step1:adverse_drug_event": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
           }
         }
       },
       {
-        "key": "albendazole_reallocated",
+        "key": "adverse_events",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of Albendazole  tablets Reallocated",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "v_max": {
-          "value": "999999999",
-          "err": "This field must be less that or equal to 999999999"
-        },
+        "hint": "Write down the adverse events reported",
+        "text_size": "8sp",
         "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "cdd_drug_allocation_relevance_rules.yml"
-            }
+          "step1:adverse_drug_event": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
           }
         }
       }

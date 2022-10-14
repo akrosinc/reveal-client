@@ -30,6 +30,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.JsonForm.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
@@ -50,6 +51,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
 import static org.smartregister.reveal.util.Utils.formatDate;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
@@ -263,16 +265,12 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
 
-        if (taskDetailsList != null && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN
-                || BuildConfig.BUILD_COUNTRY == Country.NIGERIA)) {
+        if (taskDetailsList != null && buildCountryHasIndicators()) {
             new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
         }
     }
+
+
 
     public void onMapReady() {
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
@@ -380,7 +378,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private boolean shouldOpenCDDSupervisionForm(String businessStatus, String code) {
-        return CDD_SUPERVISION.equals(code) && isKenyaMDALite() && (NOT_VISITED.equals(businessStatus) || IN_PROGRESS.equals(businessStatus));
+        return CDD_SUPERVISION.equals(code) && isKenyaMDALite() && (NOT_VISITED.equals(businessStatus) || INCOMPLETE.equals(businessStatus));
     }
 
 
@@ -390,8 +388,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private void onFeatureSelectedByLongClick(Feature feature) {
         String code = getPropertyValue(feature, TASK_CODE);
+       String taskBusinessStatus = getPropertyValue(feature,TASK_BUSINESS_STATUS);
         selectedFeatureInterventionType = code;
-        if (isKenyaMDALite() || isRwandaMDALite()) {
+        if (COMPLETE.equals(taskBusinessStatus) && (isKenyaMDALite() || isRwandaMDALite())) {
             listTaskView.displayEditCDDTaskCompleteDialog();
         }
     }
@@ -794,7 +793,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea,adjacentOperationAreas, false);
-        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        if(buildCountryHasIndicators()){
+            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        }
     }
 
     @Override
@@ -806,7 +807,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onStructureMarkedIneligible() {
         updateFeatureTaskBusinessStatus(NOT_ELIGIBLE);
         drawerPresenter.updateSyncStatusDisplay(false);
-        new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        if(buildCountryHasIndicators()){
+            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        }
     }
 
     @Override
