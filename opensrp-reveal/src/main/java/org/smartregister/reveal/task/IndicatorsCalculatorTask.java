@@ -148,6 +148,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
             tempTableLayoutView.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
+            tempTableLayoutViewKenya.setVisibility(View.GONE);
             populateTableView(getTableRowsNigeria(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutViewNG);
         } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
             tempTableLayoutView.setVisibility(View.GONE);
@@ -157,6 +158,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else {
             tempTableLayoutView.setVisibility(View.GONE);
             tempTableLayoutViewNG.setVisibility(View.GONE);
+            tempTableLayoutViewKenya.setVisibility(View.GONE);
             tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
         }
 
