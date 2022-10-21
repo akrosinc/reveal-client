@@ -33,6 +33,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PROVINCE_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
@@ -115,7 +116,6 @@ import org.smartregister.reveal.task.IndicatorsCalculatorTask;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.JsonForm;
@@ -369,8 +369,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchFamilyDetails(selectedFeature.id());
         } else if (IRS_VERIFICATION.equals(code) && isZambiaIRSLite()) {
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
-        }
-        else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
+        } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
         }
     }
@@ -582,6 +581,12 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
         }else if(isKenyaMDALite() || isRwandaMDALite()){
             jsonFormUtils.populateFormWithServerOptions(formName, formJson,feature);
+        } else if(JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM.equals(formName)){
+            try {
+                jsonFormUtils.populateField(formJson,HH_ID,feature.id(),VALUE);
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
         }
         listTaskView.startJsonForm(formJson);
     }

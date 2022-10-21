@@ -602,6 +602,7 @@ public interface Constants {
         String DISTRICT_NAME = "districtName";
         String PROVINCE_NAME = "provinceName";
 
+        String HH_ID   ="hh_id";
 
         /**
          * Non-Task Related Forms
