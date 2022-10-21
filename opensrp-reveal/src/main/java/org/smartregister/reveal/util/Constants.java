@@ -567,7 +567,7 @@ public interface Constants {
 
         String ZAMBIA_GENERAL_SUPERVISION_FORM = "json.form/zambia_general_supervision_form.json";
 
-        String MDA_HOUSEHOLD_STATUS_MOZ_FORM = "mda_household_status_moz.json";
+        String MDA_HOUSEHOLD_STATUS_MOZ_FORM = "json.form/mda_household_status_moz.json";
 
 
         String OPERATIONAL_AREA_TAG = "operational_area";
