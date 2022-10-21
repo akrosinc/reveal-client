@@ -18,6 +18,7 @@ import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
@@ -463,6 +464,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
         } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Intervention.SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
+            formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
         }
         return formName;
     }

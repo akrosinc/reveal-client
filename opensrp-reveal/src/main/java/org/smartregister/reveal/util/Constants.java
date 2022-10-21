@@ -264,8 +264,9 @@ public interface Constants {
         // New Drug Recon Form
         String MDA_DRUG_RECON = "Drug Reconciliation";
 
-//        String MDA = "Dynamic MDA";
         String SMC = "SMC";
+
+        String SURVEY = "SURVEY";
 
 
         List<String> PERSON_INTERVENTIONS = Arrays.asList(BLOOD_SCREENING, CASE_CONFIRMATION, MDA_DISPENSE, MDA_ADHERENCE, MDA_DRUG_RECON);
@@ -337,6 +338,8 @@ public interface Constants {
         String CDD_DRUG_RECEIVED_EVENT = "cdd_drug_received";
         String GENERAL_SUPERVISION = "general_supervision";
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
+
+        String MDA_SURVEY_EVENT = "mda_survey";
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -563,6 +566,8 @@ public interface Constants {
 
 
         String ZAMBIA_GENERAL_SUPERVISION_FORM = "json.form/zambia_general_supervision_form.json";
+
+        String MDA_HOUSEHOLD_STATUS_MOZ_FORM = "mda_household_status_moz.json";
 
 
         String OPERATIONAL_AREA_TAG = "operational_area";
