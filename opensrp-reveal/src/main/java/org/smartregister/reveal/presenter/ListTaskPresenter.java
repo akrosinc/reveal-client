@@ -7,6 +7,7 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
@@ -30,7 +31,6 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
-import static org.smartregister.reveal.util.Constants.JsonForm.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
@@ -95,8 +95,6 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -117,6 +115,7 @@ import org.smartregister.reveal.task.IndicatorsCalculatorTask;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.JsonForm;
@@ -347,8 +346,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         String businessStatus = getPropertyValue(feature, FEATURE_SELECT_TASK_BUSINESS_STATUS);
         String code = getPropertyValue(feature, TASK_CODE);
         selectedFeatureInterventionType = code;
-        if ((IRS.equals(code) || MOSQUITO_COLLECTION.equals(code) || LARVAL_DIPPING.equals(code) || PAOT.equals(code) || IRS_VERIFICATION.equals(code) || REGISTER_FAMILY.equals(code))
-                && (NOT_VISITED.equals(businessStatus) || businessStatus == null) || shouldOpenCDDSupervisionForm(businessStatus, code) || shouldOpenCellCoordinatorForm(businessStatus,code)) {
+        if (interventionHasLocationValidation(businessStatus, code)) {
             if (validateFarStructures()) {
                 validateUserLocation();
             } else {
@@ -375,6 +373,13 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
         }
+    }
+
+    private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
+        return (IRS.equals(taskCode) || MOSQUITO_COLLECTION.equals(taskCode) || LARVAL_DIPPING.equals(taskCode) || PAOT.equals(taskCode) || IRS_VERIFICATION.equals(taskCode) || REGISTER_FAMILY.equals(taskCode) || MDA_SURVEY.equals(taskCode))
+                && (NOT_VISITED.equals(businessStatus) || businessStatus == null)
+                || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
+                || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
     }
 
     private boolean shouldOpenCDDSupervisionForm(String businessStatus, String code) {
@@ -632,7 +637,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
-       if(!isKenyaMDALite() && !isRwandaMDALite()){
+       if(!isKenyaMDALite() && !isRwandaMDALite() && !MDA_SURVEY.equals(interventionType)){
            listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
        }
     }

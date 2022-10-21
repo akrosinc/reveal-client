@@ -1,18 +1,86 @@
 package org.smartregister.reveal.interactor;
 
+import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
+import static org.smartregister.AllConstants.MULTI_SELECT_LIST;
+import static org.smartregister.AllConstants.TYPE;
+import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
+import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
+import static org.smartregister.family.util.Utils.metadata;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
+import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
+import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
+import static org.smartregister.reveal.util.Constants.DETAILS;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
+import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.Intervention.BCC;
+import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
+import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
+import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
+import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
+import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
+import static org.smartregister.reveal.util.Constants.Intervention.IRS;
+import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
+import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
+import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
+import static org.smartregister.reveal.util.Constants.JsonForm.COLLECTION_DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE_COMM;
+import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.EVENT_POSITION;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
+import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
+import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_NAME;
+import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
+import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
+import static org.smartregister.reveal.util.Constants.METADATA;
+import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
+import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
+import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
+import static org.smartregister.reveal.util.Constants.STRUCTURE;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
+import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.KEY;
+import static org.smartregister.util.JsonFormUtils.VALUE;
+import static org.smartregister.util.JsonFormUtils.VALUES;
+import static org.smartregister.util.JsonFormUtils.getJSONObject;
+import static org.smartregister.util.JsonFormUtils.getString;
+
 import android.content.Context;
-
 import androidx.annotation.VisibleForTesting;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.mapbox.geojson.Feature;
-
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,79 +126,7 @@ import org.smartregister.reveal.widget.GeoWidgetFactory;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.PropertiesConverter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import timber.log.Timber;
-
-import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
-import static org.smartregister.AllConstants.MULTI_SELECT_LIST;
-import static org.smartregister.AllConstants.TYPE;
-import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
-import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
-import static org.smartregister.family.util.Utils.metadata;
-import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
-import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
-import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
-import static org.smartregister.reveal.util.Constants.DETAILS;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
-import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
-import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
-import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
-import static org.smartregister.reveal.util.Constants.Intervention.BCC;
-import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
-import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
-import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
-import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
-import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
-import static org.smartregister.reveal.util.Constants.Intervention.IRS;
-import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
-import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
-import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
-import static org.smartregister.reveal.util.Constants.JsonForm.COLLECTION_DATE;
-import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
-import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
-import static org.smartregister.reveal.util.Constants.JsonForm.DATE_COMM;
-import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
-import static org.smartregister.reveal.util.Constants.JsonForm.EVENT_POSITION;
-import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
-import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
-import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
-import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_DATE;
-import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_NAME;
-import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
-import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
-import static org.smartregister.reveal.util.Constants.METADATA;
-import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
-import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
-import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
-import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
-import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
-import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
-import static org.smartregister.reveal.util.Constants.STRUCTURE;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
-import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
-import static org.smartregister.util.JsonFormUtils.KEY;
-import static org.smartregister.util.JsonFormUtils.VALUE;
-import static org.smartregister.util.JsonFormUtils.VALUES;
-import static org.smartregister.util.JsonFormUtils.getJSONObject;
-import static org.smartregister.util.JsonFormUtils.getString;
 
 
 /**
@@ -328,6 +324,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = CDD_SUPERVISION;
             } else if(CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)){
                 interventionType = CELL_COORDINATION;
+            } else if(MDA_SURVEY_EVENT.equals(encounterType)){
+                interventionType = MDA_SURVEY;
             }
         } catch (JSONException e) {
             Timber.e(e);

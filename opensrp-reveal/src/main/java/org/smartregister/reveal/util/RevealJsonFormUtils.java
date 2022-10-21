@@ -82,6 +82,7 @@ import org.smartregister.reveal.model.BaseTaskDetails;
 import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.EventType;
 import org.smartregister.reveal.util.Constants.Intervention;
@@ -464,7 +465,7 @@ public class RevealJsonFormUtils {
             formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
         } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Intervention.SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
         }
         return formName;

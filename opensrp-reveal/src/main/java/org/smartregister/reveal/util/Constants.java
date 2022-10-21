@@ -266,9 +266,6 @@ public interface Constants {
 
         String SMC = "SMC";
 
-        String SURVEY = "SURVEY";
-
-
         List<String> PERSON_INTERVENTIONS = Arrays.asList(BLOOD_SCREENING, CASE_CONFIRMATION, MDA_DISPENSE, MDA_ADHERENCE, MDA_DRUG_RECON);
 
         List<String> IRS_INTERVENTIONS = Arrays.asList(IRS, IRS_VERIFICATION);
@@ -789,6 +786,7 @@ public interface Constants {
 
     interface Action {
         String STRUCTURE_TASK_SYNCED = "reveal.STRUCTURE_TASK_SYNCED";
+        String MDA_SURVEY = "MDA Survey";
     }
 
     interface ECClientConfig {
