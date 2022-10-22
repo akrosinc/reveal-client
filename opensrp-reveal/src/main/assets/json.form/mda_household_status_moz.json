@@ -126,13 +126,28 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Unique household ID",
-        "read_only": true,
+        "type": "hidden"
+      },
+      {
+        "key": "hh_id_show",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "Unique Household ID: {hh_id}",
+        "text_color": "#000000",
+        "toaster_type": "info",
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
             "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-calc.yml"
+            }
           }
         }
       },
