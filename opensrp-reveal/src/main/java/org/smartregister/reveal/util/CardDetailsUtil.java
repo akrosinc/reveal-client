@@ -18,6 +18,7 @@ import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 
 import timber.log.Timber;
@@ -227,6 +228,39 @@ public class CardDetailsUtil {
 
             registerFamily.setVisibility(View.VISIBLE);
             changeSprayStatus.setVisibility(View.GONE);
+            tvPropertyType.setVisibility(View.GONE);
+            tvFamilyHead.setVisibility(View.GONE);
+            tvReason.setVisibility(View.GONE);
+
+        } catch (Resources.NotFoundException e) {
+            Timber.e(e);
+        }
+    }
+
+    public void populateSurveyCard(SurveyCardDetails surveyCardDetails, Activity activity) {
+        try {
+            TextView tvSprayStatus = activity.findViewById(R.id.spray_status);
+            TextView tvPropertyType = activity.findViewById(R.id.property_type);
+            TextView tvSprayDate = activity.findViewById(R.id.spray_date);
+            TextView tvSprayOperator = activity.findViewById(R.id.user_id);
+            TextView tvFamilyHead = activity.findViewById(R.id.family_head);
+            TextView tvReason = activity.findViewById(R.id.reason);
+            Button changeSprayStatus = activity.findViewById(R.id.change_spray_status);
+            Button registerFamily = activity.findViewById(R.id.register_family);
+
+            Button changeHouseholdStatus  =  activity.findViewById(R.id.change_household_status);
+
+            Integer color = surveyCardDetails.getStatusColor();
+            tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
+
+            tvSprayStatus.setText(surveyCardDetails.getStatus());
+
+            tvSprayDate.setText(surveyCardDetails.getDateCreated());
+            tvSprayOperator.setText(surveyCardDetails.getOwner());
+
+            changeHouseholdStatus.setVisibility(View.VISIBLE);
+            changeSprayStatus.setVisibility(View.GONE);
+            registerFamily.setVisibility(View.GONE);
             tvPropertyType.setVisibility(View.GONE);
             tvFamilyHead.setVisibility(View.GONE);
             tvReason.setVisibility(View.GONE);

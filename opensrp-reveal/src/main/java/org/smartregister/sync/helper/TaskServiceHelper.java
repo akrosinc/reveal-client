@@ -362,7 +362,8 @@ public class TaskServiceHelper extends BaseHelper {
             List<Task> structureTasks = tasks.stream().filter(task -> task.getForEntity().equals(structure.getId())).collect(
                     Collectors.toList());
             Geometry geometry = structure.getGeometry();
-            LocationProperty locationProperty = new LocationProperty(structure.getId(),structure.getProperties().getStatus().name(),UUID.fromString(structure.getId()),"structure");
+            String status = structure.getProperties().getStatus() == null ? "PENDING_REVIEW" : structure.getProperties().getStatus().name();
+            LocationProperty locationProperty = new LocationProperty(structure.getId(),status,UUID.fromString(structure.getId()),"structure");
             structureTasks.forEach(task -> task.setLocationRequest(new LocationRequest("Feature",geometry,locationProperty)));
         });
 

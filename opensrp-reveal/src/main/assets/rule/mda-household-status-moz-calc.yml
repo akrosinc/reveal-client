@@ -5,3 +5,10 @@ priority: 1
 condition: "true"
 actions:
  - "calculation = helper.ifNull(step1_mda_structure,'Not Eligible')"
+---
+name: step1_hh_id_show
+description: step1_hh_id_display
+priority: 1
+condition: "true"
+actions:
+ - "calculation = [ 'hh_id' : step1_hh_id ]"

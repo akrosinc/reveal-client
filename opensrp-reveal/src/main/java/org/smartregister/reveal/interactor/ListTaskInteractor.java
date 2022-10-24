@@ -88,10 +88,12 @@ import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
 import org.smartregister.reveal.model.StructureDetails;
 import org.smartregister.reveal.model.StructureTaskDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.GeoJSON;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.FamilyConstants;
@@ -147,7 +149,7 @@ public class ListTaskInteractor extends BaseInteractor {
             sql = String.format("SELECT %s, %s, %s, %s, %s, %s FROM %s WHERE id= ?",
                     TRUE_STRUCTURE, ELIGIBLE_STRUCTURE, REPORT_SPRAY, CHALK_SPRAY, STICKER_SPRAY, CARD_SPRAY,
                     IRS_VERIFICATION_TABLE);
-        } else if (REGISTER_FAMILY.equals(interventionType)) {
+        } else if (REGISTER_FAMILY.equals(interventionType) || Action.MDA_SURVEY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
         }
@@ -210,11 +212,20 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createPaotCardDetails(cursor, interventionType);
         } else if (IRS_VERIFICATION.equals(interventionType)) {
             cardDetails = createIRSverificationCardDetails(cursor);
-        } else if (REGISTER_FAMILY.equals(interventionType)) {
+        } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
+        } else if(Action.MDA_SURVEY.equals(interventionType)){
+            cardDetails = createSurveyCardDetails(cursor);
         }
 
         return cardDetails;
+    }
+
+    private CardDetails createSurveyCardDetails(final Cursor cursor) {
+        return new SurveyCardDetails(
+                CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("business_status"))),
+                cursor.getString(cursor.getColumnIndex("authored_on")),
+                cursor.getString(cursor.getColumnIndex("owner")));
     }
 
     private SprayCardDetails createSprayCardDetails(Cursor cursor) {

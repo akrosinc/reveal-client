@@ -21,6 +21,7 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
@@ -109,6 +110,7 @@ import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.repository.RevealMappingHelper;
@@ -371,6 +373,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
+        } else if (MDA_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(MDA_SURVEY, feature.id(), false);
         }
     }
 
@@ -502,7 +506,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (cardDetails instanceof FamilyCardDetails) {
             formatFamilyCardDetails((FamilyCardDetails) cardDetails);
             listTaskView.openCardView(cardDetails);
+        } else if(cardDetails instanceof SurveyCardDetails){
+            formatSurveyCardDetails((SurveyCardDetails) cardDetails);
+            listTaskView.openCardView(cardDetails);
         }
+    }
+
+    private void formatSurveyCardDetails(final SurveyCardDetails cardDetails) {
+        Date originalDate = StringUtils.isBlank(cardDetails.getDateCreated()) ? null :
+                new Date(Long.parseLong(cardDetails.getDateCreated()));
+
+        cardDetails.setDateCreated(formatDate(originalDate));
     }
 
     private void formatSprayCardDetails(SprayCardDetails sprayCardDetails) {
@@ -587,6 +601,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             } catch (JSONException e) {
                 Timber.e(e);
             }
+            jsonFormUtils.populateForm(event, formJson);
         }
         listTaskView.startJsonForm(formJson);
     }
@@ -642,7 +657,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
         listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
-       if(!isKenyaMDALite() && !isRwandaMDALite() && !MDA_SURVEY.equals(interventionType)){
+       if(!isKenyaMDALite() && !isRwandaMDALite()){
            listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
        }
     }
@@ -733,6 +748,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(), MOSQUITO_COLLECTION_EVENT);
             } else if (LARVAL_DIPPING.equals(cardDetails.getInterventionType())) {
                 findLastEvent(selectedFeature.id(), LARVAL_DIPPING_EVENT);
+            } else if(MDA_SURVEY.equals(cardDetails.getInterventionType())){
+              findLastEvent(selectedFeature.id(),MDA_SURVEY_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }

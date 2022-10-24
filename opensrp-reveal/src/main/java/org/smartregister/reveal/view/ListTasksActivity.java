@@ -2,6 +2,7 @@ package org.smartregister.reveal.view;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
@@ -116,6 +117,7 @@ import org.smartregister.reveal.model.FilterConfiguration;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.repository.RevealMappingHelper;
@@ -269,6 +271,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         findViewById(R.id.btn_collapse_spray_card_view).setOnClickListener(this);
 
         tvReason = findViewById(R.id.reason);
+
+        findViewById(R.id.change_household_status).setOnClickListener(this);
 
         findViewById(R.id.change_spray_status).setOnClickListener(this);
 
@@ -515,13 +519,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             listTaskPresenter.onAddStructureClicked(revealMapHelper.isMyLocationComponentActive(this, myLocationButton));
         } else if (v.getId() == R.id.change_spray_status) {
             listTaskPresenter.onChangeInterventionStatus(IRS);
+        } else if(v.getId() == R.id.change_household_status){
+            listTaskPresenter.onChangeInterventionStatus(MDA_SURVEY);
         } else if (v.getId() == R.id.btn_undo_spray) {
             if(isZambiaIRSLite()) {
                 displayResetInterventionTaskDialog(IRS_VERIFICATION);
             } else {
                 displayResetInterventionTaskDialog(IRS);
             }
-
         } else if (v.getId() == R.id.btn_record_mosquito_collection) {
             listTaskPresenter.onChangeInterventionStatus(MOSQUITO_COLLECTION);
         } else if (v.getId() == R.id.btn_undo_mosquito_collection) {
@@ -783,6 +788,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             cardDetailsUtil.populateAndOpenIRSVerificationCard((IRSVerificationCardDetails) cardDetails, this);
         } else if (cardDetails instanceof FamilyCardDetails) {
             cardDetailsUtil.populateFamilyCard((FamilyCardDetails) cardDetails, this);
+            sprayCardView.setVisibility(View.VISIBLE);
+        } else if(cardDetails instanceof SurveyCardDetails){
+            cardDetailsUtil.populateSurveyCard((SurveyCardDetails) cardDetails,this);
             sprayCardView.setVisibility(View.VISIBLE);
         }
     }

@@ -146,7 +146,7 @@
         "calculation": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "mda-household-status-calc.yml"
+              "rules-file": "mda-household-status-moz-calc.yml"
             }
           }
         }

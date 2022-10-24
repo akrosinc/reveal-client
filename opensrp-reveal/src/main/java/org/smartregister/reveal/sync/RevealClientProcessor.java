@@ -46,6 +46,7 @@ import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -130,7 +131,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 } else if (eventType.equals(MOSQUITO_COLLECTION_EVENT) || eventType.equals(LARVAL_DIPPING_EVENT)
                         || eventType.equals(BEDNET_DISTRIBUTION_EVENT) ||
                         eventType.equals(BEHAVIOUR_CHANGE_COMMUNICATION) ||
-                        eventType.equals(IRS_VERIFICATION)) {
+                        eventType.equals(IRS_VERIFICATION) || MDA_SURVEY_EVENT.equals(eventType)) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents);
                 } else if (eventType.equals(REGISTER_STRUCTURE_EVENT)) {
                     operationalAreaId = processRegisterStructureEvent(event, clientClassification);
