@@ -74,7 +74,8 @@
           [
             "Sprayed",
             "Complete",
-            "Fully Received"
+            "Fully Received",
+            "MDA complete"
           ],
           "hsl(89, 52%, 48%)",
           [
@@ -175,7 +176,8 @@
           [
             "Sprayed",
             "Complete",
-            "Fully Received"
+            "Fully Received",
+            "MDA complete"
           ],
           "hsl(89, 52%, 48%)",
           [
