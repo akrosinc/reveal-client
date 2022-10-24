@@ -68,7 +68,8 @@
             "Not Sprayed",
             "Incomplete",
             "In Progress",
-            "None Received"
+            "None Received",
+            "MDA refused or absent"
           ],
           "hsl(3, 71%, 54%)",
           [
@@ -78,6 +79,10 @@
             "MDA complete"
           ],
           "hsl(89, 52%, 48%)",
+          [
+            "MDA partially complete"
+          ],
+          "hsl(33, 100%, 50%)",
           [
             "Not Sprayable",
             "Not Eligible"
@@ -170,7 +175,8 @@
             "Not Sprayed",
             "Incomplete",
             "In Progress",
-            "None Received"
+            "None Received",
+            "MDA refused or absent"
           ],
           "hsl(3, 71%, 54%)",
           [
@@ -180,6 +186,10 @@
             "MDA complete"
           ],
           "hsl(89, 52%, 48%)",
+          [
+            "MDA partially complete"
+          ],
+          "hsl(33, 100%, 50%)",
           [
             "Not Sprayable",
             "Not Eligible"
