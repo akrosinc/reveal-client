@@ -981,4 +981,5 @@
     <string name="pzq_damaged">Number of spoilt or damaged PZQ tablets</string>
     <string name="pzq_dispensed">"Number of PZQ dispensed"</string>
     <string name="county_cdd_supervisory_form">County/CDD supervisory Form</string>
+    <string name="mda_survey">MDA Survey</string>
 </resources>

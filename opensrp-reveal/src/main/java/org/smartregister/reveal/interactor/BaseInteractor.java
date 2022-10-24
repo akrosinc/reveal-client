@@ -412,6 +412,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     Task task = null;
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
                         task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
+                    } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
+                                BusinessStatus.NOT_VISITED, MDA_SURVEY, R.string.mda_survey);
                     } else {
                         if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
