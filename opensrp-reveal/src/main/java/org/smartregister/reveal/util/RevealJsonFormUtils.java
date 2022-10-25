@@ -354,6 +354,8 @@ public class RevealJsonFormUtils {
             } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
                     || BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+              formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }

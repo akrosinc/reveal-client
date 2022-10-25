@@ -475,6 +475,9 @@ public interface Constants {
 
         String IRS_ADD_STRUCTURE_FORM = "json.form/irs_add_structure.json";
 
+
+        String MDA_SURVEY_ADD_STRUCTURE_FORM = "json.form/mda_survey_add_structure.json";
+
         String BEDNET_DISTRIBUTION_FORM = "json.form/bednet_distribution.json";
 
         String BLOOD_SCREENING_FORM = "json.form/blood_screening.json";
