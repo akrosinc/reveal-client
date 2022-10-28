@@ -513,10 +513,21 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void formatSurveyCardDetails(final SurveyCardDetails cardDetails) {
-        Date originalDate = StringUtils.isBlank(cardDetails.getDateCreated()) ? null :
-                new Date(Long.parseLong(cardDetails.getDateCreated()));
-
-        cardDetails.setDateCreated(formatDate(originalDate));
+        try {
+            // format date
+            String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_Z);
+            cardDetails.setDateCreated(formattedDate);
+        } catch (Exception e) {
+            Timber.e(e);
+            Timber.i("Date parsing failed, trying another date format");
+            try {
+                // try another date format
+                String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_XXX);
+                cardDetails.setDateCreated(formattedDate);
+            } catch (Exception exception) {
+                Timber.e(e);
+            }
+        }
     }
 
     private void formatSprayCardDetails(SprayCardDetails sprayCardDetails) {

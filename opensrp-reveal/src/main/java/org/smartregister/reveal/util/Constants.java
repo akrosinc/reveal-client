@@ -1049,4 +1049,6 @@ public interface Constants {
         String FILTER_SORT_PARAMS = "filter_sort_params";
         String FILTER_CONFIGURATION = "filter_configuration";
     }
+
+    String SPRAY_OPERATOR = "spray_operator";
 }

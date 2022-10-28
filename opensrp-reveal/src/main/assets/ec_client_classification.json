@@ -228,6 +228,14 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "mda_survey",
+            "creates_case": [
+              "sprayed_structures",
+              "event_task"
+            ]
           }
         ]
       }
