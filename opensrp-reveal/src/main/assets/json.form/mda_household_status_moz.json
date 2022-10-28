@@ -129,32 +129,9 @@
         "type": "hidden"
       },
       {
-        "key": "hh_id_show",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "toaster_notes",
-        "text": "Unique Household ID: {hh_id}",
-        "text_color": "#000000",
-        "toaster_type": "info",
-        "relevance": {
-          "step1:structure_eligible": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        },
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-household-status-moz-calc.yml"
-            }
-          }
-        }
-      },
-      {
         "key": "hh_id_note",
         "type": "label",
-        "text": "Note: Copy this ID and paste into DHIS2 form",
+        "text": "Note: Copy this Household ID and paste into DHIS2 form",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B9A000",
@@ -166,6 +143,27 @@
           "step1:structure_eligible": {
             "type": "string",
             "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hh_id_show",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "label": "Household ID",
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-moz-calc.yml"
+            }
           }
         }
       },
