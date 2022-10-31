@@ -7,7 +7,6 @@ import static org.smartregister.family.util.DBConstants.KEY.RELATIONAL_ID;
 import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.AUTHORED_ON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASE_ENTITY_ID;
@@ -47,7 +46,6 @@ import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
-import static org.smartregister.reveal.util.Constants.Tables.EVENT_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.IRS_VERIFICATION_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.LARVAL_DIPPINGS_TABLE;
 import static org.smartregister.reveal.util.Constants.Tables.MOSQUITO_COLLECTIONS_TABLE;
@@ -99,7 +97,6 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.GeoJSON;
 import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.GeoJsonUtils;
@@ -156,7 +153,7 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
-        } else if (Action.MDA_SURVEY.equals(interventionType)){
+        } else if (Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
             sql = String.format("SELECT %s, %s, %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
         }
 
@@ -220,7 +217,7 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createIRSverificationCardDetails(cursor);
         } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
-        } else if(Action.MDA_SURVEY.equals(interventionType)){
+        } else if(Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
             cardDetails = createSurveyCardDetails(cursor);
         }
 

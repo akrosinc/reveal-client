@@ -379,7 +379,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
-        return (IRS.equals(taskCode) || MOSQUITO_COLLECTION.equals(taskCode) || LARVAL_DIPPING.equals(taskCode) || PAOT.equals(taskCode) || IRS_VERIFICATION.equals(taskCode) || REGISTER_FAMILY.equals(taskCode) || MDA_SURVEY.equals(taskCode))
+        return (Constants.Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
                 && (NOT_VISITED.equals(businessStatus) || businessStatus == null)
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
                 || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
@@ -614,6 +614,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
             jsonFormUtils.populateForm(event, formJson);
         } else  if(JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
+        } else if(JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA.equals(formName)){
             jsonFormUtils.populateForm(event,formJson);
         }
         listTaskView.startJsonForm(formJson);

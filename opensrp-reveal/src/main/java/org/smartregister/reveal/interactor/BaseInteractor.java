@@ -6,6 +6,8 @@ import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
@@ -20,8 +22,10 @@ import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATIO
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -326,6 +330,10 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = CELL_COORDINATION;
             } else if(MDA_SURVEY_EVENT.equals(encounterType)){
                 interventionType = MDA_SURVEY;
+            } else if(LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType)){
+                interventionType = LSM_HOUSEHOLD_SURVEY;
+            } else if(HABITAT_SURVEY_EVENT.equals(encounterType)){
+                interventionType = HABITAT_SURVEY;
             }
         } catch (JSONException e) {
             Timber.e(e);

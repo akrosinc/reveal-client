@@ -1,5 +1,9 @@
 package org.smartregister.reveal.util;
 
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -288,6 +292,7 @@ public interface Constants {
 
         List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
 
+        List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY);
 
     }
 
@@ -337,7 +342,9 @@ public interface Constants {
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
 
         String MDA_SURVEY_EVENT = "mda_survey";
-        String HABITAT_SURVEY =  "habitat_survey";
+        String HABITAT_SURVEY_EVENT =  "habitat_survey";
+        String LSM_HOUSEHOLD_SURVEY_EVENT =  "lsm_household_survey";
+
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -572,6 +579,7 @@ public interface Constants {
 
         String LSM_HABITAT_SURVEY_FORM_ZAMBIA = "json.form/lsm_habitat_survey_form_zambia.json";
 
+        String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
 
         String OPERATIONAL_AREA_TAG = "operational_area";
 
@@ -795,6 +803,7 @@ public interface Constants {
         String STRUCTURE_TASK_SYNCED = "reveal.STRUCTURE_TASK_SYNCED";
         String MDA_SURVEY = "MDA Survey";
         String HABITAT_SURVEY = "Habitat Survey";
+        String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
     }
 
     interface ECClientConfig {
