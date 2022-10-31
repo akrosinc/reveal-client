@@ -613,6 +613,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 Timber.e(e);
             }
             jsonFormUtils.populateForm(event, formJson);
+        } else  if(JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
         }
         listTaskView.startJsonForm(formJson);
     }

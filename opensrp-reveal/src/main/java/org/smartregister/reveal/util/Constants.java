@@ -337,6 +337,7 @@ public interface Constants {
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
 
         String MDA_SURVEY_EVENT = "mda_survey";
+        String HABITAT_SURVEY =  "habitat_survey";
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -569,6 +570,8 @@ public interface Constants {
 
         String MDA_HOUSEHOLD_STATUS_MOZ_FORM = "json.form/mda_household_status_moz.json";
 
+        String LSM_HABITAT_SURVEY_FORM_ZAMBIA = "json.form/lsm_habitat_survey_form_zambia.json";
+
 
         String OPERATIONAL_AREA_TAG = "operational_area";
 
@@ -791,6 +794,7 @@ public interface Constants {
     interface Action {
         String STRUCTURE_TASK_SYNCED = "reveal.STRUCTURE_TASK_SYNCED";
         String MDA_SURVEY = "MDA Survey";
+        String HABITAT_SURVEY = "Habitat Survey";
     }
 
     interface ECClientConfig {
