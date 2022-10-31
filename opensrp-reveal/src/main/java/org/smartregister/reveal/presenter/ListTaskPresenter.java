@@ -7,6 +7,8 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
@@ -21,6 +23,8 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
+import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
@@ -375,6 +379,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
         } else if (MDA_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
             listTaskInteractor.fetchInterventionDetails(MDA_SURVEY, feature.id(), false);
+        } else if(LSM_HOUSEHOLD_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
+        } else if(HABITAT_SURVEY.equals(code) &&  !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
         }
     }
 
@@ -765,6 +773,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(), LARVAL_DIPPING_EVENT);
             } else if(MDA_SURVEY.equals(cardDetails.getInterventionType())){
               findLastEvent(selectedFeature.id(),MDA_SURVEY_EVENT);
+            } else if(LSM_HOUSEHOLD_SURVEY.equals(cardDetails.getInterventionType())){
+                findLastEvent(selectedFeature.id(),LSM_HOUSEHOLD_SURVEY_EVENT);
+            } else if(HABITAT_SURVEY.equals(cardDetails.getInterventionType())){
+                findLastEvent(selectedFeature.id(),HABITAT_SURVEY_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }

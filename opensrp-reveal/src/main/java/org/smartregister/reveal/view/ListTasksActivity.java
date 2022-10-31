@@ -2,6 +2,8 @@ package org.smartregister.reveal.view;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
@@ -273,7 +275,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         tvReason = findViewById(R.id.reason);
 
         findViewById(R.id.change_household_status).setOnClickListener(this);
-
+        findViewById(R.id.change_lsm_household_status).setOnClickListener(this);
+        findViewById(R.id.change_habitat_status).setOnClickListener(this);
         findViewById(R.id.change_spray_status).setOnClickListener(this);
 
         findViewById(R.id.btn_undo_spray).setOnClickListener(this);
@@ -521,6 +524,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             listTaskPresenter.onChangeInterventionStatus(IRS);
         } else if(v.getId() == R.id.change_household_status){
             listTaskPresenter.onChangeInterventionStatus(MDA_SURVEY);
+        } else if(v.getId() == R.id.change_habitat_status){
+            listTaskPresenter.onChangeInterventionStatus(HABITAT_SURVEY);
+        } else if(v.getId() == R.id.change_lsm_household_status){
+            listTaskPresenter.onChangeInterventionStatus(LSM_HOUSEHOLD_SURVEY);
         } else if (v.getId() == R.id.btn_undo_spray) {
             if(isZambiaIRSLite()) {
                 displayResetInterventionTaskDialog(IRS_VERIFICATION);

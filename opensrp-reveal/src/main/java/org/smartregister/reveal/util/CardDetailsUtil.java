@@ -19,6 +19,7 @@ import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
 import org.smartregister.reveal.model.SurveyCardDetails;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 
 import timber.log.Timber;
@@ -249,6 +250,10 @@ public class CardDetailsUtil {
             Button registerFamily = activity.findViewById(R.id.register_family);
 
             Button changeHouseholdStatus  =  activity.findViewById(R.id.change_household_status);
+            Button changeHabitatStatus  =  activity.findViewById(R.id.change_habitat_status);
+            Button changeLsmHouseholdStatus  =  activity.findViewById(R.id.change_lsm_household_status);
+
+
 
             Integer color = surveyCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
@@ -258,7 +263,9 @@ public class CardDetailsUtil {
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
 
-            changeHouseholdStatus.setVisibility(View.VISIBLE);
+            changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeSprayStatus.setVisibility(View.GONE);
             registerFamily.setVisibility(View.GONE);
             tvPropertyType.setVisibility(View.GONE);
