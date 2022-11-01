@@ -218,8 +218,8 @@ public class Utils {
     }
 
     public static int getInterventionLabel() {
-        String plan = PreferencesUtil.getInstance().getCurrentPlan();
-        String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(plan);
+        String planId = PreferencesUtil.getInstance().getCurrentPlanId();
+        String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(planId);
         if (interventionType.equals(FI) || interventionType.equals(DYNAMIC_FI))
             return R.string.focus_investigation;
         else if (interventionType.equals(IRS) || interventionType.equals(DYNAMIC_IRS))
