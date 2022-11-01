@@ -129,6 +129,12 @@
         "v_required": {
           "value": "true",
           "err": "Field required"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -152,6 +158,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -165,6 +177,12 @@
         "v_required": {
           "value": true,
           "err": "Please specify the date"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -188,6 +206,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -219,6 +243,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -265,6 +295,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -307,6 +343,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -334,6 +376,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -361,6 +409,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -388,6 +442,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -415,6 +475,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -442,6 +508,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -469,6 +541,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -496,6 +574,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -523,6 +607,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -550,6 +640,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -577,6 +673,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -604,6 +706,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -631,6 +739,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -658,6 +772,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -685,6 +805,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -712,6 +838,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -739,6 +871,12 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
