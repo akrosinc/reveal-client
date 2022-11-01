@@ -264,7 +264,7 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:habitat_type": {
+          "step1:wall_type": {
             "type": "string",
             "ex": "equalTo(., \"Other\")"
           }
@@ -316,7 +316,7 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:habitat_type": {
+          "step1:roof_type": {
             "type": "string",
             "ex": "equalTo(., \"Other\")"
           }
@@ -475,6 +475,44 @@
         "v_min": {
           "value": "0",
           "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_collection_start_time",
+        "type": "time_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Start time of mosquito collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_collection_end_time",
+        "type": "time_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "End time of mosquito collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
         },
         "relevance": {
           "step1:structure_eligible": {
