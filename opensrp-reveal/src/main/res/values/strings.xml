@@ -982,4 +982,6 @@
     <string name="pzq_dispensed">"Number of PZQ dispensed"</string>
     <string name="county_cdd_supervisory_form">County/CDD supervisory Form</string>
     <string name="mda_survey">MDA Survey</string>
+    <string name="habitat_survey">Habitat Survey</string>
+    <string name="lsm_household_survey">LSM Household Survey</string>
 </resources>

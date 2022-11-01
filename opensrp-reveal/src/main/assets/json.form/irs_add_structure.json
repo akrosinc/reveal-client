@@ -83,6 +83,29 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "structureType",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Type of Structure",
+        "options": [
+          {
+            "key": "Residential Structure",
+            "text": "Residential Structure"
+          },
+          {
+            "key": "Body of Water",
+            "text": "Body of Water"
+          }
+        ],
+        "value": "Residential Structure",
+        "v_required": {
+          "value": true,
+          "err": "Please specify Type of structure"
+        }
+      },
+      {
         "key": "zoom_level",
         "type": "hidden",
         "openmrs_entity_parent": "",

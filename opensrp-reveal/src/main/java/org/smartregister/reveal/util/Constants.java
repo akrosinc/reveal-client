@@ -294,6 +294,7 @@ public interface Constants {
 
         List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY);
 
+        String LSM = "LSM";
     }
 
 
@@ -832,6 +833,8 @@ public interface Constants {
         String LARVAL_BREEDING_SITE = "Larval Breeding Site";
 
         String POTENTIAL_AREA_OF_TRANSMISSION = "Potential Area of Transmission";
+
+        String BODY_OF_WATER = "Body of Water";
     }
 
     interface TaskRegister {
