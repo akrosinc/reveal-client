@@ -144,8 +144,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private ListTaskPresenter listTaskPresenter;
 
-    private View rootView;
-
     private GeoJsonSource geoJsonSource;
 
     private GeoJsonSource selectedGeoJsonSource;
@@ -222,8 +220,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         revealMapHelper = new RevealMapHelper();
 
         listTaskPresenter = new ListTaskPresenter(this, drawerView.getPresenter());
-
-        rootView = findViewById(R.id.content_frame);
 
         initializeProgressIndicatorViews();
 
