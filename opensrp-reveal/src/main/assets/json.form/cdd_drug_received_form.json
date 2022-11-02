@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "cdd_drug_received",
-  "form_version": "0.0.3",
+  "form_version": "0.0.4",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -255,6 +255,12 @@
         "v_required": {
           "value": "true",
           "err": "This field is required."
+        },
+        "relevance": {
+          "step1:drug_received_from": {
+            "type": "string",
+            "ex": "equalTo(., \"CDD Supervisor\")"
+          }
         }
       }
     ]
