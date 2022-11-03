@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "habitat_survey",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -566,7 +566,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Anopheles EARLY larvae",
+        "hint": "Number of Anopheles EARLY instar stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -599,7 +599,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Anopheles LATE larvae",
+        "hint": "Number of Anopheles LATE instar stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
