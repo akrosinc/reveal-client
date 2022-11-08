@@ -73,6 +73,8 @@ public abstract class BaseMapActivity extends MultiLanguageActivity {
             LangUtils.saveLanguage(base.getApplicationContext(),"fr");
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
             LangUtils.saveLanguage(base.getApplicationContext(),"rw");
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+            LangUtils.saveLanguage(base.getApplicationContext(),"pt-rMZ");
         } else {
             LangUtils.saveLanguage(base.getApplicationContext(), "en");
         }
