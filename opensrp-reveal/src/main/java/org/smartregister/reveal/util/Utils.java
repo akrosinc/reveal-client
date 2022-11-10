@@ -617,7 +617,6 @@ public class Utils {
         bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
         bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
         sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
-        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
     }
     public static boolean isCurrentTargetLevelStructure(){
         return STRUCTURE.equalsIgnoreCase(PreferencesUtil.getInstance().getCurrentPlanTargetLevel());
