@@ -118,7 +118,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 } else if ((validator instanceof GeoFencingValidator)
                         && !validator.isValid("", true)
                         && (Country.ZAMBIA == BuildConfig.BUILD_COUNTRY
-                        || Country.SENEGAL == BuildConfig.BUILD_COUNTRY || Country.SENEGAL_EN == BuildConfig.BUILD_COUNTRY )) {
+                        || Country.SENEGAL == BuildConfig.BUILD_COUNTRY || Country.SENEGAL_EN == BuildConfig.BUILD_COUNTRY ||  Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY  )) {
                     // perform within op area validation
                     GeoFencingValidator geoFencingValidator = (GeoFencingValidator) validator;
                     int title = R.string.register_outside_boundary_title;
