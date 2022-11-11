@@ -208,3 +208,18 @@ priority: 1
 condition: "!step1_ntd_treated.equals('SCH')"
 actions:
   - "isRelevant = true"
+---
+name: step1_damaged_pzq
+description: step1_damaged_pzq
+priority: 1
+condition: "step1_drugs.equals('PZQ')"
+actions:
+  - "isRelevant = true"
+---
+name: step1_damaged_mbz
+description: step1_damaged_mbz
+priority: 1
+condition: "step1_drugs.equals('MBZ')"
+actions:
+  - "isRelevant = true"
+

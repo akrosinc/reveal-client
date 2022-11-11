@@ -1266,6 +1266,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -1292,6 +1299,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
         }
       },
       {
