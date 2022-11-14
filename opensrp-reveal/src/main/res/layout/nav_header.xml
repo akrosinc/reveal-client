@@ -261,7 +261,7 @@
         android:text="@string/link_to_dashboard"
         android:textColor="@color/button_blue"
         android:textSize="18sp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_navMenu_offline_maps" />
 
