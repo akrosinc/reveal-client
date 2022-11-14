@@ -356,7 +356,8 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         addGeoFencingValidator(context);
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> {
-            String parentId = locationRepository.getLocationById(operationalAreaFeature.id()).getProperties().getParentId();
+            Location parentLocation = locationRepository.getLocationById(operationalAreaFeature.id());
+            String parentId = parentLocation != null ? parentLocation.getProperties().getParentId() : null;
             String operationalLevel = operationalAreaFeature.getStringProperty("geographicLevel");
             List<Location> allLocations = locationRepository.getAllLocations().stream()
                                                                               .filter(location -> (operationalLevel.equals(location.getProperties().getGeographicLevel()) || location.getProperties().getName().toLowerCase().contains(OTHER)))
