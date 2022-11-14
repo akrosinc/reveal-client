@@ -97,6 +97,8 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
 
     private GeoFencingValidator geoFencingValidator;
 
+    private  GeoJsonSource geoJsonSource;
+
     public GeoWidgetFactory() {
     }
 
@@ -257,10 +259,10 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
-                        GeoJsonSource geoJsonSource = style.getSourceAs(context.getString(R.string.reveal_datasource_name));
+                        geoJsonSource = style.getSourceAs(context.getString(R.string.reveal_datasource_name));
 
                         if (geoJsonSource != null && StringUtils.isNotBlank(finalFeatureCollection)) {
-                            geoJsonSource.setGeoJson(finalFeatureCollection);
+                            geoJsonSource.setGeoJson(FeatureCollection.fromJson(finalFeatureCollection));
                         }
 
                         String baseMapFeatureString = AssetHandler.readFileFromAssetsFolder(context.getString(R.string.base_map_feature_json), context);
