@@ -97,19 +97,19 @@
         "label": "Was MDA completed at this household?",
         "options": [
           {
-            "key": "MDA refused or absent",
-            "text": "MDA refused or absent"
+            "key": "Refused or Permanently Absent",
+            "text": "Refused or Permanently Absent"
           },
           {
-            "key": "MDA partially complete",
-            "text": "MDA partially complete"
+            "key": "Partially complete or Temporarily Absent",
+            "text": "Partially complete or Temporarily Absent"
           },
           {
             "key": "MDA complete",
             "text": "MDA complete"
           }
         ],
-        "value": "MDA refused or absent",
+        "value": "Refused or Permanently Absent",
         "v_required": {
           "value": true,
           "err": "This field is mandatory"
