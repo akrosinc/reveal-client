@@ -4,11 +4,21 @@ package org.smartregister.reveal.model;
 public class SurveyCardDetails extends CardDetails {
     private String dateCreated;
     private String owner;
+    private String structureNumber;
 
-    public SurveyCardDetails(String status, String dateCreated, String owner) {
+    public SurveyCardDetails(String status, String dateCreated, String owner,String structureNumber) {
         super(status);
         this.dateCreated = dateCreated;
         this.owner = owner;
+        this.structureNumber = structureNumber;
+    }
+
+    public String getStructureNumber() {
+        return structureNumber;
+    }
+
+    public void setStructureNumber(final String structureNumber) {
+        this.structureNumber = structureNumber;
     }
 
     public String getDateCreated() {

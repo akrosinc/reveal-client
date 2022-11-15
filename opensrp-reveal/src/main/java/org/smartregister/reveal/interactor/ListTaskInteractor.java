@@ -154,7 +154,7 @@ public class ListTaskInteractor extends BaseInteractor {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
         } else if (Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
-            sql = String.format("SELECT %s, %s, %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
+            sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
         }
 
         final String SQL = sql;
@@ -162,11 +162,14 @@ public class ListTaskInteractor extends BaseInteractor {
             @Override
             public void run() {
                 Cursor cursor = getDatabase().rawQuery(SQL, new String[]{featureId});
-
+                Location structure = null;
+                if(interventionType == Action.MDA_SURVEY){
+                    structure = structureRepository.getLocationById(featureId);
+                }
                 CardDetails cardDetails = null;
                 try {
                     if (cursor.moveToFirst()) {
-                        cardDetails = createCardDetails(cursor, interventionType);
+                        cardDetails = createCardDetails(cursor, interventionType, structure);
                         cardDetails.setInterventionType(interventionType);
                     }
                 } catch (Exception e) {
@@ -205,7 +208,7 @@ public class ListTaskInteractor extends BaseInteractor {
         ((SprayCardDetails) cardDetails).setCommonPersonObject(commonPersonObject);
     }
 
-    private CardDetails createCardDetails(Cursor cursor, String interventionType) {
+    private CardDetails createCardDetails(Cursor cursor, String interventionType, Location location) {
         CardDetails cardDetails = null;
         if (MOSQUITO_COLLECTION.equals(interventionType) || LARVAL_DIPPING.equals(interventionType)) {
             cardDetails = createMosquitoHarvestCardDetails(cursor, interventionType);
@@ -218,17 +221,23 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
         } else if(Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
-            cardDetails = createSurveyCardDetails(cursor);
+            cardDetails = createSurveyCardDetails(cursor, interventionType,location);
         }
 
         return cardDetails;
     }
 
-    private CardDetails createSurveyCardDetails(final Cursor cursor) {
+    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType,Location location) {
+        String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
+        String structureNumber = null;
+        if (Action.MDA_SURVEY.equals(interventionType)){
+            structureNumber  = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
+        }
         return new SurveyCardDetails(
                 CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("spray_status"))),
                 cursor.getString(cursor.getColumnIndex("spray_date")),
-                cursor.getString(cursor.getColumnIndex("spray_operator")));
+                cursor.getString(cursor.getColumnIndex("spray_operator")),
+                structureNumber);
     }
 
     private SprayCardDetails createSprayCardDetails(Cursor cursor) {

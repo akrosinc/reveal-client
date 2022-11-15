@@ -246,6 +246,7 @@ public class CardDetailsUtil {
             TextView tvSprayOperator = activity.findViewById(R.id.user_id);
             TextView tvFamilyHead = activity.findViewById(R.id.family_head);
             TextView tvReason = activity.findViewById(R.id.reason);
+            TextView tvStructureNum = activity.findViewById(R.id.structure_number);
             Button changeSprayStatus = activity.findViewById(R.id.change_spray_status);
             Button registerFamily = activity.findViewById(R.id.register_family);
 
@@ -263,6 +264,10 @@ public class CardDetailsUtil {
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
 
+            if (Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType())){
+                tvStructureNum.setVisibility(View.VISIBLE);
+                tvStructureNum.setText(String.format("Structure no: %s", surveyCardDetails.getStructureNumber()));
+            }
             changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);

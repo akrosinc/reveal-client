@@ -400,6 +400,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
                     properties.setUid(UUID.randomUUID().toString());
                     properties.setGeographicLevel("structure");
+                    if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+                        properties.setStructureNumber(event.getBaseEntityId().substring(event.getBaseEntityId().length() -4));
+                    }
                     Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
                     if (structureNameObs != null && structureNameObs.getValue() != null) {
                         properties.setName(structureNameObs.getValue().toString());

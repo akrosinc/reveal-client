@@ -33,6 +33,8 @@ public class LocationProperty implements Serializable {
 
     private String geographicLevel;
 
+    private String structureNumber;
+
     private Date effectiveStartDate;
 
     private Date effectiveEndDate;
@@ -45,6 +47,14 @@ public class LocationProperty implements Serializable {
 
     public String getUid() {
         return uid;
+    }
+
+    public String getStructureNumber() {
+        return structureNumber;
+    }
+
+    public void setStructureNumber(final String structureNumber) {
+        this.structureNumber = structureNumber;
     }
 
     public void setUid(String uid) {

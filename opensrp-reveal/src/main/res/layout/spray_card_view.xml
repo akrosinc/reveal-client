@@ -82,6 +82,18 @@
                     android:textSize="@dimen/structure_info_card_text_size" />
 
                 <TextView
+                    android:id="@+id/structure_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:drawableLeft="@drawable/ic_hut_residence"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:textSize="@dimen/structure_info_card_text_size" />
+
+
+                <TextView
                     android:id="@+id/family_head"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
