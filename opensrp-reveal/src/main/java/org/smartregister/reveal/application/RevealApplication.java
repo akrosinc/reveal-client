@@ -159,7 +159,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
             LangUtils.saveLanguage(getApplicationContext(), "rw");
         } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
-            LangUtils.saveLanguage(getApplicationContext(), "pt-rMZ");
+            LangUtils.saveLanguage(getApplicationContext(), "pt");
         } else {
             LangUtils.saveLanguage(getApplicationContext(), "en");
         }

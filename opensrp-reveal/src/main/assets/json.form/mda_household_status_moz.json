@@ -76,7 +76,7 @@
         "options": [
           {
             "key": "yes",
-            "text": "Yes"
+            "text": "Sim"
           },
           {
             "key": "no",
@@ -140,7 +140,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "O MDA foi concluído nesta casa?",
+        "label": "A AMM foi concluída neste agregado?",
         "options": [
           {
             "key": "Refused or Permanently Absent",
