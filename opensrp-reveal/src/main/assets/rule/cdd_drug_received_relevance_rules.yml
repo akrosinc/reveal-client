@@ -6,7 +6,7 @@ condition: "step1_drug_issued.equals('PZQ') || step1_drug_issued.equals('Both')"
 actions:
   - "isRelevant = true"
 ---
-name: step1_mbz_received_received
+name: step1_mbz_received
 description: mbz_received_received relevance
 priority: 1
 condition: "step1_drug_issued.equals('MBZ') || step1_drug_issued.equals('Both')"

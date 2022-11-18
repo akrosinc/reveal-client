@@ -1,5 +1,6 @@
 package org.smartregister.reveal.util;
 
+import static java.util.stream.Collectors.toList;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
@@ -17,6 +18,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_ABOVE
 import android.content.Context;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +31,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 import org.joda.time.DateTime;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
@@ -251,7 +254,7 @@ public class IndicatorUtils {
 
         List<TaskDetails> validTasks = tasks.stream()
                 .filter(taskDetails -> taskDetails.getTaskCode().equals(CELL_COORDINATION) && (taskDetails.getBusinessStatus().equals(IN_PROGRESS) || taskDetails.getBusinessStatus().equals(COMPLETE)))
-                .collect(Collectors.toList());
+                .collect(toList());
 
        Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
                                                .collect(Collectors.toSet());
@@ -262,10 +265,10 @@ public class IndicatorUtils {
 
         List<Event> latestEvents = validTasks.stream().map(taskDetails -> {
             Map<DateTime,Event> eachTaskEventAndDateMap = dataCaptured.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
-            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(Collectors.toList());
+            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(toList());
             DateTime maxDatTime = Collections.max(eventDates);
             return eachTaskEventAndDateMap.get(maxDatTime);
-        }).collect(Collectors.toList());
+        }).collect(toList());
 
         value  = latestEvents.stream().map(Event::getObs)
                                               .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_5_TO_15)).findFirst().get())
@@ -463,7 +466,7 @@ public class IndicatorUtils {
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         List<TaskDetails> validTasks = tasks.stream()
                 .filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(INCOMPLETE) || taskDetails.getBusinessStatus().equals(COMPLETE)))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
                 .collect(Collectors.toSet());
@@ -473,17 +476,17 @@ public class IndicatorUtils {
         List<Event> eventsFromTasks = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
         List<Event> latestCddSupervisionEvents = validTasks.stream().map(taskDetails -> {
             Map<DateTime,Event> eachTaskEventAndDateMap = eventsFromTasks.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
-            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(Collectors.toList());
+            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(toList());
             DateTime maxDatTime = Collections.max(eventDates);
             return eachTaskEventAndDateMap.get(maxDatTime);
-        }).collect(Collectors.toList());
+        }).collect(toList());
 
       List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypes(Arrays.asList(
               CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT));
         List<Event> drugReceivedFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_RECEIVED_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
-                Collectors.toList());
+                toList());
         List<Event> drugWithdrawalFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_WITHDRAWAL_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
-                Collectors.toList());
+                toList());
 
         indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(latestCddSupervisionEvents));
         indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(latestCddSupervisionEvents));
@@ -536,10 +539,10 @@ public class IndicatorUtils {
     }
 
     private static int calculateReceivedMBZ(final List<Event> drugReceivedFormEvents) {
-        return drugReceivedFormEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+        List<Obs> mbzReceivedEvents =  drugReceivedFormEvents.stream().map(Event::getObs)
+                                                                      .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                                                                    .filter(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().isPresent()).flatMap(Collection::stream).collect(toList());
+        return mbzReceivedEvents.stream().filter(obs -> obs.getFieldCode().equals(MBZ_RECEIVED)).map(obs -> Integer.parseInt(obs.getValue().toString())).reduce(0,Integer::sum);
     }
 
     private static int calculateReceivedPZQ(final List<Event> drugReceivedFormEvents) {
