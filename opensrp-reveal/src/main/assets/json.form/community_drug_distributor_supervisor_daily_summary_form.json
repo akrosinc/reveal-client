@@ -249,6 +249,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male aged 1 to 4"
         }
       },
       {
@@ -282,6 +286,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -315,6 +323,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
         }
       },
       {
@@ -371,6 +383,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male age 1 to 4"
         }
       },
       {
@@ -404,6 +420,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -437,6 +457,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
         }
       },
       {
@@ -493,6 +517,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male age 1 to 4"
         }
       },
       {
@@ -526,6 +554,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -559,6 +591,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
         }
       },
       {
@@ -592,6 +628,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_1_to_4",
+          "err": "Should be less than or equal male age 1 to 4 treated for snake bites"
         }
       },
       {
@@ -625,6 +665,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_5_to_14",
+          "err": "Should be less than or equal male age 5 to 14 treated for snake bites"
         }
       },
       {
@@ -658,6 +702,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_above_15",
+          "err": "Should be less than or equal male age above 15 treated for snake bites"
         }
       },
       {
@@ -830,6 +878,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -863,6 +915,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -896,6 +952,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
         }
       },
       {
@@ -952,6 +1012,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -985,6 +1049,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -1018,6 +1086,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
         }
       },
       {
@@ -1074,6 +1146,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -1107,6 +1183,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -1140,6 +1220,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
         }
       },
       {
@@ -1173,6 +1257,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_1_to_4",
+          "err": "Should be less than or equal female age 1 to 4 treated for snake bites"
         }
       },
       {
@@ -1206,6 +1294,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_5_to_14",
+          "err": "Should be less than or equal female age 5 to 14 treated for snake bites"
         }
       },
       {
@@ -1239,6 +1331,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_above_15",
+          "err": "Should be less than or equal female age above 15 treated for snake bites"
         }
       },
       {
