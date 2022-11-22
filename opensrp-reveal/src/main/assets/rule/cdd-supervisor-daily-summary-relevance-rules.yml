@@ -37,7 +37,7 @@ actions:
 name: step1_street_male_1_to_4
 description: step1_street_male_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') &&  && step1_street_pop_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
