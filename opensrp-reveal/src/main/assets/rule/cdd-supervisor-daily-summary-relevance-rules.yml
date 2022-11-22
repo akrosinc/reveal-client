@@ -37,175 +37,175 @@ actions:
 name: step1_street_male_1_to_4
 description: step1_street_male_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_male.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_street_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_male_1_to_4
 description: step1_pwd_male_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_male.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_pwd_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_male_1_to_4
 description: step1_snake_bite_male_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "step1_ntd_treated.equals('STH')  || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_male_1_to_4
 description: step1_snake_bite_hospital_male_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_street_male_5_to_14
 description: step1_street_male_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_male.equals('yes')"
+condition: "step1_ntd_treated.equals('SCH') || step1_street_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_male_5_to_14
 description: step1_pwd_male_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_pwd_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_male_5_to_14
 description: step1_snake_bite_male_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_male_5_to_14
 description: step1_snake_bite_hospital_male_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH')  || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_street_male_above_15
 description: step1_street_male_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_street_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_male_above_15
 description: step1_pwd_male_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_pwd_pop_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_male_above_15
 description: step1_snake_bite_male_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_male_5_to_14
 description: step1_snake_bite_hospital_male_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_street_female_1_to_4
 description: step1_street_female_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_street_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_female_1_to_4
 description: step1_pwd_female_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_pwd_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_female_1_to_4
 description: step1_snake_bite_female_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_female_1_to_4
 description: step1_snake_bite_hospital_female_1_to_4
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_street_female_5_to_14
 description: step1_street_female_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_street_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_female_5_to_14
 description: step1_pwd_female_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_pwd_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_female_5_to_14
 description: step1_snake_bite_female_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_female_5_to_14
 description: step1_snake_bite_hospital_female_5_to_14
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_street_female_above_15
 description: step1_street_female_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_street_pop_female.equals('yes')"
+condition: "!step1_ntd_treated.equals('STH') || step1_street_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_pwd_female_above_15
 description: step1_pwd_female_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_pwd_pop_female.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_pwd_pop_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_female_above_15
 description: step1_snake_bite_female_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_male_above_15
 description: step1_snake_bite_hospital_male_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_male.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_snake_bite_male.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
 name: step1_snake_bite_hospital_female_above_15
 description: step1_snake_bite_hospital_female_above_15
 priority: 1
-condition: "!step1_ntd_treated.equals('SCH') && step1_snake_bite_female.equals('yes')"
+condition: "step1_ntd_treated.equals('STH') || step1_snake_bite_female.equals('yes')"
 actions:
   - "isRelevant = true"
 ---
