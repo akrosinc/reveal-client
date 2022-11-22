@@ -22,12 +22,23 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
+import static org.smartregister.reveal.util.Constants.JsonForm.ABLE_TO_SPRAY_FIRST;
+import static org.smartregister.reveal.util.Constants.JsonForm.CDD_SUPERVISION_TASK_COMPLETE;
 import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
+import static org.smartregister.reveal.util.Constants.JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_DISTRIBUTED;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_ISSUED;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_WITHDRAWN;
+import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_WORKER_SUPERVISOR;
+import static org.smartregister.reveal.util.Constants.JsonForm.HOUSEHOLD_ACCESSIBLE;
 import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_OTHER;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_ZONE;
+import static org.smartregister.reveal.util.Constants.JsonForm.NTD_TREATED;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_OPERATOR_CODE;
 import static org.smartregister.reveal.util.Constants.JsonForm.YES;
@@ -106,8 +117,17 @@ public class RevealJsonFormUtils {
     private StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
 
     public RevealJsonFormUtils() {
-        nonEditablefields = new HashSet<>(Arrays.asList(JsonForm.HOUSEHOLD_ACCESSIBLE,
-                JsonForm.ABLE_TO_SPRAY_FIRST, JsonForm.CDD_SUPERVISION_TASK_COMPLETE));
+        nonEditablefields = new HashSet<>(Arrays.asList(HOUSEHOLD_ACCESSIBLE,
+                                                        ABLE_TO_SPRAY_FIRST,
+                                                        CDD_SUPERVISION_TASK_COMPLETE,
+                                                        DATE,
+                                                        HEALTH_WORKER_SUPERVISOR,
+                                                        COMMUNITY_DRUG_DISTRIBUTOR_NAME,
+                                                        NTD_TREATED,
+                                                        LOCATION,
+                                                        DRUG_WITHDRAWN,
+                                                        DRUG_ISSUED,
+                                                        DRUG_DISTRIBUTED));
     }
 
     public JSONObject getFormJSON(Context context, String formName, Feature feature, String sprayStatus,

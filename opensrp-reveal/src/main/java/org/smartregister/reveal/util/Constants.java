@@ -721,6 +721,12 @@ public interface Constants {
 
         String LOCATION = "location";
 
+        String DRUG_WITHDRAWN  = "drug_withdrawn";
+
+        String DRUG_ISSUED = "drug_issued";
+
+        String DRUG_DISTRIBUTED =  "drug_distributed";
+
         String COMMUNITY_DRUG_DISTRIBUTOR_NAME = "cdd_name";
 
         String HEALTH_WORKER_SUPERVISOR = "health_worker_supervisor";
@@ -747,6 +753,7 @@ public interface Constants {
 
         String LOCATION_ZONE = "location_zone";
 
+        String NTD_TREATED = "ntd_treated";
 
         String ROOMS_SPRAYED = "rooms_sprayed";
 
