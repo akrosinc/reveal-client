@@ -1,0 +1,186 @@
+{
+  "count": "1",
+  "encounter_type": "mda_survey",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Estado do formulário MDA do agregado",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "data",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Data da visita à estrutura",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Por favor, especifique a data"
+        }
+      },
+      {
+        "key": "structure_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Esta estrutura é elegível para o MDA?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Sim"
+          },
+          {
+            "key": "no",
+            "text": "Não"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Campo de preenchimento obrigatório"
+        }
+      },
+      {
+        "key": "hh_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "hh_id_note",
+        "type": "label",
+        "text": "Copie este ID do agregado e cole no formulário DHIS2",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hh_id_show",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "label": "ID da Casa/agregado",
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-moz-calc.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "mda_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "A AMM foi concluída neste agregado?",
+        "options": [
+          {
+            "key": "Refused or Permanently Absent",
+            "text": "AMM recusada ou Aûsencia Permanente"
+          },
+          {
+            "key": "Partially complete or Temporarily Absent",
+            "text": "AMM completada parcialmente ou Aûsencia Temporal"
+          },
+          {
+            "key": "MDA complete",
+            "text": "AMM concluída"
+          }
+        ],
+        "value": "Refused or Permanently Absent",
+        "v_required": {
+          "value": true,
+          "err": "Este campo é de preenchimento obrigatório"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-moz-calc.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

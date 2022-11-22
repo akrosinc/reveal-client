@@ -7,7 +7,6 @@ import static org.smartregister.family.util.DBConstants.KEY.RELATIONAL_ID;
 import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.AUTHORED_ON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASE_ENTITY_ID;
@@ -29,6 +28,8 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.PAOT_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.PLAN_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.REPORT_SPRAY;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAY_DATE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAY_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STICKER_SPRAY;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
@@ -88,10 +89,12 @@ import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
 import org.smartregister.reveal.model.StructureDetails;
 import org.smartregister.reveal.model.StructureTaskDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.GeoJSON;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.FamilyConstants;
@@ -150,6 +153,8 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
+        } else if (Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
+            sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
         }
 
         final String SQL = sql;
@@ -157,11 +162,14 @@ public class ListTaskInteractor extends BaseInteractor {
             @Override
             public void run() {
                 Cursor cursor = getDatabase().rawQuery(SQL, new String[]{featureId});
-
+                Location structure = null;
+                if(interventionType == Action.MDA_SURVEY){
+                    structure = structureRepository.getLocationById(featureId);
+                }
                 CardDetails cardDetails = null;
                 try {
                     if (cursor.moveToFirst()) {
-                        cardDetails = createCardDetails(cursor, interventionType);
+                        cardDetails = createCardDetails(cursor, interventionType, structure);
                         cardDetails.setInterventionType(interventionType);
                     }
                 } catch (Exception e) {
@@ -200,7 +208,7 @@ public class ListTaskInteractor extends BaseInteractor {
         ((SprayCardDetails) cardDetails).setCommonPersonObject(commonPersonObject);
     }
 
-    private CardDetails createCardDetails(Cursor cursor, String interventionType) {
+    private CardDetails createCardDetails(Cursor cursor, String interventionType, Location location) {
         CardDetails cardDetails = null;
         if (MOSQUITO_COLLECTION.equals(interventionType) || LARVAL_DIPPING.equals(interventionType)) {
             cardDetails = createMosquitoHarvestCardDetails(cursor, interventionType);
@@ -210,11 +218,26 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createPaotCardDetails(cursor, interventionType);
         } else if (IRS_VERIFICATION.equals(interventionType)) {
             cardDetails = createIRSverificationCardDetails(cursor);
-        } else if (REGISTER_FAMILY.equals(interventionType)) {
+        } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
+        } else if(Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
+            cardDetails = createSurveyCardDetails(cursor, interventionType,location);
         }
 
         return cardDetails;
+    }
+
+    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType,Location location) {
+        String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
+        String structureNumber = null;
+        if (Action.MDA_SURVEY.equals(interventionType)){
+            structureNumber  = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
+        }
+        return new SurveyCardDetails(
+                CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("spray_status"))),
+                cursor.getString(cursor.getColumnIndex("spray_date")),
+                cursor.getString(cursor.getColumnIndex("spray_operator")),
+                structureNumber);
     }
 
     private SprayCardDetails createSprayCardDetails(Cursor cursor) {

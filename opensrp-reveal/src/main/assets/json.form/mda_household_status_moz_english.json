@@ -1,0 +1,187 @@
+{
+  "count": "1",
+  "encounter_type": "mda_survey",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "MDA household status form",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date of structure visitation",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        }
+      },
+      {
+        "key": "structure_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this structure eligible for MDA?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "mda_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Was MDA completed at this household?",
+        "options": [
+          {
+            "key": "Refused or Permanently Absent",
+            "text": "Refused or Permanently Absent"
+          },
+          {
+            "key": "Partially complete or Temporarily Absent",
+            "text": "Partially complete or Temporarily Absent"
+          },
+          {
+            "key": "MDA complete",
+            "text": "MDA complete"
+          }
+        ],
+        "value": "Refused or Permanently Absent",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hh_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "hh_id_note",
+        "type": "label",
+        "text": "Note: Copy this Household ID and paste into DHIS2 form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "6sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hh_id_show",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "label": "Household ID",
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-moz-calc.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-household-status-moz-calc.yml"
+            }
+          }
+        }
+      }
+
+    ]
+  }
+}

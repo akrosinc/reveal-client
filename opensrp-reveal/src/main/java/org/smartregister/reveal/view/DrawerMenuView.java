@@ -65,6 +65,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     private TextView facilityTextView;
     private TextView operatorTextView;
     private TextView p2pSyncTextView;
+    private TextView dashboardLink;
 
     private DrawerLayout mDrawerLayout;
 
@@ -169,7 +170,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
         planTextView.setOnClickListener(this);
 
-        headerView.findViewById(R.id.btn_link_dashboard).setOnClickListener(this);
+        dashboardLink = headerView.findViewById(R.id.btn_link_dashboard);
 
         if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || BuildConfig.BUILD_COUNTRY == Country.NIGERIA) { // Enable P2P sync and other forms
             p2pSyncTextView.setVisibility(View.VISIBLE);
@@ -193,6 +194,8 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             filledForms.setVisibility(View.VISIBLE);
             filledForms.setOnClickListener(this);
 
+            dashboardLink.setVisibility(View.VISIBLE);
+            dashboardLink.setOnClickListener(this);
         }
 
         offlineMapTextView.setVisibility(View.VISIBLE);

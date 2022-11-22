@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "cdd_supervisor_daily_summary",
-  "form_version": "0.0.4",
+  "form_version": "0.0.5",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -196,6 +196,29 @@
         }
       },
       {
+        "key": "street_pop_male",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone who is Living in the street?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        }
+      },
+      {
         "key": "street_male_1_to_4",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -226,6 +249,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male aged 1 to 4"
         }
       },
       {
@@ -259,6 +286,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -292,6 +323,33 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
+        }
+      },
+      {
+        "key": "pwd_pop_male",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone Living with disability?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
         }
       },
       {
@@ -325,6 +383,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male age 1 to 4"
         }
       },
       {
@@ -358,6 +420,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -391,6 +457,33 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
+        }
+      },
+      {
+        "key": "snake_bite_male",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone who got a Snake bite?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
         }
       },
       {
@@ -424,6 +517,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_1_to_4",
+          "err": "Should be less than or equal treated male age 1 to 4"
         }
       },
       {
@@ -457,6 +554,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_5_to_14",
+          "err": "Should be less than or equal treated male aged 5 to 14"
         }
       },
       {
@@ -490,6 +591,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_male_above_15",
+          "err": "Should be less than or equal treated male above 15"
         }
       },
       {
@@ -523,6 +628,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_1_to_4",
+          "err": "Should be less than or equal male age 1 to 4 treated for snake bites"
         }
       },
       {
@@ -556,6 +665,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_5_to_14",
+          "err": "Should be less than or equal male age 5 to 14 treated for snake bites"
         }
       },
       {
@@ -589,6 +702,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_male_above_15",
+          "err": "Should be less than or equal male age above 15 treated for snake bites"
         }
       },
       {
@@ -708,6 +825,29 @@
         }
       },
       {
+        "key": "street_pop_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone who got a Snake bite?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        }
+      },
+      {
         "key": "street_female_1_to_4",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -738,6 +878,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -771,6 +915,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -804,6 +952,33 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
+        }
+      },
+      {
+        "key": "pwd_pop_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone who got a Snake bite?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
         }
       },
       {
@@ -837,6 +1012,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -870,6 +1049,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -903,6 +1086,33 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
+        }
+      },
+      {
+        "key": "snake_bite_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did you treat anyone who got a Snake bite?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "value": "no",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
         }
       },
       {
@@ -936,6 +1146,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_1_to_4",
+          "err": "Should be less than or equal treated female aged 1 to 4"
         }
       },
       {
@@ -969,6 +1183,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_5_to_14",
+          "err": "Should be less than or equal treated female aged 5 to 14"
         }
       },
       {
@@ -1002,6 +1220,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "treated_female_above_15",
+          "err": "Should be less than or equal treated female above 15"
         }
       },
       {
@@ -1035,6 +1257,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_1_to_4",
+          "err": "Should be less than or equal female age 1 to 4 treated for snake bites"
         }
       },
       {
@@ -1068,6 +1294,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_5_to_14",
+          "err": "Should be less than or equal female age 5 to 14 treated for snake bites"
         }
       },
       {
@@ -1101,6 +1331,10 @@
               "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
             }
           }
+        },
+        "v_relative_max": {
+          "value": "snake_bite_female_above_15",
+          "err": "Should be less than or equal female age above 15 treated for snake bites"
         }
       },
       {
@@ -1266,6 +1500,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -1292,6 +1533,13 @@
         "v_max": {
           "value": "999999999",
           "err": "This field must be less that or equal to 999999999"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "cdd-supervisor-daily-summary-relevance-rules.yml"
+            }
+          }
         }
       },
       {

@@ -7,6 +7,9 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.TEXT;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
@@ -20,6 +23,9 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
+import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
@@ -30,9 +36,9 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
-import static org.smartregister.reveal.util.Constants.JsonForm.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
+import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PROVINCE_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
@@ -95,8 +101,6 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -110,6 +114,7 @@ import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.IRSVerificationCardDetails;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.repository.RevealMappingHelper;
@@ -347,8 +352,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         String businessStatus = getPropertyValue(feature, FEATURE_SELECT_TASK_BUSINESS_STATUS);
         String code = getPropertyValue(feature, TASK_CODE);
         selectedFeatureInterventionType = code;
-        if ((IRS.equals(code) || MOSQUITO_COLLECTION.equals(code) || LARVAL_DIPPING.equals(code) || PAOT.equals(code) || IRS_VERIFICATION.equals(code) || REGISTER_FAMILY.equals(code))
-                && (NOT_VISITED.equals(businessStatus) || businessStatus == null) || shouldOpenCDDSupervisionForm(businessStatus, code) || shouldOpenCellCoordinatorForm(businessStatus,code)) {
+        if (interventionHasLocationValidation(businessStatus, code)) {
             if (validateFarStructures()) {
                 validateUserLocation();
             } else {
@@ -371,10 +375,22 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchFamilyDetails(selectedFeature.id());
         } else if (IRS_VERIFICATION.equals(code) && isZambiaIRSLite()) {
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
-        }
-        else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
+        } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
+        } else if (MDA_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(MDA_SURVEY, feature.id(), false);
+        } else if(LSM_HOUSEHOLD_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
+        } else if(HABITAT_SURVEY.equals(code) &&  !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
         }
+    }
+
+    private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
+        return (Constants.Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
+                && (NOT_VISITED.equals(businessStatus) || businessStatus == null)
+                || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
+                || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
     }
 
     private boolean shouldOpenCDDSupervisionForm(String businessStatus, String code) {
@@ -498,6 +514,27 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (cardDetails instanceof FamilyCardDetails) {
             formatFamilyCardDetails((FamilyCardDetails) cardDetails);
             listTaskView.openCardView(cardDetails);
+        } else if(cardDetails instanceof SurveyCardDetails){
+            formatSurveyCardDetails((SurveyCardDetails) cardDetails);
+            listTaskView.openCardView(cardDetails);
+        }
+    }
+
+    private void formatSurveyCardDetails(final SurveyCardDetails cardDetails) {
+        try {
+            // format date
+            String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_Z);
+            cardDetails.setDateCreated(formattedDate);
+        } catch (Exception e) {
+            Timber.e(e);
+            Timber.i("Date parsing failed, trying another date format");
+            try {
+                // try another date format
+                String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_XXX);
+                cardDetails.setDateCreated(formattedDate);
+            } catch (Exception exception) {
+                Timber.e(e);
+            }
         }
     }
 
@@ -577,6 +614,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
         }else if(isKenyaMDALite() || isRwandaMDALite()){
             jsonFormUtils.populateFormWithServerOptions(formName, formJson,feature);
+        } else if(JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM.equals(formName)){
+            try {
+                jsonFormUtils.populateField(formJson,HH_ID,feature.id(),VALUE);
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+            jsonFormUtils.populateForm(event, formJson);
+        } else  if(JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
+        } else if(JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
         }
         listTaskView.startJsonForm(formJson);
     }
@@ -723,6 +771,12 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(), MOSQUITO_COLLECTION_EVENT);
             } else if (LARVAL_DIPPING.equals(cardDetails.getInterventionType())) {
                 findLastEvent(selectedFeature.id(), LARVAL_DIPPING_EVENT);
+            } else if(MDA_SURVEY.equals(cardDetails.getInterventionType())){
+              findLastEvent(selectedFeature.id(),MDA_SURVEY_EVENT);
+            } else if(LSM_HOUSEHOLD_SURVEY.equals(cardDetails.getInterventionType())){
+                findLastEvent(selectedFeature.id(),LSM_HOUSEHOLD_SURVEY_EVENT);
+            } else if(HABITAT_SURVEY.equals(cardDetails.getInterventionType())){
+                findLastEvent(selectedFeature.id(),HABITAT_SURVEY_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }

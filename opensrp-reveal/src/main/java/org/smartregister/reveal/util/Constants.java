@@ -1,5 +1,9 @@
 package org.smartregister.reveal.util;
 
+import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -264,9 +268,7 @@ public interface Constants {
         // New Drug Recon Form
         String MDA_DRUG_RECON = "Drug Reconciliation";
 
-//        String MDA = "Dynamic MDA";
         String SMC = "SMC";
-
 
         List<String> PERSON_INTERVENTIONS = Arrays.asList(BLOOD_SCREENING, CASE_CONFIRMATION, MDA_DISPENSE, MDA_ADHERENCE, MDA_DRUG_RECON);
 
@@ -290,7 +292,9 @@ public interface Constants {
 
         List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
 
+        List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY);
 
+        String LSM = "LSM";
     }
 
 
@@ -337,6 +341,11 @@ public interface Constants {
         String CDD_DRUG_RECEIVED_EVENT = "cdd_drug_received";
         String GENERAL_SUPERVISION = "general_supervision";
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
+
+        String MDA_SURVEY_EVENT = "mda_survey";
+        String HABITAT_SURVEY_EVENT =  "habitat_survey";
+        String LSM_HOUSEHOLD_SURVEY_EVENT =  "lsm_household_survey";
+
 
         List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -475,6 +484,9 @@ public interface Constants {
 
         String IRS_ADD_STRUCTURE_FORM = "json.form/irs_add_structure.json";
 
+
+        String MDA_SURVEY_ADD_STRUCTURE_FORM = "json.form/mda_survey_add_structure.json";
+
         String BEDNET_DISTRIBUTION_FORM = "json.form/bednet_distribution.json";
 
         String BLOOD_SCREENING_FORM = "json.form/blood_screening.json";
@@ -564,6 +576,11 @@ public interface Constants {
 
         String ZAMBIA_GENERAL_SUPERVISION_FORM = "json.form/zambia_general_supervision_form.json";
 
+        String MDA_HOUSEHOLD_STATUS_MOZ_FORM = "json.form/mda_household_status_moz.json";
+
+        String LSM_HABITAT_SURVEY_FORM_ZAMBIA = "json.form/lsm_habitat_survey_form_zambia.json";
+
+        String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
 
         String OPERATIONAL_AREA_TAG = "operational_area";
 
@@ -600,6 +617,7 @@ public interface Constants {
         String DISTRICT_NAME = "districtName";
         String PROVINCE_NAME = "provinceName";
 
+        String HH_ID   ="hh_id";
 
         /**
          * Non-Task Related Forms
@@ -703,6 +721,12 @@ public interface Constants {
 
         String LOCATION = "location";
 
+        String DRUG_WITHDRAWN  = "drug_withdrawn";
+
+        String DRUG_ISSUED = "drug_issued";
+
+        String DRUG_DISTRIBUTED =  "drug_distributed";
+
         String COMMUNITY_DRUG_DISTRIBUTOR_NAME = "cdd_name";
 
         String HEALTH_WORKER_SUPERVISOR = "health_worker_supervisor";
@@ -729,6 +753,7 @@ public interface Constants {
 
         String LOCATION_ZONE = "location_zone";
 
+        String NTD_TREATED = "ntd_treated";
 
         String ROOMS_SPRAYED = "rooms_sprayed";
 
@@ -784,6 +809,9 @@ public interface Constants {
 
     interface Action {
         String STRUCTURE_TASK_SYNCED = "reveal.STRUCTURE_TASK_SYNCED";
+        String MDA_SURVEY = "MDA Survey";
+        String HABITAT_SURVEY = "Habitat Survey";
+        String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
     }
 
     interface ECClientConfig {
@@ -812,6 +840,8 @@ public interface Constants {
         String LARVAL_BREEDING_SITE = "Larval Breeding Site";
 
         String POTENTIAL_AREA_OF_TRANSMISSION = "Potential Area of Transmission";
+
+        String BODY_OF_WATER = "Body of Water";
     }
 
     interface TaskRegister {
@@ -1042,4 +1072,6 @@ public interface Constants {
         String FILTER_SORT_PARAMS = "filter_sort_params";
         String FILTER_CONFIGURATION = "filter_configuration";
     }
+
+    String SPRAY_OPERATOR = "spray_operator";
 }

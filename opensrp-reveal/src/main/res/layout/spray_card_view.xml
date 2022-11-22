@@ -82,6 +82,18 @@
                     android:textSize="@dimen/structure_info_card_text_size" />
 
                 <TextView
+                    android:id="@+id/structure_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:drawableLeft="@drawable/ic_hut_residence"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:textSize="@dimen/structure_info_card_text_size" />
+
+
+                <TextView
                     android:id="@+id/family_head"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,6 +125,44 @@
             android:textColor="#1892D4"
             android:textSize="@dimen/structure_info_card_text_size" />
 
+        <Button
+            android:id="@+id/change_household_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/change_spray_status_btn_bottom_margin"
+            android:background="@drawable/rounded_blue_outline"
+            android:text="@string/view_details"
+            android:textAllCaps="false"
+            android:textColor="#1892D4"
+            android:textSize="@dimen/structure_info_card_text_size" />
+
+        <Button
+            android:id="@+id/change_lsm_household_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/change_spray_status_btn_bottom_margin"
+            android:background="@drawable/rounded_blue_outline"
+            android:text="@string/view_details"
+            android:textAllCaps="false"
+            android:textColor="#1892D4"
+            android:textSize="@dimen/structure_info_card_text_size" />
+
+        <Button
+            android:id="@+id/change_habitat_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/change_spray_status_btn_bottom_margin"
+            android:background="@drawable/rounded_blue_outline"
+            android:text="@string/view_details"
+            android:textAllCaps="false"
+            android:textColor="#1892D4"
+            android:textSize="@dimen/structure_info_card_text_size" />
 
         <Button
             android:id="@+id/register_family"
@@ -138,6 +188,7 @@
             android:background="@drawable/rounded_blue_outline"
             android:layout_weight="2"
             android:text="@string/undo"
+            android:visibility="gone"
             android:textAllCaps="false"
             android:textColor="#BCBCBC"
             android:textSize="@dimen/structure_info_card_text_size" />

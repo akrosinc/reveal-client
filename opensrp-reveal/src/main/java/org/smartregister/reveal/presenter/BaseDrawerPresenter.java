@@ -134,7 +134,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
             // get intervention type for plan
             for (PlanDefinition.UseContext useContext : planDefinition.getUseContext()) {
                 if (useContext.getCode().equals(INTERVENTION_TYPE)) {
-                    prefsUtil.setInterventionTypeForPlan(planDefinition.getTitle(),
+                    prefsUtil.setInterventionTypeForPlan(planDefinition.getIdentifier(),
                             useContext.getValueCodableConcept());
                     break;
                 }

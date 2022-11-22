@@ -6,8 +6,8 @@ condition: "step1_drug_issued.equals('PZQ') || step1_drug_issued.equals('Both')"
 actions:
   - "isRelevant = true"
 ---
-name: step1_albendazole_received
-description: albendazole_received relevance
+name: step1_mbz_received
+description: mbz_received_received relevance
 priority: 1
 condition: "step1_drug_issued.equals('MBZ') || step1_drug_issued.equals('Both')"
 actions:

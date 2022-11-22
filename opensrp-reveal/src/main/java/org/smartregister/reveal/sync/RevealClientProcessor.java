@@ -43,9 +43,12 @@ import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICA
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -67,7 +70,6 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_ME
  */
 public class RevealClientProcessor extends ClientProcessorForJava {
 
-    private EventClientRepository eventClientRepository;
 
     private TaskRepository taskRepository;
 
@@ -80,7 +82,6 @@ public class RevealClientProcessor extends ClientProcessorForJava {
     public RevealClientProcessor(Context context) {
         super(context);
         revealApplication = RevealApplication.getInstance();
-        eventClientRepository = revealApplication.getContext().getEventClientRepository();
         taskRepository = revealApplication.getTaskRepository();
         structureRepository = revealApplication.getStructureRepository();
         sprayEventProcessor = new SprayEventProcessor();
@@ -130,7 +131,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 } else if (eventType.equals(MOSQUITO_COLLECTION_EVENT) || eventType.equals(LARVAL_DIPPING_EVENT)
                         || eventType.equals(BEDNET_DISTRIBUTION_EVENT) ||
                         eventType.equals(BEHAVIOUR_CHANGE_COMMUNICATION) ||
-                        eventType.equals(IRS_VERIFICATION)) {
+                        eventType.equals(IRS_VERIFICATION) || MDA_SURVEY_EVENT.equals(eventType) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(eventType) || HABITAT_SURVEY_EVENT.equals(eventType)){
                     operationalAreaId = processEvent(event, clientClassification, localEvents);
                 } else if (eventType.equals(REGISTER_STRUCTURE_EVENT)) {
                     operationalAreaId = processRegisterStructureEvent(event, clientClassification);

@@ -218,8 +218,8 @@ public class Utils {
     }
 
     public static int getInterventionLabel() {
-        String plan = PreferencesUtil.getInstance().getCurrentPlan();
-        String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(plan);
+        String planId = PreferencesUtil.getInstance().getCurrentPlanId();
+        String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(planId);
         if (interventionType.equals(FI) || interventionType.equals(DYNAMIC_FI))
             return R.string.focus_investigation;
         else if (interventionType.equals(IRS) || interventionType.equals(DYNAMIC_IRS))
@@ -617,7 +617,6 @@ public class Utils {
         bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
         bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
         sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
-        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(ADMIN_PASSWORD_REQUIRED,bundle);
     }
     public static boolean isCurrentTargetLevelStructure(){
         return STRUCTURE.equalsIgnoreCase(PreferencesUtil.getInstance().getCurrentPlanTargetLevel());

@@ -1,0 +1,936 @@
+{
+  "count": "1",
+  "encounter_type": "lsm_household_survey",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "LSM Household survey",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date of visit",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        }
+      },
+      {
+        "key": "nhc_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "NHC Name",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Field required"
+        }
+      },
+
+      {
+        "key": "village_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "NHC Name",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Field required"
+        }
+      },
+      {
+        "key": "structure_eligible",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this an eligible residential structure?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "hh_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "HouseHold name",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "wall_spray",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Was the wall of your house sprayed with insecticide",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "last_spray_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "When was the house last sprayed",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "collection_place",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Collection place",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Indoor",
+            "text": "Indoor"
+          },
+          {
+            "key": "Outdoor",
+            "text": "Outdoor"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "wall_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Wall type",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Mud",
+            "text": "Mud"
+          },
+          {
+            "key": "Cement",
+            "text": "Cement"
+          },
+          {
+            "key": "Brick",
+            "text": "Brick"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "wall_type_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify 'other' wall type:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:wall_type": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "roof_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Roof type",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "Thatched",
+            "text": "Thatched"
+          },
+          {
+            "key": "Iron roof",
+            "text": "Iron roof"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "roof_type_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify 'other' roof type:",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:roof_type": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "domestic_animal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Are domestic animals present in the house at night",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "people_in_house_last_night",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of people who slept in the house last night",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "nets_in_house",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of mosquito nets in the house",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "people_under_nets_last_night",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of people who slept under a mosquito net last night",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "people_not_under_nets_last_night",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of people who did not sleep under a mosquito net last night",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_collection_start_time",
+        "type": "time_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Start time of mosquito collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_collection_end_time",
+        "type": "time_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "End time of mosquito collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "anopheles_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total number of mosquitoes collected: Anopheles Female",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "anopheles_male",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total number of mosquitoes collected: Anopheles Male",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "culicine_female",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total number of mosquitoes collected: Culicine Female",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "culicine_male",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Total number of mosquitoes collected: Culicine Male",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "unfed_anopheles",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of unfed Anopheles",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "fed_anopheles",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of fed Anopheles",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "halfgravid_anopheles",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of halfgravid Anopheles",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "gravid_anopheles",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of gravid Anopheles",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "unfed_culicine",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of unfed Culicine",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "fed_culicine",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of fed Culicine ",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "halfgravid_culicine",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of halfgravid Culicine",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "gravid_culicine",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of gravid Culicine",
+        "text_size": "8sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:structure_eligible": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-household-survey-calc.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

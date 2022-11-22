@@ -19,24 +19,6 @@ allprojects {
     repositories {
         maven { url 'https://maven.google.com' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        maven {
-            def githubProperties = new Properties()
-            if (rootProject.file("github.properties").exists()) {
-                githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-            }
-
-            name = "GitHubPackages"
-            /*  Configure path to the library hosted on GitHub Package Registry
-             *  Replace UserID with package owner userID and REPOSITORY with the repository name
-             *  e.g. ""https://maven.pkg.github.com/opensrp/opensrp-client-reporting""
-             */
-            url = uri("https://maven.pkg.github.com/onaio/kujaku")
-            credentials {
-                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
-            }
-
-        }
         mavenLocal()
         google()  // Google's Maven repository
     }
@@ -75,8 +57,8 @@ android {
         applicationId "org.smartregister.reveal"
         minSdkVersion 26
         targetSdkVersion 28
-        versionCode 37
-        versionName "10.1.2"
+        versionCode 54
+        versionName "10.3.11"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -156,7 +138,7 @@ android {
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.ZAMBIA"
+            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -236,7 +218,7 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
-    implementation('io.ona.kujaku:library:0.9.0') {
+    implementation('io.ona.kujaku:library:0.9.2') {
         exclude group: 'com.android.volley'
         exclude group: 'stax', module: 'stax-api'
     }

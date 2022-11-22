@@ -16,15 +16,29 @@ import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
 import static org.smartregister.reveal.util.Constants.DETAILS;
 import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 import static org.smartregister.reveal.util.Constants.EventType.CASE_CONFIRMATION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
+import static org.smartregister.reveal.util.Constants.JsonForm.ABLE_TO_SPRAY_FIRST;
+import static org.smartregister.reveal.util.Constants.JsonForm.CDD_SUPERVISION_TASK_COMPLETE;
 import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
+import static org.smartregister.reveal.util.Constants.JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_DISTRIBUTED;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_ISSUED;
+import static org.smartregister.reveal.util.Constants.JsonForm.DRUG_WITHDRAWN;
+import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_WORKER_SUPERVISOR;
+import static org.smartregister.reveal.util.Constants.JsonForm.HOUSEHOLD_ACCESSIBLE;
 import static org.smartregister.reveal.util.Constants.JsonForm.JSON_FORM_FOLDER;
+import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_OTHER;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_ZONE;
+import static org.smartregister.reveal.util.Constants.JsonForm.NTD_TREATED;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_OPERATOR_CODE;
 import static org.smartregister.reveal.util.Constants.JsonForm.YES;
@@ -81,6 +95,7 @@ import org.smartregister.reveal.model.BaseTaskDetails;
 import org.smartregister.reveal.model.FamilySummaryModel;
 import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
 import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.EventType;
 import org.smartregister.reveal.util.Constants.Intervention;
@@ -102,8 +117,17 @@ public class RevealJsonFormUtils {
     private StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
 
     public RevealJsonFormUtils() {
-        nonEditablefields = new HashSet<>(Arrays.asList(JsonForm.HOUSEHOLD_ACCESSIBLE,
-                JsonForm.ABLE_TO_SPRAY_FIRST, JsonForm.CDD_SUPERVISION_TASK_COMPLETE));
+        nonEditablefields = new HashSet<>(Arrays.asList(HOUSEHOLD_ACCESSIBLE,
+                                                        ABLE_TO_SPRAY_FIRST,
+                                                        CDD_SUPERVISION_TASK_COMPLETE,
+                                                        DATE,
+                                                        HEALTH_WORKER_SUPERVISOR,
+                                                        COMMUNITY_DRUG_DISTRIBUTOR_NAME,
+                                                        NTD_TREATED,
+                                                        LOCATION,
+                                                        DRUG_WITHDRAWN,
+                                                        DRUG_ISSUED,
+                                                        DRUG_DISTRIBUTED));
     }
 
     public JSONObject getFormJSON(Context context, String formName, Feature feature, String sprayStatus,
@@ -352,6 +376,8 @@ public class RevealJsonFormUtils {
             } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
                     || BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
+            } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+              formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }
@@ -463,6 +489,12 @@ public class RevealJsonFormUtils {
             formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
         } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
+            formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
+        } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))){
+            formName = JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA;
+        } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
+            formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
         }
         return formName;
     }
@@ -558,9 +590,7 @@ public class RevealJsonFormUtils {
                             field.put(VALUE, obs.getValue());
                         }
                         if (JsonFormConstants.DATE_PICKER.equals(field.optString(TYPE))) {
-                            //dirty
-                            List<String> comps = Arrays.asList(obs.getValue().toString().split("-"));
-                            field.put(VALUE, String.format("%s-%s-%s", comps.get(2), comps.get(1), comps.get(0)));
+                            field.put(VALUE, obs.getValue());
                         }
                         if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA && nonEditablefields.contains(key)
                                 && YES.equalsIgnoreCase(obs.getValue().toString())) {
