@@ -448,82 +448,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:width="0dp"
-                        android:text="@string/number_of_people_treated_for_sch"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/number_of_people_treated_for_sch"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/mbz_tablets_remaining"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/mbz_tablets_remaining"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/pzq_tablets_remaining"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/pzq_tablets_remaining"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
                         android:text="@string/mbz_dispensed"
                         android:textStyle="normal"/>
                     <TextView
                         android:id="@+id/mbz_dispensed"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/pzq_dispensed"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/pzq_dispensed"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -556,10 +484,82 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:width="0dp"
+                        android:text="@string/mbz_tablets_remaining"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mbz_tablets_remaining"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/number_of_people_treated_for_sch"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/number_of_people_treated_for_sch"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/pzq_dispensed"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/pzq_dispensed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
                         android:text="@string/pzq_damaged"
                         android:textStyle="normal"/>
                     <TextView
                         android:id="@+id/pzq_damaged"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/pzq_tablets_remaining"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/pzq_tablets_remaining"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
