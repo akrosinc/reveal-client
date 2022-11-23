@@ -473,29 +473,23 @@ public class IndicatorUtils {
 
         EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
 
-        List<Event> eventsFromTasks = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
-        List<Event> latestCddSupervisionEvents = validTasks.stream().map(taskDetails -> {
-            Map<DateTime,Event> eachTaskEventAndDateMap = eventsFromTasks.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
-            List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(toList());
-            DateTime maxDatTime = Collections.max(eventDates);
-            return eachTaskEventAndDateMap.get(maxDatTime);
-        }).collect(toList());
+        List<Event> cddSupervisionEvents = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
 
-      List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypes(Arrays.asList(
+         List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypes(Arrays.asList(
               CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT));
         List<Event> drugReceivedFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_RECEIVED_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
                 toList());
         List<Event> drugWithdrawalFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_WITHDRAWAL_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
                 toList());
 
-        indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(latestCddSupervisionEvents));
-        indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(latestCddSupervisionEvents));
-        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
-        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
-        indicatorDetails.setMbzDispensed(calculateDispensedMBZ(latestCddSupervisionEvents));
-        indicatorDetails.setPzqDispensed(calculateDispensedPZQ(latestCddSupervisionEvents));
-        indicatorDetails.setMbzDamaged(calculateDamagedMBZ(latestCddSupervisionEvents));
-        indicatorDetails.setPzqDamaged(calculateDamagedPZQ(latestCddSupervisionEvents));
+        indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(cddSupervisionEvents));
+        indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(cddSupervisionEvents));
+        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(cddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(cddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setMbzDispensed(calculateDispensedMBZ(cddSupervisionEvents));
+        indicatorDetails.setPzqDispensed(calculateDispensedPZQ(cddSupervisionEvents));
+        indicatorDetails.setMbzDamaged(calculateDamagedMBZ(cddSupervisionEvents));
+        indicatorDetails.setPzqDamaged(calculateDamagedPZQ(cddSupervisionEvents));
         return indicatorDetails;
     }
 
