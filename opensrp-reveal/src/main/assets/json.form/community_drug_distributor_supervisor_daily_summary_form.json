@@ -201,7 +201,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone who is Living in the street?",
+        "label": "Did you treat any males Living in the street?",
         "options": [
           {
             "key": "yes",
@@ -335,7 +335,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone Living with disability?",
+        "label": "Did you treat any males Living with disability?",
         "options": [
           {
             "key": "yes",
@@ -469,7 +469,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone who got a Snake bite?",
+        "label": "Did you treat any males who got a Snake bite?",
         "options": [
           {
             "key": "yes",
@@ -830,7 +830,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone who got a Snake bite?",
+        "label": "Did you treat any females who is Living in the Street?",
         "options": [
           {
             "key": "yes",
@@ -964,7 +964,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone who got a Snake bite?",
+        "label": "Did you treat any female Living with disability?",
         "options": [
           {
             "key": "yes",
@@ -1098,7 +1098,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did you treat anyone who got a Snake bite?",
+        "label": "Did you treat any females who got a Snake bite?",
         "options": [
           {
             "key": "yes",
