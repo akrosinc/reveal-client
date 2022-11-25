@@ -926,6 +926,22 @@ public class EventClientRepository extends BaseRepository {
 
     }
 
+    public List<EventClient> fetchEventClientsByEventTypesAndPlanId(List<String> eventTypes, String planId) {
+
+        if (eventTypes == null)
+            return null;
+
+        String eventTypeString = TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?"));
+
+        return fetchEventClientsCore(String.format("SELECT json FROM "
+                        + eventTable.name()
+                        + " WHERE " + event_column.eventType.name() + " IN (%s)  "
+                        + " AND " + event_column.planId.name() + " = %s"
+                        + " ORDER BY " + event_column.serverVersion.name(), eventTypeString,planId),
+                eventTypes.toArray(new String[]{}));
+
+    }
+
     public List<JSONObject> getEvents(Date lastSyncDate) {
 
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);

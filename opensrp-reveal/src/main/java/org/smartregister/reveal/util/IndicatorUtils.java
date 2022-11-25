@@ -475,8 +475,8 @@ public class IndicatorUtils {
 
         List<Event> cddSupervisionEvents = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
 
-         List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypes(Arrays.asList(
-              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT));
+         List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypesAndPlanId(Arrays.asList(
+              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT),PreferencesUtil.getInstance().getCurrentPlanId());
         List<Event> drugReceivedFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_RECEIVED_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
                 toList());
         List<Event> drugWithdrawalFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_WITHDRAWAL_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
@@ -522,14 +522,15 @@ public class IndicatorUtils {
     }
 
     private static int calculateRemainingPZQ(final List<Event> events,final List<Event> drugReceivedFormEvents, final List<Event> drugWithdrawalFormEvents) {
-        return calculateReceivedPZQ(drugReceivedFormEvents) - (calculateDispensedPZQ(events) + calculateWithdrawnPZQ(drugWithdrawalFormEvents));
+        return calculateReceivedPZQ(drugReceivedFormEvents) - (calculateDispensedPZQ(events) + calculateWithdrawnPZQ(drugWithdrawalFormEvents) + calculateDamagedPZQ(events));
     }
 
-    private static int calculateRemainingMBZ(final List<Event> events, List<Event> drugReceivedFormEvents, List<Event> drugWithdrawalFormEvents) {
-        int mbzAdministered = calculateDispensedMBZ(events);
+    private static int calculateRemainingMBZ(final List<Event> supervisionEvents, List<Event> drugReceivedFormEvents, List<Event> drugWithdrawalFormEvents) {
+        int mbzAdministered = calculateDispensedMBZ(supervisionEvents);
         int mbzWithdrawn = calculateWithdrawnMBZ(drugWithdrawalFormEvents);
         int mbzReceived = calculateReceivedMBZ(drugReceivedFormEvents);
-        return mbzReceived - ( mbzAdministered + mbzWithdrawn );
+        int mbzDamaged = calculateDamagedMBZ(supervisionEvents);
+        return mbzReceived - ( mbzAdministered + mbzWithdrawn + mbzDamaged );
     }
 
     private static int calculateReceivedMBZ(final List<Event> drugReceivedFormEvents) {
