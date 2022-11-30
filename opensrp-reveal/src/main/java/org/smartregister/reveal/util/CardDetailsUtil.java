@@ -266,7 +266,7 @@ public class CardDetailsUtil {
 
             if (Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType())){
                 tvStructureNum.setVisibility(View.VISIBLE);
-                tvStructureNum.setText(String.format("Structure no: %s", surveyCardDetails.getStructureNumber()));
+                tvStructureNum.setText(String.format(activity.getResources().getString(R.string.structure_number), surveyCardDetails.getStructureNumber()));
             }
             changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);

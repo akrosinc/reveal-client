@@ -839,4 +839,5 @@
     <string name="enter_base_url_message">Introduza a URL da base do servidor</string>
     <string name="preference_summary">Define a url da base do servidor que lida com as solicitações</string>
     <string name="reveal_base_url">URL do REVEAL</string>
+    <string name="structure_number">Nº da estrutura:  %1$s</string>
 </resources>
