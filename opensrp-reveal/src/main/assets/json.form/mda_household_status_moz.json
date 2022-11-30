@@ -144,11 +144,11 @@
         "options": [
           {
             "key": "Refused or Permanently Absent",
-            "text": "AMM recusada ou Aûsencia Permanente"
+            "text": "AMM recusada definitiva ou Ausência permanente"
           },
           {
             "key": "Partially complete or Temporarily Absent",
-            "text": "AMM completada parcialmente ou Aûsencia Temporal"
+            "text": "AMM completada parcialmente, Recusa (1 visita) ou Ausência temporal (voltar a casa de novo)"
           },
           {
             "key": "MDA complete",
