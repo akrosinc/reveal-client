@@ -462,5 +462,8 @@
     <string name="syncing">Syncing...</string>
     <string name="please_wait">Please wait...</string>
     <string name="fpp_form_name">FPP Form</string>
+    <string name="enter_base_url_message">Enter Base Server Url</string>
+    <string name="preference_summary">Defines the base server url that handles requests</string>
+    <string name="reveal_base_url">REVEAL base URL</string>
 
 </resources>
