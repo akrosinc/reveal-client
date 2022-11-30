@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Register Structure",
+    "title": "Registar estrutura  ",
     "display_back_button": true,
     "no_padding": true,
     "fields": [
@@ -63,7 +63,7 @@
       {
         "key": "selectedOpAreaLabel",
         "type": "label",
-        "text": "Selected Operational Area",
+        "text": "Área operacional seleccionada",
         "read_only": false,
         "hint_on_text": false,
         "text_color" : "#000000",
