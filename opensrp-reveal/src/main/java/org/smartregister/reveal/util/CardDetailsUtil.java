@@ -259,7 +259,7 @@ public class CardDetailsUtil {
             Integer color = surveyCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
 
-            tvSprayStatus.setText(surveyCardDetails.getStatus());
+            tvSprayStatus.setText(getTranslatedBusinessStatus(surveyCardDetails.getStatus()));
 
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
@@ -320,6 +320,12 @@ public class CardDetailsUtil {
                 } else {
                     return context.getString(R.string.partially_sprayed);
                 }
+            case "Refused or Permanently Absent":
+                return context.getString(R.string.refused_or_permanently_absent);
+            case "Partially complete or Temporarily Absent":
+                return context.getString(R.string.partially_complete_or_temp_absent);
+            case "MDA complete":
+                return context.getString(R.string.mda_complete);
             default:
                 return businessStatus;
         }

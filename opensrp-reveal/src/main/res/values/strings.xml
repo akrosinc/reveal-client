@@ -828,15 +828,6 @@
     <string name="clients_key">clients</string>
     <string name="events_key">events</string>
 
-
-
-
-
-
-
-
-
-
     <!-- Duration -->
     <string name="x_seconds">%1$ds</string>
     <string name="x_minutes">%1$dm</string>
@@ -989,4 +980,7 @@
     <string name="preference_summary">Defines the base server url that handles requests</string>
     <string name="reveal_base_url">REVEAL base URL</string>
     <string name="structure_number">Structure no:  %1$s</string>
+    <string name="refused_or_permanently_absent">Refused or Permanently Absent</string>
+    <string name="partially_complete_or_temp_absent">Partially complete or Temporarily Absent</string>
+    <string name="mda_complete">MDA complete</string>
 </resources>

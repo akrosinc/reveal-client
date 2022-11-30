@@ -840,4 +840,7 @@
     <string name="preference_summary">Define a url da base do servidor que lida com as solicitações</string>
     <string name="reveal_base_url">URL do REVEAL</string>
     <string name="structure_number">Nº da estrutura:  %1$s</string>
+    <string name="refused_or_permanently_absent">AMM recusada ou Aûsencia Permanente</string>
+    <string name="partially_complete_or_temp_absent">AMM completada parcialmente ou Aûsencia Temporal</string>
+    <string name="mda_complete">AMM concluída</string>
 </resources>
