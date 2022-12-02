@@ -535,14 +535,14 @@ public class IndicatorUtils {
 
     private static int calculateReceivedMBZ(final List<Event> drugReceivedFormEvents) {
         List<Obs> mbzReceivedEvents =  drugReceivedFormEvents.stream().map(Event::getObs)
-                                                                      .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
-                                                                    .filter(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().isPresent()).flatMap(Collection::stream).collect(toList());
+                                                                      .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && value.getValue().equals(MBZ))).findAny().isPresent())
+                                                                      .filter(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().isPresent()).flatMap(Collection::stream).collect(toList());
         return mbzReceivedEvents.stream().filter(obs -> obs.getFieldCode().equals(MBZ_RECEIVED)).map(obs -> Integer.parseInt(obs.getValue().toString())).reduce(0,Integer::sum);
     }
 
     private static int calculateReceivedPZQ(final List<Event> drugReceivedFormEvents) {
         return drugReceivedFormEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(PZQ) || value.getValue().equals(BOTH)))).findAny().isPresent())
+                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(PZQ)))).findAny().isPresent())
                 .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_RECEIVED)).findFirst().get())
                 .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
     }

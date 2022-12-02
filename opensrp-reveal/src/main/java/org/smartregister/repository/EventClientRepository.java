@@ -932,13 +932,16 @@ public class EventClientRepository extends BaseRepository {
             return null;
 
         String eventTypeString = TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?"));
+        List<String> params = new ArrayList<>();
+        params.addAll(eventTypes);
+        params.add(planId);
 
         return fetchEventClientsCore(String.format("SELECT json FROM "
                         + eventTable.name()
                         + " WHERE " + event_column.eventType.name() + " IN (%s)  "
-                        + " AND " + event_column.planId.name() + " = %s"
-                        + " ORDER BY " + event_column.serverVersion.name(), eventTypeString,planId),
-                eventTypes.toArray(new String[]{}));
+                        + " AND " + event_column.planId.name() + " = ? "
+                        + " ORDER BY " + event_column.serverVersion.name(), eventTypeString),
+                params.toArray(new String[]{}));
 
     }
 
