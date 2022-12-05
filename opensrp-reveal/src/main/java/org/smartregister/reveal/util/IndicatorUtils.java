@@ -16,10 +16,12 @@ import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_6_TO_
 import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_ABOVE_16;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -473,24 +475,40 @@ public class IndicatorUtils {
 
         EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
 
-        List<Event> cddSupervisionEvents = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
+        List<Event> cddSupervisionEvents =  eventClientRepository.getEventsByTaskIds(taskIdentifiers);
+        List<Event> latestCddSupervisionEvents = getLatestEventsPerFormSubmissionId(cddSupervisionEvents,cddSupervisionEvents.stream().map(Event::getFormSubmissionId).collect(
+                Collectors.toSet()));
 
-         List<EventClient> otherFormsEventClients  =  eventClientRepository.fetchEventClientsByEventTypesAndPlanId(Arrays.asList(
-              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT),PreferencesUtil.getInstance().getCurrentPlanId());
-        List<Event> drugReceivedFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_RECEIVED_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
+
+         List<Event> otherFormsEvents  =  eventClientRepository.fetchEventClientsByEventTypesAndPlanId(Arrays.asList(
+              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT),PreferencesUtil.getInstance().getCurrentPlanId()).stream().map(EventClient::getEvent).collect(toList());
+
+
+         List<Event> otherFormsLatestEvents  = getLatestEventsPerFormSubmissionId(otherFormsEvents, otherFormsEvents.stream().map(Event::getFormSubmissionId).collect(Collectors.toSet()));
+
+        List<Event> drugReceivedFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_RECEIVED_EVENT.equals(event.getEventType())).collect(
                 toList());
-        List<Event> drugWithdrawalFormEvents = otherFormsEventClients.stream().filter(eventClient -> CDD_DRUG_WITHDRAWAL_EVENT.equals(eventClient.getEvent().getEventType())).map(EventClient::getEvent).collect(
+        List<Event> drugWithdrawalFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_WITHDRAWAL_EVENT.equals(event.getEventType())).collect(
                 toList());
 
-        indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(cddSupervisionEvents));
-        indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(cddSupervisionEvents));
-        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(cddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
-        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(cddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
-        indicatorDetails.setMbzDispensed(calculateDispensedMBZ(cddSupervisionEvents));
-        indicatorDetails.setPzqDispensed(calculateDispensedPZQ(cddSupervisionEvents));
-        indicatorDetails.setMbzDamaged(calculateDamagedMBZ(cddSupervisionEvents));
-        indicatorDetails.setPzqDamaged(calculateDamagedPZQ(cddSupervisionEvents));
+        indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(latestCddSupervisionEvents));
+        indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(latestCddSupervisionEvents));
+        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setMbzDispensed(calculateDispensedMBZ(latestCddSupervisionEvents));
+        indicatorDetails.setPzqDispensed(calculateDispensedPZQ(latestCddSupervisionEvents));
+        indicatorDetails.setMbzDamaged(calculateDamagedMBZ(latestCddSupervisionEvents));
+        indicatorDetails.setPzqDamaged(calculateDamagedPZQ(latestCddSupervisionEvents));
         return indicatorDetails;
+    }
+
+    @NonNull
+    private static List<Event> getLatestEventsPerFormSubmissionId(final List<Event> events,
+            final Set<String> formSubmissionIds) {
+        return formSubmissionIds.stream().map( formSubmissionId -> {
+            List<Event> groupedEvents = events.stream().filter(event -> event.getFormSubmissionId().equals(formSubmissionId)).collect(toList());
+            return Collections.max(groupedEvents, Comparator.comparing(Event::getEventDate));
+        }).collect(toList());
     }
 
     private static int calculateDamagedPZQ(final List<Event> events) {
