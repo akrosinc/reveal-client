@@ -126,7 +126,6 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnDrugWithdrawalForm = view.findViewById(R.id.cdd_drug_withdrawal_form);
         btnCountyCddSupervisoryForm = view.findViewById(R.id.county_cdd_supervisory_form);
 
-
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
             btnGeneralSupervisionForm.setVisibility(View.VISIBLE);

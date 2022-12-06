@@ -2,6 +2,7 @@ package org.smartregister.reveal.view;
 
 import static org.smartregister.reveal.util.Constants.COPYDBNAME;
 import static org.smartregister.reveal.util.Constants.DBNAME;
+import static org.smartregister.reveal.util.Constants.Intervention.LSM;
 import static org.smartregister.util.SyncUtils.setAllEntityNotSynced;
 
 import android.app.Activity;
@@ -37,7 +38,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.reporting.view.ProgressIndicatorView;
-import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -388,6 +388,11 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
                 AlertDialogUtils.displayNotification(v.getContext(),R.string.select_campaign_operational_area_title,R.string.select_campaign_operational_area);
                 return;
             }
+            if (LSM.equals(PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId()))){
+                AlertDialogUtils.displayNotification(v.getContext(), R.string.action_not_available, R.string.action_not_available_message);
+                return;
+            }
+
             startOtherFormsActivity();
         }
         else if (v.getId() == R.id.btn_navMenu_offline_maps)

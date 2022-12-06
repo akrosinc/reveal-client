@@ -983,4 +983,6 @@
     <string name="refused_or_permanently_absent">Refused or Permanently Absent</string>
     <string name="partially_complete_or_temp_absent">Partially complete or Temporarily Absent</string>
     <string name="mda_complete">MDA complete</string>
+    <string name="action_not_available">Not Available</string>
+    <string name="action_not_available_message">Not Available on  this Plan Type</string>
 </resources>
