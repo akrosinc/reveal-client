@@ -58,6 +58,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "hint": "Date of data collection",
+        "min_date": "01-01-2022",
         "max_date": "today",
         "v_required": {
           "value": true,
