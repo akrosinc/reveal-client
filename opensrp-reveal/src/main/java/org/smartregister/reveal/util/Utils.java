@@ -636,6 +636,6 @@ public class Utils {
 
     @NonNull
     public static String getSatelliteStyle(Context context) {
-        return org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ? context.getString(R.string.reveal_satellite_style) :  ( org.smartregister.reveal.util.Utils.isKenyaMDALite() ? context.getString(R.string.reveal_mda_lite_style) : context.getString(R.string.reveal_select_jurisdiction_style));
+        return org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ? context.getString(R.string.reveal_satellite_style) : context.getString(R.string.reveal_select_jurisdiction_style);
     }
 }
