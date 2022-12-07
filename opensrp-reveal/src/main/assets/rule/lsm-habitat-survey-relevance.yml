@@ -2,28 +2,28 @@
 name: step1_anopheles_early_larvae
 description: step1_anopheles_early_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Dipping' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_anopheles_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_anopheles_late_larvae
 description: step1_anopheles_late_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Dipping' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_anopheles_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_culex_early_larvae
 description: step1_culex_early_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Dipping' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_culex_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_culex_late_larvae
 description: step1_culex_late_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Dipping' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_culex_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
@@ -51,21 +51,21 @@ actions:
 name: step1_total_culex_early_larvae
 description: step1_total_culex_early_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting' && step1_culex_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_total_culex_late_larvae
 description: step1_total_culex_late_larvae
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting' && step1_culex_larvae_present == 'Yes'"
 actions:
   - "isRelevant = true"
 ---
 name: step1_total_pupae_sampled
 description: step1_total_pupae_sampled
 priority: 1
-condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting' && step1_anopheles_larvae_present == 'Yes'"
+condition: "step1_eligible_water == 'yes'  && step1_sampling_method == 'Pipetting'"
 actions:
   - "isRelevant = true"
 ---
