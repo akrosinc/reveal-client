@@ -582,9 +582,10 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
