@@ -1,48 +1,47 @@
 package org.smartregister.reveal.fragment;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static android.content.DialogInterface.BUTTON_POSITIVE;
+import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON_FRAGMENT;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import com.google.android.material.tabs.TabLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.tabs.TabLayout;
+import io.ona.kujaku.listeners.BaseLocationListener;
+import io.ona.kujaku.utils.Constants;
+import java.util.List;
+import java.util.Set;
 import org.json.JSONObject;
 import org.smartregister.domain.Task;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.adapter.StructureTaskAdapter;
 import org.smartregister.reveal.contract.StructureTasksContract;
 import org.smartregister.reveal.model.StructureTaskDetails;
 import org.smartregister.reveal.presenter.StructureTasksPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.LocationUtils;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
-
-import java.util.List;
-import java.util.Set;
-
-import io.ona.kujaku.listeners.BaseLocationListener;
-import io.ona.kujaku.utils.Constants;
 import timber.log.Timber;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON_FRAGMENT;
 
 /**
  * Created by samuelgithengi on 4/8/19.
@@ -118,7 +117,7 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
 
     private void setUpViews(View view) {
         TextView interventionType = view.findViewById(R.id.intervention_type);
-        interventionType.setText(getString(Utils.getInterventionLabel()));
+        interventionType.setText((Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY) ? getString(R.string.mda):getString(Utils.getInterventionLabel()));
         taskRecyclerView = view.findViewById(R.id.task_recyclerView);
 
         progressDialog = new ProgressDialog(getContext());

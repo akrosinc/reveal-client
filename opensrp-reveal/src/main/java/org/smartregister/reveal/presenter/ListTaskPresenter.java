@@ -382,7 +382,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if(LSM_HOUSEHOLD_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
             listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
         } else if(HABITAT_SURVEY.equals(code) &&  !NOT_VISITED.equals(businessStatus)){
-            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
+            listTaskInteractor.fetchInterventionDetails(HABITAT_SURVEY, feature.id(), false);
         }
     }
 

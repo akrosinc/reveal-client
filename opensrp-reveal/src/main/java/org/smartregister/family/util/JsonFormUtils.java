@@ -124,7 +124,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             baseClient.setGender("Male");
             baseClient.setClientType("Family");
 
-            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, Utils.metadata().familyRegister.registerEventType, Utils.metadata().familyRegister.tableName);
+            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, Utils.metadata().familyRegister.registerEventType, Utils.metadata().familyRegister.tableName,null);
 
             JsonFormUtils.tagSyncMetadata(allSharedPreferences, baseEvent);// tag docs
 
@@ -162,7 +162,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             Client baseClient = org.smartregister.util.JsonFormUtils.createBaseClient(fields, formTag(allSharedPreferences), entityId);
             baseClient.addRelationship(Utils.metadata().familyMemberRegister.familyRelationKey, familyBaseEntityId);
 
-            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, Utils.metadata().familyMemberRegister.registerEventType, Utils.metadata().familyMemberRegister.tableName);
+            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, Utils.metadata().familyMemberRegister.registerEventType, Utils.metadata().familyMemberRegister.tableName,null);
 
             JsonFormUtils.tagSyncMetadata(allSharedPreferences, baseEvent);// tag docs
 
@@ -210,7 +210,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 baseClient.addRelationship(Utils.metadata().familyMemberRegister.familyRelationKey, familyBaseEntityId);
             }
 
-            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, encounterType, Utils.metadata().familyMemberRegister.tableName);
+            Event baseEvent = org.smartregister.util.JsonFormUtils.createEvent(fields, getJSONObject(jsonForm, METADATA), formTag(allSharedPreferences), entityId, encounterType, Utils.metadata().familyMemberRegister.tableName,null);
 
             JsonFormUtils.tagSyncMetadata(allSharedPreferences, baseEvent);// tag docs
 

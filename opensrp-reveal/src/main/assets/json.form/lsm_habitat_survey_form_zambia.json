@@ -85,7 +85,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "NHC Name",
+        "hint": "Village Name",
         "edit_type": "name",
         "text_size": "8sp",
         "v_required": {
@@ -560,46 +560,195 @@
         }
       },
       {
-        "key": "anopheles_early_larvae",
+        "key": "sampling_method",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Number of Anopheles EARLY instar stage larvae",
+        "type": "native_radio",
+        "label": "Sampling Method: Are you dipping or pipetting?",
         "text_size": "8sp",
-        "is_mandatory": true,
+        "options": [
+          {
+            "key": "Dipping",
+            "text": "Dipping"
+          },
+          {
+            "key": "Pipetting",
+            "text": "Pipetting"
+          }
+        ],
         "v_required": {
-          "value": true,
+          "value": "true",
           "err": "Required field"
         },
-        "v_numeric": {
-          "value": "true",
-          "err": "Field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Field must be greater than or equal to 0"
-        },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
       {
-        "key": "anopheles_late_larvae",
+        "key": "number_of_dips",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "Total number of dips",
+        "repeating_group_label": "Dipping",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:sampling_method": {
+            "type": "string",
+            "ex": "equalTo(., \"Dipping\")"
+          }
+        },
+        "value": [
+          {
+            "key": "anopheles_early_larvae",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "Number of Anopheles EARLY instar stage larvae",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "Field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "Field must be greater than or equal to 0"
+            }
+          },
+          {
+            "key": "anopheles_late_larvae",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "Number of Anopheles LATE instar stage larvae",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "Field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "Field must be greater than or equal to 0"
+            }
+          },
+          {
+            "key": "culex_early_larvae",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "Number of Culex EARLY stage larvae",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "Field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "Field must be greater than or equal to 0"
+            }
+          },
+          {
+            "key": "culex_late_larvae",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "Number of Culex LATE stage larvae",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "Field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "Field must be greater than or equal to 0"
+            }
+          },
+          {
+            "key": "pupae_sampled",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "edit_type": "number",
+            "hint": "No of pupae sampled",
+            "text_size": "8sp",
+            "is_mandatory": true,
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "Field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "Field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "Field must be greater than or equal to 0"
+            }
+          }
+        ]
+      },
+      {
+        "key": "total_anopheles_early_larvae",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Anopheles LATE instar stage larvae",
+        "hint": "TOTAL Number of Anopheles EARLY instar stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -619,20 +768,21 @@
           "err": "Field must be greater than or equal to 0"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
       {
-        "key": "culex_early_larvae",
+        "key": "total_anopheles_late_larvae",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Culex EARLY stage larvae",
+        "hint": "TOTAL Number of Anopheles LATE instar stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -652,20 +802,21 @@
           "err": "Field must be greater than or equal to 0"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
       {
-        "key": "culex_late_larvae",
+        "key": "total_culex_early_larvae",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Number of Culex LATE stage larvae",
+        "hint": "TOTAL Number of Culex EARLY stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -685,20 +836,21 @@
           "err": "Field must be greater than or equal to 0"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
       {
-        "key": "pupae_sampled",
+        "key": "total_culex_late_larvae",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "No of pupae sampled",
+        "hint": "TOTAL Number of Culex LATE stage larvae",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -718,20 +870,21 @@
           "err": "Field must be greater than or equal to 0"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },
       {
-        "key": "dips",
+        "key": "total_pupae_sampled",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "No of dips",
+        "hint": "TOTAL No of pupae sampled",
         "text_size": "8sp",
         "is_mandatory": true,
         "v_required": {
@@ -751,9 +904,10 @@
           "err": "Field must be greater than or equal to 0"
         },
         "relevance": {
-          "step1:eligible_water": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "lsm-habitat-survey-relevance.yml"
+            }
           }
         }
       },

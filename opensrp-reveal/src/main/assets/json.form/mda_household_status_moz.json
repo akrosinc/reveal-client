@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Estado do formulário MDA do agregado",
+    "title": "Estado do formulário AMM",
     "display_back_button": true,
     "no_padding": true,
     "fields": [
@@ -71,7 +71,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Esta estrutura é elegível para o MDA?",
+        "label": "Esta estrutura é elegível para o AMM?",
         "text_size": "8sp",
         "options": [
           {
@@ -144,11 +144,11 @@
         "options": [
           {
             "key": "Refused or Permanently Absent",
-            "text": "AMM recusada ou Aûsencia Permanente"
+            "text": "AMM recusada definitiva ou Ausência permanente"
           },
           {
             "key": "Partially complete or Temporarily Absent",
-            "text": "AMM completada parcialmente ou Aûsencia Temporal"
+            "text": "AMM completada parcialmente, Recusa (1 visita) ou Ausência temporal (voltar a casa de novo)"
           },
           {
             "key": "MDA complete",

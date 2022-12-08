@@ -259,14 +259,14 @@ public class CardDetailsUtil {
             Integer color = surveyCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
 
-            tvSprayStatus.setText(surveyCardDetails.getStatus());
+            tvSprayStatus.setText(getTranslatedBusinessStatus(surveyCardDetails.getStatus()));
 
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
 
             if (Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType())){
                 tvStructureNum.setVisibility(View.VISIBLE);
-                tvStructureNum.setText(String.format("Structure no: %s", surveyCardDetails.getStructureNumber()));
+                tvStructureNum.setText(String.format(activity.getResources().getString(R.string.structure_number), surveyCardDetails.getStructureNumber()));
             }
             changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
@@ -320,6 +320,12 @@ public class CardDetailsUtil {
                 } else {
                     return context.getString(R.string.partially_sprayed);
                 }
+            case "Refused or Permanently Absent":
+                return context.getString(R.string.refused_or_permanently_absent);
+            case "Partially complete or Temporarily Absent":
+                return context.getString(R.string.partially_complete_or_temp_absent);
+            case "MDA complete":
+                return context.getString(R.string.mda_complete);
             default:
                 return businessStatus;
         }

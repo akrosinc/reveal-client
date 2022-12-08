@@ -2,6 +2,7 @@ package org.smartregister.reveal.presenter;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.DETAILS;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.FORM_SUBMISSION_ID;
 import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 
 import android.content.DialogInterface;
@@ -112,7 +113,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 tableName + "." + DatabaseKeys.SOP,
                 tableName + "." + DatabaseKeys.ENTITY,
                 tableName + "." + DatabaseKeys.STATUS,
-                tableName + "." + DatabaseKeys.FORM_SUBMISSION_ID,
+                tableName + "." + FORM_SUBMISSION_ID,
                 tableName + "." + DatabaseKeys.BASE_ENTITY_ID,
                 tableName + "." + DatabaseKeys.SPRAYED,
                 tableName + "." + DatabaseKeys.FOUND,
@@ -149,6 +150,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
             try {
                 formJSON.put(ENTITY_ID, event.getBaseEntityId());
                 formJSON.put(DETAILS, new JSONObject(event.getDetails()));
+                formJSON.put(FORM_SUBMISSION_ID, event.getFormSubmissionId());
             } catch (JSONException e) {
                 Timber.e(e);
             }

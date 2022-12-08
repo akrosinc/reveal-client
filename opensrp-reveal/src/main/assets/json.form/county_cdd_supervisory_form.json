@@ -106,7 +106,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "spinner",
-        "hint": "Name of ward",
+        "hint": "Name of Health Facility",
         "text_size": "8sp",
         "v_required": {
           "value": "true",

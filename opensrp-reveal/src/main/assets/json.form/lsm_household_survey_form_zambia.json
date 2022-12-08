@@ -86,7 +86,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "NHC Name",
+        "hint": "Village Name",
         "edit_type": "name",
         "text_size": "8sp",
         "v_required": {

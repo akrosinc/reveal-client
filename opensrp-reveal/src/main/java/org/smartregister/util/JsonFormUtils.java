@@ -130,10 +130,10 @@ public class JsonFormUtils {
 
     }
 
-    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType, String existingSubmissionId) {
 
         String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
-        String encounterLocation = null;
+        String encounterLocation;
 
         Date encounterDate = new Date();
         if (StringUtils.isNotBlank(encounterDateField)) {
@@ -145,7 +145,8 @@ public class JsonFormUtils {
 
         encounterLocation = metadata.optString(ENCOUNTER_LOCATION);
 
-        String formSubmissionId = formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString();
+
+        String formSubmissionId = existingSubmissionId != null? existingSubmissionId : (formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString());
         Event event =
                 ( Event ) new Event().withBaseEntityId(entityId).withEventDate(encounterDate).withEventType(encounterType)
                         .withLocationId(encounterLocation).withProviderId(formTag.providerId).withEntityType(bindType)

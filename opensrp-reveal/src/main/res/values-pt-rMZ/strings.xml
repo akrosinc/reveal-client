@@ -835,4 +835,12 @@
     <string name="habitat_survey">Habitat Survey</string>
     <string name="lsm_household_survey">LSM Household Survey</string>
     <string name="Menu">Menu</string>
+    <string name="server">Servidor</string>
+    <string name="enter_base_url_message">Introduza a URL da base do servidor</string>
+    <string name="preference_summary">Define a url da base do servidor que lida com as solicitações</string>
+    <string name="reveal_base_url">URL do REVEAL</string>
+    <string name="structure_number">Nº da estrutura:  %1$s</string>
+    <string name="refused_or_permanently_absent">AMM recusada definitiva ou Ausência permanente</string>
+    <string name="partially_complete_or_temp_absent">AMM completada parcialmente, Recusa (1 visita) ou Ausência temporal (voltar a casa de novo)</string>
+    <string name="mda_complete">AMM concluída</string>
 </resources>

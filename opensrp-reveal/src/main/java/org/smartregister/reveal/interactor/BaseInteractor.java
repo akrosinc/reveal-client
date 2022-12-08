@@ -14,6 +14,7 @@ import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICA
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
 import static org.smartregister.reveal.util.Constants.DETAILS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.FORM_SUBMISSION_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURES_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
@@ -23,7 +24,6 @@ import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_D
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
@@ -37,16 +37,12 @@ import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
-import static org.smartregister.reveal.util.Constants.JsonForm.COLLECTION_DATE;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
-import static org.smartregister.reveal.util.Constants.JsonForm.DATE;
-import static org.smartregister.reveal.util.Constants.JsonForm.DATE_COMM;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.EVENT_POSITION;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PHYSICAL_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_AREAS;
-import static org.smartregister.reveal.util.Constants.JsonForm.SPRAY_DATE;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.STRUCTURE_TYPE;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
@@ -233,9 +229,10 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     private org.smartregister.domain.Event saveEvent(JSONObject jsonForm, String encounterType, String bindType) throws JSONException {
         //TODO: clean up this method, upgrade native forms where necessary
         String entityId = getString(jsonForm, ENTITY_ID);
+        String formSubmissionId = getString(jsonForm,FORM_SUBMISSION_ID);
         JSONArray fields = JsonFormUtils.fields(jsonForm);
         JSONObject metadata = getJSONObject(jsonForm, METADATA);
-        Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType);
+        Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType,formSubmissionId);
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
         JSONArray obsList = (JSONArray) eventJson.get("obs");
@@ -256,19 +253,6 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             }
         }
 
-        if(DAILY_SUMMARY_EVENT.equals(event.getEventType())) {
-            fixEditTextValueWithCorrectDateFormat(obsList,fields,COLLECTION_DATE);
-        }
-
-        if(IRS_LITE_VERIFICATION.equals(event.getEventType()) || CDD_SUPERVISOR_DAILY_SUMMARY.equals(event.getEventType())){
-            Arrays.asList(DATE,DATE_COMM,SPRAY_DATE).stream().forEach(key -> {
-                try {
-                    fixEditTextValueWithCorrectDateFormat(obsList,fields,key);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
         if(DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
             JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
             if (sprayArea != null && MULTI_SELECT_LIST.equals(sprayArea.optString(TYPE))) {
