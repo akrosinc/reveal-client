@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "cdd_supervisor_daily_summary",
-  "form_version": "0.0.5",
+  "form_version": "0.0.6",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -1464,6 +1464,10 @@
           "value": "true",
           "err": "This field must be a number"
         },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
         "v_min": {
           "value": "0",
           "err": "This field must be greater than or equal to 0"
@@ -1493,6 +1497,10 @@
         "v_numeric": {
           "value": "true",
           "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
@@ -1526,6 +1534,10 @@
         "v_numeric": {
           "value": "true",
           "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
         },
         "v_min": {
           "value": "0",
