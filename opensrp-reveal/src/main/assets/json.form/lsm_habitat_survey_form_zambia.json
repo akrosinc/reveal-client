@@ -629,6 +629,13 @@
             "v_min": {
               "value": "0",
               "err": "Field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "lsm-habitat-survey-relevance.yml"
+                }
+              }
             }
           },
           {
@@ -656,6 +663,13 @@
             "v_min": {
               "value": "0",
               "err": "Field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "lsm-habitat-survey-relevance.yml"
+                }
+              }
             }
           },
           {
@@ -683,6 +697,13 @@
             "v_min": {
               "value": "0",
               "err": "Field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "lsm-habitat-survey-relevance.yml"
+                }
+              }
             }
           },
           {
@@ -710,6 +731,13 @@
             "v_min": {
               "value": "0",
               "err": "Field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-dynamic": "lsm-habitat-survey-relevance.yml"
+                }
+              }
             }
           },
           {
