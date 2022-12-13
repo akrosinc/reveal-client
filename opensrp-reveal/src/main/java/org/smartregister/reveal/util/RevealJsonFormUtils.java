@@ -20,7 +20,7 @@ import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_E
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCO_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.ABLE_TO_SPRAY_FIRST;
@@ -492,8 +492,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
         } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCO_EVENT.equals(encounterType))){
-            formName = JsonForm.MDA_ONCO_SURVEY_FORM;
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCHO_EVENT.equals(encounterType))){
+            formName = JsonForm.MDA_ONCHO_SURVEY_FORM;
         } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA;
         } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
