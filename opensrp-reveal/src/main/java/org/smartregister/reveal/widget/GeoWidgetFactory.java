@@ -8,6 +8,7 @@ import static org.smartregister.reveal.util.Utils.getLocationBuffer;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
+import static org.smartregister.reveal.util.Utils.isGeoFencedEnabled;
 
 import android.app.Activity;
 import android.content.Context;
@@ -65,7 +66,6 @@ import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Constants.Map;
-import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.reveal.validators.GeoFencingValidator;
 import org.smartregister.reveal.validators.MinZoomValidator;
@@ -119,8 +119,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                     }
                 } else if ((validator instanceof GeoFencingValidator)
                         && !validator.isValid("", true)
-                        && (Country.ZAMBIA == BuildConfig.BUILD_COUNTRY
-                        || Country.SENEGAL == BuildConfig.BUILD_COUNTRY || Country.SENEGAL_EN == BuildConfig.BUILD_COUNTRY ||  Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY  )) {
+                        && isGeoFencedEnabled()) {
                     // perform within op area validation
                     GeoFencingValidator geoFencingValidator = (GeoFencingValidator) validator;
                     int title = R.string.register_outside_boundary_title;

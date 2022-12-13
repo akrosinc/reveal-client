@@ -843,4 +843,5 @@
     <string name="refused_or_permanently_absent">AMM recusada definitiva ou Ausência permanente</string>
     <string name="partially_complete_or_temp_absent">AMM completada parcialmente, Recusa (1 visita) ou Ausência temporal (voltar a casa de novo)</string>
     <string name="mda_complete">AMM concluída</string>
+    <string name="mda_onco_survey">MDA Onchocerciasis Survey</string>
 </resources>

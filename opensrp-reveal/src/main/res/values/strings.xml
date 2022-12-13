@@ -985,4 +985,5 @@
     <string name="mda_complete">MDA complete</string>
     <string name="action_not_available">Not Available</string>
     <string name="action_not_available_message">Not Available on  this Plan Type</string>
+    <string name="mda_onco_survey">MDA Onchocerciasis Survey</string>
 </resources>

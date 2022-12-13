@@ -133,7 +133,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);

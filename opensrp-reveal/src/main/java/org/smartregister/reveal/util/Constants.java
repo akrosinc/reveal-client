@@ -343,6 +343,7 @@ public interface Constants {
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
 
         String MDA_SURVEY_EVENT = "mda_survey";
+        String MDA_ONCO_EVENT = "mda_onchocerciasis_survey";
         String HABITAT_SURVEY_EVENT =  "habitat_survey";
         String LSM_HOUSEHOLD_SURVEY_EVENT =  "lsm_household_survey";
 
@@ -582,6 +583,9 @@ public interface Constants {
 
         String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
 
+        String MDA_ONCO_SURVEY_FORM = "json.form/mda_onco_survey_form.json";
+
+
         String OPERATIONAL_AREA_TAG = "operational_area";
 
         String STRUCTURES_TAG = "structures";
@@ -812,6 +816,7 @@ public interface Constants {
         String MDA_SURVEY = "MDA Survey";
         String HABITAT_SURVEY = "Habitat Survey";
         String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
+        String MDA_ONCHOCERCIASIS_SURVEY = "MDA Onchocerciasis Survey";
     }
 
     interface ECClientConfig {
