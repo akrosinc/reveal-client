@@ -1125,7 +1125,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             }
         }
 
-        int totalSyncProgress = SyncUtils.getTotalSyncProgress();
+        int totalSyncProgress = SyncUtils.getTotalSyncProgress()
         updateTotalSyncProgressSection(totalSyncProgress);
     }
 

@@ -27,6 +27,7 @@ import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EV
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -319,6 +320,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = LSM_HOUSEHOLD_SURVEY;
             } else if(HABITAT_SURVEY_EVENT.equals(encounterType)){
                 interventionType = HABITAT_SURVEY;
+            } else if(MDA_ONCHO_EVENT.equals(encounterType)){
+                interventionType = MDA_ONCHOCERCIASIS_SURVEY;
             }
         } catch (JSONException e) {
             Timber.e(e);

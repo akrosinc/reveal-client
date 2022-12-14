@@ -57,6 +57,7 @@ import static org.smartregister.reveal.util.Utils.getPropertyValue;
 
 import com.mapbox.geojson.Feature;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
-        } else if (Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
+        } else if (Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
             sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
         }
 
@@ -220,7 +221,7 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createIRSverificationCardDetails(cursor);
         } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
-        } else if(Action.MDA_SURVEY.equals(interventionType) || Action.HABITAT_SURVEY.equals(interventionType) || Action.LSM_HOUSEHOLD_SURVEY.equals(interventionType)){
+        } else if(Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
             cardDetails = createSurveyCardDetails(cursor, interventionType,location);
         }
 
