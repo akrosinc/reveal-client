@@ -1,0 +1,7 @@
+---
+name: step1_residential_noteligible
+description: step1_residential_noteligible
+priority: 1
+condition: "step1_structure_type.equals('residential') && step1_eligibility.equals('Not Eligible')"
+actions:
+  - "isRelevant = true"
