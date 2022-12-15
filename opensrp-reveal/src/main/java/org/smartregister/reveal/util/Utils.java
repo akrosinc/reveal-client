@@ -363,7 +363,7 @@ public class Utils {
     }
 
     public static boolean isMDA() {
-        return getInterventionLabel() == R.string.mda;
+        return getInterventionLabel() == R.string.mda && BuildConfig.BUILD_COUNTRY != Country.MALI;
     }
 
     public static boolean isFocusInvestigationOrMDA() {
