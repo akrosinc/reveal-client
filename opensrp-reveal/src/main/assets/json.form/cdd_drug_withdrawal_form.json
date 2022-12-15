@@ -83,12 +83,7 @@
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "spinner",
-        "hint": "Name of Health worker Supervisor",
-        "v_required": {
-          "value": "true",
-          "err": "This field is required."
-        }
+        "type": "hidden"
       },
       {
         "key": "cdd_name",

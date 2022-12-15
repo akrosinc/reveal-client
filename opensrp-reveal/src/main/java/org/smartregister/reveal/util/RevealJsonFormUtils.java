@@ -912,21 +912,19 @@ public class RevealJsonFormUtils {
             case JsonForm.CDD_DRUG_RECEIVED_FORM:
             case JsonForm.CDD_DRUG_WITHDRAWAL_FORM:
             case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,
-                        fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                        fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME), RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.WARDS,
                         fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.DRUG_REALLOCATEE),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                                 CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.CDD_BORROWED_FORM),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COUNTY_LIST, fieldsMap.get(JsonForm.COUNTY),
                         PreferencesUtil.getInstance().getCurrentOperationalArea());
@@ -936,7 +934,7 @@ public class RevealJsonFormUtils {
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,
                         fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA:
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN:
@@ -956,13 +954,13 @@ public class RevealJsonFormUtils {
                 }
                 break;
             case JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM:
-                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-                        CONFIGURATION.HEALTH_WORKER_SUPERVISORS, fieldsMap.get(JsonForm.HEALTH_WORKER_SUPERVISOR),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,
                         fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),
-                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                        RevealApplication.getInstance().getContext().allSharedPreferences()
+                                .fetchRegisteredANM());
             default:
                 break;
         }
