@@ -263,6 +263,13 @@
               "event_task",
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "treatment_outside_household",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

@@ -355,11 +355,13 @@ public interface Constants {
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
+        String TREATMENT_OUTSIDE_HOUSEHOLD_EVENT = "treatment_outside_household";
 
-       List<String> EVENTS_FOR_CARD_DISPLAY = Arrays.asList(MOSQUITO_COLLECTION_EVENT, LARVAL_DIPPING_EVENT,
+
+        List<String> EVENTS_FOR_CARD_DISPLAY = Arrays.asList(MOSQUITO_COLLECTION_EVENT, LARVAL_DIPPING_EVENT,
         BEDNET_DISTRIBUTION_EVENT, BEDNET_DISTRIBUTION_EVENT, BEHAVIOUR_CHANGE_COMMUNICATION,
         IRS_VERIFICATION, MDA_SURVEY_EVENT, LSM_HOUSEHOLD_SURVEY_EVENT, HABITAT_SURVEY_EVENT,
-        MDA_ONCHO_EVENT);
+        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT);
     }
 
     interface Tables {
@@ -678,6 +680,8 @@ public interface Constants {
         String CDD_DRUG_ALLOCATION_FORM = "json.form/cdd_drug_allocation_form.json";
 
         String CDD_DRUG_RECEIVED_FORM = "json.form/cdd_drug_received_form.json";
+
+        String TREATMENT_OUTSIDE_HOUSEHOLD_FORM = "json.form/treatment_outside_household.json";
 
         String CDD_DRUG_WITHDRAWAL_FORM = "json.form/cdd_drug_withdrawal_form.json";
 

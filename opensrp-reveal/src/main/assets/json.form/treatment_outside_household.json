@@ -1,0 +1,503 @@
+{
+  "count": "1",
+  "encounter_type": "treatment_outside_household",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": ""
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": ""
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Adverse events record",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date of data collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "health_worker_supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "cdd_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
+        "key": "nonhhtreatment_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "What type of treatment location is this?",
+        "options": [
+          {
+            "key": "Homeless individuals",
+            "text": "Homeless individuals"
+          },
+          {
+            "key": "Point Distribution",
+            "text": "Point Distribution"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "location_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "What type of structure are you treating from",
+        "options": [
+          {
+            "key": "In the open",
+            "text": "In the open"
+          },
+          {
+            "key": "Church",
+            "text": "Church"
+          },
+          {
+            "key": "School",
+            "text": "School"
+          },
+          {
+            "key": "Residential Structure",
+            "text": "Residential Structure"
+          },
+          {
+            "key": "Health Facility",
+            "text": "Health Facility"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "location_type_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:location_type": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "gps",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "text",
+        "label": "Capture your GPS location",
+        "type": "gps"
+      },
+      {
+        "key": "treated_male_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated males aged 5 to 14 years",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "treated_female_5_to_14",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated females aged 5 to 14 years",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "treated_male_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated males aged 15 years and above",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "treated_female_above_15",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of treated females aged 15 years and above",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "tablets",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "How many tablets were administered at this location",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
+        "key": "untreated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did anyone in this household go UNTREATED?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "value": "No",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        }
+      },
+      {
+        "key": "untreated_pregnant",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated pregnant",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_childrenu5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated children under 5",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_sick",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated sick",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_absent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated absent",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_refusal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated refused",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please provide any relevant specifics about this location",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      }
+
+    ]
+  }
+}
