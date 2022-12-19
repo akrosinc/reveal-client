@@ -923,7 +923,7 @@ public class RevealJsonFormUtils {
             case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
             case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
             case JsonForm.MDA_ONCHO_SURVEY_FORM:
-            case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
+            case JsonForm.ADVERSE_EVENTS_RECORD_FORM:
             case JsonForm.MALI_DRUG_RECEIVED_FORM:
                 setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
