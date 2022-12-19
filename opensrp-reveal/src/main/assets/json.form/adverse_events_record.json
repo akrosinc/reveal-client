@@ -1,0 +1,318 @@
+{
+  "count": "1",
+  "encounter_type": "adverse_events_record",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": ""
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": ""
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Adverse events record",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date of data collection",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "health_worker_supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "cdd_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
+        "key": "patient_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Patients name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "patient_number",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Patients phone number",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "v_regex": {
+          "value": "^$|0[0-9]{9}",
+          "err": "Please enter a valid number"
+        }
+      },
+      {
+        "key": "type_sideeffect",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "What side effects were experienced?",
+        "options": [
+          {
+            "key": "Headaches",
+            "text": "Headaches"
+          },
+          {
+            "key": "Nausea/Vomiting",
+            "text": "Nausea/Vomiting"
+          },
+          {
+            "key": "Dizziness",
+            "text": "Dizziness"
+          },
+          {
+            "key": "Fever",
+            "text": "Fever"
+          },
+          {
+            "key": "Abdominal Pain",
+            "text": "Abdominal Pain"
+          },
+          {
+            "key": "Other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "sideeffect_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Specify other",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:type_sideeffect": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Other"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "vomited_out",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "hint": "Did the patient vomit the drugs out?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:type_sideeffect": {
+            "ex-checkbox": [
+              {
+                "or": [
+                  "Nausea/Vomiting"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "readminstered",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Were any drugs given again after vomiting?",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:vomited_out": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "hf_reported",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "hint": "Has the patient reported this to the health facility yet?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "care_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "What care did they receive at the health facility?",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:hf_reported": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "referal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "hint": "Did you refer them to a health facility for treatment?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "notes",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please document any other notes in relation to this adverse event",
+        "text_size": "8sp"
+      }
+    ]
+  }
+}

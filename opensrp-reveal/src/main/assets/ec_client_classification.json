@@ -270,6 +270,13 @@
             "creates_case": [
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "adverse_events_record",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

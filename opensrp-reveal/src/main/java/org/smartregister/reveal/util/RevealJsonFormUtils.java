@@ -500,6 +500,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
         } else if(EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)){
             formName = JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM;
+        } else if(EventType.ADVERSE_EVENTS_RECORD_EVENT.equals(encounterType)){
+            formName = JsonForm.ADVERSE_EVENTS_RECORD_FORM;
         }
         return formName;
     }
@@ -915,6 +917,7 @@ public class RevealJsonFormUtils {
             case JsonForm.CDD_DRUG_WITHDRAWAL_FORM:
             case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
             case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
+            case JsonForm.MDA_ONCHO_SURVEY_FORM:
                 setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),

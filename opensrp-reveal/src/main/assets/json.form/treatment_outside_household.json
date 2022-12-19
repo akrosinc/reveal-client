@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Adverse events record",
+    "title": "Treatment Outside Household",
     "display_back_button": "true",
     "fields": [
       {
@@ -491,13 +491,8 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Please provide any relevant specifics about this location",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
+        "text_size": "8sp"
       }
-
     ]
   }
 }
