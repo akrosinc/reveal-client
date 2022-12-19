@@ -1,0 +1,7 @@
+---
+name: step1_received_less_used
+description: received_less_used
+priority: 1
+condition: "true"
+actions:
+- "calculation = helper.ifNull(step1_tablets_received,0) - helper.ifNull(step1_tablets_used,0)"

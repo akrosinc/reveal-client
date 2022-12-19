@@ -49,6 +49,7 @@ import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
+import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
 import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
@@ -487,7 +488,11 @@ public class RevealJsonFormUtils {
         } else if(EventType.CDD_DRUG_WITHDRAWAL_EVENT.equals(encounterType)){
             formName = JsonForm.CDD_DRUG_WITHDRAWAL_FORM;
         } else if(EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)){
-            formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
+            if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+                formName = JsonForm.MALI_DRUG_RECEIVED_FORM;
+            } else {
+                formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
+            }
         } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
         } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
@@ -918,6 +923,8 @@ public class RevealJsonFormUtils {
             case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
             case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
             case JsonForm.MDA_ONCHO_SURVEY_FORM:
+            case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
+            case JsonForm.MALI_DRUG_RECEIVED_FORM:
                 setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),

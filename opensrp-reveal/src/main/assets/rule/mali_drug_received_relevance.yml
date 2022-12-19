@@ -1,0 +1,7 @@
+---
+name: step1_tablets_returned_err
+description: tablets_returned_err
+priority: 1
+condition: " helper.ifNull(step1_tablets_returned,0) != (helper.ifNull(step1_tablets_received,0) - helper.ifNull(step1_tablets_used,0) - helper.ifNull(step1_tablets_lost,0))"
+actions:
+ - "isRelevant = true"

@@ -684,6 +684,8 @@ public interface Constants {
 
         String CDD_DRUG_RECEIVED_FORM = "json.form/cdd_drug_received_form.json";
 
+        String MALI_DRUG_RECEIVED_FORM = "json.form/mali_drug_received_form.json";
+
         String TREATMENT_OUTSIDE_HOUSEHOLD_FORM = "json.form/treatment_outside_household.json";
 
         String CDD_DRUG_WITHDRAWAL_FORM = "json.form/cdd_drug_withdrawal_form.json";
