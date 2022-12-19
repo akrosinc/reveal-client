@@ -181,7 +181,7 @@
         "relevance": {
           "step1:structure_type": {
             "type": "string",
-            "ex": "equalTo(., \"Residential\")"
+            "ex": "equalTo(., \"residential\")"
           }
         }
       },
