@@ -73,6 +73,10 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
 
     private  Button btnDrugWithdrawalForm;
     private  Button btnCountyCddSupervisoryForm;
+    private  Button btnOutsideHouseholdTreatmentForm;
+    private Button btnAdverseEventsRecordForm;
+    private Button btnDrugAccountabilityForm;
+
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -125,6 +129,9 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnDrugReceivedForm = view.findViewById(R.id.cdd_drug_received_form);
         btnDrugWithdrawalForm = view.findViewById(R.id.cdd_drug_withdrawal_form);
         btnCountyCddSupervisoryForm = view.findViewById(R.id.county_cdd_supervisory_form);
+        btnOutsideHouseholdTreatmentForm = view.findViewById(R.id.treatment_outside_household);
+        btnAdverseEventsRecordForm = view.findViewById(R.id.adverse_events_record);
+        btnDrugAccountabilityForm = view.findViewById(R.id.drugs_accountability);
 
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
@@ -166,6 +173,14 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnCDDSupervisorChecklist.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator14).setVisibility(View.VISIBLE);
             btnHFWSupervisorChecklist.setVisibility(View.VISIBLE);
+        } else if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+            btnOutsideHouseholdTreatmentForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator19).setVisibility(View.VISIBLE);
+            btnAdverseEventsRecordForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator20).setVisibility(View.VISIBLE);
+            btnDrugAccountabilityForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator21).setVisibility(View.VISIBLE);
+
         }
         setClickListeners();
     }
@@ -191,6 +206,9 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnDrugReceivedForm.setOnClickListener(this);
             btnDrugWithdrawalForm.setOnClickListener(this);
             btnCountyCddSupervisoryForm.setOnClickListener(this);
+            btnAdverseEventsRecordForm.setOnClickListener(this);
+            btnDrugAccountabilityForm.setOnClickListener(this);
+            btnOutsideHouseholdTreatmentForm.setOnClickListener(this);
     }
 
     @Override
@@ -348,6 +366,13 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             case R.id.county_cdd_supervisory_form:
                 presenter.showBasicForm(JsonForm.COUNTY_CDD_SUPERVISORY_FORM);
                 break;
+            case R.id.treatment_outside_household:
+                presenter.showBasicForm(JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM);
+                break;
+            case  R.id.adverse_events_record:
+                presenter.showBasicForm(JsonForm.ADVERSE_EVENTS_RECORD_FORM);
+            case R.id.drugs_accountability:
+                presenter.showBasicForm(JsonForm.MALI_DRUG_RECEIVED_FORM);
             default:
                 break;
         }

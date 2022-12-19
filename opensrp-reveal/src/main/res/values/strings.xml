@@ -986,4 +986,7 @@
     <string name="action_not_available">Not Available</string>
     <string name="action_not_available_message">Not Available on  this Plan Type</string>
     <string name="mda_onco_survey">MDA Onchocerciasis Survey</string>
+    <string name="treatment_outside_household">Treatment Outside Household</string>
+    <string name="adverse_events_record">Adverse Events Record</string>
+    <string name="drugs_accountability">"Drugs Accountability "</string>
 </resources>
