@@ -123,7 +123,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NAMIBIA_EC_CLIENT_FIELDS);
         } else if (BuildConfig.BUILD_COUNTRY == Country.BOTSWANA) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.BOTSWANA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+        } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.MALI) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.REFAPP_EC_CLIENT_FIELDS);
@@ -133,7 +133,7 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
         } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
