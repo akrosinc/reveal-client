@@ -182,7 +182,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "hint": "Did the patient vomit the drugs out?",
+        "label": "Did the patient vomit the drugs out?",
         "options": [
           {
             "key": "Yes",
@@ -247,7 +247,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "hint": "Has the patient reported this to the health facility yet?",
+        "label": "Has the patient reported this to the health facility yet?",
         "options": [
           {
             "key": "Yes",
@@ -288,7 +288,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "hint": "Did you refer them to a health facility for treatment?",
+        "label": "Did you refer them to a health facility for treatment?",
         "options": [
           {
             "key": "Yes",
@@ -302,6 +302,12 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "step1:hf_reported": {
+            "type": "string",
+            "ex": "equalTo(., \"No\")"
+          }
         }
       },
       {

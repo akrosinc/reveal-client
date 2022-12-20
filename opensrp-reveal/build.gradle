@@ -58,7 +58,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 72
-        versionName "10.4.0"
+        versionName "10.4.1"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -155,7 +155,7 @@ android {
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"http://10.0.2.2:8080/"'
+            resValue "string", 'opensrp_base_url', '"https://api-ef-mali-uat.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
