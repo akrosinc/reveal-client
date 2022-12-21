@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "treatment_outside_household",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -307,7 +307,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Did anyone in this household go UNTREATED?",
+        "label": "Did anyone at this treatment location go UNTREATED?",
         "options": [
           {
             "key": "Yes",
