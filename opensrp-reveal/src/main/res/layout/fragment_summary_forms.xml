@@ -283,7 +283,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/hfw_supervisor_checklist"
@@ -315,7 +316,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/general_supervision_form"
             android:layout_width="match_parent"
@@ -333,7 +335,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/cdd_drug_received_form"
             android:layout_width="match_parent"
@@ -351,7 +354,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/cdd_drug_withdrawal_form"
             android:layout_width="match_parent"
@@ -370,7 +374,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="5dp"
-            android:background="@color/light_grey" />
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/summary_tablet_accountability_form"
             android:layout_width="match_parent"
@@ -399,6 +404,63 @@
             android:gravity="center_horizontal"
             android:padding="5dp"
             android:text="@string/county_cdd_supervisory_form"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator19"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/treatment_outside_household"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/treatment_outside_household"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator20"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/adverse_events_record"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/adverse_events_record"
+            android:textAllCaps="false"
+            android:textColor="@color/text_black"
+            android:textSize="20sp"
+            android:visibility="gone"/>
+        <View
+            android:id="@+id/separator21"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/light_grey"
+            android:visibility="gone"/>
+        <Button
+            android:id="@+id/drugs_accountability"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            android:gravity="center_horizontal"
+            android:padding="5dp"
+            android:text="@string/drugs_accountability"
             android:textAllCaps="false"
             android:textColor="@color/text_black"
             android:textSize="20sp"

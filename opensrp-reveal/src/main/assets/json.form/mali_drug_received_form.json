@@ -1,0 +1,264 @@
+{
+  "count": "1",
+  "encounter_type": "cdd_drug_received",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": ""
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": ""
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Drug Received Form",
+    "display_back_button": "true",
+    "fields": [
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "Date of drug issuing",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Date of drug issuing"
+        }
+      },
+      {
+        "key": "location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select the Location ( ward or health facility)",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "health_worker_supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "cdd_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Name of CDD issued drugs",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
+        "key": "tablets_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of tablets Received",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "tablets_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of tablets Used",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        },
+        "v_relative_max": {
+          "value": "tablets_received",
+          "err": "Must be equal to or less than received"
+        }
+      },
+      {
+        "key": "received_less_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mali_drug_received_calc.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "tablets_lost",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of tablets Lost / Damaged",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        },
+        "v_relative_max": {
+          "value": "received_less_used",
+          "err": "Must be less than Received - Used"
+        }
+      },
+      {
+        "key": "tablets_returned",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Number of tablets Returned to the CSREF",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "999999999",
+          "err": "This field must be less that or equal to 999999999"
+        }
+      },
+      {
+        "key": "tablets_returned_err",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "tablets Returned to the CSREF Must equal received - used - lost",
+        "text_color": "#CF0800",
+        "text_size": "8sp",
+        "toaster_type": "problem",
+        "v_required": {
+          "value": "true"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mali_drug_received_relevance.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

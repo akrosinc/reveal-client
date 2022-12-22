@@ -2,6 +2,7 @@ package org.smartregister.reveal.util;
 
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 
 import java.util.Arrays;
@@ -292,7 +293,7 @@ public interface Constants {
 
         List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
 
-        List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY);
+        List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY);
 
         String LSM = "LSM";
     }
@@ -343,6 +344,7 @@ public interface Constants {
         String COUNTY_CDD_SUPERVISORY_EVENT = "county_cdd_supervisory";
 
         String MDA_SURVEY_EVENT = "mda_survey";
+        String MDA_ONCHO_EVENT = "mda_onchocerciasis_survey";
         String HABITAT_SURVEY_EVENT =  "habitat_survey";
         String LSM_HOUSEHOLD_SURVEY_EVENT =  "lsm_household_survey";
 
@@ -353,7 +355,15 @@ public interface Constants {
 
         String CELL_COORDINATOR_DAILY_SUMMARY = "cell_coordinator_daily_summary";
         String MDA_DRUG_RECON = "mda_drug_reconciliation";
+        String TREATMENT_OUTSIDE_HOUSEHOLD_EVENT = "treatment_outside_household";
+        String ADVERSE_EVENTS_RECORD_EVENT = "adverse_events_record";
 
+
+
+        List<String> EVENTS_FOR_CARD_DISPLAY = Arrays.asList(MOSQUITO_COLLECTION_EVENT, LARVAL_DIPPING_EVENT,
+        BEDNET_DISTRIBUTION_EVENT, BEDNET_DISTRIBUTION_EVENT, BEHAVIOUR_CHANGE_COMMUNICATION,
+        IRS_VERIFICATION, MDA_SURVEY_EVENT, LSM_HOUSEHOLD_SURVEY_EVENT, HABITAT_SURVEY_EVENT,
+        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT,ADVERSE_EVENTS_RECORD_EVENT);
     }
 
     interface Tables {
@@ -582,6 +592,10 @@ public interface Constants {
 
         String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
 
+        String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form.json";
+
+        String ADVERSE_EVENTS_RECORD_FORM = "json.form/adverse_events_record.json";
+
         String OPERATIONAL_AREA_TAG = "operational_area";
 
         String STRUCTURES_TAG = "structures";
@@ -669,6 +683,10 @@ public interface Constants {
         String CDD_DRUG_ALLOCATION_FORM = "json.form/cdd_drug_allocation_form.json";
 
         String CDD_DRUG_RECEIVED_FORM = "json.form/cdd_drug_received_form.json";
+
+        String MALI_DRUG_RECEIVED_FORM = "json.form/mali_drug_received_form.json";
+
+        String TREATMENT_OUTSIDE_HOUSEHOLD_FORM = "json.form/treatment_outside_household.json";
 
         String CDD_DRUG_WITHDRAWAL_FORM = "json.form/cdd_drug_withdrawal_form.json";
 
@@ -812,6 +830,7 @@ public interface Constants {
         String MDA_SURVEY = "MDA Survey";
         String HABITAT_SURVEY = "Habitat Survey";
         String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
+        String MDA_ONCHOCERCIASIS_SURVEY = "MDA Onchocerciasis Survey";
     }
 
     interface ECClientConfig {

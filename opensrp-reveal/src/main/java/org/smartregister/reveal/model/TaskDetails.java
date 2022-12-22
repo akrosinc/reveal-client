@@ -5,6 +5,7 @@ import android.location.Location;
 import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.Utils;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BEDNET_DISTRIBUTED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BLOOD_SCREENING_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;

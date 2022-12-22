@@ -52,6 +52,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -362,7 +363,7 @@ public class Utils {
     }
 
     public static boolean isMDA() {
-        return getInterventionLabel() == R.string.mda;
+        return getInterventionLabel() == R.string.mda && BuildConfig.BUILD_COUNTRY != Country.MALI;
     }
 
     public static boolean isFocusInvestigationOrMDA() {
@@ -633,6 +634,13 @@ public class Utils {
                 || BuildConfig.BUILD_COUNTRY == Country.KENYA;
     }
 
+    public static boolean isGeoFencedEnabled(){
+       return  Country.ZAMBIA == BuildConfig.BUILD_COUNTRY
+                || Country.SENEGAL == BuildConfig.BUILD_COUNTRY
+                || Country.SENEGAL_EN == BuildConfig.BUILD_COUNTRY
+                ||  Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY
+                || Country.MALI == BuildConfig.BUILD_COUNTRY;
+    }
 
     @NonNull
     public static String getSatelliteStyle(Context context) {

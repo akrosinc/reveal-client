@@ -8,6 +8,7 @@ import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
@@ -26,6 +27,7 @@ import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EV
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -318,6 +320,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = LSM_HOUSEHOLD_SURVEY;
             } else if(HABITAT_SURVEY_EVENT.equals(encounterType)){
                 interventionType = HABITAT_SURVEY;
+            } else if(MDA_ONCHO_EVENT.equals(encounterType)){
+                interventionType = MDA_ONCHOCERCIASIS_SURVEY;
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -412,6 +416,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                 BusinessStatus.NOT_VISITED, MDA_SURVEY, R.string.mda_survey);
+                    } else if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+                        task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(),BusinessStatus.NOT_VISITED,MDA_ONCHOCERCIASIS_SURVEY,R.string.mda_onco_survey);
                     } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
                       task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(), BusinessStatus.NOT_VISITED,HABITAT_SURVEY,R.string.habitat_survey);
                     } else if(StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)){

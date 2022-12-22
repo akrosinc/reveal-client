@@ -172,7 +172,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
         dashboardLink = headerView.findViewById(R.id.btn_link_dashboard);
 
-        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || BuildConfig.BUILD_COUNTRY == Country.NIGERIA) { // Enable P2P sync and other forms
+        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MALI) { // Enable P2P sync and other forms
             p2pSyncTextView.setVisibility(View.VISIBLE);
             p2pSyncTextView.setOnClickListener(this);
 

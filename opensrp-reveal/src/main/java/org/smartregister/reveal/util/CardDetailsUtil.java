@@ -253,7 +253,7 @@ public class CardDetailsUtil {
             Button changeHouseholdStatus  =  activity.findViewById(R.id.change_household_status);
             Button changeHabitatStatus  =  activity.findViewById(R.id.change_habitat_status);
             Button changeLsmHouseholdStatus  =  activity.findViewById(R.id.change_lsm_household_status);
-
+            Button changeOnchoStatus = activity.findViewById(R.id.change_oncho_status);
 
 
             Integer color = surveyCardDetails.getStatusColor();
@@ -271,6 +271,7 @@ public class CardDetailsUtil {
             changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeOnchoStatus.setVisibility(Action.MDA_ONCHOCERCIASIS_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeSprayStatus.setVisibility(View.GONE);
             registerFamily.setVisibility(View.GONE);
             tvPropertyType.setVisibility(View.GONE);

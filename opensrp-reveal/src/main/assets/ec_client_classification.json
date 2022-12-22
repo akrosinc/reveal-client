@@ -254,6 +254,29 @@
               "event_task",
               "ec_events"
             ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "mda_onchocerciasis_survey",
+            "creates_case": [
+              "sprayed_structures",
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "treatment_outside_household",
+            "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "adverse_events_record",
+            "creates_case": [
+              "ec_events"
+            ]
           }
         ]
       }

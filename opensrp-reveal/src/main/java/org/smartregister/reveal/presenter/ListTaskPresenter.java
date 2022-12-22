@@ -9,6 +9,7 @@ import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
@@ -25,6 +26,7 @@ import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORM
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
@@ -124,6 +126,7 @@ import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Filter;
+import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PasswordDialogUtils;
@@ -377,17 +380,15 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
-        } else if (MDA_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
-            listTaskInteractor.fetchInterventionDetails(MDA_SURVEY, feature.id(), false);
-        } else if(LSM_HOUSEHOLD_SURVEY.equals(code) && !NOT_VISITED.equals(businessStatus)){
-            listTaskInteractor.fetchInterventionDetails(LSM_HOUSEHOLD_SURVEY, feature.id(), false);
-        } else if(HABITAT_SURVEY.equals(code) &&  !NOT_VISITED.equals(businessStatus)){
-            listTaskInteractor.fetchInterventionDetails(HABITAT_SURVEY, feature.id(), false);
+        } else if(Arrays.asList(MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
+            listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
         }
+
+
     }
 
     private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
-        return (Constants.Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
+        return (Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
                 && (NOT_VISITED.equals(businessStatus) || businessStatus == null)
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
                 || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
@@ -625,6 +626,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateForm(event,formJson);
         } else if(JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA.equals(formName)){
             jsonFormUtils.populateForm(event,formJson);
+        } else if(JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
         }
         listTaskView.startJsonForm(formJson);
     }
@@ -777,6 +780,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(),LSM_HOUSEHOLD_SURVEY_EVENT);
             } else if(HABITAT_SURVEY.equals(cardDetails.getInterventionType())){
                 findLastEvent(selectedFeature.id(),HABITAT_SURVEY_EVENT);
+            } else if(MDA_ONCHOCERCIASIS_SURVEY.equals(cardDetails.getInterventionType())){
+              findLastEvent(selectedFeature.id(),MDA_ONCHO_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }

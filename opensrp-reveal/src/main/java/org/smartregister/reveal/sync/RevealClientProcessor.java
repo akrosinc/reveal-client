@@ -1,11 +1,31 @@
 package org.smartregister.reveal.sync;
 
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_TASK_SYNCED;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
+import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
+import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
+import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
+import static org.smartregister.reveal.util.Constants.Properties.LOCATION_PARENT;
+import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
+import static org.smartregister.reveal.util.Constants.Properties.PLAN_IDENTIFIER;
+import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
+import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
+import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
+import static org.smartregister.reveal.util.Constants.TASK_RESET_EVENT;
+import static org.smartregister.reveal.util.Constants.UNDERSCRORE;
+import static org.smartregister.reveal.util.FamilyConstants.EventType.UPDATE_FAMILY_REGISTRATION;
+import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
+
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.domain.Client;
@@ -17,7 +37,6 @@ import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.repository.BaseRepository;
-import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
@@ -31,45 +50,12 @@ import org.smartregister.reveal.util.FamilyConstants.EventType;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.sync.ClientProcessorForJava;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_TASK_SYNCED;
-import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
-import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
-import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY;
-import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
-import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
-import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION;
-import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
-import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
-import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
-import static org.smartregister.reveal.util.Constants.Properties.LOCATION_PARENT;
-import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
-import static org.smartregister.reveal.util.Constants.Properties.PLAN_IDENTIFIER;
-import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
-import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
-import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
-import static org.smartregister.reveal.util.Constants.TASK_RESET_EVENT;
-import static org.smartregister.reveal.util.Constants.UNDERSCRORE;
-import static org.smartregister.reveal.util.FamilyConstants.EventType.UPDATE_FAMILY_REGISTRATION;
-import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 
 /**
  * Created by samuelgithengi on 12/7/18.
  */
 public class RevealClientProcessor extends ClientProcessorForJava {
-
 
     private TaskRepository taskRepository;
 
@@ -128,10 +114,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 String eventType = event.getEventType();
                 if (eventType.equals(SPRAY_EVENT) || eventType.equals(IRS_LITE_VERIFICATION) || CDD_SUPERVISOR_DAILY_SUMMARY.equals(eventType) || CELL_COORDINATOR_DAILY_SUMMARY.equals(eventType)) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents, JsonForm.STRUCTURE_TYPE);
-                } else if (eventType.equals(MOSQUITO_COLLECTION_EVENT) || eventType.equals(LARVAL_DIPPING_EVENT)
-                        || eventType.equals(BEDNET_DISTRIBUTION_EVENT) ||
-                        eventType.equals(BEHAVIOUR_CHANGE_COMMUNICATION) ||
-                        eventType.equals(IRS_VERIFICATION) || MDA_SURVEY_EVENT.equals(eventType) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(eventType) || HABITAT_SURVEY_EVENT.equals(eventType)){
+                } else if (isEventForCard(eventType)){
                     operationalAreaId = processEvent(event, clientClassification, localEvents);
                 } else if (eventType.equals(REGISTER_STRUCTURE_EVENT)) {
                     operationalAreaId = processRegisterStructureEvent(event, clientClassification);
@@ -175,6 +158,10 @@ public class RevealClientProcessor extends ClientProcessorForJava {
             intent.putExtra(LOCAL_SYNC_DONE, localEvents);
             LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
         }
+    }
+
+    private boolean isEventForCard(final String eventType) {
+        return Constants.EventType.EVENTS_FOR_CARD_DISPLAY.contains(eventType);
     }
 
     private String processRegisterStructureEvent(Event event, ClientClassification clientClassification) {
