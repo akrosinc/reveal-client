@@ -198,6 +198,7 @@
           [
             "Partially complete or Temporarily Absent",
             "MDA partially complete",
+            "Partially complete",
             "Temporarily Absent"
           ],
           "hsl(33, 100%, 50%)",
