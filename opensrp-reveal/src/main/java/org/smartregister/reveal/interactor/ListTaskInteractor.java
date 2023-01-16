@@ -164,7 +164,7 @@ public class ListTaskInteractor extends BaseInteractor {
             public void run() {
                 Cursor cursor = getDatabase().rawQuery(SQL, new String[]{featureId});
                 Location structure = null;
-                if(interventionType == Action.MDA_SURVEY){
+                if(Action.MDA_SURVEY.equals(interventionType)){
                     structure = structureRepository.getLocationById(featureId);
                 }
                 CardDetails cardDetails = null;
