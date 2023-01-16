@@ -70,6 +70,8 @@
             "In Progress",
             "None Received",
             "Refused or Permanently Absent",
+            "Refused",
+            "Permanently Absent",
             "MDA refused or absent"
           ],
           "hsl(3, 71%, 54%)",
@@ -82,6 +84,8 @@
           "hsl(89, 52%, 48%)",
           [
             "Partially complete or Temporarily Absent",
+            "Partially complete",
+            "Temporarily Absent",
             "MDA partially complete"
           ],
           "hsl(33, 100%, 50%)",
