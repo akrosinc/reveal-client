@@ -143,12 +143,20 @@
         "label": "A AMM foi concluída neste agregado?",
         "options": [
           {
-            "key": "Refused or Permanently Absent",
-            "text": "AMM recusada definitiva ou Ausência permanente"
+            "key": "Refused",
+            "text": "AMM recusada"
           },
           {
-            "key": "Partially complete or Temporarily Absent",
-            "text": "AMM completada parcialmente, Recusa (1 visita) ou Ausência temporal (voltar a casa de novo)"
+            "key": "Permanently Absent",
+            "text": "Ausência permanente"
+          },
+          {
+            "key": "Partially complete",
+            "text": "AMM completada parcialmente (voltar a casa de novo)"
+          },
+          {
+            "key": "Temporarily Absent",
+            "text": "Ausência temporal (voltar a casa de novo)"
           },
           {
             "key": "MDA complete",
