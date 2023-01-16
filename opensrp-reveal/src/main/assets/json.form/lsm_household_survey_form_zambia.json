@@ -1,7 +1,7 @@
 {
   "count": "1",
   "encounter_type": "lsm_household_survey",
-  "form_version": "0.0.1",
+  "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
     "start": {
@@ -126,10 +126,6 @@
         "hint": "HouseHold name",
         "edit_type": "name",
         "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Field required"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -155,10 +151,6 @@
             "text": "No"
           }
         ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -174,10 +166,6 @@
         "openmrs_entity_id": "",
         "hint": "When was the house last sprayed",
         "max_date": "today",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the date"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -203,10 +191,6 @@
             "text": "Outdoor"
           }
         ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -240,10 +224,6 @@
             "text": "Other"
           }
         ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -259,10 +239,6 @@
         "type": "edit_text",
         "hint": "Specify 'other' wall type:",
         "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:wall_type": {
             "type": "string",
@@ -292,10 +268,6 @@
             "text": "Other"
           }
         ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -311,10 +283,6 @@
         "type": "edit_text",
         "hint": "Specify 'other' roof type:",
         "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:roof_type": {
             "type": "string",
@@ -340,10 +308,6 @@
             "text": "No"
           }
         ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -360,11 +324,6 @@
         "edit_type": "number",
         "hint": "Number of people who slept in the house last night",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -393,11 +352,6 @@
         "edit_type": "number",
         "hint": "Number of mosquito nets in the house",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -426,11 +380,6 @@
         "edit_type": "number",
         "hint": "Number of people who slept under a mosquito net last night",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -459,11 +408,6 @@
         "edit_type": "number",
         "hint": "Number of people who did not sleep under a mosquito net last night",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -491,10 +435,6 @@
         "openmrs_entity_id": "",
         "hint": "Start time of mosquito collection",
         "max_date": "today",
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -510,10 +450,6 @@
         "openmrs_entity_id": "",
         "hint": "End time of mosquito collection",
         "max_date": "today",
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "relevance": {
           "step1:structure_eligible": {
             "type": "string",
@@ -530,11 +466,6 @@
         "edit_type": "number",
         "hint": "Total number of mosquitoes collected: Anopheles Female",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -563,11 +494,6 @@
         "edit_type": "number",
         "hint": "Total number of mosquitoes collected: Anopheles Male",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -596,11 +522,6 @@
         "edit_type": "number",
         "hint": "Total number of mosquitoes collected: Culicine Female",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -629,11 +550,6 @@
         "edit_type": "number",
         "hint": "Total number of mosquitoes collected: Culicine Male",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -662,11 +578,6 @@
         "edit_type": "number",
         "hint": "Number of unfed Anopheles",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -695,11 +606,6 @@
         "edit_type": "number",
         "hint": "Number of fed Anopheles",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -728,11 +634,6 @@
         "edit_type": "number",
         "hint": "Number of halfgravid Anopheles",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -761,11 +662,6 @@
         "edit_type": "number",
         "hint": "Number of gravid Anopheles",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -794,11 +690,6 @@
         "edit_type": "number",
         "hint": "Number of unfed Culicine",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -827,11 +718,6 @@
         "edit_type": "number",
         "hint": "Number of fed Culicine ",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -860,11 +746,6 @@
         "edit_type": "number",
         "hint": "Number of halfgravid Culicine",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
@@ -893,11 +774,6 @@
         "edit_type": "number",
         "hint": "Number of gravid Culicine",
         "text_size": "8sp",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        },
         "v_numeric": {
           "value": "true",
           "err": "Field must be a number"
