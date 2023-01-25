@@ -136,7 +136,7 @@ public class RevealSyncConfiguration extends SyncConfiguration {
 
     @Override
     public String getOauthClientSecret() {
-        return BuildConfig.OAUTH_CLIENT_SECRET;
+        return null;
     }
 
     @Override
