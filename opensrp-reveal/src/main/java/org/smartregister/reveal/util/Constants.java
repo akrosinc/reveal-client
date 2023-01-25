@@ -834,11 +834,8 @@ public interface Constants {
     }
 
     interface ECClientConfig {
-        String NAMIBIA_EC_CLIENT_FIELDS = "ec_client_fields_namibia.json";
-        String BOTSWANA_EC_CLIENT_FIELDS = "ec_client_fields_botswana.json";
         String ZAMBIA_EC_CLIENT_FIELDS = "ec_client_fields_zambia.json";
         String SENEGAL_EC_CLIENT_FIELDS = "ec_client_fields_senegal.json";
-        String REFAPP_EC_CLIENT_FIELDS = "ec_client_fields_refapp.json";
         String KENYA_EC_CLIENT_FIELDS = "ec_client_fields_kenya.json";
         String RWANDA_EC_CLIENT_FIELDS = "ec_client_fields_rwanda.json";
         String NIGERIA_EC_CLIENT_FIELDS = "ec_client_fields_nigeria.json";
