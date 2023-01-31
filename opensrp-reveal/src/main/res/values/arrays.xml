@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reveal_instance_names">
+        <item>ISG-MZ</item>
+        <item>QA</item>
+    </string-array>
+    <string-array name="reveal_instance_keys">
+        <item>ISG-MZ</item>
+        <item>QA</item>
+    </string-array>
+</resources>
