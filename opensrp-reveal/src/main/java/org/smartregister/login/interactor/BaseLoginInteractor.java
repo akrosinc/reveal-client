@@ -126,8 +126,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private void remoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml) {
 
         try {
-            if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
-                getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
+            if (getSharedPreferences().fetchBaseURL("").isEmpty()) {
+                getSharedPreferences().savePreference("DRISHTI_BASE_URL", "");
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
                 tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
