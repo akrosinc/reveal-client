@@ -4,27 +4,22 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.util.Arrays;
 import java.util.List;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.model.Environment;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.LangUtils;
-import timber.log.Timber;
 
-public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity
+        implements OnPreferenceChangeListener {
 
 
     private static android.preference.ListPreference listPreference;
-    private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
 
+    private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -41,24 +36,6 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().get().url("https://reveal-environments.azurewebsites.net/envs")
-                .build();
-        RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                try (Response response = client.newCall(request).execute()) {
-                    final List<Environment> servers = new Gson()
-                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
-                            }.getType());
-                    RevealApplication.getInstance().getAppExecutors().mainThread().execute(
-                            () -> servers.forEach(server -> preferenceUtil.setEnvironment(server.getKey(), server.getData().getRevealServerUrl())));
-                } catch (Exception e) {
-                    Timber.e("failed to fetch envs...");
-                }
-            }
-        });
-
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
 
@@ -79,12 +56,19 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
             Preference baseUrlPreference = findPreference("reveal_instance_key");
             if (baseUrlPreference != null) {
                 listPreference = (ListPreference) baseUrlPreference;
+                setPreferenceData(listPreference);
                 preferenceUtil.setBaseURL(
                         preferenceUtil.getEnvironmentURL(((ListPreference) baseUrlPreference).getValue()));
                 listPreference.setOnPreferenceChangeListener((SettingsActivity) getActivity());
-
             }
         }
+
+    }
+
+    protected static void setPreferenceData(ListPreference preference) {
+        List<String> options = Arrays.asList(preferenceUtil.getEnvironmentURL("env_keys").split(","));
+        preference.setEntries((String[]) options.toArray());
+        preference.setEntryValues((String[]) options.toArray());
 
     }
 
