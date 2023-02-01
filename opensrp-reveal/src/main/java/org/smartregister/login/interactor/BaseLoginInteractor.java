@@ -135,7 +135,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                     if (loginResponse == LoginResponse.SUCCESS) {
                         String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
                                 ? loginResponse.payload().user.getUsername() : userName;
-                        if (getUserService().isUserInPioneerGroup(username)) {
                             TimeStatus timeStatus = getUserService().validateDeviceTime(
                                     loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE
                             );
@@ -153,23 +152,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                     getLoginView().showErrorDialog(getApplicationContext().getString(timeStatus.getMessage()));
                                 }
                             }
-                        } else {
-
-                            if (CoreLibrary.getInstance().getSyncConfiguration().clearDataOnNewTeamLogin()) {
-                                getLoginView().showClearDataDialog((dialog, which) -> {
-
-                                    dialog.dismiss();
-
-                                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                                        resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), () -> login(new WeakReference<>(getLoginView()), userName, mLoginPresenter.getPassword()));
-                                    }
-                                });
-                            } else {
-                                // Valid user from wrong group trying to log in
-                                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.unauthorized_group));
-                            }
-
-                        }
                     } else {
                         if (loginResponse == null) {
                             getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
