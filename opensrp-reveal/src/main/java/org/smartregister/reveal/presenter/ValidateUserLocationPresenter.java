@@ -56,7 +56,7 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
             double offset = callback.getTargetCoordinates().distanceTo(
                     new LatLng(location.getLatitude(), location.getLongitude()));
          appExecutors.diskIO().execute(() -> logAdminPassRequiredEvent(location,offset > Utils.getLocationBuffer(isCurrentTargetLevelStructure()) && validateFarStructures()));
-         if (offset > Utils.getLocationBuffer(isCurrentTargetLevelStructure()) && validateFarStructures()) {
+         if (validateFarStructures() && offset > Utils.getLocationBuffer(isCurrentTargetLevelStructure())) {
                 callback.requestUserPassword();
             } else {
                 callback.onLocationValidated();
@@ -66,7 +66,9 @@ public class ValidateUserLocationPresenter implements UserLocationContract.UserL
     @Override
     public void onGetUserLocationFailed() {
         locationView.hideProgressDialog();
-        callback.requestUserPassword();
+        if(validateFarStructures()){
+            callback.requestUserPassword();
+        }
     }
 
     @Override
