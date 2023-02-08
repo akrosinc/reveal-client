@@ -1,16 +1,19 @@
 package org.smartregister.reveal.view;
 
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
+import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
+import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON_FRAGMENT;
+
 import android.app.Activity;
 import android.content.Intent;
-import androidx.viewpager.widget.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
-
 import com.vijay.jsonwizard.domain.Form;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +23,6 @@ import org.smartregister.family.activity.BaseFamilyProfileActivity;
 import org.smartregister.family.adapter.ViewPagerAdapter;
 import org.smartregister.family.util.Constants.INTENT_KEY;
 import org.smartregister.family.util.Utils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.FamilyProfileContract;
 import org.smartregister.reveal.fragment.FamilyProfileMemberFragment;
@@ -31,15 +33,9 @@ import org.smartregister.reveal.presenter.FamilyProfilePresenter;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.JsonFormUtils;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.KEY;
-import static org.smartregister.reveal.util.Constants.CONFIGURATION.VALUE;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
-import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON_FRAGMENT;
 
 /**
  * Created by samuelgithengi on 2/8/19.
@@ -133,11 +129,16 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
         inflater.inflate(R.menu.profile_menu, menu);
 
         menu.findItem(R.id.archive_family).setVisible(false);
-        if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+        if (getBuildCountry() == Country.NIGERIA) {
             menu.findItem(R.id.edit_family).setTitle(getString(R.string.family_information));
         }
 
         return true;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -171,7 +172,7 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
         Form form = new Form();
         form.setActionBarBackground(R.color.family_actionbar);
         form.setWizard(false);
-        if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.NIGERIA.equals(getBuildCountry())){
             FamilyRegisterModel.populateCompoundStructureOptions(jsonForm);
             String value = JsonFormUtils.getFieldValue(jsonForm.toString(), FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(jsonForm),FamilyConstants.FormKeys.COMPOUND_STRUCTURE);

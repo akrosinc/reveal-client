@@ -2,9 +2,9 @@ package org.smartregister.reveal.view;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import org.smartregister.reveal.BuildConfig;
+import androidx.annotation.NonNull;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
@@ -67,17 +67,22 @@ public abstract class BaseMapActivity extends MultiLanguageActivity {
 
     @Override
     protected void attachBaseContext(Context base) {
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+        if (getCountry() == Country.THAILAND) {
             LangUtils.saveLanguage(base.getApplicationContext(), "th");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+        } else if(getCountry() == Country.SENEGAL){
             LangUtils.saveLanguage(base.getApplicationContext(),"fr");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+        } else if(getCountry() == Country.RWANDA){
             LangUtils.saveLanguage(base.getApplicationContext(),"rw");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+        } else if(getCountry() == Country.MOZAMBIQUE){
             LangUtils.saveLanguage(base.getApplicationContext(),"pt");
         } else {
             LangUtils.saveLanguage(base.getApplicationContext(), "en");
         }
         super.attachBaseContext(base);
+    }
+
+    @NonNull
+    private Country getCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 }

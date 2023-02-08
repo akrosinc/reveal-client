@@ -1,23 +1,21 @@
 package org.smartregister.reveal.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.smartregister.domain.Task;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.StructureTaskDetails;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.viewholder.StructureTaskViewHolder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 
 public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskViewHolder> {
@@ -64,7 +62,7 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
                 action = context.getString(R.string.register_family);
                 name = context.getString(R.string.add_fam);
             } else if (Intervention.MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+                if (getBuildCountry() == Country.NIGERIA) {
                     action = context.getString(R.string.adhere_smc);
                     code = "SPAQ Redose";
                 } else {
@@ -72,11 +70,11 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
                 }
 
             } else if (Intervention.MDA_DRUG_RECON.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+                if (getBuildCountry() == Country.NIGERIA) {
                     action = context.getString(R.string.adhere_drug_recon);
                 }
             } if (Intervention.MDA_DISPENSE.equals(taskDetails.getTaskCode())) {
-                if (BuildConfig.BUILD_COUNTRY ==  Country.NIGERIA) {
+                if (getBuildCountry() ==  Country.NIGERIA) {
                     action = context.getString(R.string.dispense_smc);
                     code = "SMC Dispense";
                 } else {
@@ -97,6 +95,11 @@ public class StructureTaskAdapter extends RecyclerView.Adapter<StructureTaskView
         }
         viewHolder.setTaskAction(taskDetails, onClickListener);
 
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     @Override

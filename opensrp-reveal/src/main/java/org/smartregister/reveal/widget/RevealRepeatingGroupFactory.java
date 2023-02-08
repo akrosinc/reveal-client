@@ -3,12 +3,14 @@ package org.smartregister.reveal.widget;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 
 import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_SPRAYED;
@@ -25,7 +27,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
     //TODO: test this method, after upgrading version of opensrp-native-form
     @Override
     protected void addOnDoneAction(TextView textView, ImageButton doneButton, WidgetArgs widgetArgs) {
-        if (Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(BuildConfig.BUILD_COUNTRY)) {
+        if (Country.SENEGAL.equals(getBuildCountry()) || Country.SENEGAL_EN.equals(getBuildCountry())) {
             String inputText = textView.getText().toString();
             if (inputText.isEmpty()) {
                 textView.setError(PLEASE_ENTER_A_VALUE_ERROR_MESSAGE);
@@ -51,5 +53,10 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
 
         }
         super.addOnDoneAction(textView, doneButton, widgetArgs);
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 }

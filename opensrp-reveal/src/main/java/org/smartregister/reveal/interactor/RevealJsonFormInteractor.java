@@ -1,9 +1,11 @@
 package org.smartregister.reveal.interactor;
 
+import androidx.annotation.NonNull;
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
 import org.smartregister.reveal.widget.RevealBarcodeFactory;
@@ -40,7 +42,7 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
     protected void registerWidgets() {
         super.registerWidgets();
 
-        if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
+        if (getBuildCountry() == Country.NAMIBIA) {
             map.put(GEOWIDGET, new GeoWidgetFactory());
         } else {
             map.put(GEOWIDGET, new GeoWidgetFactory(false));
@@ -52,7 +54,7 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         map.put(TOASTER_NOTES, new RevealToasterNotesFactory());
         map.put(MULTI_SELECT_LIST,new RevealMultiSelectListFactory());
 
-        if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+        if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN){
             map.put(REPEATING_GROUP, new RevealRepeatingGroupFactory());
         }
 
@@ -60,6 +62,11 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
             map.put(BARCODE, new RevealBarcodeFactory());
         }
 
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
 }

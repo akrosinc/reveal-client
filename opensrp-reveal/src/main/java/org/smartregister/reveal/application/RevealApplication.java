@@ -23,6 +23,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import io.ona.kujaku.KujakuLibrary;
 import io.ona.kujaku.data.realm.RealmDatabase;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,15 +131,15 @@ public class RevealApplication extends DrishtiApplication
         P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, new RevealSyncConfiguration(), BuildConfig.BUILD_TIMESTAMP, p2POptions);
         forceRemoteLoginForInConsistentUsername();
-        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.MALI) {
+        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+        } else if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.KENYA) {
+        } else if (getBuildCountry() == Country.KENYA) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN) {
+        } else if (Arrays.asList(Country.RWANDA,Country.RWANDA_EN).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+        } else if (Arrays.asList(Country.NIGERIA,Country.MOZAMBIQUE).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
@@ -157,13 +158,13 @@ public class RevealApplication extends DrishtiApplication
         //init Job Manager
         JobManager.create(this).addJobCreator(new RevealJobCreator());
 
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+        if (getBuildCountry() == Country.THAILAND) {
             LangUtils.saveLanguage(getApplicationContext(), "th");
-        } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+        } else if (getBuildCountry() == Country.SENEGAL) {
             LangUtils.saveLanguage(getApplicationContext(), "fr");
-        } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
+        } else if (getBuildCountry() == Country.RWANDA) {
             LangUtils.saveLanguage(getApplicationContext(), "rw");
-        } else if (BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+        } else if (getBuildCountry() == Country.MOZAMBIQUE) {
             LangUtils.saveLanguage(getApplicationContext(), "pt");
         } else {
             LangUtils.saveLanguage(getApplicationContext(), "en");
@@ -189,16 +190,11 @@ public class RevealApplication extends DrishtiApplication
                     final List<Environment> servers = new Gson()
                             .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
                             }.getType());
-                    RevealApplication.getInstance().getAppExecutors().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            servers.forEach(server -> PreferencesUtil.getInstance()
-                                    .setEnvironment(server.getKey(), server.getData().getRevealServerUrl()));
+                            Gson gson  = new Gson();
+                            servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(),gson.toJson(server.getData())));
                             PreferencesUtil.getInstance()
                                     .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
                                             Collectors.joining(",")));
-                        }
-                    });
                 } catch (Exception e) {
                     Timber.e("failed to fetch envs...");
                 }
@@ -339,28 +335,28 @@ public class RevealApplication extends DrishtiApplication
         metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
                 FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
 
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+        if (getBuildCountry() == Country.THAILAND) {
             metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
                     EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
                     CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
             metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
                     EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
                     CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+        } else if (getBuildCountry() == Country.ZAMBIA) {
             metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
                     EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
                     CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
             metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
                     EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
                     CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+        } else if (getBuildCountry() == Country.REFAPP) {
             metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
                     EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
                     CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
             metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
                     EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
                     CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+        } else if (getBuildCountry() == Country.NIGERIA) {
             metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
                     EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
                     CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
@@ -379,6 +375,11 @@ public class RevealApplication extends DrishtiApplication
         metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
         metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
         return metadata;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public static CommonFtsObject createCommonFtsObject() {

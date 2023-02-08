@@ -334,12 +334,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
         listTaskView.closeAllCardViews();
         listTaskView.displaySelectedFeature(feature, clickedPoint);
-        if (isLongclick && (BuildConfig.BUILD_COUNTRY != Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL || BuildConfig.BUILD_COUNTRY != Country.SENEGAL_EN)) {
+        if (isLongclick && (getBuildCountry() != Country.ZAMBIA
+                || getBuildCountry() != Country.SENEGAL || getBuildCountry() != Country.SENEGAL_EN)) {
             onFeatureSelectedByLongClick(feature);
         } else {
             onFeatureSelectedByNormalClick(feature);
         }
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private void onFeatureSelectedByNormalClick(Feature feature) {
@@ -465,7 +470,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         revealApplication.setFeatureCollection(featureCollection);
         revealApplication.setOperationalArea(operationalArea);
 
-        if(BuildConfig.BUILD_COUNTRY != Country.NIGERIA){
+        if(getBuildCountry() != Country.NIGERIA){
             Intent intent = new Intent(listTaskView.getContext(), EditFociBoundaryActivity.class);
             listTaskView.getActivity().startActivity(intent);
         }
@@ -588,7 +593,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populatePAOTForm((MosquitoHarvestCardDetails) cardDetails, formJson);
         } else if ( cardDetails instanceof MosquitoHarvestCardDetails) {
             jsonFormUtils.populateForm(event, formJson);
-        } else if (cardDetails instanceof SprayCardDetails && Country.NAMIBIA.equals(BuildConfig.BUILD_COUNTRY)) {
+        } else if (cardDetails instanceof SprayCardDetails && Country.NAMIBIA.equals(getBuildCountry())) {
             jsonFormUtils.populateForm(event, formJson);
         } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
             try {
@@ -1032,7 +1037,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     private void logStructureInteractionEvent(Feature feature){
         Bundle bundle = new Bundle();
         bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
+        bundle.putString(BUILD_COUNTRY, getBuildCountry().name());
         bundle.putString(STRUCTURE_ID,feature.id());
         FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(USER_INTERACTS_WITH_STRUCTURE,bundle);
     }

@@ -201,7 +201,17 @@ public class PreferencesUtil {
     public  void setEnvironment(String environmentKey, String value){
         allSharedPreferences.savePreference(environmentKey,value);
     }
-    public String getEnvironmentURL(String key){
+    public String getStringPreference(String key){
         return allSharedPreferences.getPreference(key);
     }
+
+    public void setBuildCountry(String buildCountry){
+        allSharedPreferences.savePreference(AllConstants.BUILD_COUNTRY, buildCountry);
+    }
+
+    public Country getBuildCountry(){
+      String buildCountry =   allSharedPreferences.getPreference(AllConstants.BUILD_COUNTRY);
+      return StringUtils.isBlank(buildCountry) ? Country.ZAMBIA : Country.valueOf(buildCountry);
+    }
+
 }

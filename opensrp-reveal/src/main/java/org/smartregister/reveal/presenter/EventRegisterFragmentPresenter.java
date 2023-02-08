@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.FORM_SUBMISSI
 import static org.smartregister.reveal.util.Constants.ENTITY_ID;
 
 import android.content.DialogInterface;
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Event;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.EventRegisterContract;
@@ -33,6 +33,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.DatabaseKeys;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import timber.log.Timber;
 
@@ -95,7 +96,8 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
 
     private String mainSelect(String tableName, String mainCondition) {
         SmartRegisterQueryBuilder queryBUilder = new SmartRegisterQueryBuilder();
-        if(Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA_EN.equals(BuildConfig.BUILD_COUNTRY) ) {
+        if(Country.KENYA.equals(getBuildCountry()) || Country.RWANDA.equals(getBuildCountry()) || Country.RWANDA_EN.equals(
+                getBuildCountry()) ) {
             List<String> mainColumns =  new ArrayList<>(Arrays.asList(mainColumns(tableName)));
             mainColumns.add(tableName + "." + DatabaseKeys.DATA_COLLECTION_DATE);
             queryBUilder.selectInitiateMainTable(tableName, mainColumns.toArray(new String[mainColumns.size()]));
@@ -103,6 +105,11 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
             queryBUilder.selectInitiateMainTable(tableName, mainColumns(tableName));
         }
         return queryBUilder.mainCondition(mainCondition);
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     protected String[] mainColumns(String tableName) {

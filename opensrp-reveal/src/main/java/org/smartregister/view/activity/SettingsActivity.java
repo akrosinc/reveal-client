@@ -7,9 +7,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.model.EnvironmentDetails;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.LangUtils;
 
@@ -21,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity
 
     private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
 
+    private static Gson gson = new Gson();
     @Override
     protected void attachBaseContext(android.content.Context base) {
         // get language from prefs
@@ -42,7 +46,9 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (newValue != null) {
-            preferenceUtil.setBaseURL(preferenceUtil.getEnvironmentURL(newValue.toString()));
+            EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
+            preferenceUtil.setBaseURL(details.getRevealServerUrl());
+            preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
         }
         return true;
     }
@@ -57,8 +63,12 @@ public class SettingsActivity extends PreferenceActivity
             if (baseUrlPreference != null) {
                 listPreference = (ListPreference) baseUrlPreference;
                 setPreferenceData(listPreference);
-                preferenceUtil.setBaseURL(
-                        preferenceUtil.getEnvironmentURL(((ListPreference) baseUrlPreference).getValue()));
+                EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(((ListPreference) baseUrlPreference).getValue()),EnvironmentDetails.class);
+                if(details != null){
+                    preferenceUtil.setBaseURL(details.getRevealServerUrl());
+                    preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
+                }
+
                 listPreference.setOnPreferenceChangeListener((SettingsActivity) getActivity());
             }
         }
@@ -66,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     protected static void setPreferenceData(ListPreference preference) {
-        List<String> options = Arrays.asList(preferenceUtil.getEnvironmentURL("env_keys").split(","));
+        List<String> options = Arrays.asList(preferenceUtil.getStringPreference("env_keys").split(","));
         preference.setEntries((String[]) options.toArray());
         preference.setEntryValues((String[]) options.toArray());
 
