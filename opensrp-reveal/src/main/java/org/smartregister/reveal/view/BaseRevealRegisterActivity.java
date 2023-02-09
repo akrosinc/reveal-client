@@ -34,22 +34,8 @@ public abstract class BaseRevealRegisterActivity extends BaseRegisterActivity {
 
     @Override
     protected void attachBaseContext(Context base) {
-        if (getBuildCountry() == Country.THAILAND) {
-            LangUtils.saveLanguage(base.getApplicationContext(), "th");
-        } else if(getBuildCountry() == Country.SENEGAL ) {
-            LangUtils.saveLanguage(base.getApplicationContext(), "fr");
-        } else if(getBuildCountry() == Country.RWANDA){
-            LangUtils.saveLanguage(base.getApplicationContext(), "rw");
-        } else if(getBuildCountry() == Country.MOZAMBIQUE){
-            LangUtils.saveLanguage(base.getApplicationContext(), "pt");
-        } else {
-            LangUtils.saveLanguage(base.getApplicationContext(), "en");
-        }
+        LangUtils.setLanguage(base);
         super.attachBaseContext(base);
     }
 
-    @NonNull
-    private Country getBuildCountry() {
-        return PreferencesUtil.getInstance().getBuildCountry();
-    }
 }

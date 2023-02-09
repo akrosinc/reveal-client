@@ -28,7 +28,6 @@ import static org.smartregister.util.DatabaseMigrationUtils.isColumnExists;
 
 import android.content.Context;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
@@ -117,9 +116,6 @@ public class RevealRepository extends Repository {
                     break;
                 case 9:
                     upgradeToVersion9(db);
-                    break;
-                case 10:
-                    upgradeToVersion10(db);
                     break;
                 case 12:
                     upgradeToVersion12(db);
@@ -234,14 +230,6 @@ public class RevealRepository extends Repository {
         ClientRelationshipRepository.createTable(db);
         EventClientRepository.createAdditionalColumns(db);
         EventClientRepository.addEventLocationId(db);
-    }
-
-    private void upgradeToVersion10(SQLiteDatabase db) {
-        db.delete(Constants.Tables.EC_EVENTS_TABLE, String.format(" %s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
-        db.delete(Constants.Tables.EC_EVENTS_SEARCH_TABLE, String.format("%s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
-
-        clientProcessEvents(Collections.singletonList(SPRAY_EVENT));
-
     }
 
     private void upgradeToVersion12(SQLiteDatabase db) {

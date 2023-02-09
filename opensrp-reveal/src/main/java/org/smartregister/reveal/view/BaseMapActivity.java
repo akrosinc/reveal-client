@@ -67,22 +67,8 @@ public abstract class BaseMapActivity extends MultiLanguageActivity {
 
     @Override
     protected void attachBaseContext(Context base) {
-        if (getCountry() == Country.THAILAND) {
-            LangUtils.saveLanguage(base.getApplicationContext(), "th");
-        } else if(getCountry() == Country.SENEGAL){
-            LangUtils.saveLanguage(base.getApplicationContext(),"fr");
-        } else if(getCountry() == Country.RWANDA){
-            LangUtils.saveLanguage(base.getApplicationContext(),"rw");
-        } else if(getCountry() == Country.MOZAMBIQUE){
-            LangUtils.saveLanguage(base.getApplicationContext(),"pt");
-        } else {
-            LangUtils.saveLanguage(base.getApplicationContext(), "en");
-        }
+        LangUtils.setLanguage(base);
         super.attachBaseContext(base);
     }
 
-    @NonNull
-    private Country getCountry() {
-        return PreferencesUtil.getInstance().getBuildCountry();
-    }
 }

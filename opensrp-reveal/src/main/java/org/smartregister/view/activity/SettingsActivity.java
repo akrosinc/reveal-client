@@ -49,6 +49,7 @@ public class SettingsActivity extends PreferenceActivity
             EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
             preferenceUtil.setBaseURL(details.getRevealServerUrl());
             preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
+            LangUtils.setLanguage(getBaseContext());
         }
         return true;
     }
