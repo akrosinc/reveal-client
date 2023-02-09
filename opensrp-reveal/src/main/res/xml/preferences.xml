@@ -5,6 +5,7 @@
         <ListPreference android:key="reveal_instance_key"
             android:title="@string/reveal_instance_selector"
             android:entries="@array/reveal_instance_names"
+            android:summary="@string/current_server"
             app:useSimpleSummaryProvider="true"
             android:entryValues="@array/reveal_instance_keys"/>
     </PreferenceCategory>
