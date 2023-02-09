@@ -157,18 +157,7 @@ public class RevealApplication extends DrishtiApplication
 
         //init Job Manager
         JobManager.create(this).addJobCreator(new RevealJobCreator());
-
-        if (getBuildCountry() == Country.THAILAND) {
-            LangUtils.saveLanguage(getApplicationContext(), "th");
-        } else if (getBuildCountry() == Country.SENEGAL) {
-            LangUtils.saveLanguage(getApplicationContext(), "fr");
-        } else if (getBuildCountry() == Country.RWANDA) {
-            LangUtils.saveLanguage(getApplicationContext(), "rw");
-        } else if (getBuildCountry() == Country.MOZAMBIQUE) {
-            LangUtils.saveLanguage(getApplicationContext(), "pt");
-        } else {
-            LangUtils.saveLanguage(getApplicationContext(), "en");
-        }
+        LangUtils.setLanguage(getApplicationContext());
         NativeFormLibrary.getInstance()
                 .setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());
 
