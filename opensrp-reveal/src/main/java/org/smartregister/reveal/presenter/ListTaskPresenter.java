@@ -430,7 +430,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     @Override
     public void onGetUserLocation(Location location) {
         Feature userFeature = getFeatureUserIsIn(location);
-        if (userFeature == null || !Objects.equals(userFeature.id(), selectedFeature.id())) {
+        if (validateFarStructures() && userFeature == null || !Objects.equals(userFeature.id(), selectedFeature.id())) {
             requestUserPassword();
         }
         else {
