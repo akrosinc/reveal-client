@@ -36,3 +36,4 @@ release/
 /github.properties
 gradle.properties
 /fastlane/report.xml
+/key-file.json
