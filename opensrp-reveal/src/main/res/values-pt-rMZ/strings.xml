@@ -834,7 +834,6 @@
     <string name="mda_survey">Inquérito AMM</string>
     <string name="habitat_survey">Habitat Survey</string>
     <string name="lsm_household_survey">LSM Household Survey</string>
-    <string name="Menu">Menu</string>
     <string name="server">Servidor</string>
     <string name="enter_base_url_message">Introduza a URL da base do servidor</string>
     <string name="preference_summary">Define a url da base do servidor que lida com as solicitações</string>
