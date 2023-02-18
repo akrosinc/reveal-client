@@ -5,13 +5,10 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.TaskDetails;
@@ -100,7 +97,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
         else if (cardDetails != null && task.getTaskCount() != null) { // task grouping only for FI
             if (task.getTaskCount() > 1) {
                 if (task.getTaskCount() != task.getCompleteTaskCount()
-                        || (BuildConfig.BUILD_COUNTRY == Country.NIGERIA && task.isNoneReceived())) {
+                        || (getBuildCountry() == Country.NIGERIA && task.isNoneReceived())) {
 
 
                     Pair<Drawable, String> actionViewPair = getActionDrawable(task);
@@ -122,6 +119,11 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
         }
         actionView.setOnClickListener(onClickListener);
         actionView.setTag(R.id.task_details, task);
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public void setItemViewListener(TaskDetails task, View.OnClickListener onClickListener) {
@@ -184,7 +186,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
                 actionBg = context.getResources().getDrawable(R.drawable.no_task_complete_bg);
             }
         } else if (Utils.isMDA()) {
-            if (familyRegTaskMissingOrFamilyRegComplete && task.isMdaAdhered() && BuildConfig.BUILD_COUNTRY != Country.NIGERIA) {
+            if (familyRegTaskMissingOrFamilyRegComplete && task.isMdaAdhered() && getBuildCountry() != Country.NIGERIA) {
                 actionBg = context.getResources().getDrawable(R.drawable.mda_adhered_bg);
                 actionText = context.getText(R.string.tasks_complete).toString();
             } else if (familyRegTaskMissingOrFamilyRegComplete && task.isFullyReceived()) {

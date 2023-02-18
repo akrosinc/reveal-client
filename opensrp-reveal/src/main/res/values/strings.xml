@@ -187,9 +187,6 @@
     <string name="view_tasks">View \nTasks</string>
     <string name="tasks_complete">Tasks Complete</string>
     <string name="tasks_incomplete">Tasks\nIncomplete</string>
-
-    <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
-
     <string name="classification_details">Classification Details</string>
     <string name="view">View</string>
     <string name="family_details">Family Details</string>
@@ -989,4 +986,6 @@
     <string name="treatment_outside_household">Treatment Outside Household</string>
     <string name="adverse_events_record">Adverse Events Record</string>
     <string name="drugs_accountability">"Drugs Accountability "</string>
+    <string name="reveal_instance_selector">Select Reveal Server</string>
+    <string name="current_server">Current Server: %s</string>
 </resources>

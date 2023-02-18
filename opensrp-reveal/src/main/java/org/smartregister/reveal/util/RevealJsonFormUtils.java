@@ -59,6 +59,7 @@ import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import com.mapbox.geojson.Feature;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -295,116 +296,116 @@ public class RevealJsonFormUtils {
     public String getFormName(String encounterType, String taskCode) {
         String formName = null;
         if (SPRAY_EVENT.equals(encounterType) || Intervention.IRS.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
+            if (getBuildCountry() == Country.NAMIBIA) {
                 formName = JsonForm.SPRAY_FORM_NAMIBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.BOTSWANA) {
+            } else if (getBuildCountry() == Country.BOTSWANA) {
                 formName = JsonForm.SPRAY_FORM_BOTSWANA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            } else if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.SPRAY_FORM_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            } else if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_SPRAY_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.SPRAY_FORM_REFAPP;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.SPRAY_FORM_SENEGAL;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+            } else if (getBuildCountry() == Country.SENEGAL_EN) {
                 formName = JsonForm.SPRAY_FORM_SENEGAL_EN;
             } else {
                 formName = JsonForm.SPRAY_FORM;
             }
         } else if (MOSQUITO_COLLECTION_EVENT.equals(encounterType)
                 || Intervention.MOSQUITO_COLLECTION.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_MOSQUITO_COLLECTION_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+            } else if (getBuildCountry() == Country.THAILAND_EN) {
                 formName = JsonForm.THAILAND_EN_MOSQUITO_COLLECTION_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MOSQUITO_COLLECTION_FORM;
             } else {
                 formName = JsonForm.MOSQUITO_COLLECTION_FORM;
             }
         } else if (BEDNET_DISTRIBUTION_EVENT.equals(encounterType)
                 || Intervention.BEDNET_DISTRIBUTION.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_BEDNET_DISTRIBUTION_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+            } else if (getBuildCountry() == Country.THAILAND_EN) {
                 formName = JsonForm.THAILAND_EN_BEDNET_DISTRIBUTION_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_BEDNET_DISTRIBUTION_FORM;
             } else {
                 formName = JsonForm.BEDNET_DISTRIBUTION_FORM;
             }
         } else if (CASE_CONFIRMATION_EVENT.equals(encounterType)
                 || Intervention.CASE_CONFIRMATION.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_CASE_CONFIRMATION_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_CASE_CONFIRMATION_FORM;
             } else {
                 formName = JsonForm.CASE_CONFIRMATION_FORM;
             }
         } else if (BLOOD_SCREENING_EVENT.equals(encounterType)
                 || Intervention.BLOOD_SCREENING.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_BLOOD_SCREENING_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+            } else if (getBuildCountry() == Country.THAILAND_EN) {
                 formName = JsonForm.THAILAND_EN_BLOOD_SCREENING_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_BLOOD_SCREENING_FORM;
             } else {
                 formName = JsonForm.BLOOD_SCREENING_FORM;
             }
         } else if (LARVAL_DIPPING_EVENT.equals(encounterType) || Intervention.LARVAL_DIPPING.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_LARVAL_DIPPING_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+            } else if (getBuildCountry() == Country.THAILAND_EN) {
                 formName = JsonForm.THAILAND_EN_LARVAL_DIPPING_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_LARVAL_DIPPING_FORM;
             } else {
                 formName = JsonForm.LARVAL_DIPPING_FORM;
             }
         } else if (BEHAVIOUR_CHANGE_COMMUNICATION.equals(encounterType) || Intervention.BCC.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_BEHAVIOUR_CHANGE_COMMUNICATION_FORM;
             } else {
                 formName = JsonForm.BEHAVIOUR_CHANGE_COMMUNICATION_FORM;
             }
         } else if (REGISTER_STRUCTURE_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_ADD_STRUCTURE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
+            } else if (getBuildCountry() == Country.NAMIBIA) {
                 formName = JsonForm.NAMIBIA_ADD_STRUCTURE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                    || BuildConfig.BUILD_COUNTRY == Country.SENEGAL ) {
+            } else if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL_EN
+                    || getBuildCountry() == Country.SENEGAL ) {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
-            } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE || BuildConfig.BUILD_COUNTRY  == Country.MALI){
+            } else if(getBuildCountry() == Country.MOZAMBIQUE || getBuildCountry() == Country.MALI){
               formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }
         } else if (Constants.EventType.PAOT_EVENT.equals(encounterType) || Intervention.PAOT.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JsonForm.THAILAND_PAOT_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_PAOT_FORM;
             } else {
                 formName = JsonForm.PAOT_FORM;
             }
         } else if (Intervention.MDA_ADHERENCE.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.ZAMBIA_MDA_ADHERENCE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MDA_ADHERENCE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+            } else if (getBuildCountry() == Country.NIGERIA) {
                 formName = JsonForm.NIGERIA_MDA_ADHERENCE_FORM;
             }
         } else if (Intervention.MDA_DISPENSE.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.ZAMBIA_MDA_DISPENSE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JsonForm.REFAPP_MDA_DISPENSE_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+            } else if (getBuildCountry() == Country.NIGERIA) {
                 formName = JsonForm.NIGERIA_MDA_DISPENSE_FORM;
             }
         } else if (Intervention.MDA_DRUG_RECON.equals(taskCode)) {
@@ -416,57 +417,57 @@ public class RevealJsonFormUtils {
             }
             formName = JsonForm.ZAMBIA_IRS_VERIFICATION_FORM;
         } else if (Constants.EventType.DAILY_SUMMARY_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 if (isZambiaIRSLite()) {
                     formName = JsonForm.DAILY_SUMMARY_ZAMBIA_LITE;
                 } else {
                     formName = JsonForm.DAILY_SUMMARY_ZAMBIA;
                 }
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.DAILY_SUMMARY_SENEGAL;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+            } else if (getBuildCountry() == Country.SENEGAL_EN) {
                 formName = JsonForm.DAILY_SUMMARY_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_FIELD_OFFICER_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.IRS_FIELD_OFFICER_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+            } else if (getBuildCountry() == Country.SENEGAL_EN) {
                 formName = JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN;
             }
         } else if (Constants.EventType.IRS_SA_DECISION_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.IRS_SA_DECISION_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.IRS_SA_DECISION_SENEGAL;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+            } else if (getBuildCountry() == Country.SENEGAL_EN) {
                 formName = JsonForm.IRS_SA_DECISION_SENEGAL_EN;
             }
         } else if (Constants.EventType.MOBILIZATION_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.MOBILIZATION_FORM_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.MOBILIZATION_FORM_SENEGAL;
             }
         } else if (Constants.EventType.TEAM_LEADER_DOS_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.TEAM_LEADER_DOS_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.TEAM_LEADER_DOS_SENEGAL;
             }
         } else if (Constants.EventType.VERIFICATION_EVENT.equals(encounterType)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JsonForm.VERIFICATION_FORM_ZAMBIA;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
+            } else if (getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.VERIFICATION_FORM_SENEGAL;
             }
         } else if (Constants.EventType.TABLET_ACCOUNTABILITY_EVENT.equals(encounterType)) {
-            if (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY)) {
+            if (Country.RWANDA.equals(getBuildCountry())) {
                 formName = JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA;
-            } else if (Country.KENYA.equals(BuildConfig.BUILD_COUNTRY)) {
+            } else if (Country.KENYA.equals(getBuildCountry())) {
                 formName = JsonForm.TABLET_ACCOUNTABILITY_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN) {
+            } else if (getBuildCountry() == Country.RWANDA_EN) {
                 formName = JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN;
             }
         } else if (Constants.EventType.CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType)
@@ -474,9 +475,9 @@ public class RevealJsonFormUtils {
             formName = JsonForm.CDD_SUPERVISOR_DAILY_SUMMARY_FORM;
         } else if (Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)
                 || Intervention.CELL_COORDINATION.equals(taskCode)) {
-            if (BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
+            if (getBuildCountry() == Country.RWANDA) {
                 formName = JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN) {
+            } else if (getBuildCountry() == Country.RWANDA_EN) {
                 formName = JsonForm.RWANDA_CELL_COORDINATOR_DAILY_SUMMARY_FORM_EN;
             }
         } else if (Constants.EventType.FPP_EVENT.equals(encounterType)) {
@@ -488,20 +489,20 @@ public class RevealJsonFormUtils {
         } else if(EventType.CDD_DRUG_WITHDRAWAL_EVENT.equals(encounterType)){
             formName = JsonForm.CDD_DRUG_WITHDRAWAL_FORM;
         } else if(EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)){
-            if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+            if(getBuildCountry() == Country.MALI){
                 formName = JsonForm.MALI_DRUG_RECEIVED_FORM;
             } else {
                 formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
             }
         } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
+        } else if(getBuildCountry() == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCHO_EVENT.equals(encounterType))){
+        } else if(getBuildCountry() == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCHO_EVENT.equals(encounterType))){
             formName = JsonForm.MDA_ONCHO_SURVEY_FORM;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))){
+        } else if(getBuildCountry() == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA;
-        } else if(BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
+        } else if(getBuildCountry() == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
         } else if(EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)){
             formName = JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM;
@@ -509,6 +510,11 @@ public class RevealJsonFormUtils {
             formName = JsonForm.ADVERSE_EVENTS_RECORD_FORM;
         }
         return formName;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public String getFormName(String encounterType) {
@@ -604,19 +610,19 @@ public class RevealJsonFormUtils {
                         if (JsonFormConstants.DATE_PICKER.equals(field.optString(TYPE))) {
                             field.put(VALUE, obs.getValue());
                         }
-                        if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA && nonEditablefields.contains(key)
+                        if (getBuildCountry() == Country.NAMIBIA && nonEditablefields.contains(key)
                                 && YES.equalsIgnoreCase(obs.getValue().toString())) {
                             field.put(JsonFormConstants.READ_ONLY, true);
                             field.remove(JsonFormConstants.RELEVANCE);
                         }
                     }
-                    if ((Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(
-                            BuildConfig.BUILD_COUNTRY)) && nonEditablefields.contains(key)) {
+                    if ((Country.KENYA.equals(getBuildCountry()) || Country.RWANDA.equals(
+                            getBuildCountry())) && nonEditablefields.contains(key)) {
                         field.put(JsonFormConstants.READ_ONLY, true);
                     }
 
-                    if (Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL_EN.equals(
-                            BuildConfig.BUILD_COUNTRY) || Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY)) {
+                    if (Country.SENEGAL.equals(getBuildCountry()) || Country.SENEGAL_EN.equals(
+                            getBuildCountry()) || Country.ZAMBIA.equals(getBuildCountry())) {
                         if (key.equals(COMPOUND_STRUCTURE)) {
                             populateCompoundStructureOptions(formJSON, Utils.getOperationalAreaLocation(
                                     PreferencesUtil.getInstance().getCurrentOperationalArea()));
@@ -805,7 +811,7 @@ public class RevealJsonFormUtils {
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
             case JsonForm.DAILY_SUMMARY_ZAMBIA_LITE:
             case JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             Constants.CONFIGURATION.TEAM_LEADERS, fieldsMap.get(JsonForm.TEAM_LEADER),
                             PreferencesUtil.getInstance().getCurrentDistrict());
@@ -836,8 +842,8 @@ public class RevealJsonFormUtils {
                 } else if (MACEPA_PROVINCES.contains(PreferencesUtil.getInstance().getCurrentProvince())) {
                     populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(HEALTH_CENTER));
                 } else {
-                    if (!Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) && !Country.SENEGAL_EN.equals(
-                            BuildConfig.BUILD_COUNTRY)) {
+                    if (!Country.SENEGAL.equals(getBuildCountry()) && !Country.SENEGAL_EN.equals(
+                            getBuildCountry())) {
                         populateUserAssignedLocations(formJSON, JsonForm.ZONE, Arrays.asList(OPERATIONAL_AREA, ZONE));
                     }
                 }
@@ -867,7 +873,7 @@ public class RevealJsonFormUtils {
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE),
                             dataCollector.split(":")[0]);
                 }
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
                             CONFIGURATION.DISTRICT_MANAGERS, fieldsMap.get(JsonForm.DISTRICT_MANAGER),
                             PreferencesUtil.getInstance().getCurrentDistrict());

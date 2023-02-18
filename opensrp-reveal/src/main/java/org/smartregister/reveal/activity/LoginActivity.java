@@ -63,12 +63,6 @@ public class LoginActivity extends BaseLoginActivity implements BaseLoginContrac
     }
 
     private void setUpLogos() {
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
-            ImageView partnerLogo = findViewById(R.id.partner_logo);
-            partnerLogo.setVisibility(View.VISIBLE);
-            mainLogo.setBackgroundResource(R.drawable.ic_dvbd_logo);
-        } else {
-            mainLogo.setBackgroundResource(R.drawable.ic_logo_login);
-        }
+        mainLogo.setBackgroundResource(R.drawable.ic_logo_login);
     }
 }

@@ -1,12 +1,21 @@
 package org.smartregister.reveal.presenter;
 
-import android.content.Context;
+import static org.smartregister.reveal.contract.StructureTasksContract.Interactor;
+import static org.smartregister.reveal.contract.StructureTasksContract.Presenter;
+import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
+import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
+import static org.smartregister.reveal.util.Constants.Intervention.MDA_DRUG_RECON;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-
 import com.mapbox.geojson.Feature;
-
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +24,6 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.BaseFormFragmentContract;
 import org.smartregister.reveal.contract.StructureTasksContract;
@@ -27,21 +35,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Set;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.contract.StructureTasksContract.Interactor;
-import static org.smartregister.reveal.contract.StructureTasksContract.Presenter;
-import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
-import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_DRUG_RECON;
-import static org.smartregister.util.JsonFormUtils.VALUE;
 
 /**
  * Created by samuelgithengi on 4/12/19.
@@ -197,13 +191,17 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
 
             if (summary == null && BEDNET_DISTRIBUTION.equals(getTaskDetails().getTaskCode())) {
                 formInteractor.findNumberOfMembers(getTaskDetails().getTaskEntity(), formJSON);
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA && MDA_DRUG_RECON.equals(getTaskDetails().getTaskCode())) {
+            } else if (getBuildCountry() == Country.NIGERIA && MDA_DRUG_RECON.equals(getTaskDetails().getTaskCode())) {
                 interactor.findTotalSMCDosageCounts(taskDetails, formJSON);
             } else {
                 getView().startForm(formJSON);
             }
         }
         getView().hideProgressDialog();
+    }
+
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     @Override

@@ -88,12 +88,9 @@ public class RevealClientProcessor extends ClientProcessorForJava {
     }
 
     public void processClient(List<EventClient> eventClients, boolean localEvents) {
-        ClientClassification clientClassification;
-        if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
-            clientClassification = assetJsonToJava("ec_client_classification_nigeria.json", ClientClassification.class);
-        } else {
-           clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
-        }
+        ClientClassification clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
+
+
 
         if (clientClassification == null) {
             return;

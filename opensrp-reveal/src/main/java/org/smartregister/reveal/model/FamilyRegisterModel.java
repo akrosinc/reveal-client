@@ -1,11 +1,17 @@
 package org.smartregister.reveal.model;
 
+import static org.smartregister.reveal.util.FamilyConstants.DatabaseKeys.FAMILY_NAME;
+import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
+import static org.smartregister.util.JsonFormUtils.KEY;
+import static org.smartregister.util.JsonFormUtils.VALUE;
+
+import androidx.annotation.NonNull;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import com.vijay.jsonwizard.utils.FormUtils;
-
+import java.util.Arrays;
+import java.util.List;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,16 +28,7 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.JsonFormUtils;
-
-import java.util.Arrays;
-import java.util.List;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.FamilyConstants.DatabaseKeys.FAMILY_NAME;
-import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP.RESIDENCE;
-import static org.smartregister.util.JsonFormUtils.KEY;
-import static org.smartregister.util.JsonFormUtils.VALUE;
 
 
 public class FamilyRegisterModel extends BaseFamilyRegisterModel {
@@ -67,11 +64,16 @@ public class FamilyRegisterModel extends BaseFamilyRegisterModel {
             Location operationalArea = org.smartregister.reveal.util.Utils.getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
             if (operationalArea != null)
                 eventClient.getEvent().setLocationId(operationalArea.getId());
-            if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY) && eventClient.getEvent().getEntityType().equals(FamilyConstants.TABLE_NAME.FAMILY)){
+            if(Country.NIGERIA.equals(getBuildCountry()) && eventClient.getEvent().getEntityType().equals(FamilyConstants.TABLE_NAME.FAMILY)){
                 correctCompoundStructureFieldMultiSelectValue(eventClient, jsonString);
             }
         }
         return eventClientList;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     @Override
@@ -83,7 +85,7 @@ public class FamilyRegisterModel extends BaseFamilyRegisterModel {
             familyNameFieldJSONObject.put(VALUE, this.structureName);
         }
 
-        if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.NIGERIA.equals(getBuildCountry())){
             populateCompoundStructureOptions(form);
         }
         return form;

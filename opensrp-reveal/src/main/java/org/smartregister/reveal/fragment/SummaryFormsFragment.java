@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import org.json.JSONObject;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.OtherFormsfragmentContract;
 import org.smartregister.reveal.presenter.OtherFormsFragmentPresenter;
@@ -21,6 +20,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.LocationUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.SummaryFormsActivity;
@@ -158,12 +158,12 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             view.findViewById(R.id.separator9).setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator15).setVisibility(View.GONE);
             view.findViewById(R.id.separator16).setVisibility(View.GONE);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+        } else if(getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
             btnIrsSaDecision.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator5).setVisibility(View.VISIBLE);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
+        } else if(getBuildCountry() == Country.NIGERIA){
             btnDailySummaryMorning.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator11).setVisibility(View.VISIBLE);
             btnDailySummaryEvening.setVisibility(View.VISIBLE);
@@ -173,7 +173,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnCDDSupervisorChecklist.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator14).setVisibility(View.VISIBLE);
             btnHFWSupervisorChecklist.setVisibility(View.VISIBLE);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+        } else if(getBuildCountry() == Country.MALI){
             btnOutsideHouseholdTreatmentForm.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator19).setVisibility(View.VISIBLE);
             btnAdverseEventsRecordForm.setVisibility(View.VISIBLE);
@@ -183,6 +183,11 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
 
         }
         setClickListeners();
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private void setClickListeners() {
@@ -281,70 +286,70 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 break;
             case R.id.summary_daily_summary:
             case R.id.supervisor_daily_summary:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     if(Utils.isZambiaIRSLite()){
                         presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_ZAMBIA_LITE);
                     } else {
                         presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.DAILY_SUMMARY_ZAMBIA);
                     }
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_SENEGAL);
-                }else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                }else if(getBuildCountry() == Country.SENEGAL_EN){
                     presenter.showBasicForm(Constants.JsonForm.DAILY_SUMMARY_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_team_leader_dos:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.TEAM_LEADER_DOS_ZAMBIA);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.TEAM_LEADER_DOS_SENEGAL);
                 }
                 break;
             case R.id.summary_cb_spray_area:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.CB_SPRAY_AREA_ZAMBIA);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.CB_SPRAY_AREA_SENEGAL);
                 }
                 break;
             case R.id.summary_irs_sa_decision:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.IRS_SA_DECISION_ZAMBIA);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.IRS_SA_DECISION_SENEGAL);
-                } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                } else if(getBuildCountry() == Country.SENEGAL_EN){
                     presenter.showBasicForm(Constants.JsonForm.IRS_SA_DECISION_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_mobilization_form:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.MOBILIZATION_FORM_ZAMBIA);
                 } else {
                     presenter.showBasicForm(Constants.JsonForm.MOBILIZATION_FORM_SENEGAL);
                 }
                 break;
             case R.id.summary_irs_field_officer:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.IRS_FIELD_OFFICER_ZAMBIA);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.IRS_FIELD_OFFICER_SENEGAL);
-                } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN){
+                } else if(getBuildCountry() == Country.SENEGAL_EN){
                     presenter.showBasicForm(Constants.JsonForm.IRS_FIELD_OFFICER_SENEGAL_EN);
                 }
                 break;
             case R.id.summary_verification_form:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+                if (getBuildCountry() == Country.ZAMBIA) {
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.VERIFICATION_FORM_ZAMBIA);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL){
+                } else if (getBuildCountry() == Country.SENEGAL){
                     presenter.showBasicForm(Constants.JsonForm.VERIFICATION_FORM_SENEGAL);
                 }
                 break;
             case R.id.summary_tablet_accountability_form:
-                if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+                if(getBuildCountry() == Country.KENYA){
                     presenter.showBasicForm(org.smartregister.reveal.util.Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM);
-                } else if (BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+                } else if (getBuildCountry() == Country.RWANDA){
                     presenter.showBasicForm(Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA);
-                } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+                } else if(getBuildCountry() == Country.RWANDA_EN){
                     presenter.showBasicForm(Constants.JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN);
                 }
                 break;

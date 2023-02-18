@@ -57,7 +57,7 @@ import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
-import org.smartregister.reveal.api.RevealService;
+import org.smartregister.reveal.repository.EnvironmentRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -224,8 +224,7 @@ public class Context {
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
-
-    private RevealService revealService;
+    private EnvironmentRepository environmentRepository;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -553,6 +552,7 @@ public class Context {
         drishtiRepositoryList.add(formsVersionRepository());
         drishtiRepositoryList.add(imageRepository());
         drishtiRepositoryList.add(detailsRepository());
+        drishtiRepositoryList.add(environmentRepository());
         for (int i = 0; i < bindtypes.size(); i++) {
             drishtiRepositoryList.add(commonrepository(bindtypes.get(i).getBindtypename()));
         }
@@ -679,6 +679,12 @@ public class Context {
         return settingsRepository;
     }
 
+    protected EnvironmentRepository environmentRepository(){
+        if(environmentRepository == null){
+            environmentRepository = new EnvironmentRepository();
+        }
+        return environmentRepository;
+    }
     private ChildRepository childRepository() {
         if (childRepository == null) {
             childRepository = new ChildRepository();

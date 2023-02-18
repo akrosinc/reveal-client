@@ -1,62 +1,5 @@
 package org.smartregister.reveal.fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.Location;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.StringRes;
-import androidx.cardview.widget.CardView;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.Task;
-import org.smartregister.family.fragment.NoMatchDialogFragment;
-import org.smartregister.family.util.DBConstants;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.adapter.TaskRegisterAdapter;
-import org.smartregister.reveal.contract.BaseDrawerContract;
-import org.smartregister.reveal.contract.TaskRegisterFragmentContract;
-import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.model.FilterConfiguration;
-import org.smartregister.reveal.model.TaskDetails;
-import org.smartregister.reveal.model.TaskFilterParams;
-import org.smartregister.reveal.presenter.TaskRegisterFragmentPresenter;
-import org.smartregister.reveal.task.IndicatorsCalculatorTask;
-import org.smartregister.reveal.util.AlertDialogUtils;
-import org.smartregister.reveal.util.Constants.Properties;
-import org.smartregister.reveal.util.Constants.TaskRegister;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.LocationUtils;
-import org.smartregister.reveal.util.RevealJsonFormUtils;
-import org.smartregister.reveal.util.Utils;
-import org.smartregister.reveal.view.DrawerMenuView;
-import org.smartregister.reveal.view.FilterTasksActivity;
-import org.smartregister.reveal.view.ListTasksActivity;
-import org.smartregister.reveal.view.TaskRegisterActivity;
-import org.smartregister.view.activity.BaseRegisterActivity;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import io.ona.kujaku.utils.Constants;
-
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -72,6 +15,59 @@ import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.TASK_RESET_INTERVENTIONS;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
 import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.StringRes;
+import androidx.cardview.widget.CardView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.ona.kujaku.utils.Constants;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Task;
+import org.smartregister.family.fragment.NoMatchDialogFragment;
+import org.smartregister.family.util.DBConstants;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.adapter.TaskRegisterAdapter;
+import org.smartregister.reveal.contract.BaseDrawerContract;
+import org.smartregister.reveal.contract.TaskRegisterFragmentContract;
+import org.smartregister.reveal.model.BaseTaskDetails;
+import org.smartregister.reveal.model.FilterConfiguration;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.model.TaskFilterParams;
+import org.smartregister.reveal.presenter.TaskRegisterFragmentPresenter;
+import org.smartregister.reveal.task.IndicatorsCalculatorTask;
+import org.smartregister.reveal.util.AlertDialogUtils;
+import org.smartregister.reveal.util.Constants.Properties;
+import org.smartregister.reveal.util.Constants.TaskRegister;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.LocationUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.util.Utils;
+import org.smartregister.reveal.view.DrawerMenuView;
+import org.smartregister.reveal.view.FilterTasksActivity;
+import org.smartregister.reveal.view.ListTasksActivity;
+import org.smartregister.reveal.view.TaskRegisterActivity;
+import org.smartregister.view.activity.BaseRegisterActivity;
 
 /**
  * Created by samuelgithengi on 3/11/19.
@@ -415,7 +411,7 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
         Intent intent = new Intent(getContext(), FilterTasksActivity.class);
         intent.putExtra(FILTER_SORT_PARAMS, filterParams);
         FilterConfiguration.FilterConfigurationBuilder builder = FilterConfiguration.builder();
-        if (BuildConfig.BUILD_COUNTRY.equals(Country.NAMIBIA)) {
+        if (getBuildCountry().equals(Country.NAMIBIA)) {
             builder.taskCodeLayoutEnabled(false)
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
@@ -423,6 +419,10 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         getActivity().startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
+    }
+
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     @Override

@@ -35,3 +35,4 @@ release/
 ~
 /github.properties
 gradle.properties
+/fastlane/report.xml
