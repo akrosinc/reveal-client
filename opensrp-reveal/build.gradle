@@ -324,10 +324,6 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation 'com.github.akrosinc:opensrp-plan-evaluator:1.5.1-SNAPSHOT'
-
-
-
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
