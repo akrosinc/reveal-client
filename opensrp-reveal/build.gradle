@@ -53,12 +53,21 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
     defaultConfig {
         applicationId "org.smartregister.reveal"
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 76
-        versionName "10.6.0"
+        versionName "10.6.2"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -140,6 +149,7 @@ android {
             buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
             buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
             buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
+            signingConfig signingConfigs.release
         }
 
         debug {
@@ -180,7 +190,6 @@ android {
             includeAndroidResources = true
         }
     }
-
 }
 
 tasks.withType(Test) {
