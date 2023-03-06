@@ -6,18 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import java.text.MessageFormat;
+import java.util.Map;
 import org.joda.time.DateTime;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.cursoradapter.RecyclerViewProvider;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.EventRegisterDetails;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.DatabaseKeys;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -25,9 +26,6 @@ import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
-
-import java.text.MessageFormat;
-import java.util.Map;
 
 
 public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.RegisterViewHolder> {
@@ -153,9 +151,14 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
             statusTextView = itemView.findViewById(R.id.status);
             dataCollectionDateTextView = itemView.findViewById(R.id.data_collection_date);
 
-            if(!Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) && !Country.RWANDA_EN.equals(BuildConfig.BUILD_COUNTRY) ){
+            if(!Country.KENYA.equals(getBuildCountry()) && !Country.RWANDA.equals(getBuildCountry()) && !Country.RWANDA_EN.equals(getBuildCountry()) ){
                 dataCollectionDateTextView.setVisibility(View.GONE);
             }
+        }
+
+        @NonNull
+        private Country getBuildCountry() {
+            return PreferencesUtil.getInstance().getBuildCountry();
         }
     }
 

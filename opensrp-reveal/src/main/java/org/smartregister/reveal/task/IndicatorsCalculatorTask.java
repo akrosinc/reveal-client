@@ -6,9 +6,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import java.util.Arrays;
+import java.util.List;
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +17,6 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.Setting;
 import org.smartregister.reporting.view.ProgressIndicatorView;
 import org.smartregister.reporting.view.TableView;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.IndicatorDetails;
@@ -27,10 +27,6 @@ import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.ListTasksActivity;
-
-import java.util.Arrays;
-import java.util.List;
-
 import timber.log.Timber;
 
 /**
@@ -77,26 +73,32 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     protected IndicatorDetails doInBackground(Void... params) {
         IndicatorDetails indicatorDetails = null;
 
-        if ((BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && !Utils.isZambiaIRSLite()) || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+        if ((getBuildCountry() == Country.ZAMBIA && !Utils.isZambiaIRSLite()) || getBuildCountry() == Country.SENEGAL || getBuildCountry()
+                == Country.SENEGAL_EN) {
             indicatorDetails = IndicatorUtils.processIndicators(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateSprayIndicators(this.activity, indicatorDetails));
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
+        } else if (getBuildCountry() == Country.NAMIBIA) {
             Location operationalArea = Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea());
             indicatorDetails = IndicatorUtils.getNamibiaIndicators(operationalArea.getId(), prefsUtil.getCurrentPlanId(), sqLiteDatabase);
             indicatorDetails.setTarget(calculateTarget());
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNamibiaSprayIndicators(this.activity, indicatorDetails));
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+        } else if(getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN){
             indicatorDetails  = IndicatorUtils.processRwandaIndicators(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateRwandaIndicators(this.activity,indicatorDetails));
-        } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
+        } else if(getBuildCountry() == Country.NIGERIA){
             indicatorDetails = IndicatorUtils.processIndicatorsNigeria(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNigeriaIndicators(this.activity,indicatorDetails));
-        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+        } else if(getBuildCountry() == Country.KENYA){
             indicatorDetails = IndicatorUtils.processIndicatorsKenya(tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateKenyaIndicators(activity,indicatorDetails));
         }
         return indicatorDetails;
 
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public int calculateTarget() {
@@ -131,26 +133,27 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         if(Utils.isZambiaIRSLite()) {
             indicatorParentView.setVisibility(View.GONE);
         }
-        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN) {
             setIRSProgressIndicators(indicatorDetails);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
+        } else if (getBuildCountry() == Country.NAMIBIA) {
             setNamibiaProgressIndicators(indicatorDetails);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || BuildConfig.BUILD_COUNTRY == Country.KENYA){
+        } else if(getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN || getBuildCountry()
+                == Country.KENYA){
             hideProgressIndicators();
-        } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA){
+        } else if(getBuildCountry() == Country.NIGERIA){
             setNigeriaProgressIndicators(indicatorDetails);
         }
 
-        if(BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || BuildConfig.BUILD_COUNTRY == Country.RWANDA){
+        if(getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.RWANDA){
             tempTableLayoutViewNG.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
             populateTableView(getTableRowsRwanda(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutView);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+        } else if(getBuildCountry() == Country.NIGERIA) {
             tempTableLayoutView.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
             tempTableLayoutViewKenya.setVisibility(View.GONE);
             populateTableView(getTableRowsNigeria(),indicatorDetails.getSprayIndicatorList(),tempTableLayoutViewNG);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+        } else if(getBuildCountry() == Country.KENYA){
             tempTableLayoutView.setVisibility(View.GONE);
             tempTableLayoutViewNG.setVisibility(View.GONE);
             tableView.setVisibility(View.GONE);
@@ -262,7 +265,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     }
 
     private boolean shouldIndicatorsBeVisible() {
-        return Utils.getInterventionLabel() == R.string.irs || BuildConfig.BUILD_COUNTRY == Country.RWANDA  || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN || Country.NIGERIA == BuildConfig.BUILD_COUNTRY || Country.KENYA == BuildConfig.BUILD_COUNTRY  ;
+        return Utils.getInterventionLabel() == R.string.irs || getBuildCountry() == Country.RWANDA  || getBuildCountry()
+                == Country.RWANDA_EN || Country.NIGERIA == getBuildCountry() || Country.KENYA == getBuildCountry();
     }
 
 

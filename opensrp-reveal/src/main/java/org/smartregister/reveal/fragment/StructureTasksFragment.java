@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Set;
 import org.json.JSONObject;
 import org.smartregister.domain.Task;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.adapter.StructureTaskAdapter;
 import org.smartregister.reveal.contract.StructureTasksContract;
@@ -39,6 +38,7 @@ import org.smartregister.reveal.presenter.StructureTasksPresenter;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.LocationUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
 import timber.log.Timber;
@@ -117,7 +117,7 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
 
     private void setUpViews(View view) {
         TextView interventionType = view.findViewById(R.id.intervention_type);
-        interventionType.setText((Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY) ? getString(R.string.mda):getString(Utils.getInterventionLabel()));
+        interventionType.setText((Country.MOZAMBIQUE == getBuildCountry()) ? getString(R.string.mda):getString(Utils.getInterventionLabel()));
         taskRecyclerView = view.findViewById(R.id.task_recyclerView);
 
         progressDialog = new ProgressDialog(getContext());
@@ -128,6 +128,10 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
         detectCaseButton.setOnClickListener((View v) -> {
             presenter.onDetectCase();
         });
+    }
+
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {

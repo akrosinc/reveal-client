@@ -1,18 +1,20 @@
 package org.smartregister.reveal.presenter;
 
+import static org.smartregister.family.util.Constants.INTENT_KEY.BASE_ENTITY_ID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
+import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-
+import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.google.gson.Gson;
-
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
@@ -24,7 +26,6 @@ import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.family.domain.FamilyEventClient;
 import org.smartregister.family.presenter.BaseFamilyProfilePresenter;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.FamilyOtherMemberProfileContract;
@@ -40,13 +41,7 @@ import org.smartregister.reveal.util.FamilyConstants.JSON_FORM;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
-
 import timber.log.Timber;
-
-import static org.smartregister.family.util.Constants.INTENT_KEY.BASE_ENTITY_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
-import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 
 /**
  * Created by samuelgithengi on 4/10/19.
@@ -270,20 +265,20 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
 
     @Override
     public void startFormForEdit(CommonPersonObjectClient client) {
-        if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+        if (getBuildCountry() == Country.NIGERIA) {
             this.getInteractor().getRegistrationEvent(client, this.familyBaseEntityId);
         } else {
             String formName;
-            if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
+            if (getBuildCountry() == Country.THAILAND) {
                 formName = JSON_FORM.THAILAND_FAMILY_UPDATE;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
+            } else if (getBuildCountry() == Country.ZAMBIA) {
                 formName = JSON_FORM.ZAMBIA_FAMILY_UPDATE;
-            } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
+            } else if (getBuildCountry() == Country.NIGERIA) {
                 // HEADS UP
 //            formName = JSON_FORM.NIGERIA_FAMILY_UPDATE;
                 formName = JSON_FORM.NIGERIA_FAMILY_REGISTER;
 
-            } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
+            } else if (getBuildCountry() == Country.REFAPP) {
                 formName = JSON_FORM.REFAPP_FAMILY_UPDATE;
             } else {
                 formName = JSON_FORM.FAMILY_UPDATE;
@@ -299,7 +294,12 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
         }
     }
 
-        @Override
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
+    }
+
+    @Override
         public void onEventFound(Event structureEvent, CommonPersonObjectClient client) {
             String formName = JSON_FORM.NIGERIA_FAMILY_UPDATE;
 

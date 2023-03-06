@@ -15,14 +15,22 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import com.evernote.android.job.JobManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
 import io.ona.kujaku.KujakuLibrary;
 import io.ona.kujaku.data.realm.RealmDatabase;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +63,7 @@ import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.LoginActivity;
 import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
 import org.smartregister.reveal.job.RevealJobCreator;
+import org.smartregister.reveal.model.Environment;
 import org.smartregister.reveal.repository.RevealRepository;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.AppExecutors;
@@ -73,9 +82,12 @@ import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
 import timber.log.Timber;
 
-public class RevealApplication extends DrishtiApplication implements TimeChangedBroadcastReceiver.OnTimeChangedListener, ValidateAssignmentReceiver.UserAssignmentListener {
+public class RevealApplication extends DrishtiApplication
+        implements TimeChangedBroadcastReceiver.OnTimeChangedListener,
+        ValidateAssignmentReceiver.UserAssignmentListener {
 
     private JsonSpecHelper jsonSpecHelper;
+
     private char[] password;
 
     private PlanDefinitionSearchRepository planDefinitionSearchRepository;
@@ -119,21 +131,15 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
         P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, new RevealSyncConfiguration(), BuildConfig.BUILD_TIMESTAMP, p2POptions);
         forceRemoteLoginForInConsistentUsername();
-        if (BuildConfig.BUILD_COUNTRY == Country.NAMIBIA) {
-            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NAMIBIA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.BOTSWANA) {
-            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.BOTSWANA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.MALI) {
+        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
-            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.REFAPP_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+        } else if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.KENYA){
+        } else if (getBuildCountry() == Country.KENYA) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN){
+        } else if (Arrays.asList(Country.RWANDA,Country.RWANDA_EN).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA || BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+        } else if (Arrays.asList(Country.NIGERIA,Country.MOZAMBIQUE).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
@@ -151,22 +157,38 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
 
         //init Job Manager
         JobManager.create(this).addJobCreator(new RevealJobCreator());
-
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
-            LangUtils.saveLanguage(getApplicationContext(), "th");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.SENEGAL) {
-            LangUtils.saveLanguage(getApplicationContext(),"fr");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.RWANDA) {
-            LangUtils.saveLanguage(getApplicationContext(), "rw");
-        } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
-            LangUtils.saveLanguage(getApplicationContext(), "pt");
-        } else {
-            LangUtils.saveLanguage(getApplicationContext(), "en");
-        }
-        NativeFormLibrary.getInstance().setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());
+        LangUtils.setLanguage(getApplicationContext());
+        NativeFormLibrary.getInstance()
+                .setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());
 
         ValidateAssignmentReceiver.init(this);
         ValidateAssignmentReceiver.getInstance().addListener(this);
+        loadRevealEnvironments();
+
+
+    }
+
+    private void loadRevealEnvironments() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
+                .build();
+        RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try (Response response = client.newCall(request).execute()) {
+                    final List<Environment> servers = new Gson()
+                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
+                            }.getType());
+                            Gson gson  = new Gson();
+                            servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(),gson.toJson(server.getData())));
+                            PreferencesUtil.getInstance()
+                                    .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
+                                            Collectors.joining(",")));
+                } catch (Exception e) {
+                    Timber.e("failed to fetch envs...");
+                }
+            }
+        });
 
     }
 
@@ -176,7 +198,8 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
     private void forceRemoteLoginForInConsistentUsername() {
         AllSharedPreferences allSharedPreferences = context.allSharedPreferences();
         String provider = allSharedPreferences.fetchRegisteredANM();
-        if (StringUtils.isNotBlank(provider) && StringUtils.isBlank(allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM()))) {
+        if (StringUtils.isNotBlank(provider) && StringUtils.isBlank(
+                allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM()))) {
             allSharedPreferences.updateANMUserName(null);
             allSharedPreferences.saveForceRemoteLogin(true, provider);
         }
@@ -298,28 +321,54 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
             return metadata;
         }
 
-        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class, FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
+        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
+                FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
 
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND) {
-            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA) {
-            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.REFAPP) {
-            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (BuildConfig.BUILD_COUNTRY == Country.NIGERIA) {
-            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        if (getBuildCountry() == Country.THAILAND) {
+            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.ZAMBIA) {
+            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.REFAPP) {
+            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.NIGERIA) {
+            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
         } else {
-            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER, EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION, CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION,
+                    EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD,
+                    RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
         }
         metadata.updateFamilyDueRegister(TABLE_NAME.FAMILY_MEMBER, 20, true);
         metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
         metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
         return metadata;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public static CommonFtsObject createCommonFtsObject() {
@@ -339,10 +388,12 @@ public class RevealApplication extends DrishtiApplication implements TimeChanged
 
     private static String[] getFtsSearchFields(String tableName) {
         if (tableName.equals(TABLE_NAME.FAMILY)) {
-            return new String[]{DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.VILLAGE_TOWN, DBConstants.KEY.FIRST_NAME,
+            return new String[]{DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.VILLAGE_TOWN,
+                    DBConstants.KEY.FIRST_NAME,
                     DBConstants.KEY.LAST_NAME, DBConstants.KEY.UNIQUE_ID};
         } else if (tableName.equals(TABLE_NAME.FAMILY_MEMBER)) {
-            return new String[]{DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.FIRST_NAME, DBConstants.KEY.MIDDLE_NAME,
+            return new String[]{DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.FIRST_NAME,
+                    DBConstants.KEY.MIDDLE_NAME,
                     DBConstants.KEY.LAST_NAME, DBConstants.KEY.UNIQUE_ID};
         } else if (tableName.equals(EventsRegister.TABLE_NAME)) {
             return new String[]{DatabaseKeys.EVENT_DATE, DatabaseKeys.EVENT_TYPE, DatabaseKeys.SOP,

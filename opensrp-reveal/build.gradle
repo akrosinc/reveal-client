@@ -53,12 +53,21 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
     defaultConfig {
         applicationId "org.smartregister.reveal"
         minSdkVersion 26
-        targetSdkVersion 28
-        versionCode 75
-        versionName "10.4.5"
+        targetSdkVersion 31
+        versionCode 77
+        versionName "10.6.2"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -100,16 +109,6 @@ android {
                 project.logger.error("oauth.client.id variable is not set in your local.properties")
             }
 
-
-            if (properties != null && properties.containsKey("oauth.client.secret")) {
-
-                buildConfigField "String", "OAUTH_CLIENT_SECRET", properties["oauth.client.secret"]
-
-            } else {
-                project.logger.error("oauth.client.secret variable is not set in your local.properties")
-            }
-
-
         } else {
             println("local.properties does not exist")
             buildConfigField "String", "MAPBOX_SDK_ACCESS_TOKEN", "\"sample_key\""
@@ -132,13 +131,12 @@ android {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke-uat.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -152,16 +150,16 @@ android {
             buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
             buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
             buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
+            signingConfig signingConfigs.release
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"https://api-ef-ke-uat.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -194,7 +192,6 @@ android {
             includeAndroidResources = true
         }
     }
-
 }
 
 tasks.withType(Test) {
@@ -336,10 +333,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'android.arch.core', module: 'runtime'
     }
-
-    implementation 'com.github.akrosinc:opensrp-plan-evaluator:1.5.1-SNAPSHOT'
-
-
 
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

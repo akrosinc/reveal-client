@@ -48,9 +48,9 @@
                 android:name="firebase_performance_logcat_enabled"
                 android:value="true" />
 
-
         <activity
             android:name=".activity.LoginActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Login"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
@@ -62,126 +62,342 @@
         </activity>
         <activity
             android:name=".view.ListTasksActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".activity.RevealJsonFormActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".view.FamilyRegisterActivity"
+            android:exported="false"
             android:parentActivityName=".view.ListTasksActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.ListTasksActivity" />
         </activity>
         <activity
             android:name=".view.FamilyProfileActivity"
+            android:exported="false"
             android:parentActivityName=".view.FamilyRegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.FamilyRegisterActivity" />
         </activity>
-        <activity android:name="org.smartregister.family.activity.FamilyWizardFormActivity" />
-        <activity android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity" />
-        <activity android:name="org.smartregister.reveal.activity.ReadableJsonWizardFormActivity" />
+        <activity android:name="org.smartregister.family.activity.FamilyWizardFormActivity" android:exported="false" />
+        <activity android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity" android:exported="false" />
+        <activity android:name="org.smartregister.reveal.activity.ReadableJsonWizardFormActivity" android:exported="false" />
         <activity
             android:name=".view.FamilyOtherMemberProfileActivity"
+            android:exported="false"
             android:parentActivityName=".view.FamilyProfileActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.FamilyProfileActivity" />
         </activity>
-
         <activity
             android:name=".view.FilterTasksActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.TaskRegisterActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.SummaryFormsActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.StatsActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.OfflineMapsActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="org.smartregister.view.activity.DynamicJsonFormActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.EditFociBoundaryActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.EventRegisterActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".view.LocationPickerActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
         <activity
             android:name="org.smartregister.view.activity.SettingsActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
-        <service android:name=".sync.LocationTaskIntentService" />
-        <service android:name=".sync.RevealSettingsSyncIntentService" />
-        <service android:name=".sync.RevealSyncIntentService" />
-        <service android:name="org.smartregister.sync.intent.PullUniqueIdsIntentService" />
-        <service android:name="org.smartregister.sync.intent.ValidateIntentService" />
-        <service android:name="org.smartregister.sync.intent.ExtendedSyncIntentService" />
-        <service android:name="org.smartregister.sync.intent.DocumentConfigurationIntentService" />
-        <service android:name="org.smartregister.sync.intent.P2pProcessRecordsService" />
+        <service
+            android:name=".sync.LocationTaskIntentService"
+            android:exported="false" />
+        <service
+            android:name=".sync.RevealSettingsSyncIntentService"
+            android:exported="false" />
+        <service
+            android:name=".sync.RevealSyncIntentService"
+            android:exported="false" />
+        <service
+            android:name="org.smartregister.sync.intent.PullUniqueIdsIntentService"
+            android:exported="false" />
+        <service
+            android:name="org.smartregister.sync.intent.ValidateIntentService"
+            android:exported="false" />
+        <service
+            android:name="org.smartregister.sync.intent.ExtendedSyncIntentService"
+            android:exported="false" />
+        <service
+            android:name="org.smartregister.sync.intent.DocumentConfigurationIntentService"
+            android:exported="false" />
+        <service
+            android:name="org.smartregister.sync.intent.P2pProcessRecordsService"
+            android:exported="false" />
 
-
-        <!--from base -->
+        <!-- from base -->
 
         <service
             android:name="org.smartregister.account.AccountService"
             android:description="@string/component_desc_account_service"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <!--end from base-->
+        <!-- end from base -->
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/captured_images_path" />
         </provider>
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:clearTaskOnLaunch="true"
+            android:screenOrientation="sensorLandscape"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:exported="true"/>
+        <activity
+            android:name="com.vijay.jsonwizard.activities.JsonFormBarcodeScanActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="com.google.android.gms.vision.Dependencies"
+            android:value="barcode" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="io.ona.kujaku.activities.MapActivity"
+            android:exported="false" />
+
+        <service android:name="io.ona.kujaku.services.MapboxOfflineDownloaderService" android:exported="false" />
+        <service
+            android:name="io.ona.kujaku.services.TrackingService"
+            android:label="Tracking Service" android:exported="false" >
+        </service>
+
+        <receiver android:name="io.ona.kujaku.receivers.KujakuNetworkChangeReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="org.smartregister.p2p.activity.P2pModeSelectActivity"
+            android:label="@string/peer_to_peer_activity_title"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:exported="false"/>
+
+        <service android:name="org.smartregister.configurableviews.service.PullConfigurableViewsIntentService" android:exported="false" />
+
+        <activity android:name="org.smartregister.simprint.SimPrintsRegisterActivity"  android:exported="false"/>
+        <activity android:name="org.smartregister.simprint.SimPrintsVerifyActivity" android:exported="false"/>
+        <activity android:name="org.smartregister.simprint.SimPrintsIdentifyActivity" android:exported="false"/>
+        <activity
+            android:name="com.karumi.dexter.DexterActivity"
+            android:theme="@style/Dexter.Internal.Theme.Transparent"  android:exported="false"/>
+
+        <provider
+            android:name="com.google.firebase.perf.provider.FirebasePerfProvider"
+            android:authorities="org.smartregister.reveal.firebaseperfprovider"
+            android:exported="false"
+            android:initOrder="101" />
+
+        <service
+            android:name="com.google.firebase.components.ComponentDiscoveryService"
+            android:directBootAware="true"
+            android:exported="false" >
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.perf.FirebasePerfRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.crashlytics.CrashlyticsRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.remoteconfig.RemoteConfigRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.abt.component.AbtRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+        <service
+            android:name="com.evernote.android.job.v21.PlatformJobService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name="com.evernote.android.job.v14.PlatformAlarmService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name="com.evernote.android.job.v14.PlatformAlarmServiceExact"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.evernote.android.job.v14.PlatformAlarmReceiver"
+            android:exported="false" >
+            <intent-filter>
+
+                <!-- Keep the filter for legacy intents -->
+                <action android:name="com.evernote.android.job.v14.RUN_JOB" />
+                <action android:name="net.vrallev.android.job.v14.RUN_JOB" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.evernote.android.job.JobBootReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.evernote.android.job.gcm.PlatformGcmService"
+            android:enabled="false"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evernote.android.job.JobRescheduleService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            android:exported="false" >
+            <meta-data
+                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+                android:value="cct" />
+        </service>
+
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="org.smartregister.reveal.firebaseinitprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <receiver
+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <provider
+            android:name="com.mapbox.android.telemetry.provider.MapboxTelemetryInitProvider"
+            android:authorities="org.smartregister.reveal.mapboxtelemetryinitprovider"
+            android:exported="false"
+            android:initOrder="100" />
+
+        <service
+            android:name="com.mapbox.android.telemetry.crash.CrashReporterJobIntentService"
+            android:permission="android.permission.BIND_JOB_SERVICE" android:exported="false"/>
+
+        <activity
+            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <provider
+            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+            android:authorities="org.smartregister.reveal.lifecycle-process"
+            android:exported="false"
+            android:multiprocess="true" />
+
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
