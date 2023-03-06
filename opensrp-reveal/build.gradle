@@ -132,6 +132,7 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
@@ -154,6 +155,7 @@ android {
 
         debug {
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'

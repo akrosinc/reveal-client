@@ -170,7 +170,7 @@ public class RevealApplication extends DrishtiApplication
 
     private void loadRevealEnvironments() {
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().get().url("https://reveal-environments.azurewebsites.net/envs")
+        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
                 .build();
         RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
             @Override
