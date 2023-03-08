@@ -55,7 +55,7 @@ jobs:
       - name: Configure Keystore
         run: |
           echo "$ANDROID_KEYSTORE_FILE" > keystore.jks.b64
-          base64 -d -i keystore.jks.b64 > keystore.jks
+          base64 -d -i keystore.jks.b64 > opensrp-reveal/keystore.jks
           echo "ANDROID_KEYSTORE_FILE=keystore.jks" >> gradle.properties
           echo "KEYSTORE_KEY_ALIAS=$KEYSTORE_KEY_ALIAS" >> gradle.properties
           echo "KEYSTORE_STORE_PASSWORD=$KEYSTORE_STORE_PASSWORD" >> gradle.properties
