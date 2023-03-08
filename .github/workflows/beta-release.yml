@@ -46,7 +46,7 @@ jobs:
           echo "$GOOGLE_SERVICES" > google-services.json.b64
           base64 -d -i google-services.json.b64 > opensrp-reveal/google-services.json
           echo "mapbox.sdk.token=$MAPBOX_TOKEN" >> local.properties
-          echo "oauth.client.id=$OAUTH_CLIENT_ID: >> local.properties
+          echo "oauth.client.id=$OAUTH_CLIENT_ID" >> local.properties
         env:
           GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
           MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
