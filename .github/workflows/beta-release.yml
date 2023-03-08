@@ -62,6 +62,7 @@ jobs:
           echo "KEYSTORE_KEY_PASSWORD=$KEYSTORE_KEY_PASSWORD" >> gradle.properties
           echo "android.useAndroidX=true" >> gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
+          echo "org.gradle.jvmargs=-Xmx2048m" >> gradle.properties
 
         env:
           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
