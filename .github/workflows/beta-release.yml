@@ -2,7 +2,7 @@ name: Beta Release
 
 on:
   push:
-    branches: [ beta ]
+    branches: [ main ]
 
 jobs:
   deploy:
