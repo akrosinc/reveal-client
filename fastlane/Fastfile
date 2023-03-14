@@ -21,7 +21,7 @@ platform :android do
     gradle(task: "test")
   end
 
-  desc "Submit a new Beta Build to PlayStore Beta"
+  desc "Submit a new Beta Build to Google Play store Beta"
   lane :beta do
     gradle(task: "clean bundleRelease")
     upload_to_play_store(track: 'internal',  release_status: 'draft')
@@ -30,6 +30,12 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean bundleRelease")
+    upload_to_play_store
+  end
+
+  desc "Take app screenshots and upload to Google Play store"
+  lane :screenshots do
+    capture_android_screenshots
     upload_to_play_store
   end
 end
