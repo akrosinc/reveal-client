@@ -29,7 +29,7 @@ Runs all the tests
 [bundle exec] fastlane android beta
 ```
 
-Submit a new Beta Build to PlayStore Beta
+Submit a new Beta Build to Google Play store Beta
 
 ### android deploy
 
@@ -38,6 +38,14 @@ Submit a new Beta Build to PlayStore Beta
 ```
 
 Deploy a new version to the Google Play
+
+### android screenshots
+
+```sh
+[bundle exec] fastlane android screenshots
+```
+
+Take app screenshots and upload to Google Play store
 
 ----
 
