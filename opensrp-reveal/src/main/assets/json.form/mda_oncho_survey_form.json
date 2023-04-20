@@ -325,6 +325,33 @@
         }
       },
       {
+        "key": "total_under_5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "label": "Number of Total children under 5 in household?",
+        "hint": "Number of Total children under 5 in household",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        }
+      },
+      {
         "key": "received",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -636,38 +663,6 @@
         }
       },
       {
-        "key": "untreated_childrenu5",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "Untreated children under 5",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "This field must be a number"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "This field must be a whole number"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "This field must be greater than or equal to 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
         "key": "untreated_sick",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -707,6 +702,38 @@
         "type": "edit_text",
         "edit_type": "number",
         "hint": "Untreated absent",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_travel",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Untreated travel",
         "is_mandatory": true,
         "v_required": {
           "value": true,

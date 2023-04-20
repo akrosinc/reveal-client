@@ -923,6 +923,26 @@ public class RevealJsonFormUtils {
             case JsonForm.COUNTY_CDD_SUPERVISORY_FORM:
             case JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM:
             case JsonForm.MDA_ONCHO_SURVEY_FORM:
+                setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,
+                        fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME), RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.WARDS,
+                        fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.DRUG_REALLOCATEE),
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.CDD_BORROWED_FORM),
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.COUNTY_LIST, fieldsMap.get(JsonForm.COUNTY),
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SUB_COUNTY_LIST, fieldsMap.get(JsonForm.SUB_COUNTY),
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+               break;
             case JsonForm.ADVERSE_EVENTS_RECORD_FORM:
             case JsonForm.MALI_DRUG_RECEIVED_FORM:
                 setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
