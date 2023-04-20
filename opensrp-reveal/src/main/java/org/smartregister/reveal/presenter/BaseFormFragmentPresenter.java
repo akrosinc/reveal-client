@@ -1,47 +1,5 @@
 package org.smartregister.reveal.presenter;
 
-import android.content.Context;
-import android.preference.PreferenceManager;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.util.Pair;
-import androidx.core.util.Pair;
-import androidx.appcompat.app.AlertDialog;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.smartregister.commonregistry.CommonPersonObject;
-import org.smartregister.domain.Location;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.BaseFormFragmentContract;
-import org.smartregister.reveal.interactor.BaseFormFragmentInteractor;
-import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.repository.RevealMappingHelper;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.Intervention;
-import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.PasswordDialogUtils;
-import org.smartregister.reveal.util.PreferencesUtil;
-import org.smartregister.reveal.util.RevealJsonFormUtils;
-import org.smartregister.reveal.util.Utils;
-import org.smartregister.util.DateTimeTypeConverter;
-import org.smartregister.util.JsonFormUtils;
-
-import java.lang.ref.WeakReference;
-
-import io.ona.kujaku.listeners.BaseLocationListener;
-import timber.log.Timber;
-
 import static org.smartregister.family.util.Constants.JSON_FORM_KEY.OPTIONS;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_Z;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -58,14 +16,40 @@ import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
-import static org.smartregister.reveal.util.Utils.logAdminPassRequiredEvent;
-import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_ADHERENCE;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_DISPENSE;
-import static org.smartregister.reveal.util.Constants.Intervention.MDA_DRUG_RECON;
-import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
-import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
-import static org.smartregister.reveal.util.Country.NAMIBIA;
+
+import android.content.Context;
+import android.preference.PreferenceManager;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.util.Pair;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import io.ona.kujaku.listeners.BaseLocationListener;
+import java.lang.ref.WeakReference;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.domain.Location;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.BaseFormFragmentContract;
+import org.smartregister.reveal.interactor.BaseFormFragmentInteractor;
+import org.smartregister.reveal.model.BaseTaskDetails;
+import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.Intervention;
+import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.PasswordDialogUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.RevealJsonFormUtils;
+import org.smartregister.reveal.util.Utils;
+import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.JsonFormUtils;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 4/18/19.

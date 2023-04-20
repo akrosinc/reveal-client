@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/server">
-        <EditTextPreference
-            android:defaultValue="@string/opensrp_base_url"
-            android:dialogMessage="@string/enter_base_url_message"
-            android:dialogTitle="@string/reveal_base_url"
-            android:key="DRISHTI_BASE_URL"
-            android:persistent="true"
-            android:summary="@string/preference_summary"
-            android:title="@string/reveal_base_url" />
+        <ListPreference android:key="reveal_instance_key"
+            android:title="@string/reveal_instance_selector"
+            android:entries="@array/reveal_instance_names"
+            android:summary="@string/current_server"
+            app:useSimpleSummaryProvider="true"
+            android:entryValues="@array/reveal_instance_keys"/>
     </PreferenceCategory>
 </PreferenceScreen>

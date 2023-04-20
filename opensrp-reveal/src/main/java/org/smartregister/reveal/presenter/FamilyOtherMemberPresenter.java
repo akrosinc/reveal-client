@@ -1,15 +1,18 @@
 package org.smartregister.reveal.presenter;
 
 
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.google.gson.Gson;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.DateTime;
@@ -30,7 +33,6 @@ import org.smartregister.family.util.DBConstants;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.TaskRepository;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.FamilyOtherMemberProfileContract;
@@ -42,16 +44,9 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants;
 import org.smartregister.reveal.util.FamilyJsonFormUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.TaskUtils;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
-
 import timber.log.Timber;
-
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 
 /**
  * Created by samuelgithengi on 5/31/19.
@@ -206,7 +201,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
             if (familyEventClient == null) {
                 return;
             }
-            if(Country.NIGERIA.equals(BuildConfig.BUILD_COUNTRY)){
+            if(Country.NIGERIA.equals(getBuildCountry())){
                 updateMDADispenseTasksOnAgeChange(familyEventClient);
             }
             profileInteractor.saveRegistration(familyEventClient, jsonString, true, this);
@@ -214,6 +209,10 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
             getView().hideProgressDialog();
             Timber.e(e);
         }
+    }
+
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     @Override

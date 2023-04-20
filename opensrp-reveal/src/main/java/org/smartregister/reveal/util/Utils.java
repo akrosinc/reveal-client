@@ -1,6 +1,5 @@
 package org.smartregister.reveal.util;
 
-import static org.smartregister.reveal.util.Constants.ADMIN_PASSWORD_REQUIRED;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LATITUDE_AT_EQUITOR;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.KILOMETERS_PER_DEGREE_OF_LONGITUDE_AT_EQUITOR;
@@ -41,7 +40,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.util.Pair;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
@@ -52,7 +50,6 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -202,11 +199,7 @@ public class Utils {
     }
 
     private static String getDefaultSyncInterval() {
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
-            return Constants.THAILAND_SYNC_INTERVAL;
-        } else {
-            return BuildConfig.SYNC_INTERVAL_IN_MINUTES + "";
-        }
+        return BuildConfig.SYNC_INTERVAL_IN_MINUTES + "";
     }
 
 
@@ -363,7 +356,12 @@ public class Utils {
     }
 
     public static boolean isMDA() {
-        return getInterventionLabel() == R.string.mda && BuildConfig.BUILD_COUNTRY != Country.MALI;
+        return getInterventionLabel() == R.string.mda && getBuildCountry() != Country.MALI;
+    }
+
+    @NonNull
+    private static Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     public static boolean isFocusInvestigationOrMDA() {
@@ -480,7 +478,7 @@ public class Utils {
     }
 
     public static boolean isCountryBuild(Country country){
-        return BuildConfig.BUILD_COUNTRY == country;
+        return getBuildCountry() == country;
     }
 
     public static String getSyncEntityString(SyncEntity syncEntity) {
@@ -569,7 +567,7 @@ public class Utils {
         return mapList;
     }
     public static boolean isZambiaIRSLite() {
-        return (!isCurrentTargetLevelStructure()  && Country.ZAMBIA.equals(BuildConfig.BUILD_COUNTRY));
+        return (!isCurrentTargetLevelStructure()  && Country.ZAMBIA.equals(getBuildCountry()));
     }
 
     public static int getMaxZoomLevel() {
@@ -578,19 +576,20 @@ public class Utils {
 
 
     public static boolean isKenyaMDALite() {
-        return (!isCurrentTargetLevelStructure() && Country.KENYA.equals(BuildConfig.BUILD_COUNTRY));
+        return (!isCurrentTargetLevelStructure() && Country.KENYA.equals(getBuildCountry()));
 
     }
 
     public static boolean isRwandaMDALite(){
-        return (!isCurrentTargetLevelStructure()  && (Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN));
+        return (!isCurrentTargetLevelStructure()  && (Country.RWANDA.equals(getBuildCountry()) || getBuildCountry() == Country.RWANDA_EN));
     }
 
     public static boolean isZambiaIRSFull(){
-        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA && isCurrentTargetLevelStructure();
+        return getBuildCountry() == Country.ZAMBIA && isCurrentTargetLevelStructure();
     }
     public static boolean isMDALite(){
-       return Country.KENYA.equals(BuildConfig.BUILD_COUNTRY) || Country.RWANDA.equals(BuildConfig.BUILD_COUNTRY) || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN && !isCurrentTargetLevelStructure() ;
+       return Country.KENYA.equals(getBuildCountry()) || Country.RWANDA.equals(getBuildCountry()) || getBuildCountry()
+               == Country.RWANDA_EN && !isCurrentTargetLevelStructure() ;
     }
     public static Integer getMaxSelectZoomLevel(){
         return Integer.valueOf(getGlobalConfig(CONFIGURATION.MAX_SELECT_ZOOM_LEVEL,String.valueOf(MAX_SELECT_ZOOM_LEVEL)));
@@ -615,7 +614,7 @@ public class Utils {
         Float accuracy = location.getAccuracy();
         bundle.putFloat(GPS_ACCURACY,accuracy);
         sharedPreferences.savePreference(GPS_ACCURACY,accuracy.toString());
-        bundle.putString(BUILD_COUNTRY,BuildConfig.BUILD_COUNTRY.name());
+        bundle.putString(BUILD_COUNTRY, getBuildCountry().name());
         bundle.putBoolean(ADMIN_PASSWORD_ENTERED,passwordEntered);
         sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,String.valueOf(passwordEntered));
     }
@@ -624,22 +623,22 @@ public class Utils {
     }
 
     public static boolean buildCountryHasIndicators() {
-        return BuildConfig.BUILD_COUNTRY == Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY == Country.NAMIBIA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA
-                || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN
-                || BuildConfig.BUILD_COUNTRY == Country.RWANDA_EN
-                || BuildConfig.BUILD_COUNTRY == Country.NIGERIA
-                || BuildConfig.BUILD_COUNTRY == Country.KENYA;
+        return getBuildCountry() == Country.ZAMBIA
+                || getBuildCountry() == Country.NAMIBIA
+                || getBuildCountry() == Country.SENEGAL
+                || getBuildCountry() == Country.RWANDA
+                || getBuildCountry() == Country.SENEGAL_EN
+                || getBuildCountry() == Country.RWANDA_EN
+                || getBuildCountry() == Country.NIGERIA
+                || getBuildCountry() == Country.KENYA;
     }
 
     public static boolean isGeoFencedEnabled(){
-       return  Country.ZAMBIA == BuildConfig.BUILD_COUNTRY
-                || Country.SENEGAL == BuildConfig.BUILD_COUNTRY
-                || Country.SENEGAL_EN == BuildConfig.BUILD_COUNTRY
-                ||  Country.MOZAMBIQUE == BuildConfig.BUILD_COUNTRY
-                || Country.MALI == BuildConfig.BUILD_COUNTRY;
+       return  Country.ZAMBIA == getBuildCountry()
+                || Country.SENEGAL == getBuildCountry()
+                || Country.SENEGAL_EN == getBuildCountry()
+                ||  Country.MOZAMBIQUE == getBuildCountry()
+                || Country.MALI == getBuildCountry();
     }
 
     @NonNull

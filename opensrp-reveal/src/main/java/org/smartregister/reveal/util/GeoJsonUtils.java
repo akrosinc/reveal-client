@@ -1,18 +1,5 @@
 package org.smartregister.reveal.util;
 
-import androidx.annotation.NonNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.Task;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.model.StructureDetails;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import static org.smartregister.reveal.interactor.ListTaskInteractor.gson;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BEDNET_DISTRIBUTED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BLOOD_SCREENING_COMPLETE;
@@ -52,6 +39,16 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE_LIST;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
+
+import androidx.annotation.NonNull;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.Task;
+import org.smartregister.reveal.model.StructureDetails;
 
 /**
  * Created by samuelgithengi on 1/7/19.
@@ -95,7 +92,8 @@ public class GeoJsonUtils {
 
                 taskProperties = new HashMap<>();
                 taskProperties.put(TASK_IDENTIFIER, task.getIdentifier());
-                if ((BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)
+                if ((getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry()
+                        == Country.SENEGAL_EN)
                         && PARTIALLY_SPRAYED.equals(task.getBusinessStatus())) { // Set here for non residential structures
                     taskProperties.put(TASK_BUSINESS_STATUS, SPRAYED);
                 } else {
@@ -130,6 +128,11 @@ public class GeoJsonUtils {
 
         }
         return gson.toJson(structures);
+    }
+
+    @NonNull
+    private static Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private static void calculateState(Task task, StateWrapper state, @NonNull Map<String, Integer> mdaStatusMap) {

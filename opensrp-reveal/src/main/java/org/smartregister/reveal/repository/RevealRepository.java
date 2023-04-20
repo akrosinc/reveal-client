@@ -4,7 +4,6 @@ import static org.smartregister.repository.EventClientRepository.Table.event;
 import static org.smartregister.repository.EventClientRepository.event_column.baseEntityId;
 import static org.smartregister.repository.EventClientRepository.event_column.eventType;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASE_ENTITY_ID;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TASK_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LOCATION_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.PROPERTY_TYPE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.SPRAYED_STRUCTURES;
@@ -13,7 +12,6 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
-import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.STRUCTURE;
 import static org.smartregister.reveal.util.Constants.StructureType.RESIDENTIAL;
@@ -30,7 +28,6 @@ import static org.smartregister.util.DatabaseMigrationUtils.isColumnExists;
 
 import android.content.Context;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
@@ -60,7 +57,6 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.DatabaseKeys;
-import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants.EventType;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.util.DatabaseMigrationUtils;
@@ -109,9 +105,6 @@ public class RevealRepository extends Repository {
                 case 4:
                     upgradeToVersion4(db);
                     break;
-                case 5:
-                    upgradeToVersion5(db);
-                    break;
                 case 6:
                     upgradeToVersion6(db);
                     break;
@@ -123,12 +116,6 @@ public class RevealRepository extends Repository {
                     break;
                 case 9:
                     upgradeToVersion9(db);
-                    break;
-                case 10:
-                    upgradeToVersion10(db);
-                    break;
-                case 11:
-                    upgradeToVersion11(db);
                     break;
                 case 12:
                     upgradeToVersion12(db);
@@ -207,11 +194,6 @@ public class RevealRepository extends Repository {
         Utils.recreateEventAndClients(query, new String[]{}, db, Utils.getFormTag(), PAOT_TABLE, PAOT_EVENT, STRUCTURE, util);
     }
 
-    private void upgradeToVersion5(SQLiteDatabase db) {
-        if ((BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) && !isColumnExists(db, EVENT_TASK_TABLE, DatabaseKeys.PERSON_TESTED)) {
-            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s VARCHAR ", EVENT_TASK_TABLE, DatabaseKeys.PERSON_TESTED));
-        }
-    }
 
     private void upgradeToVersion6(SQLiteDatabase db) {
         ClientFormRepository.createTable(db);
@@ -248,27 +230,6 @@ public class RevealRepository extends Repository {
         ClientRelationshipRepository.createTable(db);
         EventClientRepository.createAdditionalColumns(db);
         EventClientRepository.addEventLocationId(db);
-    }
-
-    private void upgradeToVersion10(SQLiteDatabase db) {
-        if (BuildConfig.BUILD_COUNTRY != Country.ZAMBIA
-                || BuildConfig.BUILD_COUNTRY != Country.SENEGAL ||  BuildConfig.BUILD_COUNTRY != Country.SENEGAL_EN) {
-            return;
-        }
-        db.delete(Constants.Tables.EC_EVENTS_TABLE, String.format(" %s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
-        db.delete(Constants.Tables.EC_EVENTS_SEARCH_TABLE, String.format("%s=?", DatabaseKeys.EVENT_TYPE), new String[]{SPRAY_EVENT});
-
-        clientProcessEvents(Collections.singletonList(SPRAY_EVENT));
-
-    }
-
-    private void upgradeToVersion11(SQLiteDatabase db) {
-        if (BuildConfig.BUILD_COUNTRY != Country.NAMIBIA) {
-            return;
-        }
-        db.delete(SPRAYED_STRUCTURES, null, null);
-
-        clientProcessEvents(Arrays.asList(SPRAY_EVENT, REGISTER_STRUCTURE_EVENT));
     }
 
     private void upgradeToVersion12(SQLiteDatabase db) {

@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.AllConstants;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.application.RevealApplication;
@@ -193,4 +194,24 @@ public class PreferencesUtil {
     public void setCurrentPlanTargetLevel(String value){
         allSharedPreferences.savePreference(CURRENT_PLAN_TARGET_LEVEL, value);
     }
+
+    public void setBaseURL(String baseURL){
+        allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL,baseURL);
+    }
+    public  void setEnvironment(String environmentKey, String value){
+        allSharedPreferences.savePreference(environmentKey,value);
+    }
+    public String getStringPreference(String key){
+        return allSharedPreferences.getPreference(key);
+    }
+
+    public void setBuildCountry(String buildCountry){
+        allSharedPreferences.savePreference(AllConstants.BUILD_COUNTRY, buildCountry);
+    }
+
+    public Country getBuildCountry(){
+      String buildCountry =   allSharedPreferences.getPreference(AllConstants.BUILD_COUNTRY);
+      return StringUtils.isBlank(buildCountry) ? Country.ZAMBIA : Country.valueOf(buildCountry);
+    }
+
 }

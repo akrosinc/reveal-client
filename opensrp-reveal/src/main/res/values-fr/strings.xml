@@ -181,8 +181,6 @@
 
     <string name="view_tasks">Vue\n Taches</string>
     <string name="tasks_complete">Taches complétées</string>
-    <string name="opensrp_url" translatable="false">@string/opensrp_base_url</string>
-
     <string name="classification_details">Détails de la classification</string>
     <string name="view">Vue</string>
     <string name="family_details">Détails de la famille</string>

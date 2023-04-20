@@ -1,29 +1,5 @@
 package org.smartregister.reveal.util;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import org.smartregister.AllConstants;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.R;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.model.CardDetails;
-import org.smartregister.reveal.model.FamilyCardDetails;
-import org.smartregister.reveal.model.IRSVerificationCardDetails;
-import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
-import org.smartregister.reveal.model.SprayCardDetails;
-import org.smartregister.reveal.model.SurveyCardDetails;
-import org.smartregister.reveal.util.Constants.Action;
-import org.smartregister.reveal.util.Constants.BusinessStatus;
-
-import timber.log.Timber;
-
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
@@ -39,6 +15,28 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import org.smartregister.AllConstants;
+import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.model.CardDetails;
+import org.smartregister.reveal.model.FamilyCardDetails;
+import org.smartregister.reveal.model.IRSVerificationCardDetails;
+import org.smartregister.reveal.model.MosquitoHarvestCardDetails;
+import org.smartregister.reveal.model.SprayCardDetails;
+import org.smartregister.reveal.model.SurveyCardDetails;
+import org.smartregister.reveal.util.Constants.Action;
+import org.smartregister.reveal.util.Constants.BusinessStatus;
+import timber.log.Timber;
+
 /**
  * Created by samuelgithengi on 3/22/19.
  */
@@ -48,7 +46,7 @@ public class CardDetailsUtil {
         if (cardDetails == null || cardDetails.getStatus() == null)
             return;
         // extract status color
-        String status = BuildConfig.BUILD_COUNTRY == Country.NIGERIA ? cardDetails.getStatus() : getBaseBusinessStatus(cardDetails.getStatus());
+        String status = getBuildCountry() == Country.NIGERIA ? cardDetails.getStatus() : getBaseBusinessStatus(cardDetails.getStatus());
         switch (status) {
             case BusinessStatus.INELIGIBLE:
             case BusinessStatus.FAMILY_NO_TASK_REGISTERED:
@@ -82,7 +80,8 @@ public class CardDetailsUtil {
                 cardDetails.setStatusColor(R.color.partially_sprayed);
                 break;
             case PARTIALLY_SPRAYED:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+                if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry()
+                        == Country.SENEGAL_EN) {
                     formatCardDetailsForCompletedTasks(cardDetails);
                 } else {
                     cardDetails.setStatusColor(R.color.partially_sprayed);
@@ -93,6 +92,11 @@ public class CardDetailsUtil {
                 Timber.w("business status not defined :" + cardDetails.getStatus());
                 break;
         }
+    }
+
+    @NonNull
+    private static Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private static void formatCardDetailsForCompletedTasks(CardDetails cardDetails) {
@@ -316,7 +320,8 @@ public class CardDetailsUtil {
             case NOT_DISPENSED:
                 return context.getString(R.string.not_dispensed);
             case PARTIALLY_SPRAYED:
-                if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN) {
+                if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry()
+                        == Country.SENEGAL_EN) {
                     return context.getString(R.string.sprayed);
                 } else {
                     return context.getString(R.string.partially_sprayed);
@@ -378,7 +383,8 @@ public class CardDetailsUtil {
             return NOT_ELIGIBLE;
         } else if (context.getString(R.string.in_progress).equals(businessStatus)){
             return IN_PROGRESS;
-        } else if (context.getString(R.string.sprayed).equals(businessStatus) && (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN)){
+        } else if (context.getString(R.string.sprayed).equals(businessStatus) && (getBuildCountry() == Country.ZAMBIA || getBuildCountry()
+                == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN)){
             return PARTIALLY_SPRAYED;
         } else if( context.getString(R.string.partially_sprayed).equals(businessStatus)){
             return PARTIALLY_SPRAYED;

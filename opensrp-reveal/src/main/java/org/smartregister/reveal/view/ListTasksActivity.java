@@ -209,7 +209,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN) {
+        if (getCountry() == Country.THAILAND || getCountry() == Country.THAILAND_EN) {
             setContentView(R.layout.thailand_activity_list_tasks);
         } else {
             setContentView(R.layout.activity_list_tasks);
@@ -245,6 +245,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         initializeToolbar();
 
+    }
+
+    @NonNull
+    private Country getCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private void initializeCardViews() {
@@ -313,7 +318,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         if(!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
             findViewById(R.id.btn_add_structure).setVisibility(View.GONE);
         }
-        if(Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY) || Country.SENEGAL.equals(BuildConfig.BUILD_COUNTRY)){
+        if(Country.SENEGAL.equals(getCountry()) || Country.SENEGAL.equals(getCountry())){
             sprayCardView.findViewById(R.id.btn_undo_spray).setVisibility(View.GONE);
         }
     }
@@ -574,7 +579,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         Intent intent = new Intent(getContext(), FilterTasksActivity.class);
         intent.putExtra(FILTER_SORT_PARAMS, filterParams);
         FilterConfiguration.FilterConfigurationBuilder builder = FilterConfiguration.builder();
-        if (BuildConfig.BUILD_COUNTRY.equals(Country.NAMIBIA)) {
+        if (getCountry().equals(Country.NAMIBIA)) {
             builder.taskCodeLayoutEnabled(false)
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
@@ -1153,7 +1158,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     protected Country getBuildCountry() {
-        return BuildConfig.BUILD_COUNTRY;
+        return getCountry();
     }
 
 

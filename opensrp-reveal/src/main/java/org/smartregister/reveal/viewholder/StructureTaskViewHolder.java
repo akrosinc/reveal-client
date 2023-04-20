@@ -1,15 +1,16 @@
 package org.smartregister.reveal.viewholder;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Task;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.StructureTaskDetails;
@@ -18,10 +19,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Country;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.smartregister.reveal.util.PreferencesUtil;
 
 /**
  * Created by samuelgithengi on 4/11/19.
@@ -136,10 +134,15 @@ public class StructureTaskViewHolder extends RecyclerView.ViewHolder {
     }
 
     private SimpleDateFormat supportedDateFormat(){
-        if (BuildConfig.BUILD_COUNTRY == Country.THAILAND || BuildConfig.BUILD_COUNTRY == Country.THAILAND_EN){
+        if (getBuildCountry() == Country.THAILAND || getBuildCountry() == Country.THAILAND_EN){
             return ddMMyyDateFormat;
         }
         return dateFormat;
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private void setClickHandler(View.OnClickListener onClickListener, StructureTaskDetails taskDetails, View view) {

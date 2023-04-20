@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import org.json.JSONObject;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.BaseDrawerContract;
 import org.smartregister.reveal.contract.EventRegisterContract;
@@ -32,6 +32,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.EventType;
 import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.view.DrawerMenuView;
@@ -98,9 +99,14 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
             getPresenter().onFilterTasksClicked();
         });
 
-        if(BuildConfig.BUILD_COUNTRY != Country.KENYA  && BuildConfig.BUILD_COUNTRY != Country.RWANDA && BuildConfig.BUILD_COUNTRY != Country.RWANDA_EN){
+        if(getBuildCountry() != Country.KENYA  && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.RWANDA_EN){
             view.findViewById(R.id.data_collection_date_header).setVisibility(View.GONE);
         }
+    }
+
+    @NonNull
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
 

@@ -561,4 +561,5 @@ public class AllConstants {
     }
 
 
+    public static final String BUILD_COUNTRY = "BUILD_COUNTRY";
 }

@@ -11,6 +11,8 @@ import org.smartregister.repository.AllSharedPreferences;
 
 import java.util.Locale;
 
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.PreferencesUtil;
 import timber.log.Timber;
 
 public class LangUtils {
@@ -55,6 +57,24 @@ public class LangUtils {
         }
 
         return configuration;
+    }
+
+    public static void setLanguage(final Context base) {
+        if (getBuildCountry() == Country.THAILAND) {
+            LangUtils.saveLanguage(base.getApplicationContext(), "th");
+        } else if(getBuildCountry() == Country.SENEGAL ) {
+            LangUtils.saveLanguage(base.getApplicationContext(), "fr");
+        } else if(getBuildCountry() == Country.RWANDA){
+            LangUtils.saveLanguage(base.getApplicationContext(), "rw");
+        } else if(getBuildCountry() == Country.MOZAMBIQUE){
+            LangUtils.saveLanguage(base.getApplicationContext(), "pt");
+        } else {
+            LangUtils.saveLanguage(base.getApplicationContext(), "en");
+        }
+    }
+
+    private static Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
 }

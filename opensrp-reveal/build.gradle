@@ -19,6 +19,25 @@ allprojects {
     repositories {
         maven { url 'https://maven.google.com' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven {
+            def githubProperties = new Properties()
+            if (rootProject.file("github.properties").exists()) {
+                githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+            }
+
+            name = "GitHubPackages"
+            /*  Configure path to the library hosted on GitHub Package Registry
+             *  Replace UserID with package owner userID and REPOSITORY with the repository name
+             *  e.g. ""https://maven.pkg.github.com/opensrp/opensrp-client-reporting""
+             */
+            url = uri("https://maven.pkg.github.com/onaio/kujaku")
+            credentials {
+                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+            }
+
+        }
+        maven { url 'https://maven.fabric.io/public' }
         mavenLocal()
         google()  // Google's Maven repository
     }
@@ -53,12 +72,21 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        release {
+            storeFile file(ANDROID_KEYSTORE_FILE)
+            storePassword KEYSTORE_STORE_PASSWORD
+            keyAlias KEYSTORE_KEY_ALIAS
+            keyPassword KEYSTORE_KEY_PASSWORD
+        }
+    }
+
     defaultConfig {
         applicationId "org.smartregister.reveal"
         minSdkVersion 26
-        targetSdkVersion 28
-        versionCode 73
-        versionName "10.4.2"
+        targetSdkVersion 31
+        versionCode 80
+        versionName "10.6.5"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -100,16 +128,6 @@ android {
                 project.logger.error("oauth.client.id variable is not set in your local.properties")
             }
 
-
-            if (properties != null && properties.containsKey("oauth.client.secret")) {
-
-                buildConfigField "String", "OAUTH_CLIENT_SECRET", properties["oauth.client.secret"]
-
-            } else {
-                project.logger.error("oauth.client.secret variable is not set in your local.properties")
-            }
-
-
         } else {
             println("local.properties does not exist")
             buildConfigField "String", "MAPBOX_SDK_ACCESS_TOKEN", "\"sample_key\""
@@ -132,13 +150,12 @@ android {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", 'opensrp_base_url', '"https://opensrp-ef-ke-uat.akros.online/opensrp/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.KENYA"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -152,16 +169,16 @@ android {
             buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
             buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
             buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
+            signingConfig signingConfigs.release
         }
 
         debug {
-            resValue "string", 'opensrp_base_url', '"https://api-ef-mali-uat.akros.online/"'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
+            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
             buildConfigField "long", "SYNC_INTERVAL_IN_MINUTES", '480'
-            buildConfigField "org.smartregister.reveal.util.Country", "BUILD_COUNTRY", "org.smartregister.reveal.util.Country.MALI"
             buildConfigField "long", "PULL_UNIQUE_IDS_MINUTES", '15'
             buildConfigField "String", "ADMIN_PASSWORD_NOT_NEAR_STRUCTURES", '"AdminPass1"'
             buildConfigField "float", "MY_LOCATION_BUFFER", '25'
@@ -194,7 +211,6 @@ android {
             includeAndroidResources = true
         }
     }
-
 }
 
 tasks.withType(Test) {
@@ -218,7 +234,7 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
-    implementation('io.ona.kujaku:library:0.9.2') {
+    implementation('io.ona.kujaku:library:0.9.0') {
         exclude group: 'com.android.volley'
         exclude group: 'stax', module: 'stax-api'
     }
@@ -337,10 +353,6 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation 'com.github.akrosinc:opensrp-plan-evaluator:1.5.1-SNAPSHOT'
-
-
-
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -405,6 +417,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'tools.fastlane:screengrab:2.1.1'
 }
 
 task clearJar(type: Delete) {

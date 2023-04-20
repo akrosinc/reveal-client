@@ -1,40 +1,5 @@
 package org.smartregister.reveal.interactor;
 
-import android.content.Context;
-import android.location.Location;
-import android.text.TextUtils;
-
-import androidx.core.util.Pair;
-
-import com.google.common.annotations.VisibleForTesting;
-
-import net.sqlcipher.Cursor;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
-import org.smartregister.domain.Event;
-import org.smartregister.repository.EventClientRepository.event_column;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.reveal.BuildConfig;
-import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.TaskRegisterFragmentContract;
-import org.smartregister.reveal.model.TaskDetails;
-import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.EventType;
-import org.smartregister.reveal.util.Constants.Properties;
-import org.smartregister.reveal.util.Country;
-import org.smartregister.reveal.util.InteractorUtils;
-import org.smartregister.reveal.util.PreferencesUtil;
-import org.smartregister.reveal.util.Utils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import timber.log.Timber;
-
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.domain.Task.TaskStatus.COMPLETED;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
@@ -50,12 +15,12 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.GROUPED_STRUCTURE_TASK_CODE_AND_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.GROUPED_TASKS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.GROUPID;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LATITUDE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LONGITUDE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NAME;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NOT_SRAYED_OTHER_REASON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NOT_SRAYED_REASON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.OTHER;
@@ -76,6 +41,34 @@ import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_N
 import static org.smartregister.reveal.util.FamilyConstants.DatabaseKeys.HOUSE_NUMBER;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
+
+import android.content.Context;
+import android.location.Location;
+import android.text.TextUtils;
+import androidx.core.util.Pair;
+import com.google.common.annotations.VisibleForTesting;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import net.sqlcipher.Cursor;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.Event;
+import org.smartregister.repository.EventClientRepository.event_column;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.contract.TaskRegisterFragmentContract;
+import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.EventType;
+import org.smartregister.reveal.util.Constants.Properties;
+import org.smartregister.reveal.util.Country;
+import org.smartregister.reveal.util.InteractorUtils;
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.reveal.util.Utils;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 3/18/19.
@@ -108,7 +101,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
         queryBuilder.selectInitiateMainTable(tableName, mainColumns(tableName), ID_);
         queryBuilder.customJoin(String.format(" JOIN %s ON %s.%s = %s.%s ",
                 STRUCTURES_TABLE, tableName, FOR, STRUCTURES_TABLE, ID_));
-        if (BuildConfig.BUILD_COUNTRY != Country.NAMIBIA) {
+        if (getBuildCountry() != Country.NAMIBIA) {
             queryBuilder.customJoin(String.format(" LEFT JOIN %s ON %s.%s = %s.%s ",
                     SPRAYED_STRUCTURES, tableName, FOR, SPRAYED_STRUCTURES, ID));
         } else {
@@ -119,6 +112,10 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
         queryBuilder.customJoin(String.format(" LEFT JOIN %s ON %s.%s = %s.%s ",
                 FAMILY, STRUCTURES_TABLE, ID_, FAMILY, STRUCTURE_ID));
         return queryBuilder.mainCondition(mainCondition);
+    }
+
+    private Country getBuildCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private String nonRegisteredStructureTasksSelect(String mainCondition) {

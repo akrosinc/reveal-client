@@ -66,6 +66,7 @@ import static org.smartregister.util.JsonFormUtils.getJSONObject;
 import static org.smartregister.util.JsonFormUtils.getString;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -238,7 +239,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
         JSONArray obsList = (JSONArray) eventJson.get("obs");
-        if(BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL) || BuildConfig.BUILD_COUNTRY.equals(Country.SENEGAL_EN) || BuildConfig.BUILD_COUNTRY.equals(Country.ZAMBIA)){
+        if(getCountry().equals(Country.SENEGAL) || getCountry().equals(Country.SENEGAL_EN) || getCountry().equals(Country.ZAMBIA)){
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields,COMPOUND_STRUCTURE);
             if(compoundStructureField != null) {
                 for(int i =0; i < obsList.length();i++){
@@ -281,6 +282,11 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         eventJson.put(DETAILS,details);
         eventClientRepository.addEvent(entityId, eventJson);
         return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
+    }
+
+    @NonNull
+    private Country getCountry() {
+        return PreferencesUtil.getInstance().getBuildCountry();
     }
 
     private void saveLocationInterventionForm(JSONObject jsonForm) {
@@ -388,7 +394,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
                     properties.setUid(UUID.randomUUID().toString());
                     properties.setGeographicLevel("structure");
-                    if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE){
+                    if(getCountry() == Country.MOZAMBIQUE){
                         properties.setStructureNumber(event.getBaseEntityId().substring(event.getBaseEntityId().length() -4));
                     }
                     Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
@@ -413,17 +419,17 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(currentPlanId);
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
                         task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
-                    } else if(BuildConfig.BUILD_COUNTRY == Country.MOZAMBIQUE) {
+                    } else if(getCountry() == Country.MOZAMBIQUE) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                 BusinessStatus.NOT_VISITED, MDA_SURVEY, R.string.mda_survey);
-                    } else if(BuildConfig.BUILD_COUNTRY == Country.MALI){
+                    } else if(getCountry() == Country.MALI){
                         task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(),BusinessStatus.NOT_VISITED,MDA_ONCHOCERCIASIS_SURVEY,R.string.mda_onco_survey);
                     } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
                       task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(), BusinessStatus.NOT_VISITED,HABITAT_SURVEY,R.string.habitat_survey);
                     } else if(StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)){
                         task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(), BusinessStatus.NOT_VISITED,LSM_HOUSEHOLD_SURVEY,R.string.lsm_household_survey);
                     } else {
-                        if (BuildConfig.BUILD_COUNTRY == Country.ZAMBIA || BuildConfig.BUILD_COUNTRY == Country.SENEGAL || BuildConfig.BUILD_COUNTRY == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
+                        if (getCountry() == Country.ZAMBIA || getCountry() == Country.SENEGAL || getCountry() == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);
                         } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {

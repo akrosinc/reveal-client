@@ -567,16 +567,14 @@ public class HTTPAgent {
             urlConnection = initializeHttp(tokenEndpointURL, false);
 
             String clientId = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientId();
-            String clientSecret = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientSecret();
 
-            final String base64Auth = BaseEncoding.base64().encode(new StringBuffer(clientId).append(':').append(clientSecret).toString().getBytes(CharEncoding.UTF_8));
+            final String base64Auth = BaseEncoding.base64().encode(new StringBuffer(clientId).toString().getBytes(CharEncoding.UTF_8));
 
             requestParamBuffer.append("&grant_type=").append(grantType);
 
             if (allSharedPreferences.getPreferences().getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false)) {
 
                 requestParamBuffer.append("&client_id=").append(clientId);
-                requestParamBuffer.append("&client_secret=").append(clientSecret);
 
             } else {
 
