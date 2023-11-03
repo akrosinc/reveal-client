@@ -219,7 +219,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             }
             revealApplication.setRefreshMapOnEventSaved(true);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             presenterCallBack.onFormSaveFailure(encounterType);
         }
     }
@@ -330,7 +330,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = MDA_ONCHOCERCIASIS_SURVEY;
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         final String finalInterventionType = interventionType;
@@ -350,7 +350,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         }
                     });
                 } catch (JSONException e) {
-                    Timber.e(e, "Error saving saving Form ");
+                    Timber.tag("Reveal Exception").w(e, "Error saving saving Form ");
                     presenterCallBack.onFormSaveFailure(finalEncounterType);
                 }
             }
@@ -475,7 +475,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         }
                     });
                 } catch (JSONException e) {
-                    Timber.e(e, "Error saving new Structure");
+                    Timber.tag("Reveal Exception").w(e, "Error saving new Structure");
                     presenterCallBack.onFormSaveFailure(REGISTER_STRUCTURE_EVENT);
                 }
             }
@@ -501,7 +501,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         }
                     });
                 } catch (Exception e) {
-                    Timber.e("Error saving member event form");
+                    Timber.tag("Reveal Exception").w("Error saving member event form");
                 }
             }
         };
@@ -537,7 +537,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     ((StructureTasksContract.Presenter) presenterCallBack).onIndexConfirmationFormSaved(taskID, Task.TaskStatus.COMPLETED, businessStatus, removedTasks);
                 });
             } catch (Exception e) {
-                Timber.e("Error saving case confirmation data");
+                Timber.tag("Reveal Exception").w("Error saving case confirmation data");
             }
         });
     }
@@ -568,7 +568,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     family.setColumnmaps(personObject.getColumnmaps());
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 if (cursor != null)
                     cursor.close();
@@ -609,7 +609,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     handleLasteventFound(null);
                 }
             } catch (SQLException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         });
 
@@ -622,7 +622,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 structureId = cursor.getString(0);
             }
         }catch (SQLException e){
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return structureId;
     }

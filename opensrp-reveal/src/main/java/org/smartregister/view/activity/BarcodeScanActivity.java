@@ -129,7 +129,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
             try {
                 cameraSourcePreview.start(cameraSource);
             } catch (IOException e) {
-                Timber.e(e, "Unable to start camera source.");
+                Timber.tag("Reveal Exception").w(e, "Unable to start camera source.");
                 cameraSource.release();
                 cameraSource = null;
             }

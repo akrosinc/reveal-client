@@ -1,20 +1,20 @@
 package org.smartregister.reveal.widget;
 
+import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_ELIGIBLE;
+import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_SPRAYED;
+import static org.smartregister.util.JsonFormUtils.STEP1;
+
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
 import com.vijay.jsonwizard.domain.WidgetArgs;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
-
-import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_ELIGIBLE;
-import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_SPRAYED;
-import static org.smartregister.util.JsonFormUtils.STEP1;
 
 public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
 
@@ -54,6 +54,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
         }
         super.addOnDoneAction(textView, doneButton, widgetArgs);
     }
+
 
     @NonNull
     private Country getBuildCountry() {

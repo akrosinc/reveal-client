@@ -102,7 +102,7 @@ public class BaseFamilyRegisterFramentModel implements FamilyRegisterFragmentCon
                 return new JSONArray(response.payload());
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }

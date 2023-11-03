@@ -118,7 +118,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                 return form;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -180,7 +180,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                         try {
                             processFieldsForMemberEdit(client, jsonObject, jsonArray, familyName, isFamilyHead);
                         } catch (Exception e) {
-                            Timber.e(Log.getStackTraceString(e));
+                            Timber.tag("Reveal Exception").w(Log.getStackTraceString(e));
                         }
                     }
                 }
@@ -188,7 +188,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                 return form;
             }
         } catch (Exception e) {
-            Timber.e(Log.getStackTraceString(e));
+            Timber.tag("Reveal Exception").w(Log.getStackTraceString(e));
         }
 
         return null;
@@ -227,7 +227,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                     try {
                         processFieldsForMemberEdit(client, jsonObject, jsonArray, familyName, isFamilyHead);
                     } catch (Exception e) {
-                        Timber.e(Log.getStackTraceString(e));
+                        Timber.tag("Reveal Exception").w(Log.getStackTraceString(e));
                     }
                 }
                 if(isFamilyHead) {
@@ -245,7 +245,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                 return form;
             }
         } catch (Exception e) {
-            Timber.e(Log.getStackTraceString(e));
+            Timber.tag("Reveal Exception").w(Log.getStackTraceString(e));
         }
 
         return null;
@@ -423,7 +423,7 @@ public class FamilyJsonFormUtils extends JsonFormUtils {
                         field.put(VALUE, obs.getValue());
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }

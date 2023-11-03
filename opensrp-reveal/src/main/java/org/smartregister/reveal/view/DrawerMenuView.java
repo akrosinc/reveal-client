@@ -145,7 +145,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             ((TextView) headerView.findViewById(R.id.application_version))
                     .setText(appVersionText);
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
 
@@ -320,7 +320,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             });
             treeViewDialog.show();
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -351,7 +351,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             });
             treeViewDialog.show();
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

@@ -245,7 +245,7 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
             getView().getJsonFormUtils().populateField(formJSON, Constants.JsonForm.TOTAL_ADMINISTERED_SPAQ, taskDetails.getTotalAdministeredSpaq() + "", VALUE);
             getView().getJsonFormUtils().populateField(formJSON, Constants.JsonForm.TOTAL_NUMBER_OF_ADDITIONAL_DOSES, taskDetails.getTotalNumberOfAdditionalDoses() + "", VALUE);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         boolean readOnly = !taskDetails.isEdit() && taskDetails.getTaskStatus().equals(TaskStatus.COMPLETED.name());

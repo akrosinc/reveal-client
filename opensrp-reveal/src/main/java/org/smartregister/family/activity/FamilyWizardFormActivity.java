@@ -41,7 +41,7 @@ public class FamilyWizardFormActivity extends JsonWizardFormActivity {
                 this.setConfirmCloseMessage(this.getString(R.string.any_changes_you_make));
             }
         } catch (Exception e) {
-            Timber.e(e.toString());
+            Timber.tag("Reveal Exception").w(e.toString());
         }
     }
 

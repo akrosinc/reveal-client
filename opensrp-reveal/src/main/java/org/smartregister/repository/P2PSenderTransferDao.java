@@ -82,7 +82,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getEvents(lastRecordId, batchSize, locationId);
         } else {
-            Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
+            Timber.tag("Reveal Exception").w(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
                     , dataType.getName());
             return null;
         }
@@ -123,7 +123,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
 
             return null;
         } else {
-            Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
+            Timber.tag("Reveal Exception").w(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
                     , dataType.getName());
             return null;
         }

@@ -102,7 +102,7 @@ public class CloudantDataHandler {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -188,7 +188,7 @@ public class CloudantDataHandler {
                     lastSyncDate
                             .setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
                 } catch (ParseException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         } finally {
@@ -253,7 +253,7 @@ public class CloudantDataHandler {
             // ((HelloCloudantApplication) this.getApplication()).setCloudantDB(db);
 
         } catch (Exception e) {
-            Timber.e(e.getMessage());
+            Timber.tag("Reveal Exception").w(e.getMessage());
         }
         return db;
     }
@@ -311,7 +311,7 @@ public class CloudantDataHandler {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -326,7 +326,7 @@ public class CloudantDataHandler {
             return Client.fromRevision(created);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -375,7 +375,7 @@ public class CloudantDataHandler {
             try {
                 client = Client.fromRevision(rev);
             } catch (ParseException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             if (client != null) {
                 clients.add(client);

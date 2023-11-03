@@ -116,7 +116,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
                     }
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return target;

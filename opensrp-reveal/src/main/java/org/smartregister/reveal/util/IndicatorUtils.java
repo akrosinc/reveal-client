@@ -245,7 +245,7 @@ public class IndicatorUtils {
                 indicatorDetails.setNotSprayed(cursor.getInt(cursor.getColumnIndex("notSprayedStruct")));
             }
         } catch (SQLiteException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return indicatorDetails;
     }

@@ -88,7 +88,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
         try {
             familyJsonFormUtils = new FamilyJsonFormUtils(view.getContext());
         } catch (Exception e) {
-            Timber.e("error starting FamilyJsonFormUtils");
+            Timber.tag("Reveal Exception").w("error starting FamilyJsonFormUtils");
         }
         localBroadcastManager = LocalBroadcastManager.getInstance(this.getView().getContext().getApplicationContext());
     }
@@ -207,7 +207,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
             profileInteractor.saveRegistration(familyEventClient, jsonString, true, this);
         } catch (Exception e) {
             getView().hideProgressDialog();
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -268,7 +268,7 @@ public class FamilyOtherMemberPresenter extends BaseFamilyOtherMemberProfileActi
                                 }
 
                             } catch (JSONException e) {
-                                Timber.e(e);
+                                Timber.tag("Reveal Exception").w(e);
                             }
                         }
                     }

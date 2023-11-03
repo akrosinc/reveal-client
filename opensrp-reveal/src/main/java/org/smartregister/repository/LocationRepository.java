@@ -97,7 +97,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -115,7 +115,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -136,7 +136,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -154,7 +154,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -178,7 +178,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -196,7 +196,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -241,7 +241,7 @@ public class LocationRepository extends BaseRepository {
                 locations.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -264,7 +264,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();

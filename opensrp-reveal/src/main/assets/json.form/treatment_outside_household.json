@@ -89,7 +89,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "What type of treatment location is this?",
+        "label": "What type of location is this?",
         "options": [
           {
             "key": "Homeless individuals",
@@ -132,6 +132,10 @@
           {
             "key": "Health Facility",
             "text": "Health Facility"
+          },
+          {
+            "key": "Gold Digging Site",
+            "text": "Gold Digging Site"
           },
           {
             "key": "Other",

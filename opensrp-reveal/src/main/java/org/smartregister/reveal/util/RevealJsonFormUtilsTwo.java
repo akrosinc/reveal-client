@@ -49,7 +49,6 @@ import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
-import static org.smartregister.reveal.util.Constants.Tags.COUNTRY;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
 import static org.smartregister.reveal.util.Constants.Tags.OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.Tags.ZONE;
@@ -111,7 +110,7 @@ import timber.log.Timber;
 /**
  * Created by samuelgithengi on 3/22/19.
  */
-public class RevealJsonFormUtils {
+public class RevealJsonFormUtilsTwo {
 
     private Set<String> nonEditablefields;
 
@@ -119,7 +118,7 @@ public class RevealJsonFormUtils {
 
     private StructureRepository structureRepository = RevealApplication.getInstance().getStructureRepository();
 
-    public RevealJsonFormUtils() {
+    public RevealJsonFormUtilsTwo() {
         nonEditablefields = new HashSet<>(Arrays.asList(HOUSEHOLD_ACCESSIBLE,
                                                         ABLE_TO_SPRAY_FIRST,
                                                         CDD_SUPERVISION_TASK_COMPLETE,
@@ -154,7 +153,7 @@ public class RevealJsonFormUtils {
             populateFormFields(formJson, structureType, sprayStatus, familyHead);
             return formJson;
         } catch (Exception e) {
-            Timber.e(e, "error launching form" + formName);
+            Timber.tag("Reveal Exception").w(e, "error launching form" + formName);
         }
         return null;
     }
@@ -199,7 +198,7 @@ public class RevealJsonFormUtils {
             populateFormFields(formJson, structureType, sprayStatus, familyHead);
             return formJson;
         } catch (JSONException e) {
-            Timber.e(e, "error launching form" + formName);
+            Timber.tag("Reveal Exception").w(e, "error launching form" + formName);
         }
         return null;
     }
@@ -224,7 +223,7 @@ public class RevealJsonFormUtils {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return formString;
     }
@@ -289,7 +288,7 @@ public class RevealJsonFormUtils {
             intent.putExtra(JSON_FORM_PARAM_JSON, form.toString());
             context.startActivityForResult(intent, requestCode);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -530,7 +529,7 @@ public class RevealJsonFormUtils {
             populateField(formJson, JsonForm.PAOT_COMMENTS, cardDetails.getComments(), VALUE);
             populateField(formJson, JsonForm.LAST_UPDATED_DATE, cardDetails.getStartDate(), VALUE);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -562,7 +561,7 @@ public class RevealJsonFormUtils {
                     }
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }
@@ -664,7 +663,7 @@ public class RevealJsonFormUtils {
                     generateRepeatingGroupFields(field, event.getObs(), formJSON);
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }
@@ -686,7 +685,7 @@ public class RevealJsonFormUtils {
                     field.put(VALUE, Integer.toString(summary.getAdditionalDosesAdministered()));
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }
@@ -740,7 +739,7 @@ public class RevealJsonFormUtils {
                 field.put(KEYS, codes);
                 field.put(VALUES, values);
             } catch (JSONException e) {
-                Timber.e(e, "Error populating %s Operators ", filterKey);
+                Timber.tag("Reveal Exception").w(e, "Error populating %s Operators ", filterKey);
             }
             return new Pair<>(codes, values);
         }
@@ -855,7 +854,7 @@ public class RevealJsonFormUtils {
                     populateField(formJSON, JsonForm.SELECTED_OPERATIONAL_AREA_NAME, labelText,
                             JsonFormConstants.TEXT);
                 } catch (JSONException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
                 break;
 
@@ -1019,7 +1018,7 @@ public class RevealJsonFormUtils {
             field.put(KEYS, options);
             field.put(VALUES, options);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1036,7 +1035,7 @@ public class RevealJsonFormUtils {
             field.put(KEYS, options);
             field.put(VALUES, options);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1045,7 +1044,7 @@ public class RevealJsonFormUtils {
         try {
             field.put(VALUE, defaultValue);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -1081,14 +1080,14 @@ public class RevealJsonFormUtils {
                 options.put(option);
             }
         } catch (Exception e) {
-            Timber.e(e, "Error find Sprayed Structures with compound head names ");
+            Timber.tag("Reveal Exception").w(e, "Error find Sprayed Structures with compound head names ");
         }
         JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form),
                 COMPOUND_STRUCTURE);
         try {
             compoundStructureField.put(OPTIONS, options);
         } catch (JSONException e) {
-            Timber.e(e, "Error populating %s Options", COMPOUND_STRUCTURE);
+            Timber.tag("Reveal Exception").w(e, "Error populating %s Options", COMPOUND_STRUCTURE);
         }
         Timber.d("Populating compound Structure options : end");
 

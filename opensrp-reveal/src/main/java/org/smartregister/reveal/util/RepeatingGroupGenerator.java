@@ -157,7 +157,7 @@ public class RepeatingGroupGenerator {
 //                relativeMaxValidator.put(JsonFormConstants.VALUE, newRelativeMaxValidatorValue);
 //            }
 //        } catch (JSONException e) {
-//            Timber.e(e);
+//            Timber.tag("Reveal Exception").w(e);
 //        }
 //    }
 

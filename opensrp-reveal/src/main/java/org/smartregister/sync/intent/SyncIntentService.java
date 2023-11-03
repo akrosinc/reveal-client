@@ -130,7 +130,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 pullECFromServer();
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             complete(FetchStatus.fetchedFailed);
         }
     }
@@ -199,7 +199,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             processFetchedEvents(resp, ecSyncUpdater, count);
 
         } catch (Exception e) {
-            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
+            Timber.tag("Reveal Exception").w(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
@@ -262,7 +262,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
-            Timber.e(e, "Process Client Exception: %s", e.getMessage());
+            Timber.tag("Reveal Exception").w(e, "Process Client Exception: %s", e.getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             String jsonPayload = request.toString();
             startEventTrace(PUSH, eventsUploadedCount);
@@ -316,7 +316,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                             EVENT_ADD_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Timber.e("Events sync failed.");
+                Timber.tag("Reveal Exception").w("Events sync failed.");
                 isSuccessfulPushSync = false;
             } else {
                 db.markEventsAsSynced(pendingEvents);
@@ -402,7 +402,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -415,7 +415,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 count = jsonObject.getInt(NO_OF_EVENTS);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return count;
     }

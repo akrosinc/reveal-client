@@ -438,7 +438,7 @@ public abstract class RecyclerViewFragment extends
 
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return query;
@@ -464,7 +464,7 @@ public abstract class RecyclerViewFragment extends
 
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return query;
@@ -503,7 +503,7 @@ public abstract class RecyclerViewFragment extends
 
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (c != null) {
                 c.close();

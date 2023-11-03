@@ -51,17 +51,17 @@ public class FileUtilities {
             is = null;
             return result;
         } catch (FileNotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         } catch (IOException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    Timber.e("Failed to close static images input stream after attempting to retrieve image");
+                    Timber.tag("Reveal Exception").w("Failed to close static images input stream after attempting to retrieve image");
                 }
             }
             System.gc();
@@ -88,7 +88,7 @@ public class FileUtilities {
                         .getPackageInfo(packageName, 0).versionName;
                 mUserAgent = mUserAgent + " (" + packageName + "/" + version + ")";
             } catch (PackageManager.NameNotFoundException e) {
-                Timber.e(e, "Unable to find self by package name");
+                Timber.tag("Reveal Exception").w(e, "Unable to find self by package name");
             }
         }
         return mUserAgent;

@@ -69,7 +69,7 @@ public class ClientRelationshipRepository extends BaseRepository {
                 clientList.add(JsonFormUtils.gson.fromJson(cursor.getString(0), Client.class));
             }
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return clientList;
     }

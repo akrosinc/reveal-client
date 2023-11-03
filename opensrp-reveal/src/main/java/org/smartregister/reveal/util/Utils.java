@@ -409,7 +409,7 @@ public class Utils {
             }
             util.saveEventAndClients(events, db);
         } catch (Exception e) {
-            Timber.e(e, "Error creating events and clients for %s", tableName);
+            Timber.tag("Reveal Exception").w(e, "Error creating events and clients for %s", tableName);
         }
     }
 
@@ -472,7 +472,7 @@ public class Utils {
             }
             updatedCoords = editedGeometryJson.getJSONArray("coordinates");
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return updatedCoords;
     }

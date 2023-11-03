@@ -126,7 +126,7 @@ public class AlertRepository extends DrishtiRepository {
             database.setTransactionSuccessful();
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             database.endTransaction();
         }

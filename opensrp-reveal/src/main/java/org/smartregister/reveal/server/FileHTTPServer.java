@@ -3,7 +3,6 @@ package org.smartregister.reveal.server;
 import android.content.Context;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.util.Utils;
 
 import java.io.BufferedReader;
@@ -71,7 +70,7 @@ public class FileHTTPServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Timber.e("Port %d not available", port);
+        Timber.tag("Reveal Exception").w("Port %d not available", port);
         return null;
     }
 
@@ -123,7 +122,7 @@ public class FileHTTPServer {
                 long finish = System.currentTimeMillis();
                 Timber.i("%s: Served %d bytes in %d ms", request, response.data.length, finish - start);
             } catch (IOException e) {
-                Timber.e(e, "Unable to read request from socket");
+                Timber.tag("Reveal Exception").w(e, "Unable to read request from socket");
             }
         }
 
@@ -153,7 +152,7 @@ public class FileHTTPServer {
                 output.write(response.data);
                 output.flush();
             } catch (IOException e) {
-                Timber.e(e, "Unable to write response to socket");
+                Timber.tag("Reveal Exception").w(e, "Unable to write response to socket");
             }
         }
     }

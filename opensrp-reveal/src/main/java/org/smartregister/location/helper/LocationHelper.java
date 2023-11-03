@@ -114,7 +114,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return locations;
     }
@@ -149,14 +149,14 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
         if (StringUtils.isBlank(locationId)) {
-            Timber.e("Location id is null");
+            Timber.tag("Reveal Exception").w("Location id is null");
             return null;
         }
 
@@ -172,10 +172,10 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Timber.e("locationData doesn't have locationHierarchy");
+                Timber.tag("Reveal Exception").w("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return response;
@@ -190,7 +190,7 @@ public class LocationHelper {
      */
     public List<String> getOpenMrsLocationHierarchy(String locationId, boolean onlyAllowedLevels) {
         if (StringUtils.isBlank(locationId)) {
-            Timber.e("Location id is null");
+            Timber.tag("Reveal Exception").w("Location id is null");
             return new ArrayList<>();
         }
         List<String> response = null;
@@ -206,10 +206,10 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Timber.e("locationData doesn't have locationHierarchy");
+                Timber.tag("Reveal Exception").w("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return response;
     }
@@ -236,7 +236,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -273,7 +273,7 @@ public class LocationHelper {
 
             formLocationList = sortTreeViewQuestionOptions(formLocationList);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         if (withOtherOption) {
@@ -337,7 +337,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return locationList;
@@ -368,7 +368,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -402,7 +402,7 @@ public class LocationHelper {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -452,7 +452,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -512,7 +512,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return allLocationData;

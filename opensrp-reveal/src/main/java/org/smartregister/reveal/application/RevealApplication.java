@@ -13,7 +13,9 @@ import static org.smartregister.reveal.util.FamilyConstants.RELATIONSHIP;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
+
 import com.evernote.android.job.JobManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,16 +23,20 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.vijay.jsonwizard.NativeFormLibrary;
+
 import io.ona.kujaku.KujakuLibrary;
 import io.ona.kujaku.data.realm.RealmDatabase;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +58,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.DBPullRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -64,6 +71,7 @@ import org.smartregister.reveal.activity.LoginActivity;
 import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
 import org.smartregister.reveal.job.RevealJobCreator;
 import org.smartregister.reveal.model.Environment;
+import org.smartregister.reveal.model.EnvironmentDetails;
 import org.smartregister.reveal.repository.RevealRepository;
 import org.smartregister.reveal.sync.RevealClientProcessor;
 import org.smartregister.reveal.util.AppExecutors;
@@ -80,6 +88,7 @@ import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
+
 import timber.log.Timber;
 
 public class RevealApplication extends DrishtiApplication
@@ -137,9 +146,9 @@ public class RevealApplication extends DrishtiApplication
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
         } else if (getBuildCountry() == Country.KENYA) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.KENYA_EC_CLIENT_FIELDS);
-        } else if (Arrays.asList(Country.RWANDA,Country.RWANDA_EN).contains(getBuildCountry())) {
+        } else if (Arrays.asList(Country.RWANDA, Country.RWANDA_EN).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
-        } else if (Arrays.asList(Country.NIGERIA,Country.MOZAMBIQUE).contains(getBuildCountry())) {
+        } else if (Arrays.asList(Country.NIGERIA, Country.MOZAMBIQUE).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
@@ -179,13 +188,21 @@ public class RevealApplication extends DrishtiApplication
                     final List<Environment> servers = new Gson()
                             .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
                             }.getType());
-                            Gson gson  = new Gson();
-                            servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(),gson.toJson(server.getData())));
-                            PreferencesUtil.getInstance()
-                                    .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
-                                            Collectors.joining(",")));
+
+                    if (BuildConfig.DEBUG) {
+                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080/",
+                        "https://sso-demo.akros.online",
+                        Country.ZAMBIA);
+                        Environment environment = new Environment("LOCAL",environmentDetails);
+                        servers.add(environment);
+                    }
+                    Gson gson = new Gson();
+                    servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
+                    PreferencesUtil.getInstance()
+                            .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
+                                    Collectors.joining(",")));
                 } catch (Exception e) {
-                    Timber.e("failed to fetch envs...");
+                    Timber.tag("Reveal Exception").w("failed to fetch envs...");
                 }
             }
         });
@@ -212,7 +229,7 @@ public class RevealApplication extends DrishtiApplication
                 repository = new RevealRepository(getInstance().getApplicationContext(), context);
             }
         } catch (UnsatisfiedLinkError e) {
-            Timber.e(e, "Error on getRepository: ");
+            Timber.tag("Reveal Exception").w(e, "Error on getRepository: ");
 
         }
         return repository;
@@ -238,13 +255,13 @@ public class RevealApplication extends DrishtiApplication
             DrishtiSyncScheduler.stop(getApplicationContext());
             context.allSharedPreferences().saveIsSyncInProgress(false);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
     @Override
     public void onTerminate() {
-        Timber.e("Application is terminating. Stopping Sync scheduler and resetting isSyncInProgress setting.");
+        Timber.tag("Reveal Exception").w("Application is terminating. Stopping Sync scheduler and resetting isSyncInProgress setting.");
         cleanUpSyncState();
         TimeChangedBroadcastReceiver.destroy(this);
         SyncStatusBroadcastReceiver.destroy(this);
@@ -274,6 +291,10 @@ public class RevealApplication extends DrishtiApplication
 
     public LocationRepository getLocationRepository() {
         return CoreLibrary.getInstance().context().getLocationRepository();
+    }
+
+    public DBPullRepository getDBPullRepository() {
+        return CoreLibrary.getInstance().context().getDbPullRepository();
     }
 
     public LocationTagRepository getLocationTagRepository() {
@@ -307,7 +328,7 @@ public class RevealApplication extends DrishtiApplication
                 }
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

@@ -134,7 +134,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                             }
                             processEvent(event, client, clientClassification);
                         } catch (Exception e) {
-                            Timber.e(e);
+                            Timber.tag("Reveal Exception").w(e);
                         }
 
                     }
@@ -168,7 +168,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 return event.getDetails().get(LOCATION_PARENT);
             }
         } catch (Exception e) {
-            Timber.e(e, "Error processing register structure event");
+            Timber.tag("Reveal Exception").w(e, "Error processing register structure event");
         }
         return null;
     }
@@ -197,7 +197,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
             }
             processEvent(event, client, clientClassification);
         } catch (Exception e) {
-            Timber.e(e, "Error processing update family registration event");
+            Timber.tag("Reveal Exception").w(e, "Error processing update family registration event");
         }
 
     }
@@ -230,7 +230,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                     processEvent(event, client, clientClassification);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error processing %s event", event.getEventType());
+                Timber.tag("Reveal Exception").w(e, "Error processing %s event", event.getEventType());
             }
         } else {
             Timber.w("%s Event %s does not have task details", event.getEventType(), event.getEventId());
@@ -246,7 +246,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 Client client = new Client(event.getBaseEntityId());
                 processEvent(event, client, clientClassification);
             } catch (Exception e) {
-                Timber.e(e, "Error processing spray event");
+                Timber.tag("Reveal Exception").w(e, "Error processing spray event");
             }
         }
         return operationalAreaId;
@@ -256,7 +256,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         try {
             processEvent(event, new Client(event.getBaseEntityId()), clientClassification);
         } catch (Exception e) {
-            Timber.e(e, "Error processing register structure event");
+            Timber.tag("Reveal Exception").w(e, "Error processing register structure event");
         }
     }
 

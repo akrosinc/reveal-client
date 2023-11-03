@@ -42,7 +42,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             byte[] encodedBytes = c.doFinal(input);
             return encodedBytes;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -62,7 +62,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             INITIALIZATION_VECTOR = ivParams.getIV();
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -78,7 +78,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
             return decodedBytes;
         } catch (Exception e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
         try {
             return getKeyStore().getKey(keyAlias, null);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -113,7 +113,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
 
             } catch (Exception e) {
 
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }

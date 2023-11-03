@@ -68,7 +68,7 @@ public class P2pProcessRecordsService extends BaseSyncIntentService {
                         // They also do not take long to save and therefore happen during sync
                         Timber.i("Finished processing %s EventClients", String.valueOf(eventClientList.size()));
                     } catch (Exception e) {
-                        Timber.e(e);
+                        Timber.tag("Reveal Exception").w(e);
                     }
                 } else {
                     allSharedPreferences.resetLastPeerToPeerSyncProcessedEvent();

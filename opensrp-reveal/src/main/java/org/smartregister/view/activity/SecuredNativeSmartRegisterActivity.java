@@ -408,7 +408,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
             editor.commit();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -449,7 +449,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -483,7 +483,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             return JSONML.toString(parentJson);
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
         }
         return savedDataStr;

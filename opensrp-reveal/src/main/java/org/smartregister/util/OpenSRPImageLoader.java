@@ -390,13 +390,13 @@ public class OpenSRPImageLoader extends ImageLoader {
                 }
 
             } catch (FileNotFoundException e) {
-                Timber.e("Failed to save static image to disk");
+                Timber.tag("Reveal Exception").w("Failed to save static image to disk");
             } finally {
                 if (os != null) {
                     try {
                         os.close();
                     } catch (IOException e) {
-                        Timber.e("Failed to close static images output stream after attempting"
+                        Timber.tag("Reveal Exception").w("Failed to close static images output stream after attempting"
                                 + " to write image");
                     }
                 }
@@ -434,7 +434,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
                 successful = true;
             } else {
-                Timber.e("An exception occurred trying to save synced image for entity %s on abs file path %s", entityId, absoluteFileName);
+                Timber.tag("Reveal Exception").w("An exception occurred trying to save synced image for entity %s on abs file path %s", entityId, absoluteFileName);
             }
         }
 
@@ -451,7 +451,7 @@ public class OpenSRPImageLoader extends ImageLoader {
             outChannel = new FileOutputStream(dst).getChannel();
             inChannel.transferTo(0, inChannel.size(), outChannel);
         } catch (IOException ex) {
-            Timber.e(ex, "An error occurred trying to copy file");
+            Timber.tag("Reveal Exception").w(ex, "An error occurred trying to copy file");
             return false;
         } finally {
             try {
@@ -463,7 +463,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                     outChannel.close();
                 }
             } catch (IOException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
 
                 isSuccessful = false;
             }
@@ -519,7 +519,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             }
         } catch (Exception e) {
-            Timber.e(e.getMessage(), e);
+            Timber.tag("Reveal Exception").w(e.getMessage(), e);
         }
     }
 
@@ -541,7 +541,7 @@ public class OpenSRPImageLoader extends ImageLoader {
             startAsyncTask(loadBitmap, filePathArray);
 
         } catch (Exception e) {
-            Timber.e(e.getMessage(), e);
+            Timber.tag("Reveal Exception").w(e.getMessage(), e);
         }
     }
 
@@ -705,7 +705,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             } catch (Exception exc) {
 
-                Timber.e(exc.getMessage(), exc);
+                Timber.tag("Reveal Exception").w(exc.getMessage(), exc);
 
             }
 

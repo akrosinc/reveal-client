@@ -333,7 +333,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 });
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

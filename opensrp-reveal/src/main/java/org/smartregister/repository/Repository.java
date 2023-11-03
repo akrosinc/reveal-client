@@ -172,7 +172,7 @@ public class Repository extends SQLiteOpenHelper {
         try {
             return isDatabaseWritable(password);
         } catch (SQLiteException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             if (e.getMessage().contains("attempt to write a readonly database")) {
                 File journal = new File(databasePath.getPath() + "-journal");
                 Timber.w("Journal exists: %s", journal.exists());
@@ -182,9 +182,9 @@ public class Repository extends SQLiteOpenHelper {
                         new FileOutputStream(journal).write(new byte[]{});
                         return isDatabaseWritable(password);
                     } catch (FileNotFoundException e1) {
-                        Timber.e(e1);
+                        Timber.tag("Reveal Exception").w(e1);
                     } catch (IOException e1) {
-                        Timber.e(e1);
+                        Timber.tag("Reveal Exception").w(e1);
                     }
                 }
             }

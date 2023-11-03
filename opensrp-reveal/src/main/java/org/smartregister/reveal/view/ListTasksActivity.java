@@ -842,7 +842,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             try {
                 selectedGeoJsonSource.setGeoJson(new com.cocoahero.android.geojson.FeatureCollection().toJSON().toString());
             } catch (JSONException e) {
-                Timber.e(e, "Error clearing selected feature");
+                Timber.tag("Reveal Exception").w(e, "Error clearing selected feature");
             }
         }
     }
@@ -913,7 +913,15 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public Location getUserCurrentLocation() {
-        return kujakuMapView.getLocationClient() == null ? null : kujakuMapView.getLocationClient().getLastLocation();
+        if (kujakuMapView == null){
+            return null;
+        } else {
+            if (kujakuMapView.getLocationClient() == null){
+                return null;
+            } else {
+                return kujakuMapView.getLocationClient().getLastLocation();
+            }
+        }
     }
 
     @Override

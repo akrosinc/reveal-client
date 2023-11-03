@@ -146,7 +146,6 @@
             "key": "notHabitable",
             "text": "Not habitable"
           },
-
           {
             "key": "other",
             "text": "Other"
@@ -240,7 +239,7 @@
           "err": "Required field"
         },
         "v_regex": {
-          "value": "^$|0[0-9]{9}",
+          "value": "^$|[0-9]{8}",
           "err": "Please enter a valid number"
         },
         "relevance": {
@@ -325,6 +324,35 @@
         }
       },
       {
+        "key": "received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Did anyone in this household receive treatment?",
+        "options": [
+          {
+            "key": "Yes",
+            "text": "Yes"
+          },
+          {
+            "key": "No",
+            "text": "No"
+          }
+        ],
+        "value": "No",
+        "v_required": {
+          "value": true,
+          "err": "This field is mandatory"
+        },
+        "relevance": {
+          "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
         "key": "total_under_5",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -349,32 +377,9 @@
         "v_min": {
           "value": "0",
           "err": "This field must be greater than or equal to 0"
-        }
-      },
-      {
-        "key": "received",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Did anyone in this household receive treatment?",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Yes"
-          },
-          {
-            "key": "No",
-            "text": "No"
-          }
-        ],
-        "value": "No",
-        "v_required": {
-          "value": true,
-          "err": "This field is mandatory"
         },
         "relevance": {
-          "step1:structure_hoh": {
+          "step1:received": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
@@ -815,7 +820,13 @@
         "v_required": {
           "value": true,
           "err": "This field is mandatory"
-        }
+        },
+        "relevance": {
+          "step1:structure_type": {
+            "type": "string",
+            "ex": "equalTo(., \"residential\")"
+          }
+      }
       },
       {
         "key": "business_status",

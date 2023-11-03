@@ -75,17 +75,17 @@ public class LocationUtils {
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            Timber.e("Location settings are inadequate, and cannot be fixed here. Dialog cannot be created.");
+                            Timber.tag("Reveal Exception").w("Location settings are inadequate, and cannot be fixed here. Dialog cannot be created.");
                             break;
 
                         default:
-                            Timber.e("Unknown status code returned after checking location settings");
+                            Timber.tag("Reveal Exception").w("Unknown status code returned after checking location settings");
                             break;
                     }
                 }
             });
         } else {
-            Timber.e("KujakuMapView is not started in an Activity and can therefore not start location services");
+            Timber.tag("Reveal Exception").w("KujakuMapView is not started in an Activity and can therefore not start location services");
         }
     }
 

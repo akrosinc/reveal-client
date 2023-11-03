@@ -34,7 +34,7 @@ public class ImageRenderHelper {
                 Bitmap myBitmap = BitmapFactory.decodeFile(photo.getFilePath());
                 profileImageView.setImageBitmap(myBitmap);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
 
                 profileImageView.setImageDrawable(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? context.getDrawable(defaultProfileImage) : ContextCompat.getDrawable(context, defaultProfileImage));
 

@@ -46,7 +46,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
                 parseResponse(ids);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

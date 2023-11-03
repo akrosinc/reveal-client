@@ -43,6 +43,7 @@ import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PROVINCE_NAME;
+import static org.smartregister.reveal.util.Constants.JsonForm.SUPERVISOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
@@ -78,22 +79,17 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.location.Location;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -103,7 +99,6 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -135,6 +130,16 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.view.EditFociBoundaryActivity;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import timber.log.Timber;
 
 
@@ -269,7 +274,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 listTaskView.clearSelectedFeature();
                 listTaskView.closeCardView(R.id.btn_collapse_spray_card_view);
             } catch (JSONException e) {
-                Timber.e("error resetting structures");
+                Timber.tag("Reveal Exception").w("error resetting structures");
             }
         }
 
@@ -295,7 +300,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onMapClicked(MapboxMap mapboxMap, LatLng point, boolean isLongclick) {
         double currentZoom = mapboxMap.getCameraPosition().zoom;
         if (currentZoom < getMaxZoomLevel()) {
-            Timber.w("onMapClicked Current Zoom level" + currentZoom);
+            Timber.tag("Reveal Exception").w("onMapClicked Current Zoom level" + currentZoom);
             listTaskView.displayToast(R.string.zoom_in_to_select);
             return;
         }
@@ -532,14 +537,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_Z);
             cardDetails.setDateCreated(formattedDate);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             Timber.i("Date parsing failed, trying another date format");
             try {
                 // try another date format
                 String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_XXX);
                 cardDetails.setDateCreated(formattedDate);
             } catch (Exception exception) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }
@@ -550,14 +555,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             String formattedDate = formatDate(sprayCardDetails.getSprayDate(), EVENT_DATE_FORMAT_Z);
             sprayCardDetails.setSprayDate(formattedDate);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             Timber.i("Date parsing failed, trying another date format");
             try {
                 // try another date format
                 String formattedDate = formatDate(sprayCardDetails.getSprayDate(), EVENT_DATE_FORMAT_XXX);
                 sprayCardDetails.setSprayDate(formattedDate);
             } catch (Exception exception) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
 
@@ -595,12 +600,15 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateForm(event, formJson);
         } else if (cardDetails instanceof SprayCardDetails && Country.NAMIBIA.equals(getBuildCountry())) {
             jsonFormUtils.populateForm(event, formJson);
-        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
+        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
+        } else if (JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
             try {
                 jsonFormUtils.populateField(formJson, DISTRICT_NAME, prefsUtil.getCurrentDistrict().trim(), VALUE);
                 jsonFormUtils.populateField(formJson, PROVINCE_NAME, prefsUtil.getCurrentProvince().trim(), VALUE);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             Map<String, JSONObject> fields = jsonFormUtils.getFields(formJson);
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.HEALTH_FACILITIES, fields.get(JsonForm.HFC_SEEK), prefsUtil.getCurrentDistrict());
@@ -611,6 +619,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.SUPERVISORS,fields.get(JsonForm.SUPERVISOR),prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateCompoundStructureOptions(formJson, org.smartregister.reveal.util.Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()));
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fields.get(JsonForm.LOCATION_ZONE),prefsUtil.getCurrentFacility());
+
         } else if (JsonForm.SPRAY_FORM_REFAPP.equals(formName)) {
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DATA_COLLECTORS, jsonFormUtils.getFields(formJson).get(JsonForm.DATA_COLLECTOR), prefsUtil.getCurrentDistrict());
         } else if (cardDetails instanceof SprayCardDetails && isZambiaIRSLite()) {
@@ -624,7 +633,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             try {
                 jsonFormUtils.populateField(formJson,HH_ID,feature.id(),VALUE);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             jsonFormUtils.populateForm(event, formJson);
         } else  if(JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)){
@@ -671,7 +680,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 listTaskInteractor.saveJsonForm(json);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             listTaskView.displayToast(R.string.error_occurred_saving_form);
         }
     }
@@ -722,7 +731,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskView.displaySelectedFeature(feature, clickedPoint, zoomlevel);
 
         } catch (JSONException e) {
-            Timber.e(e, "error extracting coordinates of added structure");
+            Timber.tag("Reveal Exception").w(e, "error extracting coordinates of added structure");
         }
     }
 
@@ -751,7 +760,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             formJson.put(LOCATION_COMPONENT_ACTIVE, myLocationComponentActive);
             listTaskView.startJsonForm(formJson);
         } catch (Exception e) {
-            Timber.e(e, "error launching add structure form");
+            Timber.tag("Reveal Exception").w(e, "error launching add structure form");
         }
 
     }

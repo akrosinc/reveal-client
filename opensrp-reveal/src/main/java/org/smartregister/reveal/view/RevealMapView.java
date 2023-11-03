@@ -1,15 +1,19 @@
 package org.smartregister.reveal.view;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
+import com.mapbox.mapboxsdk.maps.TelemetryDefinition;
 import com.rengwuxian.materialedittext.validation.METValidator;
 
 import java.util.ArrayList;
@@ -82,6 +86,18 @@ public class RevealMapView extends KujakuMapView {
             return mapboxMap.getCameraPosition().zoom;
         else
             return null;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        if (savedInstanceState == null) {
+//            TelemetryDefinition telemetry = Mapbox.getTelemetry();
+//            if (telemetry != null) {
+//                telemetry.onAppUserTurnstileEvent();
+//            }
+//        } else if (savedInstanceState.getBoolean(MapboxConstants.STATE_HAS_SAVED_STATE)) {
+//            this.savedInstanceState = savedInstanceState;
+//        }
     }
 
 

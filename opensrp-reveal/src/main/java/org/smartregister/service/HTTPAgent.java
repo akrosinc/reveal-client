@@ -168,7 +168,7 @@ public class HTTPAgent {
             return processResponse(urlConnection);
 
         } catch (IOException | URISyntaxException ex) {
-            Timber.e(ex, "EXCEPTION %s", ex.toString());
+            Timber.tag("Reveal Exception").w(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -198,7 +198,7 @@ public class HTTPAgent {
             return processResponse(urlConnection);
 
         } catch (IOException | URISyntaxException ex) {
-            Timber.e(ex, "EXCEPTION: %s", ex.toString());
+            Timber.tag("Reveal Exception").w(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -264,7 +264,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.e("Invalid credentials for: %s using %s", userName, url);
+                Timber.tag("Reveal Exception").w("Invalid credentials for: %s using %s", userName, url);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
@@ -275,18 +275,18 @@ public class HTTPAgent {
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
             } else {
-                Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
+                Timber.tag("Reveal Exception").w("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (MalformedURLException | URISyntaxException e) {
-            Timber.e(e, "Failed to check credentials bad url %s", url);
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating %s", userName);
+            Timber.tag("Reveal Exception").w(e, "SocketTimeoutException when authenticating %s", userName);
             loginResponse = TIMEOUT;
-            Timber.e(e, "Failed to check credentials of: %s using %s . Error: %s", userName, url, e.toString());
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials of: %s using %s . Error: %s", userName, url, e.toString());
         } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials of: %s  using %s . Error: %s", userName, url, e.toString());
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials of: %s  using %s . Error: %s", userName, url, e.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
             closeConnection(urlConnection);
@@ -320,7 +320,7 @@ public class HTTPAgent {
             return processResponse(urlConnection);
 
         } catch (IOException | URISyntaxException ex) {
-            Timber.e(ex, "EXCEPTION %s", ex.toString());
+            Timber.tag("Reveal Exception").w(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
 
@@ -347,15 +347,15 @@ public class HTTPAgent {
             Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
         } catch (MalformedURLException e) {
-            Timber.e(e, "%s %s", MALFORMED_URL, e.toString());
+            Timber.tag("Reveal Exception").w(e, "%s %s", MALFORMED_URL, e.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.malformed_url.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "%s %s", TIMEOUT, e.toString());
+            Timber.tag("Reveal Exception").w(e, "%s %s", TIMEOUT, e.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.timeout.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (IOException e) {
-            Timber.e(e, "%s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+            Timber.tag("Reveal Exception").w(e, "%s %s", NO_INTERNET_CONNECTIVITY, e.toString());
             return new Response<>(ResponseStatus.failure, null);
         } finally {
             closeConnection(urlConnection);
@@ -420,27 +420,94 @@ public class HTTPAgent {
                 }
                 reader.close();
             } else {
-                Timber.e("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
+                Timber.tag("Reveal Exception").w("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
                 while ((line = reader.readLine()) != null) {
-                    Timber.e("SERVER RESPONSE %s", line);
+                    Timber.tag("Reveal Exception").w("SERVER RESPONSE %s", line);
                 }
                 reader.close();
             }
 
         } catch (ProtocolException e) {
-            Timber.e(e, "Protocol exception %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "Protocol exception %s", e.toString());
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
+            Timber.tag("Reveal Exception").w(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
         } catch (MalformedURLException | URISyntaxException e) {
-            Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
+            Timber.tag("Reveal Exception").w(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
         } catch (IOException e) {
-            Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+            Timber.tag("Reveal Exception").w(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
         } finally {
 
             closeConnection(httpUrlConnection);
         }
         return responseString;
+    }
+
+    public String httpDBPost(String urlString, String dbpath) {
+        OutputStream outputStream;
+        PrintWriter writer;
+        String responseString = "";
+        HttpURLConnection httpUrlConnection = null;
+
+        try {
+
+            httpUrlConnection = initializeHttp(urlString, true);
+
+            httpUrlConnection.setRequestMethod("POST");
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            httpUrlConnection.setChunkedStreamingMode(FILE_UPLOAD_CHUNK_SIZE_BYTES);
+
+            outputStream = httpUrlConnection.getOutputStream();
+            writer = getPrintWriter(outputStream);
+
+            // attach image
+            attachDB(writer, dbpath, outputStream);
+
+            // adding string params
+            addParameter(writer, "content-type", "application/octet-stream");
+
+            // send request to server
+            writer.append(crlf).flush();
+            writer.append(twoHyphens + boundary + twoHyphens).append(crlf);
+            writer.close();
+
+            // checks server's status code first
+            int status = httpUrlConnection.getResponseCode();
+            String line;
+            if (status == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        httpUrlConnection.getInputStream()));
+
+                while ((line = reader.readLine()) != null) {
+                    responseString = line;
+                    Timber.d("SERVER RESPONSE %s", line);
+                }
+                reader.close();
+            } else {
+                Timber.tag("Reveal Exception").w("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
+                while ((line = reader.readLine()) != null) {
+                    Timber.tag("Reveal Exception").w("SERVER RESPONSE %s", line);
+                }
+                reader.close();
+            }
+
+        } catch (ProtocolException e) {
+            Timber.tag("Reveal Exception").w(e, "Protocol exception %s", e.toString());
+        } catch (SocketTimeoutException e) {
+            Timber.tag("Reveal Exception").w(e, "SocketTimeout %s %s", TIMEOUT, e.toString());
+        } catch (MalformedURLException | URISyntaxException e) {
+            Timber.tag("Reveal Exception").w(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
+        } catch (IOException e) {
+            Timber.tag("Reveal Exception").w(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+        } finally {
+
+            closeConnection(httpUrlConnection);
+        }
+      return responseString;
     }
 
     @VisibleForTesting
@@ -451,6 +518,30 @@ public class HTTPAgent {
 
     private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
         File uploadImageFile = getDownloadFolder(image.getFilepath());
+        String fileName = uploadImageFile.getName();
+
+        writer.append("--" + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"").append(crlf);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(crlf);
+        writer.append("Content-Transfer-Encoding: binary").append(crlf);
+        writer.append(crlf);
+        writer.flush();
+
+        FileInputStream inputStream = getFileInputStream(uploadImageFile);
+        byte[] buffer = new byte[FILE_UPLOAD_CHUNK_SIZE_BYTES];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(crlf);
+        writer.flush();
+    }
+
+    private void attachDB(PrintWriter writer, String dbPath, OutputStream outputStream) throws IOException {
+        File uploadImageFile = getDownloadFolder(dbPath);
         String fileName = uploadImageFile.getName();
 
         writer.append("--" + boundary).append(crlf);
@@ -487,30 +578,30 @@ public class HTTPAgent {
 
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
-            Timber.e("Empty Response using: %s ", SUCCESS_WITH_EMPTY_RESPONSE.name());
+            Timber.tag("Reveal Exception").w("Empty Response using: %s ", SUCCESS_WITH_EMPTY_RESPONSE.name());
             return SUCCESS_WITH_EMPTY_RESPONSE;
         }
 
         if (responseData.team == null || responseData.team.team == null) {
-            Timber.e("Empty Response in: %s ", SUCCESS_WITHOUT_TEAM_DETAILS.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s ", SUCCESS_WITHOUT_TEAM_DETAILS.name());
             return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
         } else if (responseData.team.team.uuid == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_UUID.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_UUID.name());
             return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
         } else if (responseData.team.team.teamName == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_NAME.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_NAME.name());
             return SUCCESS_WITHOUT_TEAM_NAME.withPayload(responseData);
         }
 
         if (responseData.user == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_DETAILS.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_USER_DETAILS.name());
             return SUCCESS_WITHOUT_USER_DETAILS.withPayload(responseData);
         } else if (responseData.user.getUsername() == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_USERNAME.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_USER_USERNAME.name());
             return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
         }
         if (responseData.locations == null) {
-            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
+            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
             return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
         }
         return SUCCESS.withPayload(responseData);
@@ -620,17 +711,17 @@ public class HTTPAgent {
 
             }
         } catch (MalformedURLException | URISyntaxException e) {
-            Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating");
+            Timber.tag("Reveal Exception").w(e, "SocketTimeoutException when authenticating");
 
             accountError = new AccountError(0, TIMEOUT.name());
 
-            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
         } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
             accountError = new AccountError(0, NO_INTERNET_CONNECTIVITY.name());
 
         } finally {
@@ -692,7 +783,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.e("Invalid credentials accessing: %s using token %s", url, oauthAccessToken);
+                Timber.tag("Reveal Exception").w("Invalid credentials accessing: %s using token %s", url, oauthAccessToken);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
@@ -703,17 +794,17 @@ public class HTTPAgent {
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
             } else {
-                Timber.e("Bad response from Server. Status code: %s using %s ", statusCode, url);
+                Timber.tag("Reveal Exception").w("Bad response from Server. Status code: %s using %s ", statusCode, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (MalformedURLException | URISyntaxException e) {
-            Timber.e(e, "Failed to check credentials bad url %s", url);
+            Timber.tag("Reveal Exception").w(e, "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating");
+            Timber.tag("Reveal Exception").w(e, "SocketTimeoutException when authenticating");
             loginResponse = TIMEOUT;
         } catch (IOException e) {
-            Timber.e(e, "Failed to connect to %s check, check internet connection. Error: %s", url, e.toString());
+            Timber.tag("Reveal Exception").w(e, "Failed to connect to %s check, check internet connection. Error: %s", url, e.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
 
@@ -903,7 +994,7 @@ public class HTTPAgent {
 
         } catch (IOException | URISyntaxException e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
         } finally {
 
@@ -954,7 +1045,7 @@ public class HTTPAgent {
             }
 
         } catch (IOException | URISyntaxException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
 
             closeConnection(urlConnection);
@@ -990,7 +1081,7 @@ public class HTTPAgent {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
 
             closeConnection(urlConnection);
@@ -1005,7 +1096,7 @@ public class HTTPAgent {
             try {
                 urlConnection.disconnect();
             } catch (Exception ex) {
-                Timber.e(ex, "Error closing input HttpUrlConnection");
+                Timber.tag("Reveal Exception").w(ex, "Error closing input HttpUrlConnection");
             }
 
         }
@@ -1019,7 +1110,7 @@ public class HTTPAgent {
                 inputStream.close();
             } catch (IOException ex) {
 
-                Timber.e(ex, "Error closing input stream");
+                Timber.tag("Reveal Exception").w(ex, "Error closing input stream");
             }
 
         }

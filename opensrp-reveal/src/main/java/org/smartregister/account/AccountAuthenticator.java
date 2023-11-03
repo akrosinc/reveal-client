@@ -74,7 +74,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
                     }
 
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }

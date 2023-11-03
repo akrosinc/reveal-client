@@ -107,7 +107,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 return gson.fromJson(cursor.getString(0), PlanDefinition.class);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -127,7 +127,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -147,7 +147,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -165,7 +165,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 ids.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

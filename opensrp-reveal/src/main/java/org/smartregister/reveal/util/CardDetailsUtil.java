@@ -131,7 +131,7 @@ public class CardDetailsUtil {
                 tvReason.setVisibility(View.GONE);
             }
         } catch (Resources.NotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -208,7 +208,7 @@ public class CardDetailsUtil {
 
             activity.findViewById(R.id.irs_verification_card_view).setVisibility(View.VISIBLE);
         } catch (Resources.NotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -238,7 +238,7 @@ public class CardDetailsUtil {
             tvReason.setVisibility(View.GONE);
 
         } catch (Resources.NotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -283,7 +283,7 @@ public class CardDetailsUtil {
             tvReason.setVisibility(View.GONE);
 
         } catch (Resources.NotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

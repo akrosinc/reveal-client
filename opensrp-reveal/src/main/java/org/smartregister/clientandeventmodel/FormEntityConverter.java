@@ -393,7 +393,7 @@ public class FormEntityConverter {
             try {
                 bde = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             birthdateApprox = bde > 0;
         }
@@ -404,7 +404,7 @@ public class FormEntityConverter {
             try {
                 dde = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             deathdateApprox = dde > 0;
         }
@@ -454,7 +454,7 @@ public class FormEntityConverter {
             try {
                 bde = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             birthdateApprox = bde > 0;
         }
@@ -465,7 +465,7 @@ public class FormEntityConverter {
             try {
                 dde = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             deathdateApprox = dde > 0;
         }
@@ -508,7 +508,7 @@ public class FormEntityConverter {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -556,7 +556,7 @@ public class FormEntityConverter {
             return map;
         } catch (JsonIOException | JsonSyntaxException | XPathExpressionException |
                 ParserConfigurationException | SAXException | IOException | ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             throw new IllegalStateException(e);
         }
     }

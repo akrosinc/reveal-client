@@ -94,7 +94,7 @@ public class JsonFormUtils {
             try {
                 birthDateEstimated = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             birthdateApprox = birthDateEstimated > 0;
         }
@@ -105,7 +105,7 @@ public class JsonFormUtils {
             try {
                 deathDateEstimated = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             deathdateApprox = deathDateEstimated > 0;
         }
@@ -177,7 +177,7 @@ public class JsonFormUtils {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
             if (AllConstants.EXPANSION_PANEL.equals(jsonObject.optString(AllConstants.TYPE))) {
@@ -211,7 +211,7 @@ public class JsonFormUtils {
                 jsonObject.put(SAVE_OBS_AS_ARRAY, true);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -231,7 +231,7 @@ public class JsonFormUtils {
                         Collections.singletonList(humanReadableValues), "", formSubmissionField));
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -361,7 +361,7 @@ public class JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -458,7 +458,7 @@ public class JsonFormUtils {
                     }
                 }
             } catch (JSONException e1) {
-                Timber.e(e1);
+                Timber.tag("Reveal Exception").w(e1);
             }
         } else if (AllConstants.GPS.equals(type)) {
             createGpsObservation(e, jsonObject, value);
@@ -546,7 +546,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Timber.e(e1);
+                    Timber.tag("Reveal Exception").w(e1);
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -577,7 +577,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException jsonException) {
-                    Timber.e(jsonException);
+                    Timber.tag("Reveal Exception").w(jsonException);
                 }
 
                 if (!keyValPairs.isEmpty()) {
@@ -765,7 +765,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -937,7 +937,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1002,7 +1002,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return fields;
     }
@@ -1044,7 +1044,7 @@ public class JsonFormUtils {
             return result;
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
 
@@ -1055,7 +1055,7 @@ public class JsonFormUtils {
         try {
             jsonObject = jsonString == null ? null : new JSONObject(jsonString);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return jsonObject;
     }
@@ -1196,7 +1196,7 @@ public class JsonFormUtils {
             }
 
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -1214,7 +1214,7 @@ public class JsonFormUtils {
 
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1233,7 +1233,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return mergedJSON;
     }
@@ -1264,7 +1264,7 @@ public class JsonFormUtils {
                 return DateUtil.yyyyMMdd.format(date);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }

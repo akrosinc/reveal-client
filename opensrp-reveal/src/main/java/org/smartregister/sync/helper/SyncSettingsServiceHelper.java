@@ -54,7 +54,7 @@ public class SyncSettingsServiceHelper {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         JSONArray settings = getSettings();
@@ -133,7 +133,7 @@ public class SyncSettingsServiceHelper {
         Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
-            Timber.e("%s http agent is null", url);
+            Timber.tag("Reveal Exception").w("%s http agent is null", url);
             return null;
         }
 
@@ -208,14 +208,14 @@ public class SyncSettingsServiceHelper {
         Timber.i("URL: %s", completeUrl);
 
         if (httpAgent == null) {
-            Timber.e("%s http agent is null", completeUrl);
+            Timber.tag("Reveal Exception").w("%s http agent is null", completeUrl);
             return null;
         }
 
         Response resp = getResponse(completeUrl, accessToken);
 
         if (resp == null || resp.isFailure()) {
-            Timber.e(" %s  not returned data ", completeUrl);
+            Timber.tag("Reveal Exception").w(" %s  not returned data ", completeUrl);
             return null;
         }
         return new JSONArray((String) resp.payload());

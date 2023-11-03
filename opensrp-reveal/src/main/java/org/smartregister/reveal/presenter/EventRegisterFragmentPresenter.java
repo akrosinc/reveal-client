@@ -159,7 +159,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 formJSON.put(DETAILS, new JSONObject(event.getDetails()));
                 formJSON.put(FORM_SUBMISSION_ID, event.getFormSubmissionId());
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             view.startForm(formJSON);
         }

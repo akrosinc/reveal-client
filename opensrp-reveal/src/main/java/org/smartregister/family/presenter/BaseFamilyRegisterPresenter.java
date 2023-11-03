@@ -4,15 +4,14 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONObject;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.reveal.R;
 import org.smartregister.family.contract.FamilyRegisterContract;
 import org.smartregister.family.domain.FamilyEventClient;
 import org.smartregister.family.interactor.FamilyRegisterInteractor;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.R;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -81,7 +80,7 @@ public class BaseFamilyRegisterPresenter implements FamilyRegisterContract.Prese
                 interactor.removeFamilyFromRegister(jsonString, allSharedPreferences.fetchRegisteredANM());
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
         }
     }
@@ -102,7 +101,7 @@ public class BaseFamilyRegisterPresenter implements FamilyRegisterContract.Prese
             interactor.saveRegistration(familyEventClientList, jsonString, isEditMode, this);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -117,7 +116,7 @@ public class BaseFamilyRegisterPresenter implements FamilyRegisterContract.Prese
         try {
             startForm(triple.getLeft(), entityId, triple.getMiddle(), triple.getRight());
         } catch (Exception e) {
-            Timber.e(Log.getStackTraceString(e));
+            Timber.tag("Reveal Exception").w(Log.getStackTraceString(e));
             if (getView() != null)
                 getView().displayToast(R.string.error_unable_to_start_form);
         }

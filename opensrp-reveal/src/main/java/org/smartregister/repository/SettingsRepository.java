@@ -78,7 +78,7 @@ public class SettingsRepository extends DrishtiRepository {
                 value = cursor.getString(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -98,7 +98,7 @@ public class SettingsRepository extends DrishtiRepository {
                 value = cursor.getBlob(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -126,7 +126,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -150,7 +150,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -172,7 +172,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -206,7 +206,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

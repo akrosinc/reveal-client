@@ -7,6 +7,8 @@ public interface RevealService {
     //maybe call this class service constants
     String SYNC_PLANS_URL = "/rest/plans/sync";
 
+    String DB_PULL_URL = "/rest/dbpull/sync";
+    String DB_PULL_UPDATE_URL = "/rest/dbpull/update";
 
     String SYNC_TASK_URL = "/rest/v2/task/sync";
     String ADD_TASK_URL = "/rest/v2/task/add";

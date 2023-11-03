@@ -37,6 +37,7 @@ import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ClientRelationshipRepository;
+import org.smartregister.repository.DBPullRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
@@ -225,6 +226,8 @@ public class Context {
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
     private EnvironmentRepository environmentRepository;
+
+    private DBPullRepository dbPullRepository;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -620,7 +623,7 @@ public class Context {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Timber.e(e, "Error creating encrypted SharedPreferences");
+            Timber.tag("Reveal Exception").w(e, "Error creating encrypted SharedPreferences");
 
             // fall back to unencrypted SharedPreferences
             sharedPreferences = getDefaultSharedPreferences(context);
@@ -685,6 +688,14 @@ public class Context {
         }
         return environmentRepository;
     }
+
+    public DBPullRepository getDbPullRepository(){
+        if(dbPullRepository == null){
+            dbPullRepository = new DBPullRepository();
+        }
+        return dbPullRepository;
+    }
+
     private ChildRepository childRepository() {
         if (childRepository == null) {
             childRepository = new ChildRepository();
@@ -1029,7 +1040,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString(AllConstants.ClientProcessing.NAME));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1070,7 +1081,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -1090,7 +1101,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1103,7 +1114,7 @@ public class Context {
                     input.close();
                 }
             } catch (Exception e2) {
-                Timber.e(e2);
+                Timber.tag("Reveal Exception").w(e2);
             }
         }
         return returnString.toString();

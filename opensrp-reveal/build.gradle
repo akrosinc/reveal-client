@@ -62,7 +62,7 @@ jacoco {
 
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 31
     buildToolsVersion "29.0.3"
     useLibrary 'org.apache.http.legacy'  //needed by some opensrp-client-core classes
 
@@ -97,7 +97,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [eventBusIndex: 'org.smartregister.reveal.RevelEventBusIndex']
+                arguments = [eventBusIndex: 'org.smartregister.reveal.RevealEventBusIndex']
             }
         }
 
@@ -151,7 +151,7 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "Integer", "DATABASE_VERSION", '14'
-            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
+            buildConfigField "String","CONFIG_SERVER",'"https://txn4miyxoz5a3n72fll33gbb6m0qyryy.lambda-url.us-east-1.on.aws/"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
@@ -174,7 +174,7 @@ android {
 
         debug {
             buildConfigField "Integer", "DATABASE_VERSION", '14'
-            buildConfigField "String","CONFIG_SERVER",'"https://reveal-environments.azurewebsites.net/envs"'
+            buildConfigField "String","CONFIG_SERVER",'"https://txn4miyxoz5a3n72fll33gbb6m0qyryy.lambda-url.us-east-1.on.aws/"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'
@@ -292,8 +292,7 @@ dependencies {
 
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
 
 

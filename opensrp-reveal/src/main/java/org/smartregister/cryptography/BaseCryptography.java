@@ -42,7 +42,7 @@ public abstract class BaseCryptography {
             keyStore.load(null);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         secureRandom = new SecureRandom();
@@ -52,7 +52,7 @@ public abstract class BaseCryptography {
         try {
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

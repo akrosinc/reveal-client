@@ -107,7 +107,7 @@ public class EventClientRepository extends BaseRepository {
 
             createIndex(db, table, columns);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -126,7 +126,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -185,7 +185,7 @@ public class EventClientRepository extends BaseRepository {
                 db.execSQL("DROP INDEX " + cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(EventClientRepository.class.getName(), "SQLException", e);
+            Timber.tag("Reveal Exception").w(EventClientRepository.class.getName(), "SQLException", e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -238,7 +238,7 @@ public class EventClientRepository extends BaseRepository {
                     }
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error updating column %s for event %s", column.name(), jsonObject);
+                Timber.tag("Reveal Exception").w(e, "Error updating column %s for event %s", column.name(), jsonObject);
             }
         }
 
@@ -265,7 +265,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -316,7 +316,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         if (shouldEnd) {
@@ -347,7 +347,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -397,7 +397,7 @@ public class EventClientRepository extends BaseRepository {
             }
             return true;
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -565,7 +565,7 @@ public class EventClientRepository extends BaseRepository {
                             Timber.w("Unable to add client with baseEntityId: %s", baseEntityId);
                     }
                 } catch (JSONException e) {
-                    Timber.e(e, "JSONException");
+                    Timber.tag("Reveal Exception").w(e, "JSONException");
                 }
             }
             if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
@@ -577,7 +577,7 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             if (sqLiteDatabase.isDbLockedByCurrentThread())
                 sqLiteDatabase.endTransaction();
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         } finally {
             if (insertStatement != null)
@@ -671,7 +671,7 @@ public class EventClientRepository extends BaseRepository {
             sqLiteDatabase.endTransaction();
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             sqLiteDatabase.endTransaction();
             return false;
         } finally {
@@ -696,7 +696,7 @@ public class EventClientRepository extends BaseRepository {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, t);
         } catch (Exception e) {
-            Timber.e(e, "Unable to convert: %s", jsonString);
+            Timber.tag("Reveal Exception").w(e, "Unable to convert: %s", jsonString);
             return null;
         }
     }
@@ -708,7 +708,7 @@ public class EventClientRepository extends BaseRepository {
         try {
             return new JSONObject(JsonFormUtils.gson.toJson(object));
         } catch (Exception e) {
-            Timber.e(e, "Unable to convert to json %s ", object);
+            Timber.tag("Reveal Exception").w(e, "Unable to convert to json %s ", object);
             return null;
         }
     }
@@ -738,7 +738,7 @@ public class EventClientRepository extends BaseRepository {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -775,7 +775,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(ev);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -794,7 +794,7 @@ public class EventClientRepository extends BaseRepository {
                 if (processEventClientCursor(list, cursor)) continue;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -896,7 +896,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(eventClient);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1001,11 +1001,11 @@ public class EventClientRepository extends BaseRepository {
                     lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1))
                             .getTime());
                 } catch (ParseException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1073,11 +1073,11 @@ public class EventClientRepository extends BaseRepository {
                     lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1))
                             .getTime());
                 } catch (ParseException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1160,7 +1160,7 @@ public class EventClientRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1188,7 +1188,7 @@ public class EventClientRepository extends BaseRepository {
                 count = cursor.getInt(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return -1;
         } finally {
             if (cursor != null) {
@@ -1229,7 +1229,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1269,7 +1269,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1342,7 +1342,7 @@ public class EventClientRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1367,7 +1367,7 @@ public class EventClientRepository extends BaseRepository {
                 return cl;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1405,7 +1405,7 @@ public class EventClientRepository extends BaseRepository {
             events.put("events", list);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1436,7 +1436,7 @@ public class EventClientRepository extends BaseRepository {
 
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1473,7 +1473,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1498,7 +1498,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonString);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1523,7 +1523,7 @@ public class EventClientRepository extends BaseRepository {
                 return convert(jsonString, Client.class);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1561,7 +1561,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(json);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1588,7 +1588,7 @@ public class EventClientRepository extends BaseRepository {
                 clients.add(new JSONObject(json));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return clients;
     }
@@ -1613,7 +1613,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1641,7 +1641,7 @@ public class EventClientRepository extends BaseRepository {
 
             eventCursorParser(list, cursor);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1681,7 +1681,7 @@ public class EventClientRepository extends BaseRepository {
 
             eventCursorParser(list, cursor);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1748,7 +1748,7 @@ public class EventClientRepository extends BaseRepository {
 
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1839,7 +1839,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1906,7 +1906,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1943,7 +1943,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e, "Error saving relationship for %s", baseEntityId);
+            Timber.tag("Reveal Exception").w(e, "Error saving relationship for %s", baseEntityId);
         }
         return null;
     }
@@ -1976,13 +1976,13 @@ public class EventClientRepository extends BaseRepository {
                 affected = getWritableDatabase().insert(clientTable.name(), null, values);
             }
             if (affected < 1)
-                Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
+                Timber.tag("Reveal Exception").w("Client %s not saved: %s", baseEntityId, jsonObject);
             if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
                 CoreLibrary.getInstance().context().getClientRelationshipRepository().saveRelationship(getClientRelationShip(baseEntityId, jsonObject));
             }
 
         } catch (Exception e) {
-            Timber.e(e, "Error saving client %s", jsonObject);
+            Timber.tag("Reveal Exception").w(e, "Error saving client %s", jsonObject);
         }
     }
 
@@ -2041,10 +2041,10 @@ public class EventClientRepository extends BaseRepository {
             }
 
             if (affected < 1)
-                Timber.e("event for %s not created or updated: %s", baseEntityId, jsonObject);
+                Timber.tag("Reveal Exception").w("event for %s not created or updated: %s", baseEntityId, jsonObject);
 
         } catch (Exception e) {
-            Timber.e(e, "Error saving event %s", jsonObject);
+            Timber.tag("Reveal Exception").w(e, "Error saving event %s", jsonObject);
         }
     }
 
@@ -2067,7 +2067,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId, BaseRepository.TYPE_Unprocessed});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2084,7 +2084,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2102,7 +2102,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2122,7 +2122,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2144,7 +2144,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2159,7 +2159,7 @@ public class EventClientRepository extends BaseRepository {
                     event_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -2186,7 +2186,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -2202,7 +2202,7 @@ public class EventClientRepository extends BaseRepository {
                 clients.add(convert(jsonString, Client.class));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -2222,7 +2222,7 @@ public class EventClientRepository extends BaseRepository {
                 events.add(convert(jsonString, Event.class));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -2310,7 +2310,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return false;
     }
@@ -2328,7 +2328,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return false;
     }

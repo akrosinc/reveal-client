@@ -174,7 +174,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         cardDetails.setInterventionType(interventionType);
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 } finally {
                     if (cursor != null) {
                         cursor.close();
@@ -342,7 +342,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
                 JSONObject finalFeatureCollection = featureCollection;
                 List<TaskDetails> finalTaskDetailsList = taskDetailsList;
@@ -405,7 +405,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         .put(cursor.getString(0), new StructureDetails(cursor.getString(1), cursor.getString(2)));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -426,7 +426,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 structureId = cursor.getString(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -457,7 +457,7 @@ public class ListTaskInteractor extends BaseInteractor {
 
             revealApplication.setSynced(false);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         Location currentOperationalArea = locationRepository
@@ -511,7 +511,7 @@ public class ListTaskInteractor extends BaseInteractor {
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             revealApplication.setSynced(false);
         }
@@ -558,7 +558,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 }
 
             } catch (Exception e) {
-                Timber.e(e, "Error querying tasks details for %s", featureId);
+                Timber.tag("Reveal Exception").w(e, "Error querying tasks details for %s", featureId);
             } finally {
                 if (cursor != null) {
                     cursor.close();

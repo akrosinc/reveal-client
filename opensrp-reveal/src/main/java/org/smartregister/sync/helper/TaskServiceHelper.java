@@ -178,7 +178,7 @@ public class TaskServiceHelper extends BaseHelper {
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) {
             serverVersion += 1;
@@ -199,7 +199,7 @@ public class TaskServiceHelper extends BaseHelper {
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
                     } catch (Exception e) {
-                        Timber.e(e, "Error saving task %s", task.getIdentifier());
+                        Timber.tag("Reveal Exception").w(e, "Error saving task %s", task.getIdentifier());
                     }
                 }
             }
@@ -212,7 +212,7 @@ public class TaskServiceHelper extends BaseHelper {
                 return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
             }
         } catch (Exception e) {
-            Timber.e(e, "Error fetching tasks from server");
+            Timber.tag("Reveal Exception").w(e, "Error fetching tasks from server");
         }
         return batchFetchedTasks;
     }
@@ -298,7 +298,7 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Timber.e("Update Status failed: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Update Status failed: %s", response.payload());
                 FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
@@ -313,7 +313,7 @@ public class TaskServiceHelper extends BaseHelper {
                         }
                     }
                 } catch (JSONException e) {
-                    Timber.e(e, "Error processing the tasks payload: %s", response.payload());
+                    Timber.tag("Reveal Exception").w(e, "Error processing the tasks payload: %s", response.payload());
                 }
             }
         }
@@ -335,7 +335,7 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
             stopTrace(taskSyncTrace);
             if (response.isFailure()) {
-                Timber.e("Failed to create new tasks on server.: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Failed to create new tasks on server.: %s", response.payload());
                 FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
@@ -397,7 +397,7 @@ public class TaskServiceHelper extends BaseHelper {
                             .systemDefault());
                     personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
                 } catch (Exception e){
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
 

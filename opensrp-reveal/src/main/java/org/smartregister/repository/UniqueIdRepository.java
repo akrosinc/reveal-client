@@ -45,7 +45,7 @@ public class UniqueIdRepository extends BaseRepository {
             database.insert(UniqueIds_TABLE_NAME, null, createValuesFor(uniqueId));
             //database.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class UniqueIdRepository extends BaseRepository {
             }
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             database.endTransaction();
         }
@@ -93,7 +93,7 @@ public class UniqueIdRepository extends BaseRepository {
             }
 
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -114,7 +114,7 @@ public class UniqueIdRepository extends BaseRepository {
             List<UniqueId> ids = readAll(cursor);
             uniqueId = ids.isEmpty() ? null : ids.get(0);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -174,7 +174,7 @@ public class UniqueIdRepository extends BaseRepository {
             return updateOpenMRSIdentifierStatus(id, values);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return 0;
         }
     }
@@ -189,7 +189,7 @@ public class UniqueIdRepository extends BaseRepository {
         }
 
         if (closed == 0) {
-            Timber.e("Error processing OpenSRP ID %s. NO SUCH ID FOUND", id);
+            Timber.tag("Reveal Exception").w("Error processing OpenSRP ID %s. NO SUCH ID FOUND", id);
         }
 
         return closed;
@@ -211,7 +211,7 @@ public class UniqueIdRepository extends BaseRepository {
             values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
             return updateOpenMRSIdentifierStatus(openmrsId_, values);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return 0;
         }
     }

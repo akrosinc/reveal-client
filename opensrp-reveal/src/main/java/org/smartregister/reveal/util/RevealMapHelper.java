@@ -176,7 +176,7 @@ public class RevealMapHelper {
             indexCaseSource = new GeoJsonSource(INDEX_CASE_SOURCE, circleFeature);
             mapboxMap.getStyle().addSource(indexCaseSource);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         indexCaseLineLayer = new LineLayer(INDEX_CASE_LINE_LAYER, indexCaseSource.getId());
@@ -211,7 +211,7 @@ public class RevealMapHelper {
                 }
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

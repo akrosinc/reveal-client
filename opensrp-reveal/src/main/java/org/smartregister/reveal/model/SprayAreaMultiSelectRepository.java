@@ -47,7 +47,7 @@ public class SprayAreaMultiSelectRepository implements MultiSelectListRepository
             property.put("confirmed-id","err");
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         locationNames.stream().forEach(name -> {
             MultiSelectItem item = new MultiSelectItem();

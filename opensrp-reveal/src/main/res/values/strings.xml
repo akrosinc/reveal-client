@@ -988,4 +988,5 @@
     <string name="drugs_accountability">"Drugs Accountability "</string>
     <string name="reveal_instance_selector">Select Reveal Server</string>
     <string name="current_server">Current Server: %s</string>
+    <string name="reveal_language_selector">Select Language</string>
 </resources>

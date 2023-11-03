@@ -73,66 +73,66 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return 0;
         }
 
         if (dataType.getName().startsWith(event.getName())) {
 
-            Timber.e("Received %s total events", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s total events", String.valueOf(jsonArray.length()));
 
-            Timber.e("  %s resident events", String.valueOf(homeData.length()));
+            Timber.tag("Reveal Exception").w("  %s resident events", String.valueOf(homeData.length()));
             if (homeData.length() > 0)
                 eventClientRepository.batchInsertEvents(homeData, 0);
 
-            Timber.e("  %s foreign events", String.valueOf(foreignData.length()));
+            Timber.tag("Reveal Exception").w("  %s foreign events", String.valueOf(foreignData.length()));
             if (foreignData.length() > 0)
                 foreignEventClientRepository.batchInsertEvents(foreignData, 0);
 
         } else if (dataType.getName().startsWith(client.getName())) {
 
-            Timber.e("Received %s clients", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s clients", String.valueOf(jsonArray.length()));
 
-            Timber.e("  %s resident clients", String.valueOf(homeData.length()));
+            Timber.tag("Reveal Exception").w("  %s resident clients", String.valueOf(homeData.length()));
             if (homeData.length() > 0)
                 eventClientRepository.batchInsertClients(homeData);
 
-            Timber.e("  %s foreign clients", String.valueOf(foreignData.length()));
+            Timber.tag("Reveal Exception").w("  %s foreign clients", String.valueOf(foreignData.length()));
             if (foreignData.length() > 0)
                 foreignEventClientRepository.batchInsertClients(foreignData);
 
         } else if (dataType.getName().startsWith(structure.getName())) {
-            Timber.e("Received %s structures", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s structures", String.valueOf(jsonArray.length()));
             structureRepository.batchInsertStructures(jsonArray);
         } else if (dataType.getName().startsWith(task.getName())) {
-            Timber.e("Received %s tasks", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s tasks", String.valueOf(jsonArray.length()));
             taskRepository.batchInsertTasks(jsonArray);
         } else if (dataType.getName().startsWith(foreignClient.getName())) {
 
-            Timber.e("Received %s foreign clients", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s foreign clients", String.valueOf(jsonArray.length()));
 
-            Timber.e("  %s resident clients", String.valueOf(homeData.length()));
+            Timber.tag("Reveal Exception").w("  %s resident clients", String.valueOf(homeData.length()));
             if (homeData.length() > 0)
                 eventClientRepository.batchInsertClients(homeData);
 
-            Timber.e("  %s foreign clients", String.valueOf(foreignData.length()));
+            Timber.tag("Reveal Exception").w("  %s foreign clients", String.valueOf(foreignData.length()));
             if (foreignData.length() > 0)
                 foreignEventClientRepository.batchInsertClients(foreignData);
 
         } else if (dataType.getName().startsWith(foreignEvent.getName())) {
 
-            Timber.e("Received %s foreign events", String.valueOf(jsonArray.length()));
+            Timber.tag("Reveal Exception").w("Received %s foreign events", String.valueOf(jsonArray.length()));
 
-            Timber.e("  %s resident events", String.valueOf(homeData.length()));
+            Timber.tag("Reveal Exception").w("  %s resident events", String.valueOf(homeData.length()));
             if (homeData.length() > 0)
                 eventClientRepository.batchInsertEvents(homeData, 0);
 
-            Timber.e("  %s foreign events", String.valueOf(foreignData.length()));
+            Timber.tag("Reveal Exception").w("  %s foreign events", String.valueOf(foreignData.length()));
             if (foreignData.length() > 0)
                 foreignEventClientRepository.batchInsertEvents(foreignData, 0);
 
         } else {
-            Timber.e("The data type provided does not exist");
+            Timber.tag("Reveal Exception").w("The data type provided does not exist");
             return maxTableRowId;
         }
 

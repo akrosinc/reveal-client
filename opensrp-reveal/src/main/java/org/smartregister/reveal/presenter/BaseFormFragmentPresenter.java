@@ -19,13 +19,18 @@ import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Pair;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+
 import io.ona.kujaku.listeners.BaseLocationListener;
+
 import java.lang.ref.WeakReference;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -49,6 +54,7 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.JsonFormUtils;
+
 import timber.log.Timber;
 
 /**
@@ -76,7 +82,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
     protected Gson gson = new GsonBuilder().setDateFormat(EVENT_DATE_FORMAT_Z)
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
-    private RevealJsonFormUtils jsonFormUtils = new RevealJsonFormUtils();
+    private RevealJsonFormUtils jsonFormUtils ;
 
     protected BaseFormFragmentPresenter(BaseFormFragmentContract.View view, Context context) {
         this.context = context;
@@ -86,6 +92,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         mappingHelper = new RevealMappingHelper();
         interactor = new BaseFormFragmentInteractor(this);
         prefsUtil = PreferencesUtil.getInstance();
+        jsonFormUtils = new RevealJsonFormUtils();
     }
 
     protected boolean validateFarStructures() {
@@ -110,7 +117,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
     @Override
     public void onLocationValidated() {
         if (!Intervention.REGISTER_FAMILY.equals(getTaskDetails().getTaskCode())) {
-            String formName = getView().getJsonFormUtils().getFormName(null, taskDetails.getTaskCode());
+            String formName = getView().getJsonFormUtils().getFormName( null, taskDetails.getTaskCode());
             if (StringUtils.isBlank(formName)) {
                 getView().displayError(R.string.opening_form_title, R.string.form_not_found);
             } else {
@@ -125,7 +132,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
                     jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), Constants.CONFIGURATION.MDA_CATCHMENT_AREAS, jsonFormUtils.getFields(formJSON).get(JsonForm.CATCHMENT_AREA), prefsUtil.getCurrentDistrict());
                     getView().startForm(formJSON);
                 } else {
-                    jsonFormUtils.populateFormWithServerOptions(formName,formJSON,null);
+                    jsonFormUtils.populateFormWithServerOptions(formName, formJSON, null);
                     getView().startForm(formJSON);
                 }
             }
@@ -135,12 +142,12 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
 
     public void showBasicForm(String formName) {
         JSONObject formJSON = getView().getJsonFormUtils().getFormJSON(context, formName, null, null);
-        jsonFormUtils.populateFormWithServerOptions(formName, formJSON,null);
+        jsonFormUtils.populateFormWithServerOptions(formName, formJSON, null);
         AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
-        sharedPreferences.savePreference(EVENT_LATITUDE,"");
-        sharedPreferences.savePreference(EVENT_LONGITUDE,"");
-        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED,"");
-        sharedPreferences.savePreference(GPS_ACCURACY,"");
+        sharedPreferences.savePreference(EVENT_LATITUDE, "");
+        sharedPreferences.savePreference(EVENT_LONGITUDE, "");
+        sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED, "");
+        sharedPreferences.savePreference(GPS_ACCURACY, "");
         getView().startForm(formJSON);
     }
 
@@ -191,7 +198,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
             jsonStr = jsonStr.replace(JsonForm.NUMBER_OF_FAMILY_MEMBERS_SLEEPING_OUTDOORS, numberOfMembers.second + "");
             getView().startForm(new JSONObject(jsonStr));
         } catch (JSONException e) {
-            Timber.e(e, "Error updating Number of members");
+            Timber.tag("Reveal Exception").w(e, "Error updating Number of members");
             getView().startForm(formJSON);
         }
         getView().hideProgressDialog();
@@ -203,7 +210,7 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         try {
             familyMemberField.put(OPTIONS, familyMembers);
         } catch (JSONException e) {
-            Timber.e(e, "Error updating family members");
+            Timber.tag("Reveal Exception").w(e, "Error updating family members");
         }
         getView().startForm(formJSON);
     }
@@ -226,7 +233,9 @@ public class BaseFormFragmentPresenter extends BaseLocationListener implements B
         return structure;
     }
 
-    public void onGetUserLocation(android.location.Location location){
+    public void onGetUserLocation(android.location.Location location) {
         //empty
-    };
+    }
+
+    ;
 }

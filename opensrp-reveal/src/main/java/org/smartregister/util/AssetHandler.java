@@ -26,7 +26,7 @@ public class AssetHandler {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Timber.e(ex);
+            Timber.tag("Reveal Exception").w(ex);
             return null;
         }
         //Log.d("File", fileContents);
@@ -67,7 +67,7 @@ public class AssetHandler {
             }
             return t;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -80,7 +80,7 @@ public class AssetHandler {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, clazz);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class AssetHandler {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, type);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -107,7 +107,7 @@ public class AssetHandler {
                 s = JsonFormUtils.gson.toJson(t, type);
             return s;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }

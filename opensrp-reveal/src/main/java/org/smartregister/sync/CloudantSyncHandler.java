@@ -97,9 +97,9 @@ public class CloudantSyncHandler {
             this.reloadReplicationSettings(pullFilter);
 
         } catch (URISyntaxException e) {
-            Timber.e(e, "Unable to construct remote URI from configuration");
+            Timber.tag("Reveal Exception").w(e, "Unable to construct remote URI from configuration");
         } catch (Exception e) {
-            Timber.e(e, "Exception While setting up datastore");
+            Timber.tag("Reveal Exception").w(e, "Exception While setting up datastore");
         }
 
     }
@@ -233,7 +233,7 @@ public class CloudantSyncHandler {
                 ClientProcessor.getInstance(mContext.getApplicationContext()).processClient();
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         mHandler.post(new Runnable() {
             @Override
@@ -268,7 +268,7 @@ public class CloudantSyncHandler {
      */
     @Subscribe
     public void error(final ReplicationErrored re) {
-        Timber.e(re.errorInfo.getException(), "Replication error:");
+        Timber.tag("Reveal Exception").w(re.errorInfo.getException(), "Replication error:");
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -334,7 +334,7 @@ public class CloudantSyncHandler {
             }
 
         } catch (Exception e) {
-            Timber.e(e, "Exception While getting sync filters json");
+            Timber.tag("Reveal Exception").w(e, "Exception While getting sync filters json");
             return null;
         }
 
@@ -380,7 +380,7 @@ public class CloudantSyncHandler {
             return false;
 
         } catch (Exception e) {
-            Timber.e(e, "Exception While setting replication filter");
+            Timber.tag("Reveal Exception").w(e, "Exception While setting replication filter");
             return null;
         }
     }
@@ -406,7 +406,7 @@ public class CloudantSyncHandler {
 
             return root.getAsJsonObject();
         } catch (Exception e) {
-            Timber.e(e, "Exception While getting replication filter");
+            Timber.tag("Reveal Exception").w(e, "Exception While getting replication filter");
             return null;
         }
     }

@@ -306,7 +306,7 @@ public class CommonRepository extends DrishtiRepository {
             }
             return commons.get(0);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -445,7 +445,7 @@ public class CommonRepository extends DrishtiRepository {
                 cursor.moveToNext();
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             cursor.close();
         }
@@ -485,7 +485,7 @@ public class CommonRepository extends DrishtiRepository {
                 cursor.moveToNext();
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             cursor.close();
         }
@@ -600,7 +600,7 @@ public class CommonRepository extends DrishtiRepository {
             cv.put(IS_CLOSED_COLUMN, 1);
             db.update(tableName, cv, BASE_ENTITY_ID_COLUMN + "=?", new String[]{baseEntityId});
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -619,7 +619,7 @@ public class CommonRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return false;
     }
@@ -642,7 +642,7 @@ public class CommonRepository extends DrishtiRepository {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
         } finally {
             if (cursor != null) {
@@ -731,7 +731,7 @@ public class CommonRepository extends DrishtiRepository {
             searchValues.put(CommonFtsObject.isClosedColumnName, commonPersonObject.getClosed());
             return searchValues;
         } catch (Exception e) {
-            Timber.e(e, "Update Search Error");
+            Timber.tag("Reveal Exception").w(e, "Update Search Error");
             return null;
         }
     }
@@ -842,7 +842,7 @@ public class CommonRepository extends DrishtiRepository {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e, "Update Search Error");
+            Timber.tag("Reveal Exception").w(e, "Update Search Error");
             database.endTransaction();
             return false;
         }
@@ -866,7 +866,7 @@ public class CommonRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e, "Update Search Error");
+            Timber.tag("Reveal Exception").w(e, "Update Search Error");
             database.endTransaction();
         }
 
@@ -891,7 +891,7 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -915,7 +915,7 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

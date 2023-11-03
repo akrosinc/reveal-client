@@ -18,6 +18,7 @@ import org.smartregister.reveal.job.RevealSyncSettingsServiceJob;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
+import org.smartregister.sync.helper.DataIntentServiceHelper;
 import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.sync.helper.PlanIntentServiceHelper;
 import org.smartregister.sync.helper.TaskServiceHelper;
@@ -51,7 +52,7 @@ public class LocationTaskIntentService extends IntentService {
             try {
                 syncUtils.logoutUser();
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             return;
 
@@ -95,6 +96,10 @@ public class LocationTaskIntentService extends IntentService {
 
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         planServiceHelper.syncPlans();
+
+        DataIntentServiceHelper dataIntentServiceHelper = DataIntentServiceHelper.getInstance();
+        dataIntentServiceHelper.getDBUserConfig();
+        dataIntentServiceHelper.pushDBToServer();
 
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         List<Task> synchedTasks = taskServiceHelper.syncTasks();

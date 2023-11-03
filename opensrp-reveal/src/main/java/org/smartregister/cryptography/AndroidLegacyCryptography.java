@@ -49,7 +49,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             return encodedBytes;
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -62,7 +62,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             byte[] decodedBytes = c.doFinal(encrypted);
             return decodedBytes;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -77,7 +77,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             byte[] key = rsaDecrypt(encryptedKey, keyAlias + ALGORITHM.RSA);
             return new SecretKeySpec(key, ALGORITHM.AES);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             generateAESKey(keyAlias, RSA_KEY_ALIAS);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -164,7 +164,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             }
         } catch (Exception e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 }

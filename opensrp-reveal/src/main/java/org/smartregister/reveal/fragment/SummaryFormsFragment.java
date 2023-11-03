@@ -139,17 +139,17 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         } else if(Utils.isZambiaIRSFull()){
             btnDailySummary.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator2).setVisibility(View.VISIBLE);
-            btnTeamLeaderDos.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.separator3).setVisibility(View.VISIBLE);
+            btnTeamLeaderDos.setVisibility(View.GONE);
+            view.findViewById(R.id.separator3).setVisibility(View.GONE);
             btnIrsSaDecision.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator5).setVisibility(View.VISIBLE);
-            btnMobilization.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.separator6).setVisibility(View.VISIBLE);
-            btnIrsFieldOfficer.setVisibility(View.VISIBLE);
-            view.findViewById(R.id.separator7).setVisibility(View.VISIBLE);
-            btnFPPForm.setVisibility(View.VISIBLE);
+            btnMobilization.setVisibility(View.GONE);
+            view.findViewById(R.id.separator6).setVisibility(View.GONE);
+            btnIrsFieldOfficer.setVisibility(View.GONE);
+            view.findViewById(R.id.separator7).setVisibility(View.GONE);
+            btnFPPForm.setVisibility(View.GONE);
             view.findViewById(R.id.separator10).setVisibility(View.GONE);
-            btnGeneralSupervisionForm.setVisibility(View.VISIBLE);
+            btnGeneralSupervisionForm.setVisibility(View.GONE);
         } else if(Utils.isMDALite()){
             btnTabletAccountabilityForm.setVisibility(View.VISIBLE);
             btnDrugReceivedForm.setVisibility(View.VISIBLE);
@@ -270,7 +270,9 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.hfw_level_referral:
-                presenter.showBasicForm(Constants.JsonForm.HFW_LEVEL_REFERRAL);
+                presenter.showBasicForm(
+
+                        Constants.JsonForm.HFW_LEVEL_REFERRAL);
                 break;
             case R.id.cdd_supervisor_checklist:
                 presenter.showBasicForm(Constants.JsonForm.CDD_SUPERVISOR_CHECKLIST);

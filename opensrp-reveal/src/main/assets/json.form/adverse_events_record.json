@@ -110,7 +110,7 @@
           "err": "Required field"
         },
         "v_regex": {
-          "value": "^$|0[0-9]{9}",
+          "value": "^$|[0-9]{8}",
           "err": "Please enter a valid number"
         }
       },

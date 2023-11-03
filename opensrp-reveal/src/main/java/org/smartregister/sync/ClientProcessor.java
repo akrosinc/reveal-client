@@ -53,7 +53,7 @@ public class ClientProcessor {
             mCloudantDataHandler = CloudantDataHandler.getInstance(context);
             preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -169,7 +169,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -217,7 +217,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -247,7 +247,7 @@ public class ClientProcessor {
             }
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -331,7 +331,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -401,7 +401,7 @@ public class ClientProcessor {
             return true;
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -423,7 +423,7 @@ public class ClientProcessor {
 
             return true;
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -588,7 +588,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -610,7 +610,7 @@ public class ClientProcessor {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -649,7 +649,7 @@ public class ClientProcessor {
             Timber.i("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -685,7 +685,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return obs;
     }
@@ -713,7 +713,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return attributes;
@@ -728,7 +728,7 @@ public class ClientProcessor {
                 map.put(key, value);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return map;
@@ -831,7 +831,7 @@ public class ClientProcessor {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return addressMap;
     }
@@ -895,7 +895,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -948,7 +948,7 @@ public class ClientProcessor {
         try {
             return mCloudantDataHandler.getClientByBaseEntityId(baseEntityId);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }

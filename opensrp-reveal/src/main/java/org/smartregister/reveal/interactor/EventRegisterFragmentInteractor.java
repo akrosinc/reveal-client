@@ -50,7 +50,7 @@ public class EventRegisterFragmentInteractor implements EventRegisterContract.In
             try {
                 details.put(DatabaseKeys.ENTITY_STATUS, DELETED);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             eventClientRepository.addEvent(baseEntityId,eventJSON);
             List<EventClient> eventClientList = eventClientRepository.fetchEventClients(Collections.singletonList(formSubmissionId));

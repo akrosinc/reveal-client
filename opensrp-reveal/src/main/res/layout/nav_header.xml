@@ -34,18 +34,18 @@
         android:id="@+id/overall_sync_progress_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/drawer_margin_vertical"
         android:layout_marginStart="@dimen/hamburger_margin"
+        android:layout_marginTop="@dimen/drawer_margin_vertical"
         android:layout_marginEnd="@dimen/hamburger_margin"
         android:layout_weight="3"
-        app:subTitle="@string/sync_progress"
-        app:title="Sync Progress 0%"
+        app:layout_constraintBottom_toTopOf="@id/sync_progress_section"
+        app:layout_constraintTop_toBottomOf="@id/branding_separator"
         app:progress="0"
         app:progressBarBackgroundColor="@color/text_gray"
         app:progressBarForegroundColor="@color/light_blue"
-        app:layout_constraintBottom_toTopOf="@id/sync_progress_section"
-        app:layout_constraintTop_toBottomOf="@id/branding_separator"
-        />
+        app:subTitle="@string/sync_progress"
+        app:title="Sync Progress 0%" />
+
     <View
         android:id="@+id/overall_sync_progress_view_separator"
         android:layout_width="match_parent"
@@ -56,122 +56,121 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/overall_sync_progress_view" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sync_progress_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/sync_progress_section"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/overall_sync_progress_view_separator">
-    <TextView
-        android:id="@+id/location_sync_progress_bar_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/drawer_margin_vertical"
-        android:layout_marginStart="@dimen/drawer_margin"
-        android:textColor="@color/text_gray"
-        android:visibility="visible"
-        android:textSize="10sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/location_sync_progress_bar"/>
-    <ProgressBar
-        android:id="@+id/location_sync_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_margin="20dp"
-        android:layout_height="wrap_content"
-        android:indeterminate="false"
-        android:layout_marginStart="@dimen/drawer_margin"
-        android:layout_marginTop="@dimen/drawer_margin_vertical"
-        android:visibility="visible"
-        android:progress="0"
-        android:max="100"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/location_sync_progress_bar_label"
-        />
+
+        <TextView
+            android:id="@+id/location_sync_progress_bar_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
+            android:textColor="@color/text_gray"
+            android:textSize="10sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/location_sync_progress_bar"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/location_sync_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/location_sync_progress_bar_label" />
 
         <TextView
             android:id="@+id/task_sync_progress_bar_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:textColor="@color/text_gray"
-            android:visibility="visible"
             android:textSize="10sp"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/location_sync_progress_bar"/>
+            app:layout_constraintTop_toBottomOf="@+id/location_sync_progress_bar" />
 
         <ProgressBar
             android:id="@+id/task_sync_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_margin="20dp"
             android:layout_height="wrap_content"
-            android:indeterminate="false"
+            android:layout_margin="20dp"
             android:layout_marginStart="@dimen/drawer_margin"
             android:layout_marginTop="@dimen/drawer_margin_vertical"
-            android:visibility="visible"
-            android:progress="0"
+            android:indeterminate="false"
             android:max="100"
+            android:progress="0"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/task_sync_progress_bar_label"
-            />
+            app:layout_constraintTop_toBottomOf="@id/task_sync_progress_bar_label" />
 
         <TextView
             android:id="@+id/plan_sync_progress_bar_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:textColor="@color/text_gray"
-            android:visibility="visible"
             android:textSize="10sp"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/task_sync_progress_bar"/>
+            app:layout_constraintTop_toBottomOf="@+id/task_sync_progress_bar" />
 
         <ProgressBar
             android:id="@+id/plan_sync_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_margin="20dp"
             android:layout_height="wrap_content"
-            android:indeterminate="false"
+            android:layout_margin="20dp"
             android:layout_marginStart="@dimen/drawer_margin"
             android:layout_marginTop="@dimen/drawer_margin_vertical"
-            android:visibility="visible"
-            android:progress="0"
+            android:indeterminate="false"
             android:max="100"
+            android:progress="0"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/plan_sync_progress_bar_label"
-            />
+            app:layout_constraintTop_toBottomOf="@id/plan_sync_progress_bar_label" />
 
         <TextView
             android:id="@+id/event_sync_progress_bar_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
             android:textColor="@color/text_gray"
-            android:visibility="visible"
             android:textSize="10sp"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plan_sync_progress_bar"/>
+            app:layout_constraintTop_toBottomOf="@+id/plan_sync_progress_bar" />
 
         <ProgressBar
             android:id="@+id/event_sync_progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_margin="20dp"
             android:layout_height="wrap_content"
-            android:indeterminate="false"
+            android:layout_margin="20dp"
             android:layout_marginStart="@dimen/drawer_margin"
             android:layout_marginTop="@dimen/drawer_margin_vertical"
-            android:visibility="visible"
-            android:progress="0"
+            android:indeterminate="false"
             android:max="100"
+            android:progress="0"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/event_sync_progress_bar_label"
-            />
+            app:layout_constraintTop_toBottomOf="@id/event_sync_progress_bar_label" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--sync progress indication end-->
@@ -288,7 +287,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_separator"/>
+        app:layout_constraintTop_toBottomOf="@id/header_separator" />
 
 
     <TextView
@@ -317,8 +316,7 @@
         android:text="@string/operational_area"
         android:textColor="@color/text_gray"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/plan_selector"
-        />
+        app:layout_constraintTop_toBottomOf="@id/plan_selector" />
 
 
     <TextView
@@ -367,6 +365,7 @@
     <TextView
         android:id="@+id/operator_label"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginStart="@dimen/drawer_margin"
         android:layout_marginTop="@dimen/operator_top_margin"
@@ -375,10 +374,10 @@
         android:textColor="@color/text_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/facility_label"
         app:layout_constraintVertical_bias="0.9"
         app:layout_constraintVertical_weight="1" />
+
     <TextView
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
@@ -397,12 +396,12 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginStart="@dimen/divider_margin"
+        android:layout_marginEnd="@dimen/divider_margin"
+        android:layout_marginBottom="10dp"
         android:background="#DFDFDF"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="@dimen/divider_margin"
-        app:layout_constraintTop_toBottomOf="@id/logout_button"
-        android:layout_marginEnd="@dimen/divider_margin"
-        android:layout_marginBottom="10dp" />
+        app:layout_constraintTop_toBottomOf="@id/logout_button" />
 
     <TextView
         android:id="@+id/application_version"
@@ -422,6 +421,13 @@
         android:textColor="@color/text_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/application_version" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

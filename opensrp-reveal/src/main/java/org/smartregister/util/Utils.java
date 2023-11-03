@@ -383,7 +383,7 @@ public class Utils {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Timber.e(ex);
+            Timber.tag("Reveal Exception").w(ex);
         }
 
         return fileContents;
@@ -395,7 +395,7 @@ public class Utils {
             is = context.getAssets().open(path);
 
         } catch (IOException ex) {
-            Timber.e(ex);
+            Timber.tag("Reveal Exception").w(ex);
         }
 
         return is;
@@ -459,19 +459,19 @@ public class Utils {
                     result.add(csvValues);
                 }
             } catch (IOException e) {
-                Timber.e(e, "populateTableFromCSV: error reading csv file ");
+                Timber.tag("Reveal Exception").w(e, "populateTableFromCSV: error reading csv file ");
 
             } finally {
                 try {
                     is.close();
                     reader.close();
                 } catch (Exception e) {
-                    Timber.e(e, "populateTableFromCSV: unable to close inputstream/bufferedreader ");
+                    Timber.tag("Reveal Exception").w(e, "populateTableFromCSV: unable to close inputstream/bufferedreader ");
                 }
             }
 
         } catch (Exception e) {
-            Timber.e(e, "populateTableFromCSV ");
+            Timber.tag("Reveal Exception").w(e, "populateTableFromCSV ");
         }
         return result;
     }
@@ -547,7 +547,7 @@ public class Utils {
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         } catch (Exception e) {
-            Timber.e(e, "Error encountered while hiding keyboard");
+            Timber.tag("Reveal Exception").w(e, "Error encountered while hiding keyboard");
         }
     }
 
@@ -637,7 +637,7 @@ public class Utils {
                 duration = new DateTime(date);
                 return DateUtil.getDuration(duration);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return "";
@@ -739,7 +739,7 @@ public class Utils {
             InputStream inputStream = assetManager.open(APP_PROPERTIES_FILE);
             properties.load(inputStream);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return properties;
 
@@ -789,8 +789,11 @@ public class Utils {
             fis.close();
 
         } catch (Exception e) {
-            Timber.e("copyDatabase: backup error " + e.toString());
+            Timber.tag("Reveal Exception").w("copyDatabase: backup error " + e.toString());
         }
+    }
+    public static String getDBPath(String dbName, String copyDbName, Context context) {
+        return context.getDatabasePath(dbName).getPath();
     }
 
     public static Locale getDefaultLocale() {
@@ -834,7 +837,7 @@ public class Utils {
             if (walFile.delete()) {
                 Timber.i("Database %s-wal deleted", databaseName);
             } else {
-                Timber.e("Failed to delete database %s-wal", databaseName);
+                Timber.tag("Reveal Exception").w("Failed to delete database %s-wal", databaseName);
                 operationSuccessful = false;
             }
         }
@@ -844,7 +847,7 @@ public class Utils {
             if (shmFile.delete()) {
                 Timber.i("Database %s-shm deleted", databaseName);
             } else {
-                Timber.e("Failed to delete database %s-shm", databaseName);
+                Timber.tag("Reveal Exception").w("Failed to delete database %s-shm", databaseName);
                 return false;
             }
         }
@@ -858,7 +861,7 @@ public class Utils {
             if (journal.delete()) {
                 Timber.i("Database %s journal deleted", databaseName);
             } else {
-                Timber.e("Failed to delete database %s journal", databaseName);
+                Timber.tag("Reveal Exception").w("Failed to delete database %s journal", databaseName);
                 return false;
             }
         }
@@ -886,7 +889,7 @@ public class Utils {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return pInfo;
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -947,7 +950,7 @@ public class Utils {
             }
             return authenticatorXml;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }

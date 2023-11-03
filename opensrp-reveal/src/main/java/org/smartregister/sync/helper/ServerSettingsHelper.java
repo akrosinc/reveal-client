@@ -55,7 +55,7 @@ public class ServerSettingsHelper {
             return gson.fromJson(settingArray.toString(), SERVER_SETTING_TYPE); // contains the whole reviews list
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return new ArrayList<>();
         }
     }

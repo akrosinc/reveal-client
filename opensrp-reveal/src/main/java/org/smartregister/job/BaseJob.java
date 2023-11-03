@@ -36,7 +36,7 @@ public abstract class BaseJob extends Job {
                 Timber.d("Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
 
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         } else {
             Timber.d("Skipping schedule for job with name " + jobTag + " : Already Exists!");

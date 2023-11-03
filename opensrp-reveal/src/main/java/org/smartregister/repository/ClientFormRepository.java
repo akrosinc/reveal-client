@@ -101,7 +101,7 @@ public class ClientFormRepository extends BaseRepository implements ClientFormCo
         try {
             clientForm.setCreatedAt(DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(CREATED_AT))));
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return clientForm;
@@ -122,7 +122,7 @@ public class ClientFormRepository extends BaseRepository implements ClientFormCo
                 clientForms.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return clientForms;
 
@@ -141,7 +141,7 @@ public class ClientFormRepository extends BaseRepository implements ClientFormCo
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
 
@@ -162,7 +162,7 @@ public class ClientFormRepository extends BaseRepository implements ClientFormCo
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
 

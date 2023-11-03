@@ -233,7 +233,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
                 prefsUtil.setCurrentFacility(name.get(name.size() - 1));
             }
         } catch (NullPointerException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         changedCurrentSelection = true;
         populateLocationsFromPreferences();

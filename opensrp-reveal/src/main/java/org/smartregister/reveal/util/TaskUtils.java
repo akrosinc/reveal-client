@@ -202,7 +202,7 @@ public class TaskUtils {
 
             taskResetSuccessful = true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return taskResetSuccessful;

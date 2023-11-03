@@ -1,9 +1,17 @@
 package org.smartregister.reveal.interactor;
 
+import static com.vijay.jsonwizard.constants.JsonFormConstants.BARCODE;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.EDIT_TEXT;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.NATIVE_RADIO_BUTTON;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
+import static com.vijay.jsonwizard.constants.JsonFormConstants.TOASTER_NOTES;
+
 import androidx.annotation.NonNull;
+
 import com.vijay.jsonwizard.interactors.JsonFormInteractor;
 
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
@@ -15,14 +23,6 @@ import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
 import org.smartregister.reveal.widget.RevealRadioButtonFactory;
 import org.smartregister.reveal.widget.RevealRepeatingGroupFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
-
-import static com.vijay.jsonwizard.constants.JsonFormConstants.BARCODE;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.EDIT_TEXT;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.LABEL;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.MULTI_SELECT_LIST;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.NATIVE_RADIO_BUTTON;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
-import static com.vijay.jsonwizard.constants.JsonFormConstants.TOASTER_NOTES;
 
 /**
  * Created by samuelgithengi on 12/13/18.
@@ -54,9 +54,9 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         map.put(TOASTER_NOTES, new RevealToasterNotesFactory());
         map.put(MULTI_SELECT_LIST,new RevealMultiSelectListFactory());
 
-        if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN){
+//        if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN){
             map.put(REPEATING_GROUP, new RevealRepeatingGroupFactory());
-        }
+//        }
 
         if(Utils.isCountryBuild(Country.NIGERIA)){
             map.put(BARCODE, new RevealBarcodeFactory());

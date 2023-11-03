@@ -130,7 +130,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
             return new FamilyEventClient(baseClient, baseEvent);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
             return new FamilyEventClient(baseClient, baseEvent);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -216,7 +216,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
 
             return new FamilyEventClient(baseClient, baseEvent);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -252,7 +252,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
         try {
             compressedImageFile = FamilyLibrary.getInstance().getCompressor().compressToBitmap(file);
         } catch (Exception e) {
-          Timber.e(e, "Error compressing image");
+          Timber.tag("Reveal Exception").w(e, "Error compressing image");
         }
         saveStaticImageToDisk(compressedImageFile, providerId, entityId);
 
@@ -265,7 +265,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             lpv.init();
             return getAutoPopulatedJsonEditFormString(client, FormUtils.getInstance(context).getFormJson(Utils.metadata().familyRegister.formName), lpv);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -300,7 +300,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 return form;
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -348,7 +348,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             jsonObject.put(JsonFormUtils.VALUE, uniqueId.replace("-", ""));
 
         } else {
-            Timber.e("ERROR:: Unprocessed Form Object Key " + jsonObject.getString(JsonFormUtils.KEY));
+            Timber.tag("Reveal Exception").w("ERROR:: Unprocessed Form Object Key " + jsonObject.getString(JsonFormUtils.KEY));
         }
     }
 
@@ -384,13 +384,13 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             }
 
         } catch (FileNotFoundException e) {
-            Timber.e("Failed to save static image to disk");
+            Timber.tag("Reveal Exception").w("Failed to save static image to disk");
         } finally {
             if (os != null) {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    Timber.e("Failed to close static images output stream after attempting to write image");
+                    Timber.tag("Reveal Exception").w("Failed to close static images output stream after attempting to write image");
                 }
             }
         }
@@ -444,7 +444,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             lastInteractedWith.put(Constants.KEY.VALUE, Calendar.getInstance().getTimeInMillis());
             fields.put(lastInteractedWith);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -473,7 +473,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -496,7 +496,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
             return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -552,7 +552,7 @@ public class JsonFormUtils extends org.smartregister.util.JsonFormUtils {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 }

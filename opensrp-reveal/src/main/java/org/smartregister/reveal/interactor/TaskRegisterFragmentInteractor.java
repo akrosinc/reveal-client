@@ -399,7 +399,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
                         }
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 } finally {
                     if (cursor != null) {
                         cursor.close();

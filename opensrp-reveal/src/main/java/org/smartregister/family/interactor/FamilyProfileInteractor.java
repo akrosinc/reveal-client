@@ -189,7 +189,7 @@ public class FamilyProfileInteractor implements FamilyProfileContract.Interactor
             getAllSharedPreferences().saveLastUpdatedAtDate(lastSyncDate.getTime());
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -198,7 +198,7 @@ public class FamilyProfileInteractor implements FamilyProfileContract.Interactor
         try {
             getClientProcessorForJava().processClient(eventClientList);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

@@ -76,7 +76,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
         try {
             familyJsonFormUtils = new FamilyJsonFormUtils(getView().getApplicationContext());
         } catch (Exception e) {
-            Timber.e(e, "error Initializing FamilyJsonFormUtils ");
+            Timber.tag("Reveal Exception").w(e, "error Initializing FamilyJsonFormUtils ");
         }
         otherMemberInteractor = new RevealFamilyOtherMemberInteractor();
         FamilyProfilePresenter that = this;
@@ -132,7 +132,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
                     lastName = cursor.getString(0);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error getting first name for" + familyHead);
+                Timber.tag("Reveal Exception").w(e, "Error getting first name for" + familyHead);
             } finally {
                 if (cursor != null)
                     cursor.close();
@@ -159,7 +159,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
                     structureId = cursor.getString(0);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error getting residence for" + familyId);
+                Timber.tag("Reveal Exception").w(e, "Error getting residence for" + familyId);
             } finally {
                 if (cursor != null)
                     cursor.close();
@@ -289,7 +289,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
                 getView().startFormActivity(form);
 
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }
@@ -315,7 +315,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
                 getView().startFormActivity(form, false);
 
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         @Override
@@ -333,7 +333,7 @@ public class FamilyProfilePresenter extends BaseFamilyProfilePresenter implement
             try {
                 startForm(RevealApplication.getInstance().getMetadata().familyMemberRegister.formName, null, null, RevealApplication.getInstance().getContext().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID));
             } catch (Exception e) {
-                Timber.e(e, "Error opening add member form");
+                Timber.tag("Reveal Exception").w(e, "Error opening add member form");
             }
         }
 }

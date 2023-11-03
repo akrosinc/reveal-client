@@ -98,7 +98,7 @@ public class BaseFamilyProfileModel implements FamilyProfileContract.Model {
             try {
                 formUtils = FormUtils.getInstance(Utils.context().applicationContext());
             } catch (Exception e) {
-                Timber.e( e);
+                Timber.tag("Reveal Exception").w( e);
             }
         }
         return formUtils;

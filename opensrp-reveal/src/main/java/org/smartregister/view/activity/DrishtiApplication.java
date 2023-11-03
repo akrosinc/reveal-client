@@ -144,7 +144,7 @@ public abstract class DrishtiApplication extends Application {
     private void closePendingTransactions() {
         if (repository != null && repository.getWritableDatabase().isOpen()
                 && repository.getWritableDatabase().inTransaction()) {
-            Timber.e(new RuntimeException("Application closed while transactions are in progress. Data maybe lost"));
+            Timber.tag("Reveal Exception").w(new RuntimeException("Application closed while transactions are in progress. Data maybe lost"));
             repository.getWritableDatabase().endTransaction();
             context.allSharedPreferences().updateTransactionsKilledFlag(true);
         }

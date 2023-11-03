@@ -186,7 +186,7 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
                         compoundStructureField.put(VALUE,multiSelectValue);
                     }
                 }catch (Exception e){
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
             String oldFamilyName = JsonFormUtils.getFieldValue(jsonForm.toString(), "family_name");

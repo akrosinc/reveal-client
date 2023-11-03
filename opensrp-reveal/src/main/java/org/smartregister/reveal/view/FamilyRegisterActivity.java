@@ -111,7 +111,7 @@ public class FamilyRegisterActivity extends BaseFamilyRegisterActivity implement
                     presenter().saveForm(jsonString, false);
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         } else if (requestCode == JsonFormUtils.REQUEST_CODE_GET_JSON && resultCode == RESULT_CANCELED) {

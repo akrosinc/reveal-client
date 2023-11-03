@@ -124,7 +124,7 @@ public abstract class BaseFamilyProfileActivity extends BaseProfileActivity impl
             presenter().startForm(formName, entityId, metaData, locationId);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             displayToast(R.string.error_unable_to_start_form);
         }
     }
@@ -158,7 +158,7 @@ public abstract class BaseFamilyProfileActivity extends BaseProfileActivity impl
                     presenter().saveFamilyMember(jsonString);
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }

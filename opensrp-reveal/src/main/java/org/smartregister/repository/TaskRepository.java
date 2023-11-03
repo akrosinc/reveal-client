@@ -225,7 +225,7 @@ public class TaskRepository extends BaseRepository {
                 tasks.put(task.getStructureId(), taskSet);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -253,7 +253,7 @@ public class TaskRepository extends BaseRepository {
                 consumer.accept(task);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -269,7 +269,7 @@ public class TaskRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -284,7 +284,7 @@ public class TaskRepository extends BaseRepository {
                 taskSet.add(task);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -374,7 +374,7 @@ public class TaskRepository extends BaseRepository {
                 taskUpdates.add(readUpdateCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -392,7 +392,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TaskRepository.TASK_TABLE, values, TaskRepository.ID + " = ?",
                     new String[]{taskID});
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -456,7 +456,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getWritableDatabase().endTransaction();
             return false;
         } finally {
@@ -498,7 +498,7 @@ public class TaskRepository extends BaseRepository {
             return true;
 
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getWritableDatabase().endTransaction();
             return false;
         } finally {
@@ -524,7 +524,7 @@ public class TaskRepository extends BaseRepository {
                     TASK_TABLE, STRUCTURE_ID, ID, ID, FOR, STRUCTURE_ID));
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -546,7 +546,7 @@ public class TaskRepository extends BaseRepository {
                     TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, clientTable, FOR, STRUCTURE_ID));
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -569,7 +569,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
             getWritableDatabase().endTransaction();
             return false;
         }
@@ -621,7 +621,7 @@ public class TaskRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -699,7 +699,7 @@ public class TaskRepository extends BaseRepository {
                 unsyncedRecordsCount = cursor.getInt(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -742,7 +742,7 @@ public class TaskRepository extends BaseRepository {
                 entityIds.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

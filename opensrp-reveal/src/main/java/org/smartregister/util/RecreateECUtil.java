@@ -64,7 +64,7 @@ public class RecreateECUtil {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -130,7 +130,7 @@ public class RecreateECUtil {
                 Timber.d("saving %d events, %s ", eventClients.first.size(), events);
                 eventClientRepository.batchInsertEvents(events, 0, sqLiteDatabase);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }
@@ -141,7 +141,7 @@ public class RecreateECUtil {
                 Timber.d("saving %d clients, %s", eventClients.second.size(), clients);
                 eventClientRepository.batchInsertClients(clients, sqLiteDatabase);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }

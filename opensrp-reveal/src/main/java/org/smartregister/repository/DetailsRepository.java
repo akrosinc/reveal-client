@@ -71,7 +71,7 @@ public class DetailsRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -97,7 +97,7 @@ public class DetailsRepository extends DrishtiRepository {
             }
             return clientDetails;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -139,7 +139,7 @@ public class DetailsRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return false;
     }

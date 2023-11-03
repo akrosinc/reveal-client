@@ -68,7 +68,7 @@ public class BaseFormFragmentInteractor implements BaseFormFragmentContract.Inte
                     numberOfMembersSleepingOutdoors = cursor.getInt(1);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error find Number of members ");
+                Timber.tag("Reveal Exception").w(e, "Error find Number of members ");
             } finally {
                 if (cursor != null)
                     cursor.close();
@@ -99,7 +99,7 @@ public class BaseFormFragmentInteractor implements BaseFormFragmentContract.Inte
                     familyMembers.put(member);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error find Member Details ");
+                Timber.tag("Reveal Exception").w(e, "Error find Member Details ");
             } finally {
                 if (cursor != null)
                     cursor.close();

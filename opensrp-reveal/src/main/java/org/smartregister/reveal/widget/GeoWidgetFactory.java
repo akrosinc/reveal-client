@@ -227,7 +227,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 selectedFeature = com.mapbox.geojson.Feature.fromJson(value);
             }
         } catch (JSONException e) {
-            Timber.e(e, "error extracting geojson form jsonform");
+            Timber.tag("Reveal Exception").w(e, "error extracting geojson form jsonform");
         }
 
         mapView.setId(canvasId);
@@ -393,7 +393,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
         try {
             return com.mapbox.geojson.Feature.fromJson(gson.toJson(location));
         } catch (Exception e) {
-            Timber.e(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getId());
+            Timber.tag("Reveal Exception").w(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getId());
         }
         return null;
     }
@@ -436,7 +436,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 Timber.w("cannot write values JsonApi is null");
             }
         } catch (JSONException e) {
-            Timber.e(e, "error writing Geowidget values");
+            Timber.tag("Reveal Exception").w(e, "error writing Geowidget values");
         }
 
     }
@@ -467,7 +467,7 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
                 mapView.addValidator(new MinZoomValidator(minValidation.getString(JsonFormConstants.ERR),
                         minValidation.getDouble(JsonFormConstants.VALUE)));
             } catch (JSONException e) {
-                Timber.e("Error extracting max zoom level from" + minValidation);
+                Timber.tag("Reveal Exception").w("Error extracting max zoom level from" + minValidation);
             }
         }
     }

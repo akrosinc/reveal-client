@@ -8,5 +8,16 @@
             android:summary="@string/current_server"
             app:useSimpleSummaryProvider="true"
             android:entryValues="@array/reveal_instance_keys"/>
+        <Preference android:key="privacy_policy"  android:title="Privacy Policy" android:summary="Privacy Policy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://reveal-privacy-policy.azurewebsites.net/api/HttpTrigger1" />
+        </Preference>
+
+        <ListPreference android:key="reveal_language_key"
+            android:title="@string/reveal_language_selector"
+            android:entries="@array/reveal_languages"
+            app:useSimpleSummaryProvider="true"
+            android:entryValues="@array/reveal_instance_keys"/>
     </PreferenceCategory>
 </PreferenceScreen>

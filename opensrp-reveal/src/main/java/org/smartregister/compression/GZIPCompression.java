@@ -33,7 +33,7 @@ public class GZIPCompression implements ICompression {
             return compressed;
         } catch (IOException e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
 
@@ -60,7 +60,7 @@ public class GZIPCompression implements ICompression {
 
         } catch (IOException e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
 
@@ -96,7 +96,7 @@ public class GZIPCompression implements ICompression {
 
         } catch (IOException e) {
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -129,7 +129,7 @@ public class GZIPCompression implements ICompression {
             out.close();
 
         } catch (IOException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
 

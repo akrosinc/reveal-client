@@ -101,7 +101,7 @@ public class Hia2ReportRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e.getMessage());
+            Timber.tag("Reveal Exception").w(e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -141,7 +141,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -188,7 +188,7 @@ public class Hia2ReportRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -205,7 +205,7 @@ public class Hia2ReportRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -224,7 +224,7 @@ public class Hia2ReportRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -239,7 +239,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -260,7 +260,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();

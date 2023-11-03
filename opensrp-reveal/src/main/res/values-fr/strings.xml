@@ -387,8 +387,8 @@
     <string name="tap_point_msg">Tap black point to move or delete</string>
     <string name="drag_selected_point_msg">Drag selected point to change boundary</string>
     <string name="progressBarLabel" formatted="false">Syncing %s : %d%% </string>
-    <string name="device_data_synced">Device data synced</string>
-    <string name="device_data_not_synced">Device data not synced</string>
+    <string name="device_data_synced">appareil synchronisées</string>
+    <string name="device_data_not_synced">appareil ne sont pas synchronisées</string>
     <string name="manifest_version_parenthesis_placeholder">(%1$s)</string>
 
     <string name="filled_forms">Formulaires renseignés</string>
@@ -464,5 +464,9 @@
     <string name="preference_summary">Defines the base server url that handles requests</string>
     <string name="reveal_base_url">REVEAL base URL</string>
     <string name="mda_onco_survey">MDA Onchocerciasis Survey</string>
-
+    <string name="logout_text">Se déconnecter</string>
+    <string name="sync_progress">Sync Progress</string>
+    <string name="treatment_outside_household">Traitement à l\'extérieur du foyer</string>
+    <string name="adverse_events_record">Registre des événements indésirables</string>
+    <string name="drugs_accountability">Responsabilité sur les medicaments</string>
 </resources>

@@ -1,5 +1,7 @@
 package org.smartregister.reveal.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +22,13 @@ import org.smartregister.view.contract.BaseLoginContract;
 public class LoginActivity extends BaseLoginActivity implements BaseLoginContract.View {
 
     private ImageView mainLogo;
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String someValue = intent.getStringExtra("someName");
+        }
+    };
 
     @Override
     protected int getContentView() {

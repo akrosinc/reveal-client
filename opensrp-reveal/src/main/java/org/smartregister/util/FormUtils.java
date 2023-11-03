@@ -143,7 +143,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return false;
@@ -448,7 +448,7 @@ public class FormUtils {
             return xml;
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return "";
     }
@@ -573,7 +573,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return entityJson;
     }
@@ -598,7 +598,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -648,7 +648,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return "";
@@ -852,7 +852,7 @@ public class FormUtils {
 
                     item.put("value", val);
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }
@@ -909,7 +909,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -1024,7 +1024,7 @@ public class FormUtils {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1070,7 +1070,7 @@ public class FormUtils {
             fileContents = IOUtils.toString(inputStream);
 
         } catch (IOException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -1098,13 +1098,13 @@ public class FormUtils {
                 String rawForm = IOUtils.toString(inputStream);
                 return new JSONObject(rawForm);
             } catch (IOException | JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 if (inputStream != null) {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        Timber.e(e);
+                        Timber.tag("Reveal Exception").w(e);
                     }
                 }
             }
