@@ -2,7 +2,7 @@ name: Beta Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test_build_03_11 ]
 
 jobs:
   deploy:
