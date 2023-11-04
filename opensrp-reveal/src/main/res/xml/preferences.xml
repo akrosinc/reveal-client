@@ -11,7 +11,7 @@
         <Preference android:key="privacy_policy"  android:title="Privacy Policy" android:summary="Privacy Policy">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://reveal-privacy-policy.azurewebsites.net/api/HttpTrigger1" />
+                android:data="https://revealprecision.com/privacy-policy/" />
         </Preference>
 
         <ListPreference android:key="reveal_language_key"
