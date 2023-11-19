@@ -1807,7 +1807,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Are you willing to answer questions about orphans in Zambia?",
+        "label": "Are you willing to answers questions about children in your household?",
         "text_size": "8sp",
         "options": [
           {
