@@ -44,6 +44,7 @@ import org.smartregister.repository.DBPullRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.EventClientRepository.client_column;
 import org.smartregister.repository.EventClientRepository.event_column;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -86,6 +87,7 @@ public class RevealRepository extends Repository {
         LocationRepository.createTable(database);
         StructureRepository.createTable(database);
         DBPullRepository.createTable(database);
+        InterventionAdditionalDetailsRepository.createTable(database);
 
         onUpgrade(database, 1, BuildConfig.DATABASE_VERSION);
     }

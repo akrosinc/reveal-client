@@ -1,11 +1,18 @@
 package org.smartregister.reveal.util;
 
 import static java.util.stream.Collectors.toList;
+import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
 import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_EDUCATION_5_TO_15;
@@ -16,7 +23,9 @@ import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_6_TO_
 import static org.smartregister.reveal.util.Constants.JsonForm.SUM_TREATED_ABOVE_16;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +34,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,8 +47,10 @@ import org.smartregister.domain.Obs;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.model.BaseTaskDetails;
 import org.smartregister.reveal.model.IndicatorDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
@@ -125,6 +137,7 @@ public class IndicatorUtils {
         taskDetails.setBusinessStatus(task.getBusinessStatus());
         taskDetails.setTaskStatus(task.getStatus().name());
         taskDetails.setStructureId(task.getStructureId());
+        taskDetails.setGroupId(task.getGroupIdentifier());
 
         return taskDetails;
 
@@ -208,14 +221,11 @@ public class IndicatorUtils {
         sprayIndicator.add(context.getResources().getString(R.string.structures_remaining_90));
         sprayIndicator.add(String.valueOf(Math.round(totalStructures * 0.9) - indicatorDetails.getSprayed()));
 
-
         sprayIndicator.add(context.getResources().getString(R.string.total_structures));
         sprayIndicator.add(String.valueOf(totalStructures));
 
-
         sprayIndicator.add(context.getResources().getString(R.string.structures_not_visited));
         sprayIndicator.add(String.valueOf(indicatorDetails.getNotVisited()));
-
 
         sprayIndicator.add(context.getResources().getString(R.string.structures_visited_found));
         sprayIndicator.add(String.valueOf(totalFound));
@@ -229,14 +239,43 @@ public class IndicatorUtils {
         return sprayIndicator;
     }
 
+    public static List<String> populateMaliIndicators(Context context, IndicatorDetails indicatorDetails) {
+
+        int totalStructures = indicatorDetails.getMdaTotalStructures();
+
+        List<String> indicators = new ArrayList<>();
+
+        indicators.add(context.getResources().getString(R.string.total_structures));
+        indicators.add(String.valueOf(totalStructures));
+
+        int structureVisited = totalStructures - indicatorDetails.getMdaNotVisited();
+        indicators.add(context.getResources().getString(R.string.structure_visited));
+        indicators.add(String.valueOf(structureVisited));
+
+        indicators.add(context.getResources().getString(R.string.structure_not_visited));
+        indicators.add(String.valueOf(indicatorDetails.getMdaNotVisited()));
+
+        indicators.add(context.getResources().getString(R.string.structure_complete_drug_distribution));
+        indicators.add(String.valueOf(indicatorDetails.getMdaComplete()));
+
+        indicators.add(context.getResources().getString(R.string.structure_partial_drug_distribution));
+        indicators.add(String.valueOf(indicatorDetails.getMdaPartiallyComplete()));
+
+        indicators.add(context.getResources().getString(R.string.structure_refused_or_absent));
+        indicators.add(String.valueOf(indicatorDetails.getMdaRefusedOrAbsent()));
+
+        indicators.add(context.getResources().getString(R.string.individual_total_number_of_eligible_people));
+        indicators.add(String.valueOf(indicatorDetails.getMdaTotalEligible()));
+
+        indicators.add(context.getResources().getString(R.string.individual_total_treated));
+        indicators.add(String.valueOf(indicatorDetails.getMdaTotalTreated()));
+
+        return indicators;
+
+    }
+
     public static IndicatorDetails getNamibiaIndicators(String locationId, String planId, SQLiteDatabase sqLiteDatabase) {
-        String query = "select" +
-                " sum(ifNull(ss.nSprayableTotal,0)) as foundStruct" +
-                " ,sum(ifNull(ss.nSprayedTotalFirst,0)+ifNull(ss.nSprayedTotalMop,0)) as sprayedStruct" +
-                " ,sum(ifNull(nSprayableTotal,0)- ifNull(nSprayedTotalFirst,0) - ifnull(nSprayedTotalMop,0)) as notSprayedStruct" +
-                " from sprayed_structures ss " +
-                " join structure s on s._id=ss.id" +
-                " where parent_id=? and ss.plan_id=?";
+        String query = "select" + " sum(ifNull(ss.nSprayableTotal,0)) as foundStruct" + " ,sum(ifNull(ss.nSprayedTotalFirst,0)+ifNull(ss.nSprayedTotalMop,0)) as sprayedStruct" + " ,sum(ifNull(nSprayableTotal,0)- ifNull(nSprayedTotalFirst,0) - ifnull(nSprayedTotalMop,0)) as notSprayedStruct" + " from sprayed_structures ss " + " join structure s on s._id=ss.id" + " where parent_id=? and ss.plan_id=?";
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         try (Cursor cursor = sqLiteDatabase.rawQuery(query, new String[]{locationId, planId})) {
             if (cursor.moveToNext()) {
@@ -250,85 +289,57 @@ public class IndicatorUtils {
         return indicatorDetails;
     }
 
-    public static IndicatorDetails processRwandaIndicators(List<TaskDetails> tasks){
+    public static IndicatorDetails processRwandaIndicators(List<TaskDetails> tasks) {
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         Integer value;
 
-        List<TaskDetails> validTasks = tasks.stream()
-                .filter(taskDetails -> taskDetails.getTaskCode().equals(CELL_COORDINATION) && (taskDetails.getBusinessStatus().equals(IN_PROGRESS) || taskDetails.getBusinessStatus().equals(COMPLETE)))
-                .collect(toList());
+        List<TaskDetails> validTasks = tasks.stream().filter(taskDetails -> taskDetails.getTaskCode().equals(CELL_COORDINATION) && (taskDetails.getBusinessStatus().equals(IN_PROGRESS) || taskDetails.getBusinessStatus().equals(COMPLETE))).collect(toList());
 
-       Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
-                                               .collect(Collectors.toSet());
+        Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId()).collect(Collectors.toSet());
 
         EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
 
         List<Event> dataCaptured = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
 
         List<Event> latestEvents = validTasks.stream().map(taskDetails -> {
-            Map<DateTime,Event> eachTaskEventAndDateMap = dataCaptured.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier","empty"))).collect(Collectors.toMap(Event::getDateCreated,Function.identity()));
+            Map<DateTime, Event> eachTaskEventAndDateMap = dataCaptured.stream().filter(event -> taskDetails.getTaskId().equals(event.getDetails().getOrDefault("taskIdentifier", "empty"))).collect(Collectors.toMap(Event::getDateCreated, Function.identity()));
             List<DateTime> eventDates = eachTaskEventAndDateMap.keySet().stream().collect(toList());
             DateTime maxDatTime = Collections.max(eventDates);
             return eachTaskEventAndDateMap.get(maxDatTime);
         }).collect(toList());
 
-        value  = latestEvents.stream().map(Event::getObs)
-                                              .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_5_TO_15)).findFirst().get())
-                                              .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_5_TO_15)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setHealthEducatedChildren5To15(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_ABOVE_16)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(HEALTH_EDUCATION_ABOVE_16)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setHealthEducatedChildrenAbove16(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_6_TO_11_MOS)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_6_TO_11_MOS)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setVitaminTreatedChildren6To11Months(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(VITAMIN_A)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setVitaminTreatedChildren12To59Months(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> (obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4))).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> (obsValue.getFieldCode().equals(SUM_TREATED_1_TO_4))).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildren12To59Months(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(ALB_MEB)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildren5To15Years(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(PZQ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(PZQ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_5_TO_15)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setPzqTreatedChildren5To15Years(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getValue().equals(ALB_MEB)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getValue().equals(ALB_MEB)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setAlbMebTreatedChildrenAbove16Years(value);
 
-        value = latestEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getValue().equals(PZQ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        value = latestEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getValue().equals(PZQ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(SUM_TREATED_ABOVE_16)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
         indicatorDetails.setPzqTreatedChildrenAbove16Years(value);
 
 
         return indicatorDetails;
     }
 
-    public static List<String> populateRwandaIndicators(Context context, IndicatorDetails indicatorDetails){
+    public static List<String> populateRwandaIndicators(Context context, IndicatorDetails indicatorDetails) {
         List<String> indicators = new ArrayList<>();
 
         indicators.add(context.getResources().getString(R.string.health_education_ages_5_to_15_years));
@@ -358,10 +369,10 @@ public class IndicatorUtils {
         indicators.add(context.getResources().getString(R.string.pzq_total_16_years_and_above));
         indicators.add(String.valueOf(indicatorDetails.getPzqTreatedChildrenAbove16Years()));
 
-        return  indicators;
+        return indicators;
     }
 
-    public static List<String> populateNigeriaIndicators(Context context,IndicatorDetails indicatorDetails){
+    public static List<String> populateNigeriaIndicators(Context context, IndicatorDetails indicatorDetails) {
         List<String> indicators = new ArrayList<>();
         int totalStructures = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
         indicators.add(context.getResources().getString(R.string.structure_total));
@@ -401,22 +412,22 @@ public class IndicatorUtils {
         if (tasks != null) {
 
             for (int i = 0; i < tasks.size(); i++) {
-                    String structureId = tasks.get(i).getStructureId();
-                    List<TaskDetails> taskDetails = indicatorDetailsMap.get(structureId);
-                    if(taskDetails == null){
-                        taskDetails  = new ArrayList<>();
-                    }
-                    taskDetails.add(tasks.get(i));
-                    indicatorDetailsMap.put(tasks.get(i).getStructureId(),taskDetails);
+                String structureId = tasks.get(i).getStructureId();
+                List<TaskDetails> taskDetails = indicatorDetailsMap.get(structureId);
+                if (taskDetails == null) {
+                    taskDetails = new ArrayList<>();
+                }
+                taskDetails.add(tasks.get(i));
+                indicatorDetailsMap.put(tasks.get(i).getStructureId(), taskDetails);
             }
 
-            for(Map.Entry<String,List<TaskDetails>> entry : indicatorDetailsMap.entrySet()){
-                for(TaskDetails task: entry.getValue()){
-                    if(Constants.BusinessStatusWrapper.NOT_ELIGIBLE.contains(task.getBusinessStatus())){
+            for (Map.Entry<String, List<TaskDetails>> entry : indicatorDetailsMap.entrySet()) {
+                for (TaskDetails task : entry.getValue()) {
+                    if (Constants.BusinessStatusWrapper.NOT_ELIGIBLE.contains(task.getBusinessStatus())) {
                         indicatorDetails.setIneligible(indicatorDetails.getIneligible() + 1);
                         break;
                     }
-                    if(task.getTaskCode().equals(Constants.Intervention.MDA_DISPENSE)  && Constants.BusinessStatusWrapper.MDA_DISPENSE_ELIGIBLE_STATUS.contains(task.getBusinessStatus())) {
+                    if (task.getTaskCode().equals(Constants.Intervention.MDA_DISPENSE) && Constants.BusinessStatusWrapper.MDA_DISPENSE_ELIGIBLE_STATUS.contains(task.getBusinessStatus())) {
                         indicatorDetails.setFoundStructures(indicatorDetails.getFoundStructures() + 1);
                         break;
                     }
@@ -434,8 +445,8 @@ public class IndicatorUtils {
     }
 
 
-    public static List<String> populateKenyaIndicators(Context  context, final IndicatorDetails indicatorDetails) {
-         List<String> indicators = new ArrayList<>();
+    public static List<String> populateKenyaIndicators(Context context, final IndicatorDetails indicatorDetails) {
+        List<String> indicators = new ArrayList<>();
         indicators.add(context.getResources().getString(R.string.number_of_people_treated_for_sth));
         indicators.add(String.valueOf(indicatorDetails.getPeopleTreatedForSTH()));
 
@@ -461,40 +472,33 @@ public class IndicatorUtils {
 
         indicators.add(context.getResources().getString(R.string.pzq_damaged));
         indicators.add(String.valueOf(indicatorDetails.getPzqDamaged()));
-         return indicators;
+        return indicators;
     }
 
     public static IndicatorDetails processIndicatorsKenya(final List<TaskDetails> tasks) {
         IndicatorDetails indicatorDetails = new IndicatorDetails();
-        List<TaskDetails> validTasks = tasks.stream()
-                .filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(INCOMPLETE) || taskDetails.getBusinessStatus().equals(COMPLETE)))
-                .collect(toList());
+        List<TaskDetails> validTasks = tasks.stream().filter(taskDetails -> taskDetails.getTaskCode().equals(CDD_SUPERVISION) && (taskDetails.getBusinessStatus().equals(INCOMPLETE) || taskDetails.getBusinessStatus().equals(COMPLETE))).collect(toList());
 
-        Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId())
-                .collect(Collectors.toSet());
+        Set<String> taskIdentifiers = validTasks.stream().map(taskDetails -> taskDetails.getTaskId()).collect(Collectors.toSet());
 
         EventClientRepository eventClientRepository = RevealApplication.getInstance().getContext().getEventClientRepository();
 
-        List<Event> cddSupervisionEvents =  eventClientRepository.getEventsByTaskIds(taskIdentifiers);
-        List<Event> latestCddSupervisionEvents = getLatestEventsPerFormSubmissionId(cddSupervisionEvents,cddSupervisionEvents.stream().map(Event::getFormSubmissionId).collect(
-                Collectors.toSet()));
+        List<Event> cddSupervisionEvents = eventClientRepository.getEventsByTaskIds(taskIdentifiers);
+        List<Event> latestCddSupervisionEvents = getLatestEventsPerFormSubmissionId(cddSupervisionEvents, cddSupervisionEvents.stream().map(Event::getFormSubmissionId).collect(Collectors.toSet()));
 
 
-         List<Event> otherFormsEvents  =  eventClientRepository.fetchEventClientsByEventTypesAndPlanId(Arrays.asList(
-              CDD_DRUG_RECEIVED_EVENT,CDD_DRUG_WITHDRAWAL_EVENT),PreferencesUtil.getInstance().getCurrentPlanId()).stream().map(EventClient::getEvent).collect(toList());
+        List<Event> otherFormsEvents = eventClientRepository.fetchEventClientsByEventTypesAndPlanId(Arrays.asList(CDD_DRUG_RECEIVED_EVENT, CDD_DRUG_WITHDRAWAL_EVENT), PreferencesUtil.getInstance().getCurrentPlanId()).stream().map(EventClient::getEvent).collect(toList());
 
 
-         List<Event> otherFormsLatestEvents  = getLatestEventsPerFormSubmissionId(otherFormsEvents, otherFormsEvents.stream().map(Event::getFormSubmissionId).collect(Collectors.toSet()));
+        List<Event> otherFormsLatestEvents = getLatestEventsPerFormSubmissionId(otherFormsEvents, otherFormsEvents.stream().map(Event::getFormSubmissionId).collect(Collectors.toSet()));
 
-        List<Event> drugReceivedFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_RECEIVED_EVENT.equals(event.getEventType())).collect(
-                toList());
-        List<Event> drugWithdrawalFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_WITHDRAWAL_EVENT.equals(event.getEventType())).collect(
-                toList());
+        List<Event> drugReceivedFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_RECEIVED_EVENT.equals(event.getEventType())).collect(toList());
+        List<Event> drugWithdrawalFormEvents = otherFormsLatestEvents.stream().filter(event -> CDD_DRUG_WITHDRAWAL_EVENT.equals(event.getEventType())).collect(toList());
 
         indicatorDetails.setPeopleTreatedForSTH(calculatePeopleTreatedForSTH(latestCddSupervisionEvents));
         indicatorDetails.setPeopleTreatedForSCH(calculatePeopleTreatedForSCH(latestCddSupervisionEvents));
-        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
-        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(latestCddSupervisionEvents,drugReceivedFormEvents,drugWithdrawalFormEvents));
+        indicatorDetails.setMbzTabletsRemaining(calculateRemainingMBZ(latestCddSupervisionEvents, drugReceivedFormEvents, drugWithdrawalFormEvents));
+        indicatorDetails.setPzqTabletsRemaining(calculateRemainingPZQ(latestCddSupervisionEvents, drugReceivedFormEvents, drugWithdrawalFormEvents));
         indicatorDetails.setMbzDispensed(calculateDispensedMBZ(latestCddSupervisionEvents));
         indicatorDetails.setPzqDispensed(calculateDispensedPZQ(latestCddSupervisionEvents));
         indicatorDetails.setMbzDamaged(calculateDamagedMBZ(latestCddSupervisionEvents));
@@ -502,44 +506,104 @@ public class IndicatorUtils {
         return indicatorDetails;
     }
 
+    public static IndicatorDetails processIndicatorsMali(final List<TaskDetails> tasks) {
+        IndicatorDetails indicatorDetails = new IndicatorDetails();
+        List<TaskDetails> validTasks = tasks.stream()
+                .filter(taskDetails -> taskDetails.getTaskCode()
+                    .equals(MDA_ONCHOCERCIASIS_SURVEY))
+                .collect(toList());
+
+        long mdaComplete = validTasks.stream()
+               .filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                        && taskDetails.getBusinessStatus().equals(MDA_COMPLETE))
+                .map(BaseTaskDetails::getStructureId).distinct().count();
+        indicatorDetails.setMdaComplete(Long.valueOf(mdaComplete).intValue());
+
+        long notVisited = validTasks.stream().filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                        && taskDetails.getBusinessStatus().equals(NOT_VISITED))
+                .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setMdaNotVisited(Long.valueOf(notVisited).intValue());
+
+        long partiallyComplete = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+                && taskDetails.getBusinessStatus().equals(MDA_PARTIALLY_COMPLETE))
+                .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setMdaPartiallyComplete(Long.valueOf(partiallyComplete).intValue());
+
+        long refusedOrAbsent = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+                && taskDetails.getBusinessStatus().equals(MDA_REFUSED_OR_ABSENT))
+                .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setMdaRefusedOrAbsent(Long.valueOf(refusedOrAbsent).intValue());
+
+        long notEligible = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+                && taskDetails.getBusinessStatus().equals(NOT_ELIGIBLE))
+                .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setMdaNotEligible(Long.valueOf(notEligible).intValue());
+
+        long totalStructures = mdaComplete + notVisited + partiallyComplete + refusedOrAbsent;
+
+        indicatorDetails.setMdaTotalStructures(Long.valueOf(totalStructures).intValue());
+
+        double distributionCoverageDouble = totalStructures > 0 ? (double) (mdaComplete + partiallyComplete) / (double) totalStructures * 100 : 0;
+
+        indicatorDetails.setMdaDistributionCoverage(Double.valueOf(Math.floor(distributionCoverageDouble)).intValue());
+
+        double successRate = (mdaComplete + partiallyComplete + refusedOrAbsent) > 0 ? (double) (mdaComplete + partiallyComplete) / (double) (mdaComplete + partiallyComplete + refusedOrAbsent) * 100 : 0;
+
+        indicatorDetails.setMdaSuccessRate(Double.valueOf(Math.floor(successRate)).intValue());
+
+        double foundCoverageDouble = totalStructures > 0 ? (double) (mdaComplete + partiallyComplete) / (double) totalStructures * 100 : 0;
+
+        indicatorDetails.setMdaFoundCoverage(Double.valueOf(Math.floor(foundCoverageDouble)).intValue());
+
+        InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
+
+        try {
+            int eligiblePop = interventionAdditionalDetailsRepository.getSumPerFieldCode("eligible_pop"
+                    ,PreferencesUtil.getInstance().getCurrentPlanId()
+                    ,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+            int totalTreated = interventionAdditionalDetailsRepository.getSumPerFieldCode("total_treated"
+                    ,PreferencesUtil.getInstance().getCurrentPlanId()
+                    ,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+
+            indicatorDetails.setMdaTotalEligible(eligiblePop);
+            indicatorDetails.setMdaTotalTreated(totalTreated);
+        } catch (Exception e){
+            Timber.tag("Reveal Exception").w(e.toString());
+
+            indicatorDetails.setMdaTotalEligible(0);
+            indicatorDetails.setMdaTotalTreated(0);
+        }
+
+        return indicatorDetails;
+    }
+
     @NonNull
-    private static List<Event> getLatestEventsPerFormSubmissionId(final List<Event> events,
-            final Set<String> formSubmissionIds) {
-        return formSubmissionIds.stream().map( formSubmissionId -> {
+    private static List<Event> getLatestEventsPerFormSubmissionId(final List<Event> events, final Set<String> formSubmissionIds) {
+        return formSubmissionIds.stream().map(formSubmissionId -> {
             List<Event> groupedEvents = events.stream().filter(event -> event.getFormSubmissionId().equals(formSubmissionId)).collect(toList());
             return Collections.max(groupedEvents, Comparator.comparing(Event::getEventDate));
         }).collect(toList());
     }
 
     private static int calculateDamagedPZQ(final List<Event> events) {
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_PZQ)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_PZQ)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
     private static int calculateDamagedMBZ(final List<Event> events) {
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_MBZ)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(DAMAGED_MBZ)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
     private static int calculateDispensedPZQ(final List<Event> events) {
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(PZQ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
     private static int calculateDispensedMBZ(final List<Event> events) {
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(DRUGS) && val.getValue().equals(MBZ)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(ADMINSTERED)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
-    private static int calculateRemainingPZQ(final List<Event> events,final List<Event> drugReceivedFormEvents, final List<Event> drugWithdrawalFormEvents) {
+    private static int calculateRemainingPZQ(final List<Event> events, final List<Event> drugReceivedFormEvents, final List<Event> drugWithdrawalFormEvents) {
         return calculateReceivedPZQ(drugReceivedFormEvents) - (calculateDispensedPZQ(events) + calculateWithdrawnPZQ(drugWithdrawalFormEvents) + calculateDamagedPZQ(events));
     }
 
@@ -548,80 +612,65 @@ public class IndicatorUtils {
         int mbzWithdrawn = calculateWithdrawnMBZ(drugWithdrawalFormEvents);
         int mbzReceived = calculateReceivedMBZ(drugReceivedFormEvents);
         int mbzDamaged = calculateDamagedMBZ(supervisionEvents);
-        return mbzReceived - ( mbzAdministered + mbzWithdrawn + mbzDamaged );
+        return mbzReceived - (mbzAdministered + mbzWithdrawn + mbzDamaged);
     }
 
     private static int calculateReceivedMBZ(final List<Event> drugReceivedFormEvents) {
-        List<Obs> mbzReceivedEvents =  drugReceivedFormEvents.stream().map(Event::getObs)
-                                                                      .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && value.getValue().equals(MBZ))).findAny().isPresent())
-                                                                      .filter(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().isPresent()).flatMap(Collection::stream).collect(toList());
-        return mbzReceivedEvents.stream().filter(obs -> obs.getFieldCode().equals(MBZ_RECEIVED)).map(obs -> Integer.parseInt(obs.getValue().toString())).reduce(0,Integer::sum);
+        List<Obs> mbzReceivedEvents = drugReceivedFormEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && value.getValue().equals(MBZ))).findAny().isPresent()).filter(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_RECEIVED)).findFirst().isPresent()).flatMap(Collection::stream).collect(toList());
+        return mbzReceivedEvents.stream().filter(obs -> obs.getFieldCode().equals(MBZ_RECEIVED)).map(obs -> Integer.parseInt(obs.getValue().toString())).reduce(0, Integer::sum);
     }
 
     private static int calculateReceivedPZQ(final List<Event> drugReceivedFormEvents) {
-        return drugReceivedFormEvents.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(PZQ)))).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_RECEIVED)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+        return drugReceivedFormEvents.stream().map(Event::getObs).filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_ISSUED) && (value.getValue().equals(PZQ)))).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_RECEIVED)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
     }
-    private static int calculateWithdrawnMBZ(List<Event> events){
-        return events.stream().map(Event::getObs)
-                              .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent())
-                              .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_WITHDRAWN)).findFirst().get())
-                              .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+
+    private static int calculateWithdrawnMBZ(List<Event> events) {
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(MBZ) || value.getValue().equals(BOTH)))).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(MBZ_WITHDRAWN)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
     }
-    private static int calculateWithdrawnPZQ(List<Event> events){
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(PZQ) || value.getValue().equals(BOTH)))).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_WITHDRAWN)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
+
+    private static int calculateWithdrawnPZQ(List<Event> events) {
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(value -> (value.getFieldCode().equals(DRUG_WITHDRAWN) && (value.getValue().equals(PZQ) || value.getValue().equals(BOTH)))).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(PZQ_WITHDRAWN)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(x -> Integer.parseInt(x.toString())).sum();
     }
 
     private static int calculatePeopleTreatedForSCH(final List<Event> events) {
-        return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(SCH)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(SCH)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
     private static int calculatePeopleTreatedForSTH(final List<Event> events) {
-       return events.stream().map(Event::getObs)
-                .filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(STH)).findAny().isPresent())
-                .map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get())
-                .map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
+        return events.stream().map(Event::getObs).filter(obs -> obs.stream().filter(val -> val.getFieldCode().equals(NTD_TREATED) && val.getValue().equals(STH)).findAny().isPresent()).map(obs -> obs.stream().filter(obsValue -> obsValue.getFieldCode().equals(TOTAL_MALE_AND_FEMALE)).findFirst().get()).map(obs -> obs.getValue()).mapToInt(val -> Integer.parseInt(val.toString())).sum();
     }
 
-    private static int calculateDrugCompletion(List<TaskDetails> tasks ) {
+    private static int calculateDrugCompletion(List<TaskDetails> tasks) {
         boolean dispenseComplete = false;
         boolean adherenceComplete = false;
 
-        for(TaskDetails task : tasks){
-            if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
+        for (TaskDetails task : tasks) {
+            if (Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())) {
                 dispenseComplete = true;
-            } else if(Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())){
+            } else if (Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())) {
                 adherenceComplete = true;
             }
         }
         return (dispenseComplete && adherenceComplete) ? 1 : 0;
     }
 
-    private  static int calculatePartialDrugDistribution(List<TaskDetails> tasks){
+    private static int calculatePartialDrugDistribution(List<TaskDetails> tasks) {
         boolean dispenseComplete = false;
         boolean adherenceComplete = false;
-        for(TaskDetails task : tasks){
-            if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
+        for (TaskDetails task : tasks) {
+            if (Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())) {
                 dispenseComplete = true;
-            }else if(Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())){
+            } else if (Constants.Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && Constants.BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())) {
                 adherenceComplete = true;
             }
         }
         return (dispenseComplete && (!adherenceComplete)) ? 1 : 0;
     }
 
-    private static int calculateChildrenEligible(List<TaskDetails> tasks){
+    private static int calculateChildrenEligible(List<TaskDetails> tasks) {
         int childrenEligible = 0;
-        for(TaskDetails task: tasks){
-            if(task.getTaskCode().equals(Constants.Intervention.MDA_DISPENSE)  && Constants.BusinessStatusWrapper.MDA_DISPENSE_ELIGIBLE_STATUS.contains(task.getBusinessStatus())){
+        for (TaskDetails task : tasks) {
+            if (task.getTaskCode().equals(Constants.Intervention.MDA_DISPENSE) && Constants.BusinessStatusWrapper.MDA_DISPENSE_ELIGIBLE_STATUS.contains(task.getBusinessStatus())) {
                 childrenEligible++;
             }
         }
@@ -632,21 +681,21 @@ public class IndicatorUtils {
         int treated = 0;
         boolean adherenceComplete = false;
 
-        for(TaskDetails task : tasks){
-            if(Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())) {
+        for (TaskDetails task : tasks) {
+            if (Intervention.MDA_ADHERENCE.equals(task.getTaskCode()) && BusinessStatus.SPAQ_COMPLETE.equals(task.getBusinessStatus())) {
                 adherenceComplete = true;
             }
-            if(Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())){
+            if (Constants.Intervention.MDA_DISPENSE.equals(task.getTaskCode()) && Constants.BusinessStatus.SMC_COMPLETE.equals(task.getBusinessStatus())) {
                 treated++;
             }
         }
         return adherenceComplete ? treated : 0;
     }
 
-    private static int calculateStructuresNotFamilyRegistered(List<TaskDetails> tasks){
+    private static int calculateStructuresNotFamilyRegistered(List<TaskDetails> tasks) {
         int notVisited = 0;
-        for(TaskDetails task : tasks){
-            if(task.getTaskCode().equals(Constants.Intervention.REGISTER_FAMILY) && Constants.BusinessStatus.NOT_VISITED.equals(task.getBusinessStatus())){
+        for (TaskDetails task : tasks) {
+            if (task.getTaskCode().equals(Constants.Intervention.REGISTER_FAMILY) && Constants.BusinessStatus.NOT_VISITED.equals(task.getBusinessStatus())) {
                 notVisited++;
                 break;
             }

@@ -58,7 +58,6 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "text_size": "8sp",
         "label": "Est-ce une structure résidentielle?",
         "options": [
           {
@@ -82,7 +81,6 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "De quel type de structure non résidentielle s'agit-il ?",
-        "text_size": "8sp",
         "relevance": {
           "step1:structure_type": {
             "type": "string",
@@ -193,7 +191,6 @@
         "dialogTitle": "Select name of the head of household",
         "buttonText": "+ Select name of the head of household",
         "searchHint": "Type Name of head of household",
-        "text_size": "8sp",
         "maxSelectable": "1",
         "v_required": {
           "value": "true",
@@ -213,7 +210,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Veuillez saisir le nom du chef de ménage",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -233,7 +229,6 @@
         "type": "edit_text",
         "hint": "Veuillez entrer le numéro de téléphone du chef de ménage",
         "edit_type": "name",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -256,7 +251,6 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "Chef de ménage sexe ?",
-        "text_size": "8sp",
         "options": [
           {
             "key": "male",
@@ -275,6 +269,78 @@
           "step1:structure_hoh": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "captured_village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Sélectionnez le village",
+        "v_required": {
+          "value": "true",
+          "err": "champs requis"
+        },
+        "relevance": {
+          "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Veuillez entrer le nom d'un autre village",
+        "v_required": {
+          "value": "true",
+          "err": "champs requis"
+        },
+        "relevance": {
+          "step1:captured_village": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "captured_hamlet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Sélectionnez le hameau",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_hamlet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Veuillez entrer le nom d'un autre hameau",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:captured_hamlet": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
           }
         }
       },
@@ -510,6 +576,20 @@
           "step1:received": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "total_treated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-oncho-survey-calc.yml"
+            }
           }
         }
       },

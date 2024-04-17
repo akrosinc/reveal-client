@@ -62,33 +62,30 @@ import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.KEY;
 import static org.smartregister.util.JsonFormUtils.VALUE;
 import static org.smartregister.util.JsonFormUtils.VALUES;
+import static org.smartregister.util.JsonFormUtils.getInterventionAdditionalDetails;
 import static org.smartregister.util.JsonFormUtils.getJSONObject;
 import static org.smartregister.util.JsonFormUtils.getString;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.mapbox.geojson.Feature;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.InterventionAdditionalDetail;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
@@ -103,6 +100,7 @@ import org.smartregister.family.util.Constants.INTENT_KEY;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
@@ -129,6 +127,17 @@ import org.smartregister.reveal.widget.GeoWidgetFactory;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.PropertiesConverter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import timber.log.Timber;
 
 
@@ -199,7 +208,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     break;
                 case EventType.MDA_DISPENSE:
                     taskUtils.generateMDAAdherenceTask(RevealApplication.getInstance().getApplicationContext(),
-                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),JsonFormUtils.getFieldValue(json,JsonForm.ADMINISTERED_SPAQ));
+                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID), JsonFormUtils.getFieldValue(json, JsonForm.ADMINISTERED_SPAQ));
 
                 case BLOOD_SCREENING_EVENT:
                 case EventType.MDA_DRUG_RECON:
@@ -232,31 +241,31 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     private org.smartregister.domain.Event saveEvent(JSONObject jsonForm, String encounterType, String bindType) throws JSONException {
         //TODO: clean up this method, upgrade native forms where necessary
         String entityId = getString(jsonForm, ENTITY_ID);
-        String formSubmissionId = getString(jsonForm,FORM_SUBMISSION_ID);
+        String formSubmissionId = getString(jsonForm, FORM_SUBMISSION_ID);
         JSONArray fields = JsonFormUtils.fields(jsonForm);
         JSONObject metadata = getJSONObject(jsonForm, METADATA);
-        Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType,formSubmissionId);
+        Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType, formSubmissionId);
         event.setEventDate(new Date());
         JSONObject eventJson = new JSONObject(gson.toJson(event));
         JSONArray obsList = (JSONArray) eventJson.get("obs");
-        if(getCountry().equals(Country.SENEGAL) || getCountry().equals(Country.SENEGAL_EN) || getCountry().equals(Country.ZAMBIA)){
-            JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields,COMPOUND_STRUCTURE);
-            if(compoundStructureField != null) {
-                for(int i =0; i < obsList.length();i++){
+        if (getCountry().equals(Country.SENEGAL) || getCountry().equals(Country.SENEGAL_EN) || getCountry().equals(Country.ZAMBIA)) {
+            JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields, COMPOUND_STRUCTURE);
+            if (compoundStructureField != null) {
+                for (int i = 0; i < obsList.length(); i++) {
                     JSONObject obs = (JSONObject) obsList.get(i);
-                    if(obs.get("formSubmissionField").equals(COMPOUND_STRUCTURE)){
+                    if (obs.get("formSubmissionField").equals(COMPOUND_STRUCTURE)) {
                         JSONObject value = (JSONObject) new JSONArray(compoundStructureField.get(VALUE).toString()).get(0);
-                        JSONArray values  = new JSONArray();
+                        JSONArray values = new JSONArray();
                         values.put(value.get(KEY));
-                        obs.put(VALUES,values);
-                        obs.put("fieldCode",COMPOUND_STRUCTURE);
+                        obs.put(VALUES, values);
+                        obs.put("fieldCode", COMPOUND_STRUCTURE);
                         break;
                     }
                 }
             }
         }
 
-        if(DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
+        if (DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
             JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
             if (sprayArea != null && MULTI_SELECT_LIST.equals(sprayArea.optString(TYPE))) {
                 for (int i = 0; i < obsList.length(); i++) {
@@ -276,13 +285,28 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
             }
         }
         JSONObject details = getJSONObject(jsonForm, DETAILS);
-        details.put(EVENT_POSITION,String.format("%s,%s",sharedPreferences.getPreference(EVENT_LATITUDE),sharedPreferences.getPreference(EVENT_LONGITUDE)));
-        details.put(Constants.ADMIN_PASSWORD_ENTERED,sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
-        details.put(Constants.GPS_ACCURACY,sharedPreferences.getPreference(GPS_ACCURACY));
-        eventJson.put(DETAILS,details);
+        details.put(EVENT_POSITION, String.format("%s,%s", sharedPreferences.getPreference(EVENT_LATITUDE), sharedPreferences.getPreference(EVENT_LONGITUDE)));
+        details.put(Constants.ADMIN_PASSWORD_ENTERED, sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
+        details.put(Constants.GPS_ACCURACY, sharedPreferences.getPreference(GPS_ACCURACY));
+        eventJson.put(DETAILS, details);
         eventClientRepository.addEvent(entityId, eventJson);
+        addInterventionAdditionalDetails( eventJson);
         return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
     }
+
+    private void addInterventionAdditionalDetails(JSONObject details) {
+        try {
+            List<InterventionAdditionalDetail> additionalDetails = getInterventionAdditionalDetails(details);
+
+            InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
+            interventionAdditionalDetailsRepository.addDetailsToTable(additionalDetails);
+        }catch (Exception e){
+            Timber.tag("Reveal Exception").w(e.toString());
+        }
+
+    }
+
+
 
     @NonNull
     private Country getCountry() {
@@ -316,17 +340,17 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = Intervention.IRS_VERIFICATION;
             } else if (encounterType.equals(EventType.DAILY_SUMMARY_EVENT)) {
                 jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
-            } else if (CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType)){
+            } else if (CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType)) {
                 interventionType = CDD_SUPERVISION;
-            } else if(CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)){
+            } else if (CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)) {
                 interventionType = CELL_COORDINATION;
-            } else if(MDA_SURVEY_EVENT.equals(encounterType)){
+            } else if (MDA_SURVEY_EVENT.equals(encounterType)) {
                 interventionType = MDA_SURVEY;
-            } else if(LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType)){
+            } else if (LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType)) {
                 interventionType = LSM_HOUSEHOLD_SURVEY;
-            } else if(HABITAT_SURVEY_EVENT.equals(encounterType)){
+            } else if (HABITAT_SURVEY_EVENT.equals(encounterType)) {
                 interventionType = HABITAT_SURVEY;
-            } else if(MDA_ONCHO_EVENT.equals(encounterType)){
+            } else if (MDA_ONCHO_EVENT.equals(encounterType)) {
                 interventionType = MDA_ONCHOCERCIASIS_SURVEY;
             }
         } catch (JSONException e) {
@@ -385,17 +409,17 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     geometry.setCoordinates(coordinates);
                     structure.setGeometry(geometry);
                     LocationProperty properties = new LocationProperty();
-                    Obs structureTypeObs = event.findObs(null,false,STRUCTURE_TYPE);
+                    Obs structureTypeObs = event.findObs(null, false, STRUCTURE_TYPE);
                     String structureType = null;
-                    if(structureTypeObs != null)
-                       structureType = structureTypeObs.getValue().toString();
+                    if (structureTypeObs != null)
+                        structureType = structureTypeObs.getValue().toString();
                     properties.setType(structureType);
                     properties.setParentId(operationalAreaId);
                     properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
                     properties.setUid(UUID.randomUUID().toString());
                     properties.setGeographicLevel("structure");
-                    if(getCountry() == Country.MOZAMBIQUE){
-                        properties.setStructureNumber(event.getBaseEntityId().substring(event.getBaseEntityId().length() -4));
+                    if (getCountry() == Country.MOZAMBIQUE) {
+                        properties.setStructureNumber(event.getBaseEntityId().substring(event.getBaseEntityId().length() - 4));
                     }
                     Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
                     if (structureNameObs != null && structureNameObs.getValue() != null) {
@@ -419,15 +443,15 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                     String interventionType = PreferencesUtil.getInstance().getInterventionTypeForPlan(currentPlanId);
                     if (StructureType.RESIDENTIAL.equals(structureType) && Utils.isFocusInvestigationOrMDA()) {
                         task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
-                    } else if(getCountry() == Country.MOZAMBIQUE) {
+                    } else if (getCountry() == Country.MOZAMBIQUE) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                 BusinessStatus.NOT_VISITED, MDA_SURVEY, R.string.mda_survey);
-                    } else if(getCountry() == Country.MALI){
-                        task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(),BusinessStatus.NOT_VISITED,MDA_ONCHOCERCIASIS_SURVEY,R.string.mda_onco_survey);
+                    } else if (getCountry() == Country.MALI) {
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, MDA_ONCHOCERCIASIS_SURVEY, R.string.mda_onco_survey);
                     } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
-                      task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(), BusinessStatus.NOT_VISITED,HABITAT_SURVEY,R.string.habitat_survey);
-                    } else if(StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)){
-                        task = taskUtils.generateTask(applicationContext,structure.getId(),structure.getId(), BusinessStatus.NOT_VISITED,LSM_HOUSEHOLD_SURVEY,R.string.lsm_household_survey);
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, HABITAT_SURVEY, R.string.habitat_survey);
+                    } else if (StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)) {
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, LSM_HOUSEHOLD_SURVEY, R.string.lsm_household_survey);
                     } else {
                         if (getCountry() == Country.ZAMBIA || getCountry() == Country.SENEGAL || getCountry() == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
@@ -614,20 +638,21 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         });
 
     }
-    private String getStructureIdByName(String locationName){
+
+    private String getStructureIdByName(String locationName) {
         String structureId = null;
         String query = String.format("select %s from  %s where %s = ? limit 1", ID_, STRUCTURES_TABLE, Constants.DatabaseKeys.NAME);
-        try(Cursor cursor = getDatabase().rawQuery(query,new String[]{locationName})){
-            if(cursor.moveToFirst()){
+        try (Cursor cursor = getDatabase().rawQuery(query, new String[]{locationName})) {
+            if (cursor.moveToFirst()) {
                 structureId = cursor.getString(0);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             Timber.tag("Reveal Exception").w(e);
         }
         return structureId;
     }
 
-    private void fixEditTextValueWithCorrectDateFormat(JSONArray obsList, JSONArray fields, String key) throws JSONException{
+    private void fixEditTextValueWithCorrectDateFormat(JSONArray obsList, JSONArray fields, String key) throws JSONException {
         JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, key);
         for (int i = 0; i < obsList.length(); i++) {
             JSONObject obs = (JSONObject) obsList.get(i);

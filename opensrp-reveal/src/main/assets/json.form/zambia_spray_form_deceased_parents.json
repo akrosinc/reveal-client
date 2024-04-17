@@ -1807,7 +1807,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Are you willing to answers questions about children in your household?",
+        "label": "Are you willing to answer questions about children in your household?",
         "text_size": "8sp",
         "options": [
           {
@@ -1853,6 +1853,13 @@
             "v_required": {
               "value": true,
               "err": "Required field"
+            },
+            "relevance": {
+              "rules-engine": {
+                "ex-rules": {
+                  "rules-file": "zambia-spray-relevance-rules.yml"
+                }
+              }
             },
             "v_numeric": {
               "value": "true",
@@ -2172,6 +2179,10 @@
             }
           }
         ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
         "relevance": {
           "step1:willingness_to_answer_about_orphans": {
             "type": "string",

@@ -199,7 +199,6 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
     }
     public void onOperationalAreaSelectorClicked(ArrayList<String> name) {
 
-        Timber.d("Selected Location Hierarchy: " + TextUtils.join(",", name));
         if (name.size() <= 2)//no operational area was selected, dialog was dismissed
         {
             return;
@@ -232,6 +231,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
             } else {
                 prefsUtil.setCurrentFacility(name.get(name.size() - 1));
             }
+
         } catch (NullPointerException e) {
             Timber.tag("Reveal Exception").w(e);
         }

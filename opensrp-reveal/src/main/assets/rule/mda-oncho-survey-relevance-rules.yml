@@ -5,3 +5,10 @@ priority: 1
 condition: "step1_structure_type.equals('residential') && step1_eligibility.equals('Not Eligible')"
 actions:
   - "isRelevant = true"
+---
+name: step1_mda_structure
+description: step1_mda_structure
+priority: 1
+condition: "step1_structure_hoh.equals('Yes')"
+actions:
+  - "isRelevant = true"

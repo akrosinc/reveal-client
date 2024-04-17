@@ -32,6 +32,71 @@ public class IndicatorDetails {
     private int totalIndividualTreated;
     private int childrenEligible;
 
+
+    //Mali Indicators
+    private int mdaTotalStructures;
+
+    public int getMdaComplete() {
+        return mdaComplete;
+    }
+
+    public int getMdaPartiallyComplete() {
+        return mdaPartiallyComplete;
+    }
+
+    public int getMdaRefusedOrAbsent() {
+        return mdaRefusedOrAbsent;
+    }
+
+    public int getMdaNotVisited() {
+        return mdaNotVisited;
+    }
+
+    public int getMdaNotEligible() {
+        return mdaNotEligible;
+    }
+
+    public int getMdaDistributionCoverage() {
+        return mdaDistributionCoverage;
+    }
+
+    public int getMdaSuccessRate() {
+        return mdaSuccessRate;
+    }
+
+    public int getMdaFoundCoverage() {
+        return mdaFoundCoverage;
+    }
+
+    private int mdaComplete;
+    private int mdaPartiallyComplete;
+    private int mdaRefusedOrAbsent;
+    private int mdaNotVisited;
+    private int mdaNotEligible;
+    private int mdaDistributionCoverage;
+    private int mdaSuccessRate;
+    private int mdaFoundCoverage;
+
+    private int mdaTotalTreated;
+
+    public int getMdaTotalTreated() {
+        return mdaTotalTreated;
+    }
+
+    public void setMdaTotalTreated(int mdaTotalTreated) {
+        this.mdaTotalTreated = mdaTotalTreated;
+    }
+
+    public int getMdaTotalEligible() {
+        return mdaTotalEligible;
+    }
+
+    public void setMdaTotalEligible(int mdaTotalEligible) {
+        this.mdaTotalEligible = mdaTotalEligible;
+    }
+
+    private int mdaTotalEligible;
+
     //Kenya indicators
     private int peopleTreatedForSTH;
     private int peopleTreatedForSCH;
@@ -42,6 +107,44 @@ public class IndicatorDetails {
     private int mbzDamaged;
     private int pzqDamaged;
 
+
+    public void setMdaTotalStructures(int mdaTotalStructures) {
+        this.mdaTotalStructures = mdaTotalStructures;
+    }
+
+    public int getMdaTotalStructures() {
+        return mdaTotalStructures;
+    }
+    public void setMdaComplete(int mdaComplete) {
+        this.mdaComplete = mdaComplete;
+    }
+
+    public void setMdaPartiallyComplete(int mdaPartiallyComplete) {
+        this.mdaPartiallyComplete = mdaPartiallyComplete;
+    }
+
+    public void setMdaRefusedOrAbsent(int mdaRefusedOrAbsent) {
+        this.mdaRefusedOrAbsent = mdaRefusedOrAbsent;
+    }
+
+    public void setMdaNotVisited(int mdaNotVisited) {
+        this.mdaNotVisited = mdaNotVisited;
+    }
+
+    public void setMdaNotEligible(int mdaNotEligible) {
+        this.mdaNotEligible = mdaNotEligible;
+    }
+
+    public void setMdaDistributionCoverage(int mdaDistributionCoverage) {
+        this.mdaDistributionCoverage = mdaDistributionCoverage;
+    }
+    public void setMdaSuccessRate(int mdaSuccessRate) {
+        this.mdaSuccessRate = mdaSuccessRate;
+    }
+
+    public void setMdaFoundCoverage(int mdaFoundCoverage) {
+        this.mdaFoundCoverage = mdaFoundCoverage;
+    }
     public int getSprayed() {
         return sprayed;
     }
@@ -289,5 +392,19 @@ public class IndicatorDetails {
 
     public void setPzqDamaged(final int pzqDamaged) {
         this.pzqDamaged = pzqDamaged;
+    }
+
+    public String toMaliIndicatorString() {
+        return "IndicatorDetails{" +
+                "mdaTotalStructures=" + mdaTotalStructures +
+                ", mdaComplete=" + mdaComplete +
+                ", mdaPartiallyComplete=" + mdaPartiallyComplete +
+                ", mdaRefusedOrAbsent=" + mdaRefusedOrAbsent +
+                ", mdaNotVisited=" + mdaNotVisited +
+                ", mdaNotEligible=" + mdaNotEligible +
+                ", mdaDistributionCoverage=" + mdaDistributionCoverage +
+                ", mdaSuccessRate=" + mdaSuccessRate +
+                ", mdaFoundCoverage=" + mdaFoundCoverage +
+                '}';
     }
 }

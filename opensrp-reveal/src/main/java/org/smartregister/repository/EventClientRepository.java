@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.clientandeventmodel.InterventionAdditionalDetail;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -67,19 +68,23 @@ public class EventClientRepository extends BaseRepository {
     public static final String DELETED = "DELETED";
 
 
+    private InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository;
+
     protected Table clientTable;
     protected Table eventTable;
 
     protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
 
-    public EventClientRepository() {
+    public EventClientRepository(InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository) {
         this.clientTable = Table.client;
         this.eventTable = Table.event;
+        this.interventionAdditionalDetailsRepository = interventionAdditionalDetailsRepository;
     }
 
-    public EventClientRepository(Table clientTable, Table eventTable) {
+    public EventClientRepository(Table clientTable, Table eventTable, InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository) {
         this.clientTable = clientTable;
         this.eventTable = eventTable;
+        this.interventionAdditionalDetailsRepository = interventionAdditionalDetailsRepository;
     }
 
     public static String getCreateTableColumn(Column col) {
@@ -666,9 +671,17 @@ public class EventClientRepository extends BaseRepository {
                     else
                         Timber.w("Unable to update event with formSubmissionId: %s", formSubmissionId);
                 }
+                try {
+                    List<InterventionAdditionalDetail> interventionAdditionalDetails = JsonFormUtils.getInterventionAdditionalDetails(jsonObject);
+
+                    interventionAdditionalDetailsRepository.addDetailsToTable(interventionAdditionalDetails);
+                }catch (Exception e){
+                    Timber.tag("Reveal Exception").w(e.toString());
+                }
             }
             sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
+
             return true;
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e);

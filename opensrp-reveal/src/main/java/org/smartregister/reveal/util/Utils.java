@@ -630,7 +630,9 @@ public class Utils {
                 || getBuildCountry() == Country.SENEGAL_EN
                 || getBuildCountry() == Country.RWANDA_EN
                 || getBuildCountry() == Country.NIGERIA
-                || getBuildCountry() == Country.KENYA;
+                || getBuildCountry() == Country.KENYA
+                || getBuildCountry() == Country.MALI;
+
     }
 
     public static boolean isGeoFencedEnabled(){

@@ -96,6 +96,17 @@ public class TaskDetails extends BaseTaskDetails implements Comparable<TaskDetai
 
     private String groupedTaskCodes;
 
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    private String groupId;
+
+
     public TaskDetails(@NonNull String taskId) {
         super(taskId);
     }

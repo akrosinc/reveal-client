@@ -1,5 +1,8 @@
 package org.smartregister.reveal.view;
 
+import static org.smartregister.reveal.util.Constants.MY_LOCATION_ZOOM_LEVEL;
+import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -7,23 +10,17 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
-import com.mapbox.mapboxsdk.maps.TelemetryDefinition;
 import com.rengwuxian.materialedittext.validation.METValidator;
+
+import org.smartregister.reveal.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import io.ona.kujaku.views.KujakuMapView;
-import org.smartregister.reveal.util.Utils;
-
-import static org.smartregister.reveal.util.Constants.MY_LOCATION_ZOOM_LEVEL;
-import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
 
 /**
  * Created by samuelgithengi on 12/13/18.
@@ -90,11 +87,11 @@ public class RevealMapView extends KujakuMapView {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-//        if (savedInstanceState == null) {
-//            TelemetryDefinition telemetry = Mapbox.getTelemetry();
-//            if (telemetry != null) {
-//                telemetry.onAppUserTurnstileEvent();
-//            }
+//        if (savedInstanceState != null) {
+////            TelemetryDefinition telemetry = Mapbox.getTelemetry();
+////            if (telemetry != null) {
+////                telemetry.onAppUserTurnstileEvent();
+////            }
 //        } else if (savedInstanceState.getBoolean(MapboxConstants.STATE_HAS_SAVED_STATE)) {
 //            this.savedInstanceState = savedInstanceState;
 //        }

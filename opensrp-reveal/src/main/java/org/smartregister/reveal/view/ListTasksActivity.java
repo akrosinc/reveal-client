@@ -83,15 +83,6 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
-import io.ona.kujaku.listeners.OnFeatureLongClickListener;
-import io.ona.kujaku.utils.Constants;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,7 +99,6 @@ import org.smartregister.receiver.SyncProgressBroadcastReceiver;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.reporting.view.ProgressIndicatorView;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -135,6 +125,17 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
+import io.ona.kujaku.layers.BoundaryLayer;
+import io.ona.kujaku.listeners.OnFeatureLongClickListener;
+import io.ona.kujaku.utils.Constants;
 import timber.log.Timber;
 
 /**
@@ -244,7 +245,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         initializeCardViews();
 
         initializeToolbar();
-
     }
 
     @NonNull

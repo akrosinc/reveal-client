@@ -1,11 +1,16 @@
 package org.smartregister.util;
 
+import static org.smartregister.AllConstants.TASK_IDENTIFIER;
+import static org.smartregister.cloudant.models.Event.date_created_key;
+import static org.smartregister.reveal.util.Constants.DETAILS;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_POP;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.TOTAL_TREATED;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +24,9 @@ import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
+import org.smartregister.clientandeventmodel.InterventionAdditionalDetail;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import timber.log.Timber;
 
@@ -769,6 +775,64 @@ public class JsonFormUtils {
         }
     }
 
+    @NonNull
+    public static List<InterventionAdditionalDetail> getInterventionAdditionalDetails(JSONObject details) {
+        Predicate<String> isEligiblePop = o -> o!=null && o.equals(ELIGIBLE_POP);
+        Predicate<String> isTotalTreated = o -> o!=null && o.equals(TOTAL_TREATED);
+        Predicate<String> isHohType = o -> o!=null && o.equals("hoh_typed");
+
+        JSONArray obs = getJSONArray(details, "obs");
+        String eventType = getString(details, EVENT_TYPE_FIELD);
+
+        List<InterventionAdditionalDetail> additionalDetails = new ArrayList<>();
+        if (obs != null) {
+            for (int i = 0; i < obs.length(); i++) {
+                try {
+                    JSONObject ob = obs.getJSONObject(i);
+                    String fieldCode = getString(ob, "fieldCode");
+                    JSONArray values = getJSONArray(ob, "values");
+                    String value = values!=null?values.getString(0):"";
+
+                    JSONObject detailsJson = getJSONObject(details, DETAILS);
+
+                    String dateCreated = details.getString(date_created_key);
+
+                    InterventionAdditionalDetail interventionAdditionalDetail = new InterventionAdditionalDetail();
+                    interventionAdditionalDetail.setEventDateTime(dateCreated);
+
+                    if (eventType != null && eventType.equals(MDA_ONCHO_EVENT)) {
+                        if (isEligiblePop.test(fieldCode)
+                                || isTotalTreated.test(fieldCode)
+                                || isHohType.test(fieldCode)) {
+
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                interventionAdditionalDetail.setValue(value);
+                                interventionAdditionalDetail.setKey(fieldCode);
+                                interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                interventionAdditionalDetail.setEventType(eventType);
+
+                                String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                interventionAdditionalDetail.setValueType("int");
+                                additionalDetails.add(interventionAdditionalDetail);
+                            }
+
+                        }
+                    }
+                }
+                catch (JSONException  e){
+                    Timber.tag("Reveal Exception").w(e.toString());
+                }
+            }
+        }
+        return additionalDetails;
+    }
 
     public static Map<String, String> extractIdentifiers(JSONArray fields, String bindType) {
         Map<String, String> pids = new HashMap<>();

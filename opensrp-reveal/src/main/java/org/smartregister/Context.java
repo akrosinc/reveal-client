@@ -45,6 +45,7 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.ManifestRepository;
@@ -228,6 +229,8 @@ public class Context {
     private EnvironmentRepository environmentRepository;
 
     private DBPullRepository dbPullRepository;
+
+    private InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
@@ -682,18 +685,25 @@ public class Context {
         return settingsRepository;
     }
 
-    protected EnvironmentRepository environmentRepository(){
-        if(environmentRepository == null){
+    protected EnvironmentRepository environmentRepository() {
+        if (environmentRepository == null) {
             environmentRepository = new EnvironmentRepository();
         }
         return environmentRepository;
     }
 
-    public DBPullRepository getDbPullRepository(){
-        if(dbPullRepository == null){
+    public DBPullRepository getDbPullRepository() {
+        if (dbPullRepository == null) {
             dbPullRepository = new DBPullRepository();
         }
         return dbPullRepository;
+    }
+
+    public InterventionAdditionalDetailsRepository getInterventionAdditionalDetailsRepository() {
+        if (interventionAdditionalDetailsRepository == null) {
+            interventionAdditionalDetailsRepository = new InterventionAdditionalDetailsRepository();
+        }
+        return interventionAdditionalDetailsRepository;
     }
 
     private ChildRepository childRepository() {
@@ -1173,7 +1183,7 @@ public class Context {
 
     public EventClientRepository getEventClientRepository() {
         if (eventClientRepository == null) {
-            eventClientRepository = new EventClientRepository();
+            eventClientRepository = new EventClientRepository(getInterventionAdditionalDetailsRepository());
         }
         return eventClientRepository;
     }
@@ -1195,7 +1205,8 @@ public class Context {
 
     public EventClientRepository getForeignEventClientRepository() {
         if (foreignEventClientRepository == null) {
-            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
+            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient
+                    , EventClientRepository.Table.foreignEvent, getInterventionAdditionalDetailsRepository());
         }
         return foreignEventClientRepository;
     }

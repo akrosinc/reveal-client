@@ -90,7 +90,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Patients name",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -104,7 +103,6 @@
         "type": "edit_text",
         "hint": "Patients phone number",
         "edit_type": "name",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -159,7 +157,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Specify other",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -215,7 +212,6 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "edit_type": "number",
         "hint": "Were any drugs given again after vomiting?",
         "is_mandatory": true,
         "v_required": {
@@ -270,7 +266,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "What care did they receive at the health facility?",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -316,8 +311,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please document any other notes in relation to this adverse event",
-        "text_size": "8sp"
+        "hint": "Please document any other notes in relation to this adverse event"
       }
     ]
   }

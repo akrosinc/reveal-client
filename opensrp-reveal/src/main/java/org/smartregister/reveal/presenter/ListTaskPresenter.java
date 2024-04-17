@@ -642,6 +642,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             jsonFormUtils.populateForm(event,formJson);
         } else if(JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)){
             jsonFormUtils.populateForm(event,formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
         }
         listTaskView.startJsonForm(formJson);
     }

@@ -58,7 +58,6 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "text_size": "8sp",
         "label": "Is this a residential structure?",
         "options": [
           {
@@ -82,7 +81,6 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "What type of non-residential structure is this?",
-        "text_size": "8sp",
         "relevance": {
           "step1:structure_type": {
             "type": "string",
@@ -193,8 +191,9 @@
         "dialogTitle": "Select name of the head of household",
         "buttonText": "+ Select name of the head of household",
         "searchHint": "Type Name of head of household",
-        "text_size": "8sp",
         "maxSelectable": "1",
+        "source": "true",
+        "repositoryClass":"org.smartregister.reveal.model.HeadOfHouseholdRepository",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -213,7 +212,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Please enter the name of the head of household",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -233,7 +231,6 @@
         "type": "edit_text",
         "hint": "Please enter head of household phone number",
         "edit_type": "name",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -256,7 +253,6 @@
         "openmrs_entity_id": "",
         "type": "native_radio",
         "label": "Head of household gender?",
-        "text_size": "8sp",
         "options": [
           {
             "key": "male",
@@ -275,6 +271,78 @@
           "step1:structure_hoh": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "captured_village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select the Village",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_village",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please enter name for other village",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:captured_village": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
+          }
+        }
+      },
+      {
+        "key": "captured_hamlet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select the Hamlet",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_hamlet",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Please enter name for other hamlet",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:captured_hamlet": {
+            "type": "string",
+            "ex": "equalTo(., \"Other\")"
           }
         }
       },
@@ -510,6 +578,20 @@
           "step1:received": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "total_treated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-oncho-survey-calc.yml"
+            }
           }
         }
       },
@@ -822,9 +904,10 @@
           "err": "This field is mandatory"
         },
         "relevance": {
-          "step1:structure_type": {
-            "type": "string",
-            "ex": "equalTo(., \"residential\")"
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "mda-oncho-survey-relevance-rules.yml"
+            }
           }
       }
       },

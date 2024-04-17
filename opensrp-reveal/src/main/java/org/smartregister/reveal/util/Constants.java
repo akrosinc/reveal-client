@@ -155,6 +155,7 @@ public interface Constants {
         public static String COMMUNITY_DRUG_DISTRIBUTORS = "community_drug_distributors";
         public static String HEALTH_WORKER_SUPERVISORS = "health_worker_supervisors";
         public static String VILLAGES = "villages";
+        public static String HAMLETS = "hamlets";
         public static String SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = "select_jurisdiction_max_select_zoom_level";
         public static String MAX_SELECT_ZOOM_LEVEL = "max_select_zoom_level";
         public static String SPRAY_AREAS = "spray_areas";
@@ -412,6 +413,9 @@ public interface Constants {
         public static String BLOOD_SCREENING_COMPLETE = "Blood Screening Complete";
         public static String PARTIALLY_SPRAYED = "Partially Sprayed";
 
+        public static String MDA_COMPLETE = "MDA complete";
+        public static String MDA_PARTIALLY_COMPLETE = "MDA partially complete";
+        public static String MDA_REFUSED_OR_ABSENT = "MDA refused or absent";
 
         public static List<String> IRS_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, NOT_SPRAYED,
                 SPRAYED, NOT_SPRAYABLE, COMPLETE, INCOMPLETE, NOT_ELIGIBLE, IN_PROGRESS);
@@ -748,6 +752,10 @@ public interface Constants {
 
         public static String COMMUNITY_DRUG_DISTRIBUTOR_NAME = "cdd_name";
 
+        public static String CAPTURED_VILLAGE = "captured_village";
+
+        public static String CAPTURED_HAMLET = "captured_hamlet";
+
         public static String HEALTH_WORKER_SUPERVISOR = "health_worker_supervisor";
 
         public static String CDD_SUPERVISION_TASK_COMPLETE = "task_complete";
@@ -832,6 +840,7 @@ public interface Constants {
         public static String HABITAT_SURVEY = "Habitat Survey";
         public static String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
         public static String MDA_ONCHOCERCIASIS_SURVEY = "MDA Onchocerciasis Survey";
+
     }
 
     public interface ECClientConfig {
@@ -955,6 +964,10 @@ public interface Constants {
         public static String TRUE_STRUCTURE = "true_structure";
 
         public static String ELIGIBLE_STRUCTURE = "eligible_structure";
+
+        public static String ELIGIBLE_POP = "eligible_pop";
+
+        public static String TOTAL_TREATED = "total_treated";
 
         public static String REPORT_SPRAY = "report_spray";
 

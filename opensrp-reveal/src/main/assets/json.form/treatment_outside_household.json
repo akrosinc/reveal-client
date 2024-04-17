@@ -154,7 +154,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Specify other",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -164,6 +163,18 @@
             "type": "string",
             "ex": "equalTo(., \"Other\")"
           }
+        }
+      },
+      {
+        "key": "name_of_place",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Provide name of location",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -494,8 +505,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Please provide any relevant specifics about this location",
-        "text_size": "8sp"
+        "hint": "Please provide any relevant specifics about this location"
       }
     ]
   }

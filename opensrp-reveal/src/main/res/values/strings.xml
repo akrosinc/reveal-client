@@ -260,7 +260,9 @@
     <string name="value">Value</string>
 
     <string name="spray_success_rate">Spray Success Rate</string>
-
+    <string name="success_rate">Success Rate</string>
+    <string name="individual_total_number_of_eligible_people">Individual: TOTAL NUMBER OF ELIGIBLE PEOPLE</string>
+    <string name="individual_total_treated">Individual: TOTAL TREATED</string>
 
     <string name="do_not_edit_client_records_until_complete">Do not edit records until complete.</string>
     <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit records until the process is complete.</string>
@@ -430,6 +432,7 @@
     <string name="structure_confirmed_eligible">Structure: CONFIRMED ELIGIBLE</string>
     <string name="structure_complete_drug_distribution">Structure: COMPLETE DRUG DISTRIBUTION</string>
     <string name="structure_partial_drug_distribution">Structure: PARTIAL DRUG DISTRIBUTION</string>
+    <string name="structure_refused_or_absent">Structure: REFUSED OR ABSENT</string>
     <string name="individual_total_number_of_children_eligible_3_to_49_mos">Individual: TOTAL NUMBER OF ELIGIBLE CHILDREN 3-59 MOS</string>
     <string name="individual_total_treated_3_to_59_mos">Individual: TOTAL TREATED 3-59 MOS</string>
     <string name="sync_started">Sync Started</string>

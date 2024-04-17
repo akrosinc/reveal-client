@@ -90,7 +90,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Le nom du patient",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -104,7 +103,6 @@
         "type": "edit_text",
         "hint": "Numéro de téléphone du patient",
         "edit_type": "name",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -159,7 +157,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Précisez autre",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -270,7 +267,6 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "hint": "Quels soins ont-ils reçus à l'établissement de santé ?",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -316,8 +312,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Veuillez documenter toute autre note relative à cet événement indésirable",
-        "text_size": "8sp"
+        "hint": "Veuillez documenter toute autre note relative à cet événement indésirable"
       }
     ]
   }
