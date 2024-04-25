@@ -988,7 +988,8 @@
     <string name="mda_onco_survey">MDA Onchocerciasis Survey</string>
     <string name="treatment_outside_household">Treatment Outside Household</string>
     <string name="adverse_events_record">Adverse Events Record</string>
-    <string name="drugs_accountability">"Drugs Accountability "</string>
+    <string name="drugs_accountability">Drugs Accountability</string>
+    <string name="cdd_structure_summary_form">CDD Structure Summary Form</string>
     <string name="reveal_instance_selector">Select Reveal Server</string>
     <string name="current_server">Current Server: %s</string>
     <string name="reveal_language_selector">Select Language</string>

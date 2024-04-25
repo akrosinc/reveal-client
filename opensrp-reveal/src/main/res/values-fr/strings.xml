@@ -479,4 +479,5 @@
     <string name="treatment_outside_household">Traitement à l\'extérieur du foyer</string>
     <string name="adverse_events_record">Registre des événements indésirables</string>
     <string name="drugs_accountability">Responsabilité sur les medicaments</string>
+    <string name="cdd_structure_summary_form">Formulaire de résumé de la structure CDD</string>
 </resources>

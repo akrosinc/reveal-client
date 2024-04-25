@@ -599,6 +599,8 @@ public interface Constants {
 
         public static String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form.json";
 
+        public static String MDA_ONCHO_SURVEY_FORM_OTHER = "json.form/mda_oncho_survey_form_other.json";
+
         public static String ADVERSE_EVENTS_RECORD_FORM = "json.form/adverse_events_record.json";
 
         public static String OPERATIONAL_AREA_TAG = "operational_area";

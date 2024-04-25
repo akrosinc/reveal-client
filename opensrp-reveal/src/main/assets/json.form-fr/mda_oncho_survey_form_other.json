@@ -53,6 +53,15 @@
     "no_padding": true,
     "fields": [
       {
+        "key": "gps",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "text",
+        "label": "Capturez votre position GPS",
+        "type": "gps"
+      },
+      {
         "key": "structure_type",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -192,8 +201,6 @@
         "buttonText": "+ Select name of the head of household",
         "searchHint": "Type Name of head of household",
         "maxSelectable": "1",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.HeadOfHouseholdRepository",
         "v_required": {
           "value": "true",
           "err": "champs requis"
@@ -420,7 +427,39 @@
           }
         }
       },
-
+      {
+        "key": "total_under_5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "label": "Nombre total d'enfants de moins de 5 ans dans le ménage ?",
+        "hint": "Nombre total d'enfants de moins de 5 ans dans le ménage ?",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:received": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
       {
         "key": "treated_male_5_to_14",
         "openmrs_entity_parent": "",
@@ -428,7 +467,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ADMISSIBLES TRAITÉS: Nombre d'hommes traités âgés de 5 à 14 ans",
+        "hint": "Nombre d'hommes traités âgés de 5 à 14 ans",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -460,7 +499,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ADMISSIBLES TRAITÉS: Nombre de femmes traitées âgées de 5 à 14 ans",
+        "hint": "Nombre de femmes traitées âgées de 5 à 14 ans",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -492,7 +531,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ADMISSIBLES TRAITÉS: Nombre d'hommes traités âgés de 15 ans et plus",
+        "hint": "Nombre d'hommes traités âgés de 15 ans et plus",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -524,7 +563,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ADMISSIBLES TRAITÉS: Nombre de femmes traitées âgées de 15 ans et plus",
+        "hint": "Nombre de femmes traitées âgées de 15 ans et plus",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -551,65 +590,6 @@
       },
       {
         "key": "total_treated",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-oncho-survey-calc.yml"
-            }
-          }
-        },
-        "relevance": {
-          "step1:received": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "total_treated_validate",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "ELIGIBLE TREATED: Total number of people treated in household?",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:received": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        },
-        "constraints": [
-          {
-            "type": "numeric",
-            "ex": "equalTo(.,step1:total_treated)",
-            "err": "La valeur doit être égale à la somme des TRAITÉS ÉLIGIBLES"
-          }
-        ]
-      },
-      {
-        "key": "tablets_hidden_upper",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -652,211 +632,6 @@
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
-        },
-        "constraints": [
-          {
-            "type": "numeric",
-            "ex": "greaterThanEqualTo(.,step1:total_treated)",
-            "err": "La valeur doit être supérieure au total traité "
-          },
-          {
-            "type": "numeric",
-            "ex": "lessThanEqualTo(.,step1:tablets_hidden_upper)",
-            "err": "La valeur doit être inférieure au total traité multiplié par 4"
-          }
-        ]
-      },
-      {
-        "key": "untreated",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "ÉLIGIBLE MAIS NON TRAITÉ: Est-ce que quelqu'un dans ce ménage est SANS TRAITEMENT ?",
-        "options": [
-          {
-            "key": "Yes",
-            "text": "Oui"
-          },
-          {
-            "key": "No",
-            "text": "Non"
-          }
-        ],
-        "value": "No",
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "relevance": {
-          "step1:structure_hoh": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "untreated_travel",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "ÉLIGIBLE MAIS NON TRAITÉ: Voyage non traité",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "untreated_absent",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "ÉLIGIBLE MAIS NON TRAITÉ: Absent non traité",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "untreated_refusal",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "ÉLIGIBLE MAIS NON TRAITÉ: Non traité refusé",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-
-      {
-        "key": "untreated_total",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-oncho-survey-calc.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "untreated_total_validate",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "ELIGIBLE BUT UNTREATED: Total number of people eligible but untreated in household?",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        },
-        "constraints": [
-          {
-            "type": "numeric",
-            "ex": "equalTo(.,step1:untreated_total)",
-            "err": "La valeur doit être égale à la somme des NON TRAITÉS ÉLIGIBLES"
-          }
-        ]
-      },
-      {
-        "key": "total_eligible",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-oncho-survey-calc.yml"
-            }
-          }
         }
       },
       {
@@ -889,165 +664,36 @@
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
-        },
-        "constraints": [
+        }
+      },
+      {
+        "key": "untreated",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Est-ce que quelqu'un dans ce ménage est SANS TRAITEMENT ?",
+        "options": [
           {
-            "type": "numeric",
-            "ex": "equalTo(.,step1:total_eligible)",
-            "err": "La valeur doit être égale à la somme des TRAITÉS ÉLIGIBLES + DES NON TRAITÉS ÉLIGIBLES"
+            "key": "Yes",
+            "text": "Oui"
+          },
+          {
+            "key": "No",
+            "text": "Non"
           }
-        ]
-      },
-      {
-        "key": "total_under_5",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "label": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage ?",
-        "hint": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage ?",
-        "is_mandatory": true,
+        ],
+        "value": "No",
         "v_required": {
           "value": true,
           "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:received": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-
-      {
-        "key": "untreated_sick",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "NON ELIGIBLE: Malade non traité",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "untreated_pregnant",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "NON ELIGIBLE: Enceinte non traitée",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
-        },
-        "relevance": {
-          "step1:untreated": {
-            "type": "string",
-            "ex": "equalTo(., \"Yes\")"
-          }
-        }
-      },
-      {
-        "key": "noteligible_total",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "hidden",
-        "calculation": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-oncho-survey-calc.yml"
-            }
-          }
-        }
-      },
-      {
-        "key": "noteligible_total_validate",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "edit_type": "number",
-        "hint": "NOT ELIGIBLE: Total number of not eligible people in household",
-        "is_mandatory": true,
-        "v_required": {
-          "value": true,
-          "err": "Ce champ est obligatoire"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre"
-        },
-        "v_numeric_integer": {
-          "value": "true",
-          "err": "Ce champ doit être un nombre entier"
-        },
-        "v_min": {
-          "value": "0",
-          "err": "Ce champ doit être supérieur ou égal à 0"
         },
         "relevance": {
           "step1:structure_hoh": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
-        },
-        "constraints": [
-          {
-            "type": "numeric",
-            "ex": "equalTo(.,step1:noteligible_total)",
-            "err": "La valeur doit être égale à la somme de NON ÉLIGIBLE"
-          }
-        ]
+        }
       },
       {
         "key": "eligible_missing",
@@ -1073,6 +719,166 @@
         },
         "relevance": {
           "step1:structure_hoh": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_pregnant",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Enceinte non traitée",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_sick",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Malade non traité",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_absent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Absent non traité",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_travel",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Voyage non traité",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:untreated": {
+            "type": "string",
+            "ex": "equalTo(., \"Yes\")"
+          }
+        }
+      },
+      {
+        "key": "untreated_refusal",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "edit_type": "number",
+        "hint": "Non traité refusé",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Ce champ est obligatoire"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Ce champ doit être un nombre entier"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "Ce champ doit être supérieur ou égal à 0"
+        },
+        "relevance": {
+          "step1:untreated": {
             "type": "string",
             "ex": "equalTo(., \"Yes\")"
           }
@@ -1105,12 +911,11 @@
           "err": "Ce champ est obligatoire"
         },
         "relevance": {
-          "rules-engine": {
-            "ex-rules": {
-              "rules-file": "mda-oncho-survey-relevance-rules.yml"
-            }
+          "step1:structure_type": {
+            "type": "string",
+            "ex": "equalTo(., \"residential\")"
           }
-      }
+        }
       },
       {
         "key": "business_status",

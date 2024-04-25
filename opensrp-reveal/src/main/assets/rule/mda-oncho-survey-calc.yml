@@ -4,11 +4,39 @@ description: Business status calculation
 priority: 1
 condition: "true"
 actions:
- - "calculation = helper.ifNull(step1_structure_hoh,'No') == 'No' ? 'MDA complete' : helper.ifNull(step1_mda_structure,'Not Eligible')"
+ - "calculation = step1_structure_hoh == 'No' ? 'MDA complete' : step1_structure_type == 'nonResidential' ? 'Not Eligible' : step1_mda_structure"
 ---
 name: step1_total_treated
 description: step1_total_treated
 priority: 1
 condition: "true"
 actions:
- - "calculation = Integer.valueOf(helper.ifNull(step1_treated_female_above_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_above_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_5_to_14,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_5_to_14,0)) + Integer.valueOf(helper.ifNull(step1_total_under_5,0))"
+ - "calculation = Integer.valueOf(helper.ifNull(step1_treated_female_above_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_above_15,0)) + Integer.valueOf(helper.ifNull(step1_treated_female_5_to_14,0)) + Integer.valueOf(helper.ifNull(step1_treated_male_5_to_14,0))"
+---
+name: step1_untreated_total
+description: step1_untreated_total
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Integer.valueOf(helper.ifNull(step1_untreated_refusal,0)) + Integer.valueOf(helper.ifNull(step1_untreated_absent,0)) + Integer.valueOf(helper.ifNull(step1_untreated_travel,0))"
+---
+name: step1_total_eligible
+description: step1_total_eligible
+priority: 1
+condition: "true"
+actions:
+ - "calculation =  Integer.valueOf(helper.ifNull(step1_untreated_total,0)) + Integer.valueOf(helper.ifNull(step1_total_treated,0))"
+---
+name: step1_noteligible_total
+description: step1_noteligible_total
+priority: 1
+condition: "true"
+actions:
+ - "calculation =  Integer.valueOf(helper.ifNull(step1_untreated_pregnant,0)) + Integer.valueOf(helper.ifNull(step1_untreated_sick,0))  + Integer.valueOf(helper.ifNull(step1_total_under_5,0))"
+---
+name: step1_tablets_hidden_upper
+description: step1_tablets_hidden_upper
+priority: 1
+condition: "true"
+actions:
+ - "calculation =  Integer.valueOf(helper.ifNull(step1_total_treated,0)) * 4"
