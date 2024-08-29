@@ -280,6 +280,15 @@
           },
           {
             "field": "eventType",
+            "field_value": "structure_survey",
+            "creates_case": [
+              "sprayed_structures",
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
             "field_value": "treatment_outside_household",
             "creates_case": [
               "ec_events"

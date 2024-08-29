@@ -24,6 +24,8 @@ public interface FamilyConstants {
         String ARCHIVE_FAMILY = "Archive_Family";
 
         String ARCHIVE_FAMILY_MEMBER = "Archive_Family_Member";
+
+        String STRUCTURE_SURVEY = "structure_survey";
     }
 
     interface JSON_FORM {

@@ -25,10 +25,12 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm;
 import static org.smartregister.reveal.util.Constants.JsonForm.ABLE_TO_SPRAY_FIRST;
+import static org.smartregister.reveal.util.Constants.JsonForm.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.JsonForm.CDD_SUPERVISION_TASK_COMPLETE;
 import static org.smartregister.reveal.util.Constants.JsonForm.CELL_COORDINATOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.CHILDREN_TREATED;
@@ -391,6 +393,8 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
             } else if(getBuildCountry() == Country.MOZAMBIQUE || getBuildCountry() == Country.MALI){
               formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
+            } else if (Intervention.SURVEY.equals(taskCode) && getBuildCountry() == Country.NIGERIA){
+                formName = JsonForm.STRUCTURE_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
             }
@@ -514,10 +518,15 @@ public class RevealJsonFormUtils {
             formName = JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA;
         } else if(getBuildCountry() == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
             formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
-        } else if(EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)){
+        }else if(getBuildCountry() == Country.NIGERIA && (Action.STRUCTURE_SURVEY.equals(taskCode) || STRUCTURE_SURVEY_EVENT.equals(encounterType))){
+            formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
+        }
+        else if(EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)){
             formName = JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM;
         } else if(EventType.ADVERSE_EVENTS_RECORD_EVENT.equals(encounterType)){
             formName = JsonForm.ADVERSE_EVENTS_RECORD_FORM;
+        } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)){
+            formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
         }
         return formName;
     }
@@ -552,6 +561,10 @@ public class RevealJsonFormUtils {
 
     public String getFormName(String encounterType) {
         return getFormName(encounterType, null);
+    }
+
+    public String getFormNameWithIntervention(String encounterType, String interventionTypeForPlan) {
+        return getFormName(encounterType, interventionTypeForPlan);
     }
 
     public void populatePAOTForm(MosquitoHarvestCardDetails cardDetails, JSONObject formJson) {
@@ -605,10 +618,14 @@ public class RevealJsonFormUtils {
         if (event == null) {
             return;
         }
+
+        boolean processedRepeatingGroup = false;
         JSONArray fields = JsonFormUtils.fields(formJSON);
+        JSONArray fieldsCopy = JsonFormUtils.fields(JsonFormUtils.toJSONObject(formJSON.toString()));
         for (int i = 0; i < fields.length(); i++) {
             try {
                 JSONObject field = fields.getJSONObject(i);
+                JSONObject fieldCopy = fieldsCopy.getJSONObject(i);
                 String key = field.getString(KEY);
                 Obs obs = null;
                 if (field.optString(TYPE).equals(MULTI_SELECT_LIST)) {
@@ -694,10 +711,45 @@ public class RevealJsonFormUtils {
 
                 }
                 if (JsonFormConstants.REPEATING_GROUP.equals(field.optString(TYPE))) {
-                    generateRepeatingGroupFields(field, event.getObs(), formJSON);
+                    processedRepeatingGroup = true;
+                    generateRepeatingGroupFields(fieldCopy, event.getObs(), formJSON);
+
                 }
             } catch (JSONException e) {
                 Timber.tag("Reveal Exception").w(e);
+            }
+        }
+        if (processedRepeatingGroup) {
+            boolean fieldsHasBusinessStatus = false;
+            for (int i = 0; i < fields.length(); i++) {
+                try {
+                    JSONObject field = fields.getJSONObject(i);
+                    String key = field.getString(KEY);
+                    if (BUSINESS_STATUS.equals(key)){
+                        fieldsHasBusinessStatus = true;
+                        break;
+                    }
+                } catch (JSONException e) {
+                Timber.tag("Reveal Exception").w(e);
+                }
+            }
+            JSONObject businessStatus = null;
+            boolean fieldsCopyHasBusinessStatus = false;
+            for (int i = 0; i < fieldsCopy.length(); i++) {
+                try {
+                    JSONObject fieldCopy = fieldsCopy.getJSONObject(i);
+                    String key = fieldCopy.getString(KEY);
+                    if (BUSINESS_STATUS.equals(key)){
+                        fieldsCopyHasBusinessStatus = true;
+                        businessStatus = fieldCopy;
+                        break;
+                    }
+                } catch (JSONException e) {
+                    Timber.tag("Reveal Exception").w(e);
+                }
+            }
+            if (!fieldsHasBusinessStatus && fieldsCopyHasBusinessStatus){
+                fields.put(businessStatus);
             }
         }
     }
@@ -872,6 +924,10 @@ public class RevealJsonFormUtils {
                             CONFIGURATION.SPRAY_OPERATORS, fieldsMap.get(JsonForm.SPRAY_OPERATOR_CODE_CONFIRMATION),
                             dataCollector);
                 }
+                break;
+            case JsonForm.STRUCTURE_SURVEY_NIGERIA:
+                setDefaultValue(formJSON, SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:

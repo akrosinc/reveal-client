@@ -73,7 +73,7 @@ import org.smartregister.util.JsonFormUtils;
 /**
  * Created by samuelgithengi on 1/30/19.
  */
-public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter implements PasswordRequestCallback, UserLocationCallback {
+public class RevealJsonFormFragmentPresenterDup extends JsonFormFragmentPresenter implements PasswordRequestCallback, UserLocationCallback {
 
     private JsonFormFragment formFragment;
 
@@ -99,7 +99,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
 
     private Map<String, ValidationStatus> invalidFields;
 
-    public RevealJsonFormFragmentPresenter(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
+    public RevealJsonFormFragmentPresenterDup(JsonFormFragment formFragment, JsonFormInteractor jsonFormInteractor) {
         super(formFragment, jsonFormInteractor);
         this.formFragment = formFragment;
         passwordDialog = PasswordDialogUtils.initPasswordDialog(formFragment.getActivity(), this);
@@ -282,14 +282,14 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                         getView().writeValue(mstepDup, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
                         //for repeating grp referenceEditText validation
-//                        if (editText.getId() == R.id.reference_edit_text  && validationStatus.isValid()) {
+//                        if (editText.getId() == R.id.reference_edit_text && editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
 //                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
 //                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
-////                            if (o == null) {
-////                                validationStatus.setIsValid(false);
-////                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-////                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-////                            }
+//                            if (o == null) {
+//                                validationStatus.setIsValid(false);
+//                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+//                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+//                            }
 //                        }
                     } else {
                         validationStatus.setIsValid(true);

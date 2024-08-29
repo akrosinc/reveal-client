@@ -114,6 +114,8 @@ public class CardDetailsUtil {
             TextView tvFamilyHead = activity.findViewById(R.id.family_head);
             TextView tvReason = activity.findViewById(R.id.reason);
 
+            Button changeSprayStatusButton = activity.findViewById(R.id.change_spray_status);
+
             Integer color = sprayCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
 
@@ -130,6 +132,7 @@ public class CardDetailsUtil {
             } else {
                 tvReason.setVisibility(View.GONE);
             }
+            changeSprayStatusButton.setVisibility(View.VISIBLE);
         } catch (Resources.NotFoundException e) {
             Timber.tag("Reveal Exception").w(e);
         }
@@ -258,6 +261,8 @@ public class CardDetailsUtil {
             Button changeHabitatStatus  =  activity.findViewById(R.id.change_habitat_status);
             Button changeLsmHouseholdStatus  =  activity.findViewById(R.id.change_lsm_household_status);
             Button changeOnchoStatus = activity.findViewById(R.id.change_oncho_status);
+            Button changeStructureSurveyStatus = activity.findViewById(R.id.change_structure_survey_status);
+            Button undoStructureSurveyStatus = activity.findViewById(R.id.btn_undo_structure_status);
 
 
             Integer color = surveyCardDetails.getStatusColor();
@@ -276,6 +281,8 @@ public class CardDetailsUtil {
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeOnchoStatus.setVisibility(Action.MDA_ONCHOCERCIASIS_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType())?View.VISIBLE:View.GONE);
+            undoStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType())?View.VISIBLE:View.GONE);
             changeSprayStatus.setVisibility(View.GONE);
             registerFamily.setVisibility(View.GONE);
             tvPropertyType.setVisibility(View.GONE);

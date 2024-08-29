@@ -4,17 +4,24 @@ import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.JsonForm.ROOMS_SPRAYED;
 import static org.smartregister.util.JsonFormUtils.STEP1;
 
+import android.content.Context;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.vijay.jsonwizard.domain.WidgetArgs;
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import com.vijay.jsonwizard.interfaces.CommonListener;
 import com.vijay.jsonwizard.widgets.RepeatingGroupFactory;
 
+import org.json.JSONObject;
 import org.smartregister.reveal.activity.RevealJsonFormActivity;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
+
+import java.util.List;
 
 public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
 
@@ -23,6 +30,20 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
     public static final String PLEASE_ENTER_A_VALUE_ERROR_MESSAGE = "Please enter a value";
     public static final String NUMBER_OF_INSECTICIDE_SACHETS_MIXED = "Number of insecticide sachets mixed";
     public static final String NUMBER_OF_INSECTICIDE_SACHETS_VALIDATION_ERR_MESSAGE = "number of insecticide sachets must be greater than 0";
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
+        List<View> viewsFromJson = super.getViewsFromJson(stepName, context, formFragment, jsonObject, listener, popup);
+
+        return viewsFromJson;
+    }
+
+
+
+    @Override
+    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
+        return super.getViewsFromJson(stepName, context, formFragment, jsonObject, listener);
+    }
 
     //TODO: test this method, after upgrading version of opensrp-native-form
     @Override
@@ -33,12 +54,12 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
                 textView.setError(PLEASE_ENTER_A_VALUE_ERROR_MESSAGE);
                 return;
             }
-            RevealJsonFormActivity activity = ( RevealJsonFormActivity ) textView.getContext();
+            RevealJsonFormActivity activity = (RevealJsonFormActivity) textView.getContext();
             Integer reasonsOrSachetCount = Integer.parseInt(inputText);
             if (CONFIRMED_ROOMS_NOT_SPRAYED.equals(textView.getHint().toString())) {
-                TextView roomSprayedTextView = ( TextView ) activity.getFormDataView(STEP1 + ":" + ROOMS_SPRAYED);
+                TextView roomSprayedTextView = (TextView) activity.getFormDataView(STEP1 + ":" + ROOMS_SPRAYED);
                 Integer roomsSprayedCount = Integer.parseInt(roomSprayedTextView.getText().toString());
-                TextView roomsEligibleTextView = ( TextView ) activity.getFormDataView(STEP1 + ":" + ROOMS_ELIGIBLE);
+                TextView roomsEligibleTextView = (TextView) activity.getFormDataView(STEP1 + ":" + ROOMS_ELIGIBLE);
                 Integer roomsEligible = Integer.parseInt(roomsEligibleTextView.getText().toString());
                 if (reasonsOrSachetCount != (roomsEligible - roomsSprayedCount)) {
                     textView.setError(CONFIRMED_ROOMS_NOT_SPRAYED_ERROR);

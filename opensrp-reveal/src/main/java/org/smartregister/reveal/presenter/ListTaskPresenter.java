@@ -11,6 +11,7 @@ import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
@@ -28,6 +29,7 @@ import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_E
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
@@ -38,6 +40,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Intervention.SURVEY;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
@@ -390,7 +393,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
-        } else if(Arrays.asList(MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
+        } else if(Arrays.asList(MDA_SURVEY,STRUCTURE_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
             listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
         }
 
@@ -643,6 +646,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if(JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)){
             jsonFormUtils.populateForm(event,formJson);
             jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
+        } else if (JsonForm.STRUCTURE_SURVEY_NIGERIA.equals(formName)){
+            jsonFormUtils.populateForm(event,formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
         }
         listTaskView.startJsonForm(formJson);
     }
@@ -656,6 +662,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskView.showProgressDialog(R.string.fetching_larval_dipping_points_title, R.string.fetching_larval_dipping_points_message);
         } else if (PAOT.equals(interventionType)) {
             listTaskView.showProgressDialog(R.string.fetching_paot_title, R.string.fetching_paot_message);
+        } else if (STRUCTURE_SURVEY.equals(interventionType)) {
+            listTaskView.showProgressDialog(R.string.fetching_household_title, R.string.fetching_household_message);
         }
         listTaskInteractor.fetchInterventionDetails(interventionType, selectedFeature.id(), true);
     }
@@ -749,7 +757,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     public void onAddStructureClicked(boolean myLocationComponentActive, String point) {
-        String formName = jsonFormUtils.getFormName(REGISTER_STRUCTURE_EVENT);
+        String interventionTypeForPlan = prefsUtil.getInterventionTypeForPlan(prefsUtil.getCurrentPlanId());
+        String formName;
+        if (SURVEY.equals(interventionTypeForPlan)){
+            formName = jsonFormUtils.getFormNameWithIntervention(REGISTER_STRUCTURE_EVENT,interventionTypeForPlan);
+        } else {
+            formName = jsonFormUtils.getFormName(REGISTER_STRUCTURE_EVENT);
+        }
+
         try {
             JSONObject formJson = new JSONObject(jsonFormUtils.getFormString(listTaskView.getContext(), formName, null));
             revealApplication.setFeatureCollection(featureCollection);
@@ -797,6 +812,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(),HABITAT_SURVEY_EVENT);
             } else if(MDA_ONCHOCERCIASIS_SURVEY.equals(cardDetails.getInterventionType())){
               findLastEvent(selectedFeature.id(),MDA_ONCHO_EVENT);
+            } else if(STRUCTURE_SURVEY.equals(cardDetails.getInterventionType())){
+                findLastEvent(selectedFeature.id(),STRUCTURE_SURVEY_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }

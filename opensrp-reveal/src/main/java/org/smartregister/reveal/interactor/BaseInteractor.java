@@ -10,6 +10,7 @@ import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
@@ -29,6 +30,7 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
@@ -39,6 +41,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
+import static org.smartregister.reveal.util.Constants.Intervention.SURVEY;
 import static org.smartregister.reveal.util.Constants.JsonForm.COMPOUND_STRUCTURE;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.EVENT_POSITION;
@@ -352,6 +355,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = HABITAT_SURVEY;
             } else if (MDA_ONCHO_EVENT.equals(encounterType)) {
                 interventionType = MDA_ONCHOCERCIASIS_SURVEY;
+            } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)) {
+                interventionType = STRUCTURE_SURVEY;
             }
         } catch (JSONException e) {
             Timber.tag("Reveal Exception").w(e);
@@ -452,7 +457,9 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, HABITAT_SURVEY, R.string.habitat_survey);
                     } else if (StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, LSM_HOUSEHOLD_SURVEY, R.string.lsm_household_survey);
-                    } else {
+                    } else if (SURVEY.equals(interventionType) && getCountry() == Country.NIGERIA){
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, STRUCTURE_SURVEY, R.string.structure_survey);
+                    }else {
                         if (getCountry() == Country.ZAMBIA || getCountry() == Country.SENEGAL || getCountry() == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);

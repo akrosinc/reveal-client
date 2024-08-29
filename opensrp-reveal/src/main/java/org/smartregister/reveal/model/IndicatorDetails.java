@@ -12,6 +12,8 @@ public class IndicatorDetails {
     private int notVisited;
     private int ineligible;
     private int foundStructures;
+
+    private int surveyedStructures;
     private int roomCoverage;
     private List<String> sprayIndicatorList;
     private int target;
@@ -209,6 +211,13 @@ public class IndicatorDetails {
         this.foundStructures = foundStructures;
     }
 
+    public int getSurveyedStructures() {
+        return surveyedStructures;
+    }
+
+    public void setSurveyedStructures(int surveyedStructures) {
+        this.surveyedStructures = surveyedStructures;
+    }
     public int getRoomCoverage() {
         return roomCoverage;
     }

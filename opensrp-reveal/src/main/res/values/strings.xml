@@ -97,6 +97,9 @@
     <string name="fetching_larval_dipping_points_title">Fetching Larval Dipping Point Details</string>
     <string name="fetching_larval_dipping_points_message">Fetching Larval Dipping Point Details. Please wait</string>
 
+    <string name="fetching_household_title">Fetching Household Details</string>
+    <string name="fetching_household_message">Fetching Household Details. Please wait</string>
+
     <string name="fetching_paot_title">Fetching PAOT Details</string>
     <string name="fetching_paot_message">Fetching PAOT Details. Please wait</string>
 
@@ -242,10 +245,12 @@
 
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
-
-
-    <string name="found_coverage">Found Coverage</string>mda_adherence
+    <string name="structures_surveyed">Structure: SURVEYED</string>
+    <string name="structures_found">Structure: FOUND</string>
+    <string name="survey_coverage">Survey Coverage</string>
+    <string name="found_coverage">Found Coverage</string>
     <string name="spray_coverage">Spray Coverage</string>
+    <string name="visitation_coverage">Visitation Coverage Percentage</string>
     <string name="structures_remaining_90">Structures Remaining 90%</string>
     <string name="total_structures">Total Structures</string>
     <string name="structures_not_visited">Structures Not Visited</string>
@@ -277,7 +282,7 @@
 
     <string name="irs_verification">IRS Verification</string>
     <string name="not_true_structure">Not True Structure</string>
-    <string name="structure_ineligible">Structure Ineligible</string>
+    <string name="structure_ineligible">Structure: NOT ELIGIBLE</string>
     <string name="reported_spray_status">Reported Spray Status</string>
     <string name="chalk_spray_status">Chalk Spray Status</string>
     <string name="sticker_spray_status">Sticker Spray Status</string>
@@ -427,6 +432,9 @@
     <string name="distribution_coverage">Distribution coverage</string>
     <string name="and_individuals_complete">And Individuals complete</string>
     <string name="structure_total">Structure: TOTAL</string>
+    <string name="structure_total_survey">Total Structures</string>
+    <string name="hdss_structures_visited_survey">HDSS Structures Visited</string>
+    <string name="structures_not_visited_survey">Structures Not Visited</string>
     <string name="structure_visited">Structure: VISITED</string>
     <string name="structure_not_visited">Structure: NOT VISITED</string>
     <string name="structure_confirmed_eligible">Structure: CONFIRMED ELIGIBLE</string>
@@ -935,7 +943,6 @@
     <string name="job_aids">Job Aids</string>
 
 
-
     <!-- register -->
     <string name="family_head">Family Head</string>
     <string name="primary_care_giver">Primary Caregiver</string>
@@ -975,6 +982,7 @@
     <string name="mda_survey">MDA Survey</string>
     <string name="habitat_survey">Habitat Survey</string>
     <string name="lsm_household_survey">LSM Household Survey</string>
+    <string name="structure_survey">Structure Survey</string>
     <string name="server">Server</string>
     <string name="enter_base_url_message">Enter Base Server Url</string>
     <string name="preference_summary">Defines the base server url that handles requests</string>

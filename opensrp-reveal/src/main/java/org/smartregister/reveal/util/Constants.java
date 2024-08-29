@@ -4,6 +4,7 @@ import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -261,6 +262,7 @@ public interface Constants {
 
         public static String MDA = "MDA";
 
+        public static String SURVEY ="SURVEY";
         public static String MDA_LITE = "MDA-Lite";
 
         public static String DYNAMIC_MDA = "Dynamic-MDA";
@@ -294,7 +296,7 @@ public interface Constants {
 
         public static List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
 
-        public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY);
+        public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY);
 
         public static String LSM = "LSM";
     }
@@ -349,6 +351,8 @@ public interface Constants {
         public static String HABITAT_SURVEY_EVENT =  "habitat_survey";
         public static String LSM_HOUSEHOLD_SURVEY_EVENT =  "lsm_household_survey";
 
+        public static String STRUCTURE_SURVEY_EVENT =  "structure_survey";
+
 
         public static List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -364,7 +368,7 @@ public interface Constants {
         public static List<String> EVENTS_FOR_CARD_DISPLAY = Arrays.asList(MOSQUITO_COLLECTION_EVENT, LARVAL_DIPPING_EVENT,
         BEDNET_DISTRIBUTION_EVENT, BEDNET_DISTRIBUTION_EVENT, BEHAVIOUR_CHANGE_COMMUNICATION,
         IRS_VERIFICATION, MDA_SURVEY_EVENT, LSM_HOUSEHOLD_SURVEY_EVENT, HABITAT_SURVEY_EVENT,
-        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT,ADVERSE_EVENTS_RECORD_EVENT);
+        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT,ADVERSE_EVENTS_RECORD_EVENT,STRUCTURE_SURVEY_EVENT);
     }
 
     public interface Tables {
@@ -486,7 +490,7 @@ public interface Constants {
 
         public static String SPRAY_FORM_REFAPP = "json.form/refapp_spray_form.json";
 
-        public static String SPRAY_FORM_ZAMBIA = "json.form/zambia_spray_form_deceased_parents.json";
+        public static String SPRAY_FORM_ZAMBIA = "json.form/zambia_spray_form_nih_uat.json";
 //        public static String SPRAY_FORM_ZAMBIA = "json.form/zambia_spray_form.json";
 
         public static String SPRAY_FORM_SENEGAL = "json.form/senegal_spray_form.json";
@@ -501,6 +505,8 @@ public interface Constants {
 
 
         public static String MDA_SURVEY_ADD_STRUCTURE_FORM = "json.form/mda_survey_add_structure.json";
+
+        public static String STRUCTURE_SURVEY_ADD_STRUCTURE_FORM = "json.form/structure_survey_add_structure.json";
 
         public static String BEDNET_DISTRIBUTION_FORM = "json.form/bednet_distribution.json";
 
@@ -596,6 +602,8 @@ public interface Constants {
         public static String LSM_HABITAT_SURVEY_FORM_ZAMBIA = "json.form/lsm_habitat_survey_form_zambia.json";
 
         public static String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
+
+        public static String STRUCTURE_SURVEY_NIGERIA = "json.form/structure_survey_form_nigeria.json";
 
         public static String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form.json";
 
@@ -841,6 +849,8 @@ public interface Constants {
         public static String MDA_SURVEY = "MDA Survey";
         public static String HABITAT_SURVEY = "Habitat Survey";
         public static String LSM_HOUSEHOLD_SURVEY =  "LSM Household Survey";
+
+        public static String STRUCTURE_SURVEY =  "Structure Survey";
         public static String MDA_ONCHOCERCIASIS_SURVEY = "MDA Onchocerciasis Survey";
 
     }
@@ -1050,7 +1060,7 @@ public interface Constants {
     }
 
     public interface UseContextCode {
-        public static String INTERVENTION_TYPE = " public static interventionType";
+        public static String INTERVENTION_TYPE = "interventionType";
     }
 
     public interface IRSVerificationStatus {

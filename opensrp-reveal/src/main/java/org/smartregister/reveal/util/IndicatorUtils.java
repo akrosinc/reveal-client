@@ -38,9 +38,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
+
 import org.joda.time.DateTime;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Obs;
@@ -55,6 +57,7 @@ import org.smartregister.reveal.model.IndicatorDetails;
 import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.Intervention;
+
 import timber.log.Timber;
 
 /**
@@ -406,6 +409,51 @@ public class IndicatorUtils {
         return indicators;
     }
 
+    public static List<String> populateNigeriaIndicatorsSurvey(Context context, IndicatorDetails indicatorDetails) {
+        List<String> indicators = new ArrayList<>();
+
+        indicators.add(context.getResources().getString(R.string.structure_total_survey));
+        indicators.add(String.valueOf(indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible()));
+
+//        indicators.add(context.getResources().getString(R.string.hdss_structures_visited_survey));
+//        indicators.add(String.valueOf(indicatorDetails.getFoundStructures()));
+
+        indicators.add(context.getResources().getString(R.string.hdss_structures_visited_survey));
+        indicators.add(String.valueOf(indicatorDetails.getSurveyedStructures()));
+
+        indicators.add(context.getResources().getString(R.string.structures_not_visited_survey));
+        indicators.add(String.valueOf(indicatorDetails.getNotVisited()));
+
+//        indicators.add(context.getResources().getString(R.string.structure_ineligible));
+//        indicators.add(String.valueOf(indicatorDetails.getIneligible()));
+
+        return indicators;
+    }
+
+    public static IndicatorDetails processIndicatorsNigeriaSurvey(List<TaskDetails> tasks) {
+        IndicatorDetails indicatorDetails = new IndicatorDetails();
+
+        if (tasks != null) {
+            List<TaskDetails> notVisited = tasks.stream().filter(Objects::nonNull).filter(t -> NOT_VISITED.equals(t.getBusinessStatus())).collect(toList());
+            List<TaskDetails> complete = tasks.stream().filter(Objects::nonNull).filter(t -> COMPLETE.equals(t.getBusinessStatus())).collect(toList());
+            List<TaskDetails> notEligible = tasks.stream().filter(Objects::nonNull).filter(t -> NOT_ELIGIBLE.equals(t.getBusinessStatus())).collect(toList());
+            indicatorDetails.setIneligible(notEligible.size());
+            indicatorDetails.setSurveyedStructures(complete.size());
+            indicatorDetails.setNotVisited(notVisited.size());
+//            indicatorDetails.setFoundStructures(indicatorDetails.getSurveyedStructures() + indicatorDetails.getIneligible());
+            indicatorDetails.setTotalStructures(tasks.size());
+        } else {
+            indicatorDetails.setIneligible(0);
+            indicatorDetails.setSurveyedStructures(0);
+            indicatorDetails.setNotVisited(0);
+//            indicatorDetails.setFoundStructures(0);
+            indicatorDetails.setTotalStructures(0);
+        }
+
+
+        return indicatorDetails;
+    }
+
     public static IndicatorDetails processIndicatorsNigeria(List<TaskDetails> tasks) {
         Map<String, List<TaskDetails>> indicatorDetailsMap = new HashMap<>();
         IndicatorDetails indicatorDetails = new IndicatorDetails();
@@ -510,34 +558,34 @@ public class IndicatorUtils {
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         List<TaskDetails> validTasks = tasks.stream()
                 .filter(taskDetails -> taskDetails.getTaskCode()
-                    .equals(MDA_ONCHOCERCIASIS_SURVEY))
+                        .equals(MDA_ONCHOCERCIASIS_SURVEY))
                 .collect(toList());
 
         long mdaComplete = validTasks.stream()
-               .filter(taskDetails ->
-                taskDetails.getBusinessStatus() != null
-                        && taskDetails.getBusinessStatus().equals(MDA_COMPLETE))
+                .filter(taskDetails ->
+                        taskDetails.getBusinessStatus() != null
+                                && taskDetails.getBusinessStatus().equals(MDA_COMPLETE))
                 .map(BaseTaskDetails::getStructureId).distinct().count();
         indicatorDetails.setMdaComplete(Long.valueOf(mdaComplete).intValue());
 
         long notVisited = validTasks.stream().filter(taskDetails ->
-                taskDetails.getBusinessStatus() != null
-                        && taskDetails.getBusinessStatus().equals(NOT_VISITED))
+                        taskDetails.getBusinessStatus() != null
+                                && taskDetails.getBusinessStatus().equals(NOT_VISITED))
                 .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
         indicatorDetails.setMdaNotVisited(Long.valueOf(notVisited).intValue());
 
         long partiallyComplete = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
-                && taskDetails.getBusinessStatus().equals(MDA_PARTIALLY_COMPLETE))
+                        && taskDetails.getBusinessStatus().equals(MDA_PARTIALLY_COMPLETE))
                 .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
         indicatorDetails.setMdaPartiallyComplete(Long.valueOf(partiallyComplete).intValue());
 
         long refusedOrAbsent = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
-                && taskDetails.getBusinessStatus().equals(MDA_REFUSED_OR_ABSENT))
+                        && taskDetails.getBusinessStatus().equals(MDA_REFUSED_OR_ABSENT))
                 .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
         indicatorDetails.setMdaRefusedOrAbsent(Long.valueOf(refusedOrAbsent).intValue());
 
         long notEligible = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
-                && taskDetails.getBusinessStatus().equals(NOT_ELIGIBLE))
+                        && taskDetails.getBusinessStatus().equals(NOT_ELIGIBLE))
                 .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
         indicatorDetails.setMdaNotEligible(Long.valueOf(notEligible).intValue());
 
@@ -561,15 +609,15 @@ public class IndicatorUtils {
 
         try {
             int eligiblePop = interventionAdditionalDetailsRepository.getSumPerFieldCode("eligible_pop"
-                    ,PreferencesUtil.getInstance().getCurrentPlanId()
-                    ,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+                    , PreferencesUtil.getInstance().getCurrentPlanId()
+                    , PreferencesUtil.getInstance().getCurrentOperationalAreaId());
             int totalTreated = interventionAdditionalDetailsRepository.getSumPerFieldCode("total_treated"
-                    ,PreferencesUtil.getInstance().getCurrentPlanId()
-                    ,PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+                    , PreferencesUtil.getInstance().getCurrentPlanId()
+                    , PreferencesUtil.getInstance().getCurrentOperationalAreaId());
 
             indicatorDetails.setMdaTotalEligible(eligiblePop);
             indicatorDetails.setMdaTotalTreated(totalTreated);
-        } catch (Exception e){
+        } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e.toString());
 
             indicatorDetails.setMdaTotalEligible(0);

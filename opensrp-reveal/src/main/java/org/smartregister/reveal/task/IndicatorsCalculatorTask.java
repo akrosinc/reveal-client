@@ -21,6 +21,7 @@ import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.IndicatorDetails;
 import org.smartregister.reveal.model.TaskDetails;
+import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.IndicatorUtils;
@@ -45,6 +46,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     private TableView tableView;
     private TableLayout tempTableLayoutView;
     private TableLayout tempTableLayoutViewNG;
+
+    private TableLayout tempTableLayoutViewNGSurvey;
     private TableLayout tempTableLayoutViewKenya;
 
     private TableLayout tempTableLayoutViewMali;
@@ -67,6 +70,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         tableView = activity.findViewById(R.id.tableView);
         tempTableLayoutView = activity.findViewById(R.id.tempTableView);
         tempTableLayoutViewNG = activity.findViewById(R.id.tempTableViewNG);
+        tempTableLayoutViewNGSurvey = activity.findViewById(R.id.tempTableViewNGSurvey);
         tempTableLayoutViewKenya = activity.findViewById(R.id.tempTableViewKenya);
         tempTableLayoutViewMali = activity.findViewById(R.id.tempTableViewMALI);
     }
@@ -92,8 +96,17 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             indicatorDetails = IndicatorUtils.processRwandaIndicators(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateRwandaIndicators(this.activity, indicatorDetails));
         } else if (getBuildCountry() == Country.NIGERIA) {
-            indicatorDetails = IndicatorUtils.processIndicatorsNigeria(this.tasks);
-            indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNigeriaIndicators(this.activity, indicatorDetails));
+
+            String interventionTypeForPlan = PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId());
+
+            if (interventionTypeForPlan != null && interventionTypeForPlan.equals(Constants.Intervention.SURVEY)){
+                indicatorDetails = IndicatorUtils.processIndicatorsNigeriaSurvey(this.tasks);
+                indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNigeriaIndicatorsSurvey(this.activity, indicatorDetails));
+            } else {
+                indicatorDetails = IndicatorUtils.processIndicatorsNigeria(this.tasks);
+                indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNigeriaIndicators(this.activity, indicatorDetails));
+            }
+
         } else if (getBuildCountry() == Country.KENYA) {
             indicatorDetails = IndicatorUtils.processIndicatorsKenya(tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateKenyaIndicators(activity, indicatorDetails));
@@ -150,12 +163,21 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
                 == Country.KENYA) {
             hideProgressIndicators();
         } else if (getBuildCountry() == Country.NIGERIA) {
-            setNigeriaProgressIndicators(indicatorDetails);
+
+            String interventionTypeForPlan = PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId());
+
+            if (interventionTypeForPlan != null && interventionTypeForPlan.equals(Constants.Intervention.SURVEY)){
+                setNigeriaProgressIndicatorsSurvey(indicatorDetails);
+            } else {
+                setNigeriaProgressIndicators(indicatorDetails);
+            }
+
         }
         tempTableLayoutView.setVisibility(View.GONE);
         tempTableLayoutViewKenya.setVisibility(View.GONE);
         tempTableLayoutViewMali.setVisibility(View.GONE);
         tempTableLayoutViewNG.setVisibility(View.GONE);
+        tempTableLayoutViewNGSurvey.setVisibility(View.GONE);
 
         if (getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.RWANDA) {
             tempTableLayoutView.setVisibility(View.VISIBLE);
@@ -167,9 +189,20 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             populateTableView(getTableRowsMali(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewMali);
         }
         else if (getBuildCountry() == Country.NIGERIA) {
+
             tableView.setVisibility(View.GONE);
-            tempTableLayoutViewNG.setVisibility(View.VISIBLE);
-            populateTableView(getTableRowsNigeria(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNG);
+
+            String interventionTypeForPlan = PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId());
+
+            if (interventionTypeForPlan != null && interventionTypeForPlan.equals(Constants.Intervention.SURVEY)){
+                tempTableLayoutViewNGSurvey.setVisibility(View.VISIBLE);
+                populateTableView(getTableRowsNigeriaSurvey(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNGSurvey);
+            } else {
+                tempTableLayoutViewNG.setVisibility(View.VISIBLE);
+                populateTableView(getTableRowsNigeria(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNG);
+            }
+
+
         } else if (getBuildCountry() == Country.KENYA) {
             tempTableLayoutViewKenya.setVisibility(View.VISIBLE);
             tableView.setVisibility(View.GONE);
@@ -252,6 +285,27 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, individualsComplete));
     }
 
+    private void setNigeriaProgressIndicatorsSurvey(final IndicatorDetails indicatorDetails) {
+        int totalStructures = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
+        int visited = indicatorDetails.getSurveyedStructures();
+        int visitationCoverage = totalStructures > 0 ? Math.round(visited * 100 / totalStructures) : 0;
+        progressIndicator.setSubTitle(this.activity.getString(R.string.visitation_coverage));
+        progressIndicator.setProgress(visitationCoverage);
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, visitationCoverage));
+
+
+//        int totalEligible = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
+//        int surveyed = indicatorDetails.getSurveyedStructures();
+//        int surveyCoverage = totalEligible > 0 ? Math.round(surveyed * 100 / totalEligible) : 0;
+//        progressIndicator2.setSubTitle(this.activity.getString(R.string.survey_coverage));
+//        progressIndicator2.setProgress(surveyCoverage);
+//        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, surveyCoverage));
+
+        progressIndicator2.setVisibility(View.GONE);
+        progressIndicator3.setVisibility(View.GONE);
+
+    }
+
     private void hideProgressIndicators() {
         progressIndicator.setVisibility(View.GONE);
         progressIndicator2.setVisibility(View.GONE);
@@ -285,12 +339,19 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     private List<Integer> getTableRowsNigeria() {
         return Arrays.asList(R.id.total_structures_cell,
                 R.id.structures_visited_cell,
-                R.id.structures_not_visited_cell,
+                R.id.structure_not_visited_cell,
                 R.id.structure_confirmed_eligible_cell,
                 R.id.structure_complete_drug_distribution_cell,
                 R.id.structure_partial_drug_distribution_cell,
                 R.id.individual_total_number_of_children_eligible_3_to_49_mos_cell,
                 R.id.individual_total_treated_3_to_59_mos_cell);
+    }
+
+    private List<Integer> getTableRowsNigeriaSurvey() {
+        return Arrays.asList(R.id.total_structures_cell,
+                R.id.total_structures_visited,
+                R.id.structure_notvisited_cell
+                );
     }
 
     private List<Integer> getTableRowsMali() {

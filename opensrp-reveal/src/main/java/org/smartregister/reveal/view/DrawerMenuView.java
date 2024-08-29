@@ -289,7 +289,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     @Override
     public void lockNavigationDrawerForSelection(int title, int message) {
-        AlertDialogUtils.displayNotification(getContext(), title, message);
+//        AlertDialogUtils.displayNotification(getContext(), title, message);
         mDrawerLayout.openDrawer(GravityCompat.START);
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
 
@@ -391,7 +391,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             startP2PActivity();
         else if (v.getId() == R.id.btn_navMenu_summaryForms){
             if (StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentPlan()) || StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentFacility())) {
-                AlertDialogUtils.displayNotification(v.getContext(),R.string.select_campaign_operational_area_title,R.string.select_campaign_operational_area);
+//                AlertDialogUtils.displayNotification(v.getContext(),R.string.select_campaign_operational_area_title,R.string.select_campaign_operational_area);
                 return;
             }
             if (LSM.equals(PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId()))){

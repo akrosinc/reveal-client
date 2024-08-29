@@ -211,7 +211,7 @@ public class PreferencesUtil {
 
     public Country getBuildCountry(){
       String buildCountry =   allSharedPreferences.getPreference(AllConstants.BUILD_COUNTRY);
-      return StringUtils.isBlank(buildCountry) ? Country.ZAMBIA : Country.valueOf(buildCountry);
+      return StringUtils.isBlank(buildCountry) ? Country.NIGERIA : Country.valueOf(buildCountry);
     }
 
 }
