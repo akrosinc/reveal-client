@@ -2,7 +2,7 @@ package org.smartregister.domain;
 
 
 public enum SyncEntity {
-    TASKS("Tasks"), EVENTS("Events"), LOCATIONS("Locations"),
+    TASKS("Tasks"), EVENTS("Events"), LOCATIONS("Locations"),HDSS("hdss"),
     STRUCTURES("structures"), PLANS("Plans");
     private String value;
 

@@ -173,21 +173,22 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         dashboardLink = headerView.findViewById(R.id.btn_link_dashboard);
 
         if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN || getBuildCountry()
-                == Country.NIGERIA || getBuildCountry() == Country.MALI) { // Enable P2P sync and other forms
+                == Country.NIGERIA || getBuildCountry() == Country.MALI || getBuildCountry() == Country.GDRS || getBuildCountry() == Country.UW) { // Enable P2P sync and other forms
             p2pSyncTextView.setVisibility(View.VISIBLE);
             p2pSyncTextView.setOnClickListener(this);
 
-            summaryFormsTextView.setVisibility(View.VISIBLE);
-            summaryFormsTextView.setOnClickListener(this);
-
-            if(getBuildCountry() != Country.NIGERIA){
+            if (getBuildCountry() != Country.UW) {
+                summaryFormsTextView.setVisibility(View.VISIBLE);
+                summaryFormsTextView.setOnClickListener(this);
+            }
+            if(getBuildCountry() != Country.NIGERIA && getBuildCountry() != Country.UW){
                 //Nigeria build currently does not have support for filled forms
                 TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
                 filledForms.setVisibility(View.VISIBLE);
                 filledForms.setOnClickListener(this);
             }
 
-        } else if(getBuildCountry() == Country.KENYA || getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN){
+        } else if(getBuildCountry() == Country.KENYA || getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.GDRS){
             summaryFormsTextView.setVisibility(View.VISIBLE);
             summaryFormsTextView.setOnClickListener(this);
 

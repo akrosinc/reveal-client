@@ -566,6 +566,7 @@ public abstract class RecyclerViewFragment extends
     }
 
     public CommonRepository commonRepository() {
+        Timber.tag("RevealCommonRepository").i("tablename %s",tablename);
         return context().commonrepository(tablename);
     }
 

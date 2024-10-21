@@ -2,7 +2,15 @@ package org.smartregister.reveal.model;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class IndicatorDetails {
 
     private int sprayed;
@@ -34,6 +42,36 @@ public class IndicatorDetails {
     private int totalIndividualTreated;
     private int childrenEligible;
 
+    @Setter @Getter
+    private int totalRcdStructures ;
+    @Setter @Getter
+    private int totalRcdMemberTasks ;
+    @Setter @Getter
+    private int totalIndexStructure ;
+    @Setter @Getter
+    private int totalIndexMemberTasks ;
+    @Setter @Getter
+    private int totalCompleteRcdStructures ;
+    @Setter @Getter
+    private int totalCompleteRcdMemberTasks ;
+    @Setter @Getter
+    private int totalCompleteIndexStructure ;
+    @Setter @Getter
+    private int totalCompleteIndexMemberTasks ;
+    @Setter @Getter
+    private int totalUnVisitRcdStructures ;
+    @Setter @Getter
+    private int totalUnVisitIndexStructure ;
+    @Setter @Getter
+    private int totalVisitIndexStructure ;
+    @Setter @Getter
+    private int totalVisitRCDStructure ;
+    @Setter @Getter
+    int indexStructureCoverage;
+    @Setter @Getter
+    int rcdStructureCoverage;
+    @Setter @Getter
+    int visitedGDRSCoverage;
 
     //Mali Indicators
     private int mdaTotalStructures;

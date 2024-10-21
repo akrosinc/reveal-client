@@ -1,0 +1,7 @@
+---
+name: step1_receive_treatment
+description: step1_receive_treatment
+priority: 1
+condition: 'revealhelper.getAgeInMonthsyyyyMMdd(step1_dob) >= 6 && revealhelper.getAgeInMonthsyyyyMMdd(step1_dob) <= 65'
+actions:
+ - "isRelevant = true"

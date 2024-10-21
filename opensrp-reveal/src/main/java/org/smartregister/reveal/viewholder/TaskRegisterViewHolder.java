@@ -17,6 +17,8 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 
+import java.util.List;
+
 
 /**
  * Created by samuelgithengi on 3/12/19.
@@ -110,8 +112,33 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
             }
 
         } else if (cardDetails != null && cardDetails.getStatusColor() != null) {
-            actionView.setBackground(context.getResources().getDrawable(R.drawable.no_task_complete_bg));
-            actionView.setTextColor(context.getResources().getColor(R.color.text_black));
+            if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())){
+
+                if (Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE.equals(task.getBusinessStatus())){
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.blood_screening_complete,null));
+                } else if (List.of(Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE
+                , Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE).contains(task.getBusinessStatus())) {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.dark_cyan,null));
+                } else if (Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())){
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green,null));
+                } else {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.cyan,null));
+                }
+
+            } else if (Constants.Action.RCD.equals(task.getTaskCode())){
+                if (Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE.equals(task.getBusinessStatus())){
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.orange,null));
+                } else if (Constants.BusinessStatus.COMPLETE.contains(task.getBusinessStatus())) {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));
+                } else {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.not_visited_yellow,null));
+                }
+            } else {
+                actionView.setBackground(context.getResources().getDrawable(R.drawable.baseline_keyboard_arrow_right));
+                actionView.setTextColor(context.getResources().getColor(R.color.text_black));
+            }
+
+
         } else {
             actionView.setBackground(context.getResources().getDrawable(R.drawable.family_no_task_registered_bg));
             actionView.setTextColor(context.getResources().getColor(R.color.text_black));

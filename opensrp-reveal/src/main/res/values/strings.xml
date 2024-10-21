@@ -190,6 +190,14 @@
     <string name="view_tasks">View \nTasks</string>
     <string name="tasks_complete">Tasks Complete</string>
     <string name="tasks_incomplete">Tasks\nIncomplete</string>
+    <string name="round_refused">Round Refused</string>
+    <string name="round_one">Round 1</string>
+    <string name="month_three_complete">Month Three Complete</string>
+    <string name="month_six_complete">Month Six Complete</string>
+    <string name="round_three">Round 3</string>
+    <string name="enrolled">Enrolled</string>
+    <string name="notenrolled">Not Enrolled</string>
+    <string name="enrollednotcomplete">Enrolled Not Complete</string>
     <string name="classification_details">Classification Details</string>
     <string name="view">View</string>
     <string name="family_details">Family Details</string>
@@ -248,6 +256,7 @@
     <string name="structures_surveyed">Structure: SURVEYED</string>
     <string name="structures_found">Structure: FOUND</string>
     <string name="survey_coverage">Survey Coverage</string>
+    <string name="survey">Survey</string>
     <string name="found_coverage">Found Coverage</string>
     <string name="spray_coverage">Spray Coverage</string>
     <string name="visitation_coverage">Visitation Coverage Percentage</string>
@@ -263,6 +272,19 @@
     <string name="n_percent">%1$d%%</string>
     <string name="indicator">Indicator</string>
     <string name="value">Value</string>
+
+    <string name="totalRcdStructures">Total RCD Structures</string>
+    <string name="totalRcdMemberTasks">Total RCD Member Tasks</string>
+    <string name="totalIndexStructure">Total Index Case Structures</string>
+    <string name="totalIndexMemberTasks">Total Index Case Member Tasks</string>
+    <string name="totalCompleteRcdStructures">Total Complete RCD Structures</string>
+    <string name="totalCompleteRcdMemberTasks">Total Complete RCD Member Tasks</string>
+    <string name="totalCompleteIndexStructure">Total Complete Index Case Structures</string>
+    <string name="totalCompleteIndexMemberTasks">Total Complete Index Case Member Tasks</string>
+    <string name="totalUnVisitRcdStructures">Total Un-visited RCD Structures</string>
+    <string name="totalUnVisitIndexStructure">Total Un-visited Index Case Structures</string>
+    <string name="totalVisitIndexStructure">Total Visited Index Case Structures</string>
+    <string name="totalVisitRCDStructure">Total Visited RCD Structures</string>
 
     <string name="spray_success_rate">Spray Success Rate</string>
     <string name="success_rate">Success Rate</string>
@@ -376,7 +398,18 @@
         <item>SOP</item>
     </string-array>
 
+    <string-array name="gender">
+        <item>Select an option</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
     <string-array name="task_sort_options_namibia">
+        <item>Distance (nearest first)</item>
+        <item>Status</item>
+    </string-array>
+
+    <string-array name="task_sort_options_uw">
         <item>Distance (nearest first)</item>
         <item>Status</item>
     </string-array>
@@ -430,6 +463,13 @@
     <string name="cdd_drug_withdrawal_form">CDD Drug Withdrawal Form</string>
     <string name="cdd_drug_received_form">CDD Drug Received Form</string>
     <string name="distribution_coverage">Distribution coverage</string>
+
+
+    <string name="index_case_coverage">Index Case Coverage</string>
+    <string name="rcd_coverage">RCD Coverage</string>
+    <string name="gdrs_visited_coverage">Visited Coverage</string>
+
+
     <string name="and_individuals_complete">And Individuals complete</string>
     <string name="structure_total">Structure: TOTAL</string>
     <string name="structure_total_survey">Total Structures</string>
@@ -452,7 +492,7 @@
     <string name="event_date">Date</string>
     <string name="form_name">Form Name</string>
     <string name="sop">SOP</string>
-    <string name="hh_village_name">HH/ village Name</string>
+    <string name="hh_village_name">Entity</string>
     <string name="daily_summary_status">%1$dF/%2$dS/%3$dNS</string>
     <string name="search">Search</string>
     <string name="hh_form">HH Form</string>
@@ -983,6 +1023,8 @@
     <string name="habitat_survey">Habitat Survey</string>
     <string name="lsm_household_survey">LSM Household Survey</string>
     <string name="structure_survey">Structure Survey</string>
+    <string name="rcd">RCD</string>
+    <string name="rcd_member">RCD Member</string>
     <string name="server">Server</string>
     <string name="enter_base_url_message">Enter Base Server Url</string>
     <string name="preference_summary">Defines the base server url that handles requests</string>
@@ -997,8 +1039,14 @@
     <string name="treatment_outside_household">Treatment Outside Household</string>
     <string name="adverse_events_record">Adverse Events Record</string>
     <string name="drugs_accountability">Drugs Accountability</string>
+    <string name="health_facility_pathology">Parasitology Form</string>
+    <string name="passive_case_detection">HF Passive Case Detection Form</string>
     <string name="cdd_structure_summary_form">CDD Structure Summary Form</string>
     <string name="reveal_instance_selector">Select Reveal Server</string>
     <string name="current_server">Current Server: %s</string>
     <string name="reveal_language_selector">Select Language</string>
+    <string name="edit_index_case">Edit Index Case</string>
+    <string name="action_index_case">Action Index Case</string>
+    <string name="edit_racd">Edit RACD</string>
+    <string name="action_racd">Action RACD</string>
 </resources>

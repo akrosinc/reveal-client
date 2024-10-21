@@ -15,6 +15,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.MDA;
 import static org.smartregister.reveal.util.Constants.Intervention.MDA_LITE;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
+import static org.smartregister.reveal.util.Constants.Intervention.SURVEY;
 import static org.smartregister.reveal.util.Constants.Map.MAX_SELECT_ZOOM_LEVEL;
 import static org.smartregister.reveal.util.Constants.Map.SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
@@ -224,7 +225,9 @@ public class Utils {
             return R.string.mda;
         else if (interventionType.equals(MDA_LITE))
             return R.string.mda_lite;
-        else
+        else if (SURVEY.equals(interventionType)) {
+            return R.string.survey_coverage;
+        } else
             return R.string.irs;
     }
 
@@ -631,7 +634,8 @@ public class Utils {
                 || getBuildCountry() == Country.RWANDA_EN
                 || getBuildCountry() == Country.NIGERIA
                 || getBuildCountry() == Country.KENYA
-                || getBuildCountry() == Country.MALI;
+                || getBuildCountry() == Country.MALI
+                || getBuildCountry() == Country.GDRS;
 
     }
 

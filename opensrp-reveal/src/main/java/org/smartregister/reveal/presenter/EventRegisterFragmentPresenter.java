@@ -117,13 +117,13 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
                 tableName + ".relationalid",
                 tableName + "." + DatabaseKeys.EVENT_DATE,
                 tableName + "." + DatabaseKeys.EVENT_TYPE,
-                tableName + "." + DatabaseKeys.SOP,
+                tableName + "." + DatabaseKeys.PROVIDER_ID,
                 tableName + "." + DatabaseKeys.ENTITY,
                 tableName + "." + DatabaseKeys.STATUS,
                 tableName + "." + FORM_SUBMISSION_ID,
                 tableName + "." + DatabaseKeys.BASE_ENTITY_ID,
-                tableName + "." + DatabaseKeys.SPRAYED,
-                tableName + "." + DatabaseKeys.FOUND,
+//                tableName + "." + DatabaseKeys.SPRAYED,
+//                tableName + "." + DatabaseKeys.FOUND,
                 tableName + "." + DatabaseKeys.ENTITY_STATUS
         };
         return columns;

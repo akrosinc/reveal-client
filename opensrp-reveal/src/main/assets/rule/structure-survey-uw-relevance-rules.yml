@@ -1,0 +1,7 @@
+---
+name: step1_roundone
+description: step1_roundone
+priority: 1
+condition: "step1_enrolled.equals('Yes')"
+actions:
+ - "isRelevant = true"

@@ -5,9 +5,15 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.reveal.util.Constants.Action;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOTENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHTHREECOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHSIXCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_SORT_PARAMS;
@@ -416,6 +422,12 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
                     .sortOptions(R.array.task_sort_options_namibia);
+        }   else if (getBuildCountry().equals(Country.UW)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, MONTHTHREECOMPLETE
+                            , MONTHSIXCOMPLETE, ENROLLED,NOT_ELIGIBLE,ENROLLED_NOT_COMPLETE, NOTENROLLED))
+                    .sortOptions(R.array.task_sort_options_uw);
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         getActivity().startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);

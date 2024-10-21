@@ -218,8 +218,15 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         } else if (childAt instanceof RelativeLayout
                 && childAt.getTag(R.id.is_multiselect_relative_layout) != null &&
                 Boolean.TRUE.equals(childAt.getTag(R.id.is_multiselect_relative_layout))) {
-            ValidationStatus validationStatus = MultiSelectListFactory
-                    .validate(formFragmentView, (RelativeLayout) childAt);
+            ValidationStatus validationStatus;
+            if (Boolean.TRUE.equals(childAt.getTag(R.id.is_reveal_multiselect_relative_layout))){
+                validationStatus = RevealMultiSelectListFactory
+                        .validate(formFragmentView, (RelativeLayout) childAt);
+            } else {
+                validationStatus = MultiSelectListFactory
+                        .validate(formFragmentView, (RelativeLayout) childAt);
+            }
+
             if (!validationStatus.isValid()) {
                 if (requestFocus) {
                     validationStatus.requestAttention();

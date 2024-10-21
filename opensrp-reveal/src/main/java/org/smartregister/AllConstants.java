@@ -548,6 +548,8 @@ public class AllConstants {
         String PLAN_SYNC = "plan_sync";
         String EVENT_SYNC = "event_sync";
         String LOCATION_SYNC = "location_sync";
+
+        String HDSS_SYNC = "hdss_sync";
         String CLIENT_PROCESSING = "client_processing";
     }
 

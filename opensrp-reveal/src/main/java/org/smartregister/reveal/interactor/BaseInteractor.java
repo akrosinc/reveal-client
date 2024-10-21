@@ -10,6 +10,7 @@ import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
@@ -30,6 +31,7 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -70,6 +72,7 @@ import static org.smartregister.util.JsonFormUtils.getJSONObject;
 import static org.smartregister.util.JsonFormUtils.getString;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -112,7 +115,9 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseContract;
 import org.smartregister.reveal.contract.BaseContract.BasePresenter;
 import org.smartregister.reveal.contract.StructureTasksContract;
+import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.sync.RevealClientProcessor;
+import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
@@ -293,7 +298,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
         details.put(Constants.GPS_ACCURACY, sharedPreferences.getPreference(GPS_ACCURACY));
         eventJson.put(DETAILS, details);
         eventClientRepository.addEvent(entityId, eventJson);
-        addInterventionAdditionalDetails( eventJson);
+        addInterventionAdditionalDetails(eventJson);
         return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
     }
 
@@ -303,12 +308,11 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
 
             InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
             interventionAdditionalDetailsRepository.addDetailsToTable(additionalDetails);
-        }catch (Exception e){
+        } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e.toString());
         }
 
     }
-
 
 
     @NonNull
@@ -357,6 +361,8 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = MDA_ONCHOCERCIASIS_SURVEY;
             } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)) {
                 interventionType = STRUCTURE_SURVEY;
+            } else if (RCD_EVENT.equals(encounterType)) {
+                interventionType = RCD;
             }
         } catch (JSONException e) {
             Timber.tag("Reveal Exception").w(e);
@@ -457,9 +463,11 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, HABITAT_SURVEY, R.string.habitat_survey);
                     } else if (StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, LSM_HOUSEHOLD_SURVEY, R.string.lsm_household_survey);
-                    } else if (SURVEY.equals(interventionType) && getCountry() == Country.NIGERIA){
+                    } else if (SURVEY.equals(interventionType) && (getCountry() == Country.NIGERIA || getCountry() == Country.UW)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, STRUCTURE_SURVEY, R.string.structure_survey);
-                    }else {
+                    } else if (SURVEY.equals(interventionType) && (getCountry() == Country.GDRS)) {
+                        task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, RCD, R.string.rcd);
+                    } else {
                         if (getCountry() == Country.ZAMBIA || getCountry() == Country.SENEGAL || getCountry() == Country.SENEGAL_EN || StructureType.RESIDENTIAL.equals(structureType)) {
                             task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(),
                                     BusinessStatus.NOT_VISITED, Intervention.IRS, R.string.irs_task_description);
@@ -610,6 +618,17 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 presenterCallBack.onFamilyFound(finalFamily);
             });
         });
+    }
+
+    public void startGDRSActivity(Context context, TaskDetails details) {
+        Intent intent = new Intent(context, GDRSActivity.class);
+        intent.putExtra(Properties.LOCATION_UUID, details.getStructureId());
+        intent.putExtra(Properties.TASK_IDENTIFIER, details.getTaskId());
+        intent.putExtra(Properties.TASK_BUSINESS_STATUS, details.getBusinessStatus());
+        intent.putExtra(Properties.TASK_CODE, details.getTaskCode());
+
+        context.startActivity(intent);
+
     }
 
     public SQLiteDatabase getDatabase() {

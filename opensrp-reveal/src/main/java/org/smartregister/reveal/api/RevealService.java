@@ -23,6 +23,9 @@ public interface RevealService {
     String FORM_SUBMISSIONS_PATH = "form-submissions";
 
     String LOCATION_STRUCTURE_URL = "/rest/location/sync";
+
+    String HDSS_SEARCH_URL = "/rest/hdss/search";
+    String HDSS_SYNC_URL = "/rest/hdss/sync";
     String CREATE_STRUCTURE_URL = "/rest/location/add";
 
    String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";

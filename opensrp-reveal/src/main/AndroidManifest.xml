@@ -69,6 +69,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
+            android:name=".test.GDRSActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
             android:name=".activity.RevealJsonFormActivity"
             android:exported="false"
             android:launchMode="singleTask"
@@ -181,7 +187,9 @@
         <service
             android:name="org.smartregister.sync.intent.P2pProcessRecordsService"
             android:exported="false" />
-
+        <service
+            android:name="org.smartregister.sync.intent.HdssSyncIntentService"
+            android:exported="false" />
         <!-- from base -->
 
         <service

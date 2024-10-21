@@ -10,11 +10,13 @@ import androidx.fragment.app.Fragment;
 
 import com.vijay.jsonwizard.activities.FormConfigurationJsonFormActivity;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
-
+import com.vijay.jsonwizard.fragments.JsonFormFragment;
+import org.json.JSONException;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
 import org.smartregister.reveal.fragment.RevealJsonFormFragment;
-
+import org.smartregister.reveal.util.PreferencesUtil;
+import org.smartregister.rule.RevealRuleEngineFactory;
 import io.ona.kujaku.utils.Constants;
 
 
@@ -25,13 +27,17 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
     private boolean requestedLocation;
 
     private ProgressDialog progressDialog;
+    private PreferencesUtil instance ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
+        rulesEngineFactory = new RevealRuleEngineFactory(this, globalValues);
+        instance = PreferencesUtil.getInstance();
     }
+
 
     @Override
     public void initializeFormFragment() {
@@ -39,6 +45,10 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
         RevealJsonFormFragment revealJsonFormFragment = RevealJsonFormFragment.getFormFragment(JsonFormConstants.FIRST_STEP_NAME);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, revealJsonFormFragment).commit();
+    }
+
+    public JsonFormFragment getFragment(){
+        return  this.formFragment;
     }
 
     @Override
@@ -102,5 +112,18 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
     protected void onDestroy() {
         super.onDestroy();
         formFragment.getPresenter().getLocationUtils().destroy();
+    }
+
+    @Override
+    protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,
+                                     String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
+        super.widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
+    }
+
+    @Override
+    public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,
+                           String openMrsEntityId, boolean popup) throws JSONException {
+
+        super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
     }
 }

@@ -23,10 +23,10 @@
                 android:id="@+id/kujakuMapView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:locationClient="google_location_client"
                 app:mapbox_uiAttributionGravity="center_horizontal|bottom"
                 app:mapbox_uiLogoGravity="center_horizontal|bottom"
                 app:mapbox_uiLogoMarginRight="30dp"
-                app:locationClient="google_location_client"
                 app:mapbox_uiRotateGestures="false" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton

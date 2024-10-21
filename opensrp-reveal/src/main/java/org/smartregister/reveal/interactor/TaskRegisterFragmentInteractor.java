@@ -56,7 +56,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.HdssCompoundHousehold;
+import org.smartregister.domain.HdssCompoundObj;
 import org.smartregister.repository.EventClientRepository.event_column;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.TaskRegisterFragmentContract;
@@ -76,6 +79,7 @@ import timber.log.Timber;
 public class TaskRegisterFragmentInteractor extends BaseInteractor implements TaskRegisterFragmentContract.Interactor {
 
     private final LocationRepository locationRepository;
+    private final HdssRepository hdssRepository;
     private final Float locationBuffer;
     private InteractorUtils interactorUtils;
 
@@ -92,6 +96,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
         super(presenter);
         this.locationBuffer = locationBuffer;
         locationRepository = RevealApplication.getInstance().getLocationRepository();
+        hdssRepository = RevealApplication.getInstance().getHdssRepository();
         interactorUtils = new InteractorUtils(RevealApplication.getInstance().getTaskRepository(), eventClientRepository, clientProcessor);
     }
 
@@ -230,6 +235,9 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
             tasks.addAll(queryTaskDetails(indexCaseSelect(), params, lastLocation,
                     operationalAreaCenter, houseLabel, false));
 
+
+            getHdssDetailsForTasks(tasks, lastLocation,structuresWithinBuffer);
+            
             Collections.sort(tasks);
             appExecutors.mainThread().execute(() -> {
                 getPresenter().onTasksFound(tasks, structuresWithinBuffer);
@@ -353,6 +361,26 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
 
     }
 
+
+    public void getHdssDetailsForTasks(List<TaskDetails> tasks, Location location, int structuresWithinBuffer){
+        if (tasks == null)
+            return;
+        appExecutors.diskIO().execute(() -> {
+            for (TaskDetails taskDetails : tasks) {
+                if (List.of(Constants.Action.RCD, Constants.Action.INDEX_CASE).contains(taskDetails.getTaskCode())) {
+
+                    List<HdssCompoundHousehold> compoundAndHouseholdByStructureId
+                            = hdssRepository.getCompoundAndHouseholdByStructureId(taskDetails.getTaskEntity());
+
+                    if (compoundAndHouseholdByStructureId != null && compoundAndHouseholdByStructureId.size()>0){
+                        taskDetails.setCompoundId(compoundAndHouseholdByStructureId.get(0).getCompoundId());
+                        taskDetails.setHouseHoldId(compoundAndHouseholdByStructureId.get(0).getHouseholdId());
+                    }
+                }
+            }
+
+        });
+    }
 
     public void getStructure(TaskDetails taskDetails) {
         appExecutors.diskIO().execute(() -> {

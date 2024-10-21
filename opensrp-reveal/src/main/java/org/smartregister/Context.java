@@ -44,6 +44,7 @@ import org.smartregister.repository.EligibleCoupleRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.LocationRepository;
@@ -106,6 +107,7 @@ import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
@@ -230,13 +232,26 @@ public class Context {
 
     private DBPullRepository dbPullRepository;
 
+    private HdssRepository hdssRepository;
+    private boolean fetchedHdssDetails = false;
+
     private InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository;
+
+    private HdssServiceHelper hdssServiceHelper;
 
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
     /////////////////////////////////////////////////
 
     protected Context() {
+    }
+
+    public boolean hasFetchedHdssDetails(){
+        return fetchedHdssDetails;
+    }
+
+    public void setFetchedHdssDetails(boolean fetched){
+        this.fetchedHdssDetails = fetched;
     }
 
     public static Context getInstance() {
@@ -277,6 +292,13 @@ public class Context {
             beneficiaryService = new BeneficiaryService(allEligibleCouples(), allBeneficiaries());
         }
         return beneficiaryService;
+    }
+
+    public HdssServiceHelper hdssServiceHelper() {
+        if (hdssServiceHelper == null) {
+            hdssServiceHelper = new HdssServiceHelper(getHdssRepository());
+        }
+        return hdssServiceHelper;
     }
 
     public Context updateApplicationContext(android.content.Context applicationContext) {
@@ -699,6 +721,13 @@ public class Context {
         return dbPullRepository;
     }
 
+    public HdssRepository getHdssRepository() {
+        if (hdssRepository == null) {
+            hdssRepository = new HdssRepository();
+        }
+        return hdssRepository;
+    }
+
     public InterventionAdditionalDetailsRepository getInterventionAdditionalDetailsRepository() {
         if (interventionAdditionalDetailsRepository == null) {
             interventionAdditionalDetailsRepository = new InterventionAdditionalDetailsRepository();
@@ -995,6 +1024,7 @@ public class Context {
         if (MapOfCommonRepository == null) {
             MapOfCommonRepository = new HashMap<String, CommonRepository>();
         }
+
         if (MapOfCommonRepository.get(tablename) == null) {
             for (CommonRepositoryInformationHolder bindType : bindtypes) {
                 if (bindType.getBindtypename().equalsIgnoreCase(tablename)) {

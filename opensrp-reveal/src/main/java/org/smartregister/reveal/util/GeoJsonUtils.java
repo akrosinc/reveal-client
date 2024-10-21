@@ -28,8 +28,10 @@ import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMI
 import static org.smartregister.reveal.util.Constants.MDA_ADHERENCE_COMPLETE_COUNT;
 import static org.smartregister.reveal.util.Constants.MDA_DRUG_RECON_COMPLETE_COUNT;
 import static org.smartregister.reveal.util.Constants.MDA_TASK_COUNT;
+import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
+import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_TYPE;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_VERSION;
@@ -107,6 +109,15 @@ public class GeoJsonUtils {
                     taskProperties.put(IS_INDEX_CASE, Boolean.TRUE.toString());
                 } else {
                     taskProperties.put(IS_INDEX_CASE, Boolean.FALSE.toString());
+                }
+
+                if (List.of(Constants.Action.INDEX_CASE, Constants.Action.RCD).contains(task.getCode())){
+                    if (task.getHouseholdId() != null) {
+                        taskProperties.put(HOUSEHOLD_ID, task.getHouseholdId());
+                    }
+                    if (task.getCompoundId() != null) {
+                        taskProperties.put(COMPOUND_ID, task.getCompoundId());
+                    }
                 }
 
                 taskProperties.put(LOCATION_UUID, structure.getProperties().getUid());

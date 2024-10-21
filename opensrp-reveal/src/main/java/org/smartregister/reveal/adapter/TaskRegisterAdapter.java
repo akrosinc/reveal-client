@@ -77,6 +77,14 @@ public class TaskRegisterAdapter extends RecyclerView.Adapter<TaskRegisterViewHo
             if (task.getBusinessStatus() != null) {
                 action = CardDetailsUtil.getTranslatedBusinessStatus(task.getBusinessStatus()).replaceAll(" ", "\n");
             }
+        } else if (Constants.Action.RCD.equals(task.getTaskCode())) {
+            name = "RCD ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            action = context.getString(R.string.view);
+        } else if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
+            name = "Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            action = context.getString(R.string.view);
         } else {
             name = NOT_ELIGIBLE.equals(task.getBusinessStatus()) ? context.getString(R.string.ineligible_location) : task.getFamilyName();
             if (name == null) {

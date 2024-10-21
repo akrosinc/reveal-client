@@ -3,13 +3,21 @@ package org.smartregister.reveal.view;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOTENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHTHREECOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHSIXCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
@@ -22,7 +30,6 @@ import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICAT
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
-import static org.smartregister.reveal.util.Constants.Intervention.SURVEY;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FAMILY_PROFILE;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_FILTER_TASKS;
@@ -75,6 +82,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.MultiPolygon;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -83,7 +91,9 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
@@ -119,6 +129,7 @@ import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants.Action;
@@ -139,7 +150,6 @@ import java.util.Optional;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
-import io.ona.kujaku.listeners.OnFeatureLongClickListener;
 import io.ona.kujaku.utils.Constants;
 import timber.log.Timber;
 
@@ -186,6 +196,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private BoundaryLayer boundaryLayer;
 
     private BoundaryLayer adjacentOperationalBoundaryLayer;
+
+    private BoundaryLayer parentLayer;
 
     private RevealMapHelper revealMapHelper;
 
@@ -286,6 +298,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         findViewById(R.id.change_spray_status).setOnClickListener(this);
         findViewById(R.id.change_oncho_status).setOnClickListener(this);
         findViewById(R.id.change_structure_survey_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_index_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_rcd_status).setOnClickListener(this);
 
         findViewById(R.id.btn_undo_spray).setOnClickListener(this);
         findViewById(R.id.btn_undo_structure_status).setOnClickListener(this);
@@ -400,7 +414,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     }
                 });
 
+
                 mMapboxMap = mapboxMap;
+
                 mapboxMap.setMinZoomPreference(10);
                 mapboxMap.setMaxZoomPreference(21);
 
@@ -468,13 +484,14 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
-        if (getBuildCountry() != Country.MALI && getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
-                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN && getBuildCountry() != Country.NIGERIA) {
+        if (!List.of(Country.MALI, Country.ZAMBIA, Country.NAMIBIA, Country.SENEGAL, Country.RWANDA,
+                Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS)
+                .contains(getBuildCountry())) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
             int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
 
-            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda) ? progressHeight + 40 : 40;
+            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.survey_coverage) ? progressHeight + 40 : 40;
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
 
             if (layerSwitcherFab != null) {
@@ -535,6 +552,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             listTaskPresenter.onChangeInterventionStatus(STRUCTURE_SURVEY);
         } else if (v.getId() == R.id.change_household_status) {
             listTaskPresenter.onChangeInterventionStatus(MDA_SURVEY);
+        } else if (v.getId() == R.id.change_gdrs_rcd_status) {
+            listTaskPresenter.onChangeInterventionStatus(RCD);
+        } else if (v.getId() == R.id.change_gdrs_index_status) {
+            listTaskPresenter.onChangeInterventionStatus(INDEX_CASE);
         } else if (v.getId() == R.id.change_habitat_status) {
             listTaskPresenter.onChangeInterventionStatus(HABITAT_SURVEY);
         } else if (v.getId() == R.id.change_lsm_household_status) {
@@ -547,7 +568,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             } else {
                 displayResetInterventionTaskDialog(IRS);
             }
-        } else if(v.getId() == R.id.btn_undo_structure_status){
+        } else if (v.getId() == R.id.btn_undo_structure_status) {
             displayResetInterventionTaskDialog(STRUCTURE_SURVEY);
         } else if (v.getId() == R.id.btn_record_mosquito_collection) {
             listTaskPresenter.onChangeInterventionStatus(MOSQUITO_COLLECTION);
@@ -594,6 +615,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
                     .sortOptions(R.array.task_sort_options_namibia);
+        } else if (getCountry().equals(Country.UW)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, MONTHTHREECOMPLETE
+                            , MONTHSIXCOMPLETE, ENROLLED,NOT_ELIGIBLE,ENROLLED_NOT_COMPLETE, NOTENROLLED))
+                    .sortOptions(R.array.task_sort_options_uw);
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
@@ -657,6 +684,22 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     @Override
+    public void openRCD() {
+        clearSelectedFeature();
+        Intent intent = new Intent(this, GDRSActivity.class);
+        Feature feature = listTaskPresenter.getSelectedFeature();
+
+        intent.putExtra(Properties.LOCATION_UUID, feature.id());
+        intent.putExtra(Properties.TASK_IDENTIFIER, feature.getStringProperty(Properties.TASK_IDENTIFIER));
+        intent.putExtra(Properties.TASK_BUSINESS_STATUS, feature.getStringProperty(Properties.TASK_BUSINESS_STATUS));
+        intent.putExtra(Properties.TASK_CODE, feature.getStringProperty(Properties.TASK_CODE));
+
+
+        startActivity(intent);
+
+    }
+
+    @Override
     public void onLocationComponentInitialized() {
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
             LocationComponent locationComponent = kujakuMapView.getMapboxLocationComponentWrapper()
@@ -667,6 +710,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea, List<Feature> adjacentOperationalAreas, boolean isChangeMapPosition) {
+
         if (StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition) {
             initializeMapView(savedInstanceState);
             if (org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
@@ -678,7 +722,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         if (geoJsonSource != null) {
             geoJsonSource.setGeoJson(featureCollection);
-
             if (operationalArea != null) {
                 CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation) {
@@ -698,25 +741,190 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 Boolean drawOperationalAreaBoundaryAndLabel = getDrawOperationalAreaBoundaryAndLabel();
                 if (drawOperationalAreaBoundaryAndLabel) {
                     if (boundaryLayer == null || isChangeMapPosition) {
-                        boundaryLayer = createBoundaryLayer(operationalArea);
+                        if (operationalArea.geometry() instanceof MultiPolygon) {
+                            FeatureCollection featureCollectionOperationalArea = revealMapHelper.splitMultiPolygonsToSingleFeatureCollection(operationalArea);
+
+                            boundaryLayer = createBoundaryLayerFromFeatureCollection(featureCollectionOperationalArea);
+
+                        } else {
+                            boundaryLayer = createBoundaryLayer(operationalArea);
+                        }
+
                         kujakuMapView.addLayer(boundaryLayer);
 
+//                        if (mMapboxMap != null) {
+//                            if (mMapboxMap.getStyle() != null) {
+//
+//
+//                                String concat = "line-source";
+//                                if (mMapboxMap.getStyle().getSource(concat) == null) {
+//                                    GeoJsonOptions geoJsonOptions = new GeoJsonOptions();
+//                                    geoJsonOptions.withTolerance(0);
+//                                    GeoJsonSource source = new GeoJsonSource(concat, featureCollections, geoJsonOptions);
+//
+//                                    mMapboxMap.getStyle().addSource(source);
+//                                    LineLayer lined = new LineLayer("lined", concat);
+//                                    lined.setProperties(PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND));
+//                                    lined.setProperties(PropertyFactory.lineCap(Property.LINE_CAP_ROUND));
+//                                    mMapboxMap.getStyle().addLayer(lined);
+//                                }
+//
+//
+//                            }
+//                        }
 
-                        kujakuMapView.setOnFeatureLongClickListener(new OnFeatureLongClickListener() {
-                            @Override
-                            public void onFeatureLongClick(List<Feature> features) {
-                                listTaskPresenter.onFociBoundaryLongClicked();
-                            }
-                        }, boundaryLayer.getLayerIds());
 
-                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
-                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
+//                        kujakuMapView.setOnFeatureLongClickListener(new OnFeatureLongClickListener() {
+//                            @Override
+//                            public void onFeatureLongClick(List<Feature> features) {
+//                                listTaskPresenter.onFociBoundaryLongClicked();
+//                            }
+//                        }, boundaryLayer.getLayerIds());
+//
+//                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
+//                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
 
                     } else {
-                        boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
-
-                        adjacentOperationalBoundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
+//                        boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
+//
+//                        adjacentOperationalBoundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
                     }
+                }
+
+                Map<String, String> featureToLayerMapping = new HashMap<>();
+
+                if (!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
+                    RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
+                        for (Feature feature : featureCollection.features()) {
+                            BoundaryLayer boundaryLayer = createIRSLiteOABoundaryLayer(feature);
+                            kujakuMapView.addLayer(boundaryLayer);
+                            featureToLayerMapping.put(boundaryLayer.getLayerIds()[0], feature.id());
+                        }
+                    });
+                }
+
+                if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation && revealMapHelper.getIndexCaseLineLayer() == null) {
+                    revealMapHelper.addIndexCaseLayers(mMapboxMap, getContext(), featureCollection);
+                } else {
+                    revealMapHelper.updateIndexCaseLayers(mMapboxMap, featureCollection, this);
+                }
+                mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
+                    @Override
+                    public void onCameraMove() {
+                        final FeatureCollection lambdaFeatureCollection = featureCollection;
+                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
+                        if (mMapboxMap.getStyle() != null) {
+                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
+                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+
+                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
+                                            .filter(f -> f.id()
+                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
+                                            .findAny();
+                                    if (feature.isPresent()) {
+                                        layer.setProperties(
+                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
+                                    }
+                                });
+                            } else {
+                                mMapboxMap.getStyle().getLayers().stream()
+                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
+                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void setGeoJsonSourceWithParents(@NonNull FeatureCollection featureCollection, Feature operationalArea, List<Feature> adjacentOperationalAreas, boolean isChangeMapPosition, List<Feature> parentLocations) {
+        if (StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition) {
+            initializeMapView(savedInstanceState);
+            if (org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
+                addStructureButton.setVisibility(View.VISIBLE);
+            } else {
+                addStructureButton.setVisibility(View.GONE);
+            }
+        }
+
+        if (geoJsonSource != null) {
+            geoJsonSource.setGeoJson(featureCollection);
+            if (operationalArea != null) {
+                CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
+                if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation) {
+                    Feature indexCase = revealMapHelper.getIndexCase(featureCollection);
+                    if (indexCase != null) {
+                        Location center = new RevealMappingHelper().getCenter(indexCase.geometry().toJson());
+                        double currentZoom = mMapboxMap.getCameraPosition().zoom;
+                        cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(center.getLatitude(), center.getLongitude())).zoom(currentZoom).build();
+                    }
+                }
+
+                if (cameraPosition != null && (boundaryLayer == null || isChangeMapPosition)) {
+                    mMapboxMap.setCameraPosition(cameraPosition);
+                }
+
+                Boolean drawOperationalAreaBoundaryAndLabel = getDrawOperationalAreaBoundaryAndLabel();
+                if (drawOperationalAreaBoundaryAndLabel) {
+                    if (boundaryLayer == null || isChangeMapPosition) {
+                        if (operationalArea.geometry() instanceof MultiPolygon) {
+                            FeatureCollection featureCollectionOperationalArea = revealMapHelper.splitMultiPolygonsToSingleFeatureCollection(operationalArea);
+
+                            boundaryLayer = createBoundaryLayerFromFeatureCollection(featureCollectionOperationalArea);
+
+                        } else {
+                            boundaryLayer = createBoundaryLayer(operationalArea);
+                        }
+
+                        kujakuMapView.addLayer(boundaryLayer);
+
+//                        if (mMapboxMap != null) {
+//                            if (mMapboxMap.getStyle() != null) {
+//
+//
+//                                String concat = "line-source";
+//                                if (mMapboxMap.getStyle().getSource(concat) == null) {
+//                                    GeoJsonOptions geoJsonOptions = new GeoJsonOptions();
+//                                    geoJsonOptions.withTolerance(0);
+//                                    GeoJsonSource source = new GeoJsonSource(concat, featureCollections, geoJsonOptions);
+//
+//                                    mMapboxMap.getStyle().addSource(source);
+//                                    LineLayer lined = new LineLayer("lined", concat);
+//                                    lined.setProperties(PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND));
+//                                    lined.setProperties(PropertyFactory.lineCap(Property.LINE_CAP_ROUND));
+//                                    mMapboxMap.getStyle().addLayer(lined);
+//                                }
+//
+//
+//                            }
+//                        }
+
+
+//                        kujakuMapView.setOnFeatureLongClickListener(new OnFeatureLongClickListener() {
+//                            @Override
+//                            public void onFeatureLongClick(List<Feature> features) {
+//                                listTaskPresenter.onFociBoundaryLongClicked();
+//                            }
+//                        }, boundaryLayer.getLayerIds());
+//
+//                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
+//                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
+
+                    } else {
+//                        boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
+//
+//                        adjacentOperationalBoundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
+                    }
+                }
+                if (parentLocations != null && !parentLocations.isEmpty()){
+                    FeatureCollection featureCollection1 = FeatureCollection.fromFeatures(parentLocations);
+
+                    parentLayer = createParentBoundaryLayerFromFeatureCollection(featureCollection1);
+                    kujakuMapView.addLayer(parentLayer);
+
                 }
 
                 Map<String, String> featureToLayerMapping = new HashMap<>();
@@ -768,11 +976,29 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
         return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+
                 .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.YELLOW)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
     }
+
+    private BoundaryLayer createBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
+        return new BoundaryLayer.Builder(operationalArea)
+                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                .setLabelColorInt(Color.WHITE)
+                .setBoundaryColor(Color.YELLOW)
+                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+    }
+
+    private BoundaryLayer createParentBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
+        return new BoundaryLayer.Builder(operationalArea)
+                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                .setLabelColorInt(Color.WHITE)
+                .setBoundaryColor(Color.GRAY)
+                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+    }
+
 
     private BoundaryLayer createNeighbouringBoundaryLayer(List<Feature> operationalArea) {
         return new BoundaryLayer.Builder(FeatureCollection.fromFeatures(operationalArea))

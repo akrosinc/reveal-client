@@ -8,12 +8,12 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 
-import androidx.annotation.NonNull;
-import android.widget.ImageButton;
-
+import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.MultiPolygon;
+import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -24,6 +24,7 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.turf.TurfMeasurement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ import org.smartregister.reveal.util.Constants.StructureType;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.ona.kujaku.KujakuLibrary;
 import io.ona.kujaku.plugin.switcher.BaseLayerSwitcherPlugin;
 import io.ona.kujaku.views.KujakuMapView;
 import timber.log.Timber;
@@ -269,4 +271,132 @@ public class RevealMapHelper {
         baseLayerSwitcherPlugin.show();
     }
 
+    public List<FeatureCollection> splitMultiPolygons(FeatureCollection multiPolygonFeatureCollection) {
+        List<FeatureCollection> polygonFeatureCollections = new ArrayList<>();
+
+        // Iterate through each feature in the FeatureCollection
+        for (Feature feature : multiPolygonFeatureCollection.features()) {
+            Geometry geometry = feature.geometry();
+            if (geometry instanceof MultiPolygon) {
+                MultiPolygon multiPolygon = (MultiPolygon) geometry;
+
+                // Iterate through each Polygon in the MultiPolygon
+                for (List<List<Point>> polygonCoordinates : multiPolygon.coordinates()) {
+                    // The list of rings in the current polygon
+                    List<List<Point>> rings = new ArrayList<>(polygonCoordinates);
+
+                    // Create a Polygon from the coordinates
+                    Polygon polygon = Polygon.fromLngLats(rings);
+
+                    // Create a new Feature for this Polygon
+                    Feature polygonFeature = Feature.fromGeometry(polygon);
+
+                    // Create a new FeatureCollection for this individual Polygon
+                    FeatureCollection polygonFeatureCollection = FeatureCollection.fromFeatures(new Feature[]{polygonFeature});
+
+                    // Add to result list
+                    polygonFeatureCollections.add(polygonFeatureCollection);
+                }
+            }
+        }
+
+        return polygonFeatureCollections;
+    }
+
+    public FeatureCollection splitMultiPolygonsToSingleFeatureCollection(Feature multiPolygonFeatureCollection) {
+        List<Feature> polygonFeatures = new ArrayList<>();
+
+        // Iterate through each feature in the FeatureCollection
+
+        String name = null;
+        if (multiPolygonFeatureCollection.properties() != null) {
+            JsonObject properties = multiPolygonFeatureCollection.properties();
+
+            if (properties.has("name")) {
+                name = properties.get("name").getAsString();
+            }
+        }
+
+        Geometry geometry = multiPolygonFeatureCollection.geometry();
+        if (geometry instanceof MultiPolygon) {
+            MultiPolygon multiPolygon = (MultiPolygon) geometry;
+
+            int count = 0;
+            // Iterate through each Polygon in the MultiPolygon
+            for (List<List<Point>> polygonCoordinates : multiPolygon.coordinates()) {
+                // Create a Polygon from the coordinates
+                Polygon polygon = Polygon.fromLngLats(polygonCoordinates);
+
+                // Create a new Feature for this Polygon
+                Feature polygonFeature = Feature.fromGeometry(polygon);
+
+                if (name != null) {
+                    polygonFeature.addStringProperty("name", name.concat("_").concat(String.valueOf(count)));
+                }
+
+                // Add the polygon feature to the list
+                polygonFeatures.add(polygonFeature);
+                count++;
+            }
+        }
+
+
+        // Create a FeatureCollection containing all the individual Polygon features
+        return FeatureCollection.fromFeatures(polygonFeatures);
+    }
+
+    public FeatureCollection getLabels(FeatureCollection multiPolygonFeatureCollection) {
+        List<Feature> polygonFeatures = new ArrayList<>();
+
+        // Iterate through each feature in the FeatureCollection
+
+
+        List<Feature> features = multiPolygonFeatureCollection.features();
+        List<Point> points = new ArrayList<>();
+        for (Feature feature: features){
+            Geometry geometry = feature.geometry();
+            if (geometry instanceof Polygon) {
+
+                Polygon polygon = (Polygon) geometry;
+                Point point = calculateCentroid(polygon);
+                Feature pointFeature = Feature.fromGeometry(point);
+                if (feature.properties()!=null && feature.properties().has("added_label")){
+                    pointFeature.addStringProperty("added_label",feature.properties().get("added_label").getAsString());
+                    polygonFeatures.add(pointFeature);
+                }
+            }
+        }
+        // Create a FeatureCollection containing all the individual Polygon features
+        return FeatureCollection.fromFeatures(polygonFeatures);
+    }
+
+    public Point calculateCentroid(Polygon polygon) {
+        double area = 0.0;
+        double C_x = 0.0;
+        double C_y = 0.0;
+        int n = polygon.coordinates().get(0).size(); // Assuming it's a single polygon
+
+        List<Point> points = polygon.coordinates().get(0); // Get the outer ring coordinates
+
+        for (int i = 0; i < n; i++) {
+            Point current = points.get(i);
+            Point next = points.get((i + 1) % n); // Wrap around to the first point
+
+            double x0 = current.longitude();
+            double y0 = current.latitude();
+            double x1 = next.longitude();
+            double y1 = next.latitude();
+
+            double a = x0 * y1 - x1 * y0;
+            area += a;
+            C_x += (x0 + x1) * a;
+            C_y += (y0 + y1) * a;
+        }
+
+        area *= 0.5;
+        C_x /= (6.0 * area);
+        C_y /= (6.0 * area);
+
+        return Point.fromLngLat(C_x, C_y); // Return the centroid as a Point
+    }
 }

@@ -11,6 +11,8 @@ import static org.smartregister.AllConstants.JSON_FILE_EXTENSION;
 import static org.smartregister.AllConstants.OPTIONS;
 import static org.smartregister.AllConstants.TEXT;
 import static org.smartregister.reveal.util.Constants.Action;
+import static org.smartregister.reveal.util.Constants.Action.PASSIVE_CASE_DETECTION;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
@@ -25,6 +27,8 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
@@ -132,21 +136,21 @@ public class RevealJsonFormUtils {
 
     public RevealJsonFormUtils() {
         nonEditablefields = new HashSet<>(Arrays.asList(HOUSEHOLD_ACCESSIBLE,
-                                                        ABLE_TO_SPRAY_FIRST,
-                                                        CDD_SUPERVISION_TASK_COMPLETE,
-                                                        DATE,
-                                                        HEALTH_WORKER_SUPERVISOR,
-                                                        COMMUNITY_DRUG_DISTRIBUTOR_NAME,
-                                                        NTD_TREATED,
-                                                        LOCATION,
-                                                        DRUG_WITHDRAWN,
-                                                        DRUG_ISSUED,
-                                                        DRUG_DISTRIBUTED));
+                ABLE_TO_SPRAY_FIRST,
+                CDD_SUPERVISION_TASK_COMPLETE,
+                DATE,
+                HEALTH_WORKER_SUPERVISOR,
+                COMMUNITY_DRUG_DISTRIBUTOR_NAME,
+                NTD_TREATED,
+                LOCATION,
+                DRUG_WITHDRAWN,
+                DRUG_ISSUED,
+                DRUG_DISTRIBUTED));
 
     }
 
     public JSONObject getFormJSON(Context context, String formName, Feature feature, String sprayStatus,
-            String familyHead) {
+                                  String familyHead) {
 
         String taskBusinessStatus = getPropertyValue(feature, Properties.TASK_BUSINESS_STATUS);
         String taskIdentifier = getPropertyValue(feature, Properties.TASK_IDENTIFIER);
@@ -170,6 +174,7 @@ public class RevealJsonFormUtils {
         }
         return null;
     }
+
 
     public JSONObject getFormJSON(Context context, String formName, BaseTaskDetails task, Location structure) {
 
@@ -243,9 +248,9 @@ public class RevealJsonFormUtils {
 
 
     public JSONObject populateFormDetails(String formString, String entityId, String structureId,
-            String taskIdentifier,
-            String taskBusinessStatus, String taskStatus, String structureUUID,
-            Integer structureVersion) throws JSONException {
+                                          String taskIdentifier,
+                                          String taskBusinessStatus, String taskStatus, String structureUUID,
+                                          Integer structureVersion) throws JSONException {
 
         JSONObject formJson = new JSONObject(formString);
         formJson.put(ENTITY_ID, entityId);
@@ -389,11 +394,11 @@ public class RevealJsonFormUtils {
             } else if (getBuildCountry() == Country.NAMIBIA) {
                 formName = JsonForm.NAMIBIA_ADD_STRUCTURE_FORM;
             } else if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL_EN
-                    || getBuildCountry() == Country.SENEGAL ) {
+                    || getBuildCountry() == Country.SENEGAL) {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
-            } else if(getBuildCountry() == Country.MOZAMBIQUE || getBuildCountry() == Country.MALI){
-              formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
-            } else if (Intervention.SURVEY.equals(taskCode) && getBuildCountry() == Country.NIGERIA){
+            } else if (getBuildCountry() == Country.MOZAMBIQUE || getBuildCountry() == Country.MALI) {
+                formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
+            } else if (Intervention.SURVEY.equals(taskCode) && (getBuildCountry() == Country.NIGERIA || getBuildCountry() == Country.UW || getBuildCountry() == Country.GDRS)) {
                 formName = JsonForm.STRUCTURE_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
@@ -498,40 +503,47 @@ public class RevealJsonFormUtils {
             formName = JsonForm.FPP_FORM_ZAMBIA;
         } else if (EventType.CDD_DRUG_ALLOCATION_EVENT.equals(encounterType)) {
             formName = JsonForm.CDD_DRUG_ALLOCATION_FORM;
-        } else if(EventType.GENERAL_SUPERVISION.equals(encounterType)){
+        } else if (EventType.GENERAL_SUPERVISION.equals(encounterType)) {
             formName = JsonForm.ZAMBIA_GENERAL_SUPERVISION_FORM;
-        } else if(EventType.CDD_DRUG_WITHDRAWAL_EVENT.equals(encounterType)){
+        } else if (EventType.CDD_DRUG_WITHDRAWAL_EVENT.equals(encounterType)) {
             formName = JsonForm.CDD_DRUG_WITHDRAWAL_FORM;
-        } else if(EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)){
-            if(getBuildCountry() == Country.MALI){
+        } else if (EventType.CDD_DRUG_RECEIVED_EVENT.equals(encounterType)) {
+            if (getBuildCountry() == Country.MALI) {
                 formName = JsonForm.MALI_DRUG_RECEIVED_FORM;
             } else {
                 formName = JsonForm.CDD_DRUG_RECEIVED_FORM;
             }
-        } else if(EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)){
+        } else if (EventType.COUNTY_CDD_SUPERVISORY_EVENT.equals(encounterType)) {
             formName = JsonForm.COUNTY_CDD_SUPERVISORY_FORM;
-        } else if(getBuildCountry() == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))){
+        } else if (getBuildCountry() == Country.MOZAMBIQUE && (Action.MDA_SURVEY.equals(taskCode) || MDA_SURVEY_EVENT.equals(encounterType))) {
             formName = JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM;
-        } else if(getBuildCountry() == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCHO_EVENT.equals(encounterType))){
+        } else if (getBuildCountry() == Country.MALI && (Action.MDA_ONCHOCERCIASIS_SURVEY.equals(taskCode) || MDA_ONCHO_EVENT.equals(encounterType))) {
             formName = JsonForm.MDA_ONCHO_SURVEY_FORM;
-        } else if(getBuildCountry() == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))){
+        } else if (getBuildCountry() == Country.ZAMBIA && (Action.HABITAT_SURVEY.equals(taskCode) || HABITAT_SURVEY_EVENT.equals(encounterType))) {
             formName = JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA;
-        } else if(getBuildCountry() == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))){
+        } else if (getBuildCountry() == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))) {
             formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
-        }else if(getBuildCountry() == Country.NIGERIA && (Action.STRUCTURE_SURVEY.equals(taskCode) || STRUCTURE_SURVEY_EVENT.equals(encounterType))){
+        } else if (getBuildCountry() == Country.NIGERIA && (Action.STRUCTURE_SURVEY.equals(taskCode) || STRUCTURE_SURVEY_EVENT.equals(encounterType))) {
             formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
-        }
-        else if(EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)){
+        } else if (EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)) {
             formName = JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM;
-        } else if(EventType.ADVERSE_EVENTS_RECORD_EVENT.equals(encounterType)){
+        } else if (EventType.ADVERSE_EVENTS_RECORD_EVENT.equals(encounterType)) {
             formName = JsonForm.ADVERSE_EVENTS_RECORD_FORM;
-        } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)){
-            formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
+        } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType) || Action.STRUCTURE_SURVEY.equals(taskCode)) {
+            if (getBuildCountry() == Country.UW) {
+                formName = JsonForm.STRUCTURE_SURVEY_UW;
+            } else {
+                formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
+            }
+        } else if ((RCD_EVENT.equals(encounterType) || RCD.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
+            formName = JsonForm.GDRS_RCD;
+        } else if ((PASSIVE_CASE_DETECTION_EVENT.equals(encounterType) || PASSIVE_CASE_DETECTION.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
+            formName = JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM;
         }
         return formName;
     }
 
-    public String getFormName(Context context, String encounterType, String taskCode){
+    public String getFormName(Context context, String encounterType, String taskCode) {
 
         String language = LangUtils.getLanguage(context);
 
@@ -539,7 +551,7 @@ public class RevealJsonFormUtils {
 
         String dir = "json.form";
         String defaultForm = dir.concat("/".concat(formName));
-        if (context==null){
+        if (context == null) {
             return defaultForm;
         } else {
             try {
@@ -725,12 +737,12 @@ public class RevealJsonFormUtils {
                 try {
                     JSONObject field = fields.getJSONObject(i);
                     String key = field.getString(KEY);
-                    if (BUSINESS_STATUS.equals(key)){
+                    if (BUSINESS_STATUS.equals(key)) {
                         fieldsHasBusinessStatus = true;
                         break;
                     }
                 } catch (JSONException e) {
-                Timber.tag("Reveal Exception").w(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
             JSONObject businessStatus = null;
@@ -739,7 +751,7 @@ public class RevealJsonFormUtils {
                 try {
                     JSONObject fieldCopy = fieldsCopy.getJSONObject(i);
                     String key = fieldCopy.getString(KEY);
-                    if (BUSINESS_STATUS.equals(key)){
+                    if (BUSINESS_STATUS.equals(key)) {
                         fieldsCopyHasBusinessStatus = true;
                         businessStatus = fieldCopy;
                         break;
@@ -748,7 +760,7 @@ public class RevealJsonFormUtils {
                     Timber.tag("Reveal Exception").w(e);
                 }
             }
-            if (!fieldsHasBusinessStatus && fieldsCopyHasBusinessStatus){
+            if (!fieldsHasBusinessStatus && fieldsCopyHasBusinessStatus) {
                 fields.put(businessStatus);
             }
         }
@@ -794,7 +806,7 @@ public class RevealJsonFormUtils {
     }
 
     public Pair<JSONArray, JSONArray> populateServerOptions(Map<String, Object> serverConfigs,
-            String settingsConfigKey, JSONObject field, String filterKey) {
+                                                            String settingsConfigKey, JSONObject field, String filterKey) {
         if (serverConfigs == null || field == null) {
             return null;
         }
@@ -833,7 +845,7 @@ public class RevealJsonFormUtils {
     }
 
     public static org.smartregister.clientandeventmodel.Event createTaskEvent(String baseEntityId, String locationId,
-            Map<String, String> details, String eventType, String entityType) {
+                                                                              Map<String, String> details, String eventType, String entityType) {
         org.smartregister.clientandeventmodel.Event taskEvent
                 = (org.smartregister.clientandeventmodel.Event) new org.smartregister.clientandeventmodel.Event().withBaseEntityId(
                         baseEntityId).withEventDate(new Date()).withEventType(eventType)
@@ -857,8 +869,6 @@ public class RevealJsonFormUtils {
         Map<String, JSONObject> fieldsMap = getFields(formJSON);
         String dataCollector = RevealApplication.getInstance().getContext().allSharedPreferences()
                 .fetchRegisteredANM();
-
-        Timber.tag("UserDetails").i("Data Collector: %s", dataCollector);
 
         switch (formName) {
 
@@ -907,7 +917,6 @@ public class RevealJsonFormUtils {
 
             case JsonForm.DAILY_SUMMARY_ZAMBIA:
 
-
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.ZONES,
                         fieldsMap.get(LOCATION_ZONE), PreferencesUtil.getInstance().getCurrentFacility());
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
@@ -927,6 +936,37 @@ public class RevealJsonFormUtils {
                 break;
             case JsonForm.STRUCTURE_SURVEY_NIGERIA:
                 setDefaultValue(formJSON, SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                break;
+            case JsonForm.STRUCTURE_SURVEY_UW:
+                setRoundDate(formJSON,JsonForm.ROUND_ONE_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SURVEY_ROUND_ONE_DATE,
+                        PreferencesUtil.getInstance().getHighestLevel());
+
+                setRoundDate(formJSON,JsonForm.ROUND_TWO_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SURVEY_ROUND_TWO_DATE,
+                        PreferencesUtil.getInstance().getHighestLevel());
+
+                setRoundDate(formJSON,JsonForm.ROUND_THREE_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                        CONFIGURATION.SURVEY_ROUND_THREE_DATE,
+                        PreferencesUtil.getInstance().getHighestLevel());
+
+//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+//                        CONFIGURATION.SURVEY_ROUND_TWO_DATE, fieldsMap.get(JsonForm.ROUND_TWO_THRESHOLD),
+//                        PreferencesUtil.getInstance().getHighestLevel());
+//
+//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
+//                        CONFIGURATION.SURVEY_ROUND_THREE_DATE, fieldsMap.get(JsonForm.ROUND_THREE_THRESHOLD),
+//                        PreferencesUtil.getInstance().getHighestLevel());
+
+                setDefaultValue(formJSON, SUPERVISOR,
+                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                break;
+            case JsonForm.GDRS_INDEX_CASE:
+            case JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY:
+            case JsonForm.GDRS_RCD:
+            case JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM:
+                setDefaultValue(formJSON, JsonForm.HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.DAILY_SUMMARY_SENEGAL:
@@ -1086,25 +1126,7 @@ public class RevealJsonFormUtils {
                         fieldsMap.get(JsonForm.CAPTURED_HAMLET),
                         PreferencesUtil.getInstance().getCurrentProvince());
 
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.WARDS,
-//                        fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentOperationalArea());
-//
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.DRUG_REALLOCATEE),
-//                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-//
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.CDD_BORROWED_FORM),
-//                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-//
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COUNTY_LIST, fieldsMap.get(JsonForm.COUNTY),
-//                        PreferencesUtil.getInstance().getCurrentOperationalArea());
-//
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.SUB_COUNTY_LIST, fieldsMap.get(JsonForm.SUB_COUNTY),
-//                        PreferencesUtil.getInstance().getCurrentOperationalArea());
-               break;
+                break;
             case JsonForm.ADVERSE_EVENTS_RECORD_FORM:
             case JsonForm.MALI_DRUG_RECEIVED_FORM:
                 setDefaultValue(formJSON, HEALTH_WORKER_SUPERVISOR,
@@ -1117,22 +1139,6 @@ public class RevealJsonFormUtils {
 
                 populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,
                         fieldsMap.get(JsonForm.LOCATION), PreferencesUtil.getInstance().getCurrentProvince());
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.DRUG_REALLOCATEE),
-//                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                                CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS, fieldsMap.get(JsonForm.CDD_BORROWED_FORM),
-//                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COUNTY_LIST, fieldsMap.get(JsonForm.COUNTY),
-//                        PreferencesUtil.getInstance().getCurrentOperationalArea());
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.SUB_COUNTY_LIST, fieldsMap.get(JsonForm.SUB_COUNTY),
-//                        PreferencesUtil.getInstance().getCurrentOperationalArea());
-//                populateServerOptions(RevealApplication.getInstance().getServerConfigs(),
-//                        CONFIGURATION.COMMUNITY_DRUG_DISTRIBUTORS,
-//                        fieldsMap.get(JsonForm.COMMUNITY_DRUG_DISTRIBUTOR_NAME),
-//                        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA:
             case JsonForm.TABLET_ACCOUNTABILITY_FORM_RWANDA_EN:
@@ -1199,12 +1205,31 @@ public class RevealJsonFormUtils {
         }
     }
 
-    private void setDefaultValue(JSONObject formJSON, String fieldKey, String defaultValue) {
+    public void setDefaultValue(JSONObject formJSON, String fieldKey, String defaultValue) {
         JSONObject field = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(formJSON), fieldKey);
         try {
             field.put(VALUE, defaultValue);
         } catch (JSONException e) {
             Timber.tag("Reveal Exception").w(e);
+        }
+
+    }
+
+    public void setRoundDate(JSONObject formJSON, String fieldKey, Map<String, Object> serverConfigs,
+                             String settingsConfigKey, String filterKey) {
+        if (serverConfigs == null) {
+            return;
+        }
+        JSONArray serverConfig = (JSONArray) serverConfigs.get(settingsConfigKey);
+        if (serverConfig != null && !serverConfig.isNull(0)) {
+            JSONArray options = serverConfig.optJSONObject(0).optJSONArray(filterKey);
+            if (options != null) {
+                if (options.length() > 0) {
+                    JSONObject operator = options.optJSONObject(0);
+                    String name = operator.optString(CONFIGURATION.NAME).trim();
+                    setDefaultValue(formJSON, fieldKey, name);
+                }
+            }
         }
 
     }
@@ -1262,7 +1287,7 @@ public class RevealJsonFormUtils {
         PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
                 .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
         List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
-        List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false,hierarchyGeographicLevels);
+        List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false, hierarchyGeographicLevels);
 
         String parentName;
         if (PreferencesUtil.getInstance().getCurrentPlanTargetLevel().equals("structure")) {

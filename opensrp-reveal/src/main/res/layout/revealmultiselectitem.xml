@@ -1,0 +1,77 @@
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/revealmultiselectborder">
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <android.widget.TextView
+            android:id="@+id/lbl1MultiSelectItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Label 1"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/> <!-- Space between label and text -->
+
+        <android.widget.TextView
+            android:id="@+id/txtMultiSelectItem"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:textColor="@color/primary_text"
+            android:paddingBottom="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.widget.LinearLayout>
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <android.widget.TextView
+            android:id="@+id/lbl2MultiSelectItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Label 2"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <android.widget.TextView
+            android:id="@+id/txt2MultiSelectItem"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:textColor="@color/primary_text"
+            android:paddingBottom="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <android.widget.TextView
+            android:id="@+id/lbl3MultiSelectItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Label 3"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <android.widget.TextView
+            android:id="@+id/txt3MultiSelectItem"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:textColor="@color/primary_text"
+            android:paddingBottom="10sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.widget.LinearLayout>
+</android.widget.LinearLayout>

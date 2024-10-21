@@ -64,6 +64,8 @@
             "Not Visited"
           ],
           "hsl(46, 88%, 62%)",
+          ["enrolled"],
+          "hsl(303, 86%, 57%)",
           [
             "Not Sprayed",
             "Incomplete",
@@ -71,6 +73,7 @@
             "None Received",
             "Refused or Permanently Absent",
             "Refused",
+            "notenrolled",
             "Permanently Absent",
             "MDA refused or absent"
           ],
@@ -79,14 +82,21 @@
             "Sprayed",
             "Complete",
             "Fully Received",
-            "MDA complete"
+            "MDA complete",
+            "round_three",
+            "round_three_skip",
+            "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
           [
             "Partially complete or Temporarily Absent",
             "Partially complete",
             "Temporarily Absent",
-            "MDA partially complete"
+            "MDA partially complete",
+            "round_one_refused",
+            "round_two_refused",
+            "round_three_refused",
+            "enrollednotcomplete"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -112,6 +122,14 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
+          ["round_one","round_one_skip","Index Case Not Visited","monththreecomplete"],
+          "hsl(191, 89%, 61%)",
+          ["round_two","round_two_skip"],
+          "hsl(227, 66%, 55%)",
+          ["Index complete RCD Incomplete"],
+          "hsl(272, 100%, 43%)",
+          ["RCD Incomplete Index Incomplete", "RCD complete Index Incomplete"],
+          "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],
         "fill-opacity": [
@@ -152,7 +170,7 @@
       ],
       "layout": {},
       "paint": {
-        "circle-radius": [
+        "circle-radius":  [
           "interpolate",
           [
             "linear"
@@ -177,6 +195,8 @@
             "Not Visited"
           ],
           "hsl(46, 88%, 62%)",
+          ["enrolled"],
+          "hsl(303, 86%, 57%)",
           [
             "Not Sprayed",
             "Incomplete",
@@ -184,6 +204,7 @@
             "None Received",
             "Refused or Permanently Absent",
             "Refused",
+            "notenrolled",
             "Permanently Absent",
             "MDA refused or absent"
           ],
@@ -192,14 +213,21 @@
             "Sprayed",
             "Complete",
             "Fully Received",
-            "MDA complete"
+            "MDA complete",
+            "round_three",
+            "round_three_skip",
+            "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
           [
             "Partially complete or Temporarily Absent",
-            "MDA partially complete",
             "Partially complete",
-            "Temporarily Absent"
+            "Temporarily Absent",
+            "MDA partially complete",
+            "round_one_refused",
+            "round_two_refused",
+            "round_three_refused",
+            "enrollednotcomplete"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -225,6 +253,14 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
+          ["round_one","round_one_skip","Index Case Not Visited","monththreecomplete"],
+          "hsl(191, 89%, 61%)",
+          ["round_two","round_two_skip"],
+          "hsl(227, 66%, 55%)",
+          ["Index complete RCD Incomplete"],
+          "hsl(272, 100%, 43%)",
+          ["RCD Incomplete Index Incomplete", "RCD complete Index Incomplete"],
+          "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],
         "circle-stroke-width": 1,

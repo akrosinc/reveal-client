@@ -1,0 +1,18 @@
+package org.smartregister.domain;
+
+
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class HdssIndividualHouseHoldCompound implements Serializable {
+    private String identifier;
+    private String individualId;
+    private String dob;
+    private String gender;
+    private String householdId;
+    private String compoundId;
+}

@@ -28,6 +28,8 @@
     <color name="structure_tasks_complete">#68BB0C</color>
 
     <color name="blood_screening_complete">#995EFF</color>
+    <color name="index_incomplete_rcd_partially_complete">#5B3599</color>
+
     <color name="bednet_distributed">#3DA9DA</color>
     <color name="family_registered">#FF96C2</color>
     <color name="family_no_task_registered">#8B8B8B</color>
@@ -61,6 +63,11 @@
     <color name="status_bar_text_almost_white">#f5f5f5</color>
     <color name="text_black">#333333</color>
     <color name="text_blue">#389cc8</color>
+    <color name="cyan">#43D4F4</color>
+    <color name="dark_cyan">#007d99</color>
+    <color name="purple">#7500db</color>
+    <color name="orange">#ff8c00</color>
+    <color name="not_visited_yellow">#F3CC49</color>
     <color name="client_list_header_dark_grey">#e6e6e6</color>
     <color name="smart_register_blue">#389cc8</color>
 

@@ -1,9 +1,15 @@
 package org.smartregister.reveal.util;
 
 import static java.util.stream.Collectors.toList;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
@@ -272,6 +278,50 @@ public class IndicatorUtils {
 
         indicators.add(context.getResources().getString(R.string.individual_total_treated));
         indicators.add(String.valueOf(indicatorDetails.getMdaTotalTreated()));
+
+        return indicators;
+
+    }
+
+    public static List<String> populateGdrsIndicators(Context context, IndicatorDetails indicatorDetails) {
+
+        List<String> indicators = new ArrayList<>();
+
+        indicators.add(context.getResources().getString(R.string.totalRcdStructures));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+
+        indicators.add(context.getResources().getString(R.string.totalIndexStructure));
+        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+
+        indicators.add(context.getResources().getString(R.string.totalRcdMemberTasks));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdMemberTasks()));
+
+        indicators.add(context.getResources().getString(R.string.totalIndexMemberTasks));
+        indicators.add(String.valueOf(indicatorDetails.getTotalIndexMemberTasks()));
+
+        indicators.add(context.getResources().getString(R.string.totalCompleteRcdStructures));
+        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteRcdStructures()));
+
+        indicators.add(context.getResources().getString(R.string.totalCompleteIndexStructure));
+        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteIndexStructure()));
+
+        indicators.add(context.getResources().getString(R.string.totalCompleteRcdMemberTasks));
+        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteRcdMemberTasks()));
+
+        indicators.add(context.getResources().getString(R.string.totalCompleteIndexMemberTasks));
+        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteIndexMemberTasks()));
+
+        indicators.add(context.getResources().getString(R.string.totalVisitRCDStructure));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+
+        indicators.add(context.getResources().getString(R.string.totalVisitIndexStructure));
+        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+
+        indicators.add(context.getResources().getString(R.string.totalUnVisitRcdStructures));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+
+        indicators.add(context.getResources().getString(R.string.totalUnVisitIndexStructure));
+        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
 
         return indicators;
 
@@ -551,6 +601,80 @@ public class IndicatorUtils {
         indicatorDetails.setPzqDispensed(calculateDispensedPZQ(latestCddSupervisionEvents));
         indicatorDetails.setMbzDamaged(calculateDamagedMBZ(latestCddSupervisionEvents));
         indicatorDetails.setPzqDamaged(calculateDamagedPZQ(latestCddSupervisionEvents));
+        return indicatorDetails;
+    }
+
+    public static IndicatorDetails processIndicatorsGdrs(final List<TaskDetails> tasks) {
+
+        Map<String, List<TaskDetails>> tasksByTaskCode = tasks.stream()
+                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+
+        Map<String, List<TaskDetails>> completedTasksByTaskCode = tasks.stream()
+                .filter(details -> COMPLETE.equals(details.getBusinessStatus()))
+                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+
+        Map<String, List<TaskDetails>> unvisitedTasksByTaskCode = tasks.stream()
+                .filter(details -> NOT_VISITED.equals(details.getBusinessStatus()))
+                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+
+        List<TaskDetails> total = tasks.stream()
+                .filter(details->List.of(RCD,INDEX_CASE).contains(details.getTaskCode()))
+                .collect( toList());
+
+        List<TaskDetails> totalVisited = tasks.stream()
+                .filter(details->List.of(RCD,INDEX_CASE).contains(details.getTaskCode()))
+                .filter(details -> !List.of(NOT_VISITED, INDEX_CASE_NOT_VISITED).contains(details.getBusinessStatus()))
+                .collect( toList());
+
+        List<TaskDetails> indexStructuresVisited = tasks.stream()
+                .filter(details -> Constants.Action.INDEX_CASE.equals(details.getTaskCode()))
+                .filter(details -> !NOT_VISITED.equals(details.getBusinessStatus()))
+                .collect(Collectors.toList());
+
+        List<TaskDetails> rcdStructuresVisited = tasks.stream()
+                .filter(details -> RCD.equals(details.getTaskCode()))
+                .filter(details -> !INDEX_CASE_COMPLETE.equals(details.getBusinessStatus()))
+                .collect(Collectors.toList());
+
+
+        int totalRcdStructures = tasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(tasksByTaskCode.get(RCD)).size() : 0;
+        int totalRcdMemberTasks = tasksByTaskCode.containsKey(RCD_MEMBER) ?  Objects.requireNonNull(tasksByTaskCode.get(RCD_MEMBER)).size() : 0;
+        int totalIndexStructure = tasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE)).size() : 0;
+        int totalIndexMemberTasks = tasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ?  Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
+
+        int totalCompleteRcdStructures = completedTasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(completedTasksByTaskCode.get(RCD)).size() : 0;
+        int totalCompleteRcdMemberTasks = completedTasksByTaskCode.containsKey(RCD_MEMBER) ?  Objects.requireNonNull(completedTasksByTaskCode.get(RCD_MEMBER)).size() : 0;
+        int totalCompleteIndexStructure = completedTasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
+        int totalCompleteIndexMemberTasks = completedTasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ?  Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
+
+        int totalUnVisitRcdStructures = unvisitedTasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(unvisitedTasksByTaskCode.get(RCD)).size() : 0;
+        int totalUnVisitIndexStructure = unvisitedTasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(unvisitedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
+
+        int totalVisitIndexStructure = indexStructuresVisited.size();
+        int totalVisitRCDStructure = rcdStructuresVisited.size();
+
+        int indexStructureCoverage = totalIndexStructure>0 ? totalCompleteIndexStructure / totalIndexStructure : 0;
+        int rcdStructureCoverage = totalRcdStructures>0 ? totalCompleteRcdStructures / totalRcdStructures : 0;
+        int visitedCoverage = !total.isEmpty() ? totalVisited.size() / total.size() : 0;
+
+
+        IndicatorDetails indicatorDetails = IndicatorDetails.builder()
+                .totalRcdStructures(totalRcdStructures)
+                .totalRcdMemberTasks(totalRcdMemberTasks)
+                .totalIndexStructure(totalIndexStructure)
+                .totalIndexMemberTasks(totalIndexMemberTasks)
+                .totalCompleteRcdStructures(totalCompleteRcdStructures)
+                .totalCompleteRcdMemberTasks(totalCompleteRcdMemberTasks)
+                .totalCompleteIndexStructure(totalCompleteIndexStructure)
+                .totalCompleteIndexMemberTasks(totalCompleteIndexMemberTasks)
+                .totalUnVisitRcdStructures(totalUnVisitRcdStructures)
+                .totalUnVisitIndexStructure(totalUnVisitIndexStructure)
+                .totalVisitIndexStructure(totalVisitIndexStructure)
+                .totalVisitRCDStructure(totalVisitRCDStructure)
+                .indexStructureCoverage(indexStructureCoverage)
+                .rcdStructureCoverage(rcdStructureCoverage)
+                .visitedGDRSCoverage(visitedCoverage)
+                .build();
         return indicatorDetails;
     }
 

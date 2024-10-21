@@ -8,12 +8,12 @@
     android:layout_marginBottom="5dp"
     card_view:cardCornerRadius="10dp">
 
-    <LinearLayout
+    <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageButton
+        <android.widget.ImageButton
             android:id="@+id/btn_collapse_spray_card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,12 +26,12 @@
 
             >
 
-            <LinearLayout
+            <android.widget.LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/spray_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                     android:textColor="#EE0427"
                     android:textSize="@dimen/structure_info_card_text_size" />
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/reason"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,7 +51,18 @@
                     android:textSize="@dimen/structure_info_card_text_size"
                     android:visibility="gone" />
 
-                <TextView
+                <android.widget.TextView
+                    android:id="@+id/gdrs_intervention"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="5dp"
+                    android:textAllCaps="false"
+                    android:textColor="#6C6C6C"
+                    android:textSize="@dimen/structure_info_card_text_size"
+                    android:visibility="gone" />
+
+                <android.widget.TextView
                     android:id="@+id/property_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,7 +73,7 @@
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/structure_info_card_text_size" />
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/spray_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +84,7 @@
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/structure_info_card_text_size" />
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/user_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -83,7 +94,7 @@
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/structure_info_card_text_size" />
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/structure_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,7 +106,7 @@
                     android:textSize="@dimen/structure_info_card_text_size" />
 
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/family_head"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -104,17 +115,17 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/text_black"
                     android:textSize="@dimen/structure_info_card_text_size" />
-            </LinearLayout>
+            </android.widget.LinearLayout>
 
         </ScrollView>
 
-    <LinearLayout
+    <android.widget.LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:orientation="horizontal">
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_spray_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -128,7 +139,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_structure_survey_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,7 +153,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/btn_undo_structure_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -158,7 +169,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_household_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -172,7 +183,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_lsm_household_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -186,7 +197,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_habitat_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -200,7 +211,7 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
             android:id="@+id/change_oncho_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -214,7 +225,35 @@
             android:textSize="@dimen/structure_info_card_text_size"
             android:visibility="gone"/>
 
-        <Button
+        <android.widget.Button
+            android:id="@+id/change_gdrs_rcd_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/change_spray_status_btn_bottom_margin"
+            android:background="@drawable/rounded_blue_outline"
+            android:text="@string/view_details"
+            android:textAllCaps="false"
+            android:textColor="#1892D4"
+            android:textSize="@dimen/structure_info_card_text_size"
+            android:visibility="gone"/>
+
+        <android.widget.Button
+            android:id="@+id/change_gdrs_index_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/change_spray_status_btn_bottom_margin"
+            android:background="@drawable/rounded_blue_outline"
+            android:text="@string/view_details"
+            android:textAllCaps="false"
+            android:textColor="#1892D4"
+            android:textSize="@dimen/structure_info_card_text_size"
+            android:visibility="gone"/>
+
+        <android.widget.Button
             android:id="@+id/register_family"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -229,7 +268,7 @@
             android:visibility="gone"
             />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/btn_undo_spray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -244,7 +283,7 @@
             android:textColor="#BCBCBC"
             android:textSize="@dimen/structure_info_card_text_size"
             />
-    </LinearLayout>
+    </android.widget.LinearLayout>
 
-    </LinearLayout>
+    </android.widget.LinearLayout>
 </androidx.cardview.widget.CardView>

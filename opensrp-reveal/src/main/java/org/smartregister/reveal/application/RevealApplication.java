@@ -46,6 +46,7 @@ import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.DBPullRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -138,7 +139,7 @@ public class RevealApplication extends DrishtiApplication
         P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, new RevealSyncConfiguration(), BuildConfig.BUILD_TIMESTAMP, p2POptions);
         forceRemoteLoginForInConsistentUsername();
-        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI) {
+        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI || getBuildCountry() == Country.GDRS) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         } else if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
@@ -148,6 +149,8 @@ public class RevealApplication extends DrishtiApplication
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.RWANDA_EC_CLIENT_FIELDS);
         } else if (Arrays.asList(Country.NIGERIA, Country.MOZAMBIQUE).contains(getBuildCountry())) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
+        } else {
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         }
         ConfigurableViewsLibrary.init(context);
         FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
@@ -188,9 +191,9 @@ public class RevealApplication extends DrishtiApplication
                             }.getType());
 
                     if (BuildConfig.DEBUG) {
-                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080/",
-                        "https://sso-demo.akros.online",
-                        Country.ZAMBIA);
+                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080",
+                        "https://sso-uw.akros.digital",
+                        Country.GDRS);
                         Environment environment = new Environment("LOCAL",environmentDetails);
                         servers.add(environment);
                     }
@@ -289,6 +292,10 @@ public class RevealApplication extends DrishtiApplication
 
     public LocationRepository getLocationRepository() {
         return CoreLibrary.getInstance().context().getLocationRepository();
+    }
+
+    public HdssRepository getHdssRepository() {
+        return CoreLibrary.getInstance().context().getHdssRepository();
     }
 
     public DBPullRepository getDBPullRepository() {

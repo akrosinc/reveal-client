@@ -298,6 +298,63 @@
             "field": "eventType",
             "field_value": "adverse_events_record",
             "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "index_case_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "add_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "add_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "parasitology",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "passive_case_detection",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "rcd",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "structure_survey",
+            "creates_case": [
+              "event_task",
               "ec_events"
             ]
           }
@@ -313,6 +370,62 @@
             "field": "eventType",
             "field_value": "Spray",
             "creates_case": [
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "index_case_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "add_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "add_member",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "parasitology",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "passive_case_detection",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "rcd",
+            "creates_case": [
+              "event_task",
+              "ec_events"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "structure_survey",
+            "creates_case": [
+              "event_task",
               "ec_events"
             ]
           }

@@ -9,6 +9,7 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.AUTHORED_ON;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASEENTITYID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BASE_ENTITY_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.CARD_SPRAY;
@@ -17,8 +18,10 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.CODE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_STRUCTURE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FIRST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.JSON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_UPDATED_DATE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NAME;
@@ -37,6 +40,7 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TRUE_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.UPDATED_AT;
 import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
@@ -44,6 +48,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Preferences.IS_GDRS_PLAN;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.Tables.IRS_VERIFICATION_TABLE;
@@ -54,6 +59,8 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 import static org.smartregister.reveal.util.Utils.getInterventionLabel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
+import static org.smartregister.util.JsonFormUtils.getJSONArray;
+import static org.smartregister.util.JsonFormUtils.getString;
 
 import com.mapbox.geojson.Feature;
 import java.util.ArrayList;
@@ -105,6 +112,8 @@ import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.InteractorUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
+import org.smartregister.util.JsonFormUtils;
+
 import timber.log.Timber;
 
 /**
@@ -117,6 +126,8 @@ public class ListTaskInteractor extends BaseInteractor {
     private InteractorUtils interactorUtils;
 
     private StructureRepository structureRepository;
+
+    private LocationRepository locationRepository;
 
     private TaskRepository taskRepository;
 
@@ -133,6 +144,7 @@ public class ListTaskInteractor extends BaseInteractor {
         interactorUtils = new InteractorUtils(taskRepository, eventClientRepository, clientProcessor);
         revealApplication = RevealApplication.getInstance();
         taskDetails = new ArrayList<>();
+        locationRepository = RevealApplication.getInstance().getLocationRepository();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -154,8 +166,18 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
-        } else if (Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.STRUCTURE_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
+        } else if (Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
             sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
+        } else if (Action.STRUCTURE_SURVEY.equals(interventionType)){
+            sql = String.format("SELECT t.%s, ss.%s, ss.%s, ss.%s from task t left join sprayed_structures ss on t.structure_id = ss.id where id = ?", BUSINESS_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR);
+        } else if (List.of(Action.INDEX_CASE,Action.RCD).contains(interventionType)) {
+            sql = "SELECT  t.business_status,e.updatedAt,t.for,e.json,hhi.household_id  from task t \n" +
+                    "left join hdss_household_structure hhs on hhs.structure_id = t.for\n" +
+                    "left join hdss_household_individual hhi on hhi.household_id = hhs.household_id\n" +
+                    "left join hdss_individual hi on hi.individual_id = hhi.individual_id\n" +
+                    "left join event e on e.baseEntityId = hi.identifier\n" +
+                    "WHERE t.for  = ? and e.baseEntityId is not null\n" +
+                    "order by e.updatedAt desc LIMIT 1";
         }
 
         final String SQL = sql;
@@ -221,14 +243,18 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createIRSverificationCardDetails(cursor);
         } else if (REGISTER_FAMILY.equals(interventionType) ) {
             cardDetails = createFamilyCardDetails(cursor);
-        } else if(Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY,Action.STRUCTURE_SURVEY).contains(interventionType)){
+        } else if(Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
+            cardDetails = createSurveyCardDetailsWithSprayDetails(cursor, interventionType,location);
+        } else if (Action.STRUCTURE_SURVEY.equals(interventionType)){
             cardDetails = createSurveyCardDetails(cursor, interventionType,location);
+        } else if (List.of(Action.INDEX_CASE,Action.RCD).contains(interventionType)){
+            cardDetails = createGdrsCardDetails(cursor,interventionType,location);
         }
 
         return cardDetails;
     }
 
-    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType,Location location) {
+    private CardDetails createSurveyCardDetailsWithSprayDetails(final Cursor cursor, final String interventionType,Location location) {
         String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
         String structureNumber = null;
         if (Action.MDA_SURVEY.equals(interventionType)){
@@ -240,7 +266,53 @@ public class ListTaskInteractor extends BaseInteractor {
                 cursor.getString(cursor.getColumnIndex("spray_operator")),
                 structureNumber);
     }
+    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType,Location location) {
+        String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
+        String structureNumber = null;
+        if (Action.MDA_SURVEY.equals(interventionType)){
+            structureNumber  = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
+        }
+        String businessStatus = CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("business_status")));
+        String date = cursor.getString(cursor.getColumnIndex("spray_date"));
+        String operator = cursor.getString(cursor.getColumnIndex("spray_operator"));
+        return new SurveyCardDetails(
+                businessStatus,
+                date,
+                operator,
+                structureNumber);
+    }
 
+    private CardDetails createGdrsCardDetails(final Cursor cursor, final String interventionType,Location location)  {
+        String businessStatus = CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow(BUSINESS_STATUS)));
+        String date = cursor.getString(cursor.getColumnIndexOrThrow(UPDATED_AT));
+        String json = cursor.getString(cursor.getColumnIndexOrThrow(JSON));
+        String householdid = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+
+        String operator = null;
+        try {
+            JSONObject jsonForm = new JSONObject(json);
+            JSONArray obs = getJSONArray(jsonForm, "obs");
+            if (obs != null){
+                for (int i=0; i<obs.length();i++){
+                    JSONObject ob = obs.getJSONObject(i);
+                    String fieldCode = getString(ob, "fieldCode");
+                    JSONArray values = getJSONArray(ob, "values");
+                    if (fieldCode!= null && fieldCode.equals(JsonForm.HEALTH_WORKER_SUPERVISOR)){
+                        operator = values!=null?values.getString(0):null;
+                    }
+                }
+            }
+
+        }catch (JSONException e){
+            operator = null;
+        }
+
+        return new SurveyCardDetails(
+                businessStatus,
+                date,
+                operator,
+                householdid);
+    }
     private SprayCardDetails createSprayCardDetails(Cursor cursor) {
         String reason = cursor.getString(cursor.getColumnIndex("not_sprayed_reason"));
         if ("other".equals(reason)) {
@@ -306,6 +378,11 @@ public class ListTaskInteractor extends BaseInteractor {
         fetchLocations(plan, operationalArea, null, null);
     }
 
+    public void fetchLocationsWithParents(String plan, String operationalArea) {
+        fetchLocationsWithParents(plan, operationalArea, null, null);
+    }
+
+
     public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
         Runnable runnable = new Runnable() {
 
@@ -320,8 +397,13 @@ public class ListTaskInteractor extends BaseInteractor {
                 try {
                     featureCollection = createFeatureCollection();
                     if (operationalAreaLocation != null) {
-                        Map<String, Set<Task>> tasks = taskRepository
-                                .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        Map<String, Set<Task>> tasks;
+                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
+                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
+                        } else {
+                            tasks = taskRepository
+                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        }
                         List<Location> structures ;
                         if(Utils.isCurrentTargetLevelStructure()){
                             structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
@@ -364,6 +446,103 @@ public class ListTaskInteractor extends BaseInteractor {
                             }
                         } else {
                             getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
+                        }
+                    }
+                });
+
+            }
+
+        };
+
+        appExecutors.diskIO().execute(runnable);
+    }
+
+    private void getParentLocations(List<Feature> locations, Location location){
+        if (location.getProperties() != null) {
+            if (location.getProperties().getParentId()!=null){
+               Location parentlocation =  Utils.getLocationById(location.getProperties().getParentId());
+               if (parentlocation !=null){
+                   Feature parentFeature = Feature.fromJson(gson.toJson(parentlocation));
+                   locations.add(parentFeature);
+                   getParentLocations(locations,parentlocation);
+               }
+            }
+        }
+    }
+
+    public void fetchLocationsWithParents(String plan, String operationalArea,
+                                          String point, Boolean locationComponentActive) {
+
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                JSONObject featureCollection = null;
+
+                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+
+                List<Feature> parentLocations = new ArrayList<>();
+                if (operationalAreaLocation.getProperties() != null){
+                    if (operationalAreaLocation.getProperties().getParentId()!=null){
+                        getParentLocations(parentLocations,operationalAreaLocation);
+                    }
+                }
+
+                List<TaskDetails> taskDetailsList = null;
+                List<Location> adjacentOperationalAreaLocations  = null;
+
+                try {
+                    featureCollection = createFeatureCollection();
+                    if (operationalAreaLocation != null) {
+                        Map<String, Set<Task>> tasks;
+                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
+                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
+                        } else {
+                            tasks = taskRepository
+                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        }
+                        List<Location> structures ;
+                        if(Utils.isCurrentTargetLevelStructure()){
+                            structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
+                        } else {
+                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
+                        }
+                        Map<String, StructureDetails> structureNames = getStructureName(
+                                operationalAreaLocation.getId());
+                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
+                        String indexCase = null;
+                        if (getInterventionLabel() == R.string.focus_investigation) {
+                            indexCase = getIndexCaseStructure(plan);
+                        }
+                        String features = GeoJsonUtils
+                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+
+                        adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
+                    }
+                } catch (Exception e) {
+                    Timber.tag("Reveal Exception").w(e);
+                }
+                JSONObject finalFeatureCollection = featureCollection;
+                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+                final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
+                appExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (operationalAreaLocation != null) {
+                            operationalAreaId = operationalAreaLocation.getId();
+                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
+                            List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
+                                    gson.toJson(location))).collect(Collectors.toList());
+                            if (locationComponentActive != null) {
+                                getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+                                        finalTaskDetailsList, point, locationComponentActive,parentLocations);
+                            } else  {
+                                getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+                                        finalTaskDetailsList,parentLocations);
+                            }
+                        } else {
+                            getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, null,null, null,parentLocations);
                         }
                     }
                 });

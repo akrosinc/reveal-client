@@ -1,0 +1,25 @@
+---
+name: step1_business_status
+description: Business status calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_six_no.equals('no')?'notenrolled':( 
+                                    	step1_month_six.equals('yes')?'monthsixcomplete': (
+                                    		step1_monthsix_start.equals('yes') ? 'enrollednotcomplete' : (
+                                    			step1_three_no.equals('no')?'notenrolled':(
+                                    				step1_month_three.equals('yes')?'monththreecomplete':(
+                                    					step1_monththree_start.equals('yes') ? 'enrollednotcomplete' : (
+                                    						step1_enrollment_complete.equals('yes') ? 'enrolled' : (
+                                                                step1_enrolled.equals('no')? 'notenrolled' :(
+                                                                    step1_enrolled.equals('yes')? 'enrollednotcomplete' : (
+                                                                       step1_structure_type.equals('nonResidential')?'Not Eligible':'Not Visited'
+                                                                    )
+                                                                )		
+                                    						)
+                                    					)
+                                    				)
+                                    			)
+                                    		) 
+                                    	)
+                                   )"

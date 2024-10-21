@@ -77,6 +77,10 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     private Button btnAdverseEventsRecordForm;
     private Button btnDrugAccountabilityForm;
 
+    private Button btnHealthScreeningForm;
+
+    private Button btnHealthFacilityPathologyForm;
+
     public static SummaryFormsFragment newInstance(Bundle bundle) {
 
         SummaryFormsFragment fragment = new SummaryFormsFragment();
@@ -133,6 +137,9 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
         btnAdverseEventsRecordForm = view.findViewById(R.id.adverse_events_record);
         btnDrugAccountabilityForm = view.findViewById(R.id.drugs_accountability);
 
+        btnHealthScreeningForm = view.findViewById(R.id.passive_case_detection);
+        btnHealthFacilityPathologyForm = view.findViewById(R.id.health_facility_parasitology);
+
         if(Utils.isZambiaIRSLite()){
             btnSupervisorDailySummary.setVisibility(View.VISIBLE);
             btnGeneralSupervisionForm.setVisibility(View.VISIBLE);
@@ -181,6 +188,11 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnDrugAccountabilityForm.setVisibility(View.VISIBLE);
             view.findViewById(R.id.separator21).setVisibility(View.VISIBLE);
 
+        } else if (getBuildCountry() == Country.GDRS){
+            btnHealthScreeningForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator22).setVisibility(View.VISIBLE);
+            btnHealthFacilityPathologyForm.setVisibility(View.VISIBLE);
+            view.findViewById(R.id.separator23).setVisibility(View.VISIBLE);
         }
         setClickListeners();
     }
@@ -214,6 +226,8 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
             btnAdverseEventsRecordForm.setOnClickListener(this);
             btnDrugAccountabilityForm.setOnClickListener(this);
             btnOutsideHouseholdTreatmentForm.setOnClickListener(this);
+            btnHealthFacilityPathologyForm.setOnClickListener(this);
+            btnHealthScreeningForm.setOnClickListener(this);
     }
 
     @Override
@@ -378,8 +392,16 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 break;
             case  R.id.adverse_events_record:
                 presenter.showBasicForm(JsonForm.ADVERSE_EVENTS_RECORD_FORM);
+                break;
             case R.id.drugs_accountability:
                 presenter.showBasicForm(JsonForm.MALI_DRUG_RECEIVED_FORM);
+                break;
+            case R.id.passive_case_detection:
+                presenter.showBasicForm(JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM);
+                break;
+            case R.id.health_facility_parasitology:
+                presenter.showBasicForm(JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY);
+                break;
             default:
                 break;
         }

@@ -43,6 +43,8 @@ import java.util.regex.Pattern;
 import timber.log.Timber;
 
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
 import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
@@ -239,12 +241,14 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
                     &&
                     (BLOOD_SCREENING.equals(details.getTaskCode()) ||
                             BEDNET_DISTRIBUTION.equals(details.getTaskCode()) ||
-                            REGISTER_FAMILY.equals(details.getTaskCode())) ||
+                            REGISTER_FAMILY.equals(details.getTaskCode()) ) ||
                     hasSingleGroupedTask ||
                     (details.getTaskCount() != null && details.getTaskCount() > 1 // structures with grouped tasks should display the family profile
                             && !(REGISTER_FAMILY.equals(details.getTaskCode()) && Task.TaskStatus.READY.name().equals(details.getTaskStatus())))) { // skip if we have a READY family reg task
                 setTaskDetails(details);
                 interactor.fetchFamilyDetails(details.getStructureId());
+            } else if (List.of(RCD,INDEX_CASE).contains(details.getTaskCode())){
+                interactor.startGDRSActivity(this.getView().getContext(),details);
             } else {
                 getView().showProgressDialog(R.string.opening_form_title, R.string.opening_form_message);
                 interactor.getStructure(details);
@@ -291,7 +295,9 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
                 if (Utils.matchesSearchPhrase(task.getFamilyName(), searchText) ||
                         Utils.matchesSearchPhrase(task.getStructureName(), searchText) ||
                         Utils.matchesSearchPhrase(task.getHouseNumber(), searchText) ||
-                        Utils.matchesSearchPhrase(task.getFamilyMemberNames(), searchText)) {
+                        Utils.matchesSearchPhrase(task.getFamilyMemberNames(), searchText) ||
+                Utils.matchesSearchPhrase(task.getCompoundId(),searchText)||
+                Utils.matchesSearchPhrase(task.getHouseHoldId(),searchText)) {
                     filteredTasks.add(task);
                     if (task.getDistanceFromUser() > 0 && task.getDistanceFromUser() <= Utils.getLocationBuffer(Utils.isCurrentTargetLevelStructure()))
                         withinBuffer++;

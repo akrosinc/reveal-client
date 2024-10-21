@@ -21,7 +21,7 @@ public class RevealJsonFormFragment extends JsonFormFragment {
     private RevealJsonFormFragmentPresenter presenter;
 
     @Override
-    protected JsonFormFragmentPresenter createPresenter() {
+    public JsonFormFragmentPresenter createPresenter() {
         presenter = new RevealJsonFormFragmentPresenter(this, new RevealJsonFormInteractor());
         return presenter;
     }

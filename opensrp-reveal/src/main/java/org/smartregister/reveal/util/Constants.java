@@ -1,9 +1,11 @@
 package org.smartregister.reveal.util;
 
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 
 import java.util.Arrays;
@@ -16,6 +18,8 @@ public interface Constants {
     public static String FILTER_TEAM_ID = "teamId";
 
     public static String JSON_FORM_PARAM_JSON = "json";
+
+    public static String FOR = "for";
 
     public static String METADATA = "metadata";
 
@@ -138,6 +142,9 @@ public interface Constants {
         public static String TEAM_LEADERS = "team_leaders";
         public static String FIELD_OFFICERS = "field_officers";
         public static String DISTRICT_MANAGERS = "district_managers";
+        public static String SURVEY_ROUND_ONE_DATE = "survey_round_one_date";
+        public static String SURVEY_ROUND_TWO_DATE = "survey_round_two_date";
+        public static String SURVEY_ROUND_THREE_DATE = "survey_round_three_date";
         public static String HEALTH_FACILITIES = "health_facilities";
         public static String COMMUNITY_HEALTH_WORKERS = "community_health_workers";
         public static String CODE = "code";
@@ -169,9 +176,12 @@ public interface Constants {
         public static String CURRENT_FACILITY = "CURRENT_FACILITY";
         public static String CURRENT_DISTRICT = "CURRENT_DISTRICT";
         public static String CURRENT_PROVINCE = "CURRENT_PROVINCE";
+
+        public static String HIGHEST_LEVEL = "HIGHEST_LEVEL";
         public static String CURRENT_PLAN = "CURRENT_PLAN";
         public static String CURRENT_PLAN_ID = "CURRENT_PLAN_ID";
         public static String FACILITY_LEVEL = "FACILITY_LEVEL";
+        public static String IS_GDRS_PLAN = "IS_GDRS_PLAN";
         public static String CURRENT_OPERATIONAL_AREA = "CURRENT_OPERATIONAL_AREA";
         public static String CURRENT_OPERATIONAL_AREA_ID = "CURRENT_OPERATIONAL_AREA_ID";
         public static String EVENT_LATITUDE = "EVENT_LATITUDE";
@@ -180,6 +190,10 @@ public interface Constants {
         public static String ADMIN_PASSWORD_ENTERED = "ADMIN_PASSWORD_ENTERED";
         public static String TOTAL_SYNC_PROGRESS = "TOTAL_SYNC_PROGRESS";
         public static String CURRENT_PLAN_TARGET_LEVEL = "CURRENT_PLAN_TARGET_LEVEL";
+
+        public static String SELECTED_COMPOUND_ID = "SELECTED_COMPOUND_ID";
+        public static String SELECTED_HOUSEHOLD_ID = "SELECTED_HOUSEHOLD_ID";
+
     }
 
     public static class Tags {
@@ -221,6 +235,8 @@ public interface Constants {
         public static String PLAN_IDENTIFIER = "planIdentifier";
         public static String LOCATION_STATUS = "status";
         public static String LOCATION_NAME = "name";
+        public static String HOUSEHOLD_ID = "household_id";
+        public static String COMPOUND_ID = "compound_id";
     }
 
 
@@ -296,7 +312,9 @@ public interface Constants {
 
         public static List<String> KENYA_INTERVENTIONS = Arrays.asList(CELL_COORDINATION);
 
-        public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY);
+        public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING
+                ,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY
+                ,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY,RCD,INDEX_CASE);
 
         public static String LSM = "LSM";
     }
@@ -353,6 +371,12 @@ public interface Constants {
 
         public static String STRUCTURE_SURVEY_EVENT =  "structure_survey";
 
+        public static String RCD_EVENT =  "rcd";
+        public static String INDEX_CASE_MEMBER_EVENT =  "index_case_member";
+
+        public static String PASSIVE_CASE_DETECTION_EVENT = "passive_case_detection";
+
+        public static String PARASITOLOGY = "parasitology";
 
         public static List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -368,7 +392,7 @@ public interface Constants {
         public static List<String> EVENTS_FOR_CARD_DISPLAY = Arrays.asList(MOSQUITO_COLLECTION_EVENT, LARVAL_DIPPING_EVENT,
         BEDNET_DISTRIBUTION_EVENT, BEDNET_DISTRIBUTION_EVENT, BEHAVIOUR_CHANGE_COMMUNICATION,
         IRS_VERIFICATION, MDA_SURVEY_EVENT, LSM_HOUSEHOLD_SURVEY_EVENT, HABITAT_SURVEY_EVENT,
-        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT,ADVERSE_EVENTS_RECORD_EVENT,STRUCTURE_SURVEY_EVENT);
+        MDA_ONCHO_EVENT,TREATMENT_OUTSIDE_HOUSEHOLD_EVENT,ADVERSE_EVENTS_RECORD_EVENT,STRUCTURE_SURVEY_EVENT, RCD_EVENT,INDEX_CASE_MEMBER_EVENT);
     }
 
     public interface Tables {
@@ -391,10 +415,19 @@ public interface Constants {
         public static String SPRAYED = "Sprayed";
         public static String NOT_SPRAYABLE = "Not Sprayable";
         public static String COMPLETE = "Complete";
+
+        public static String INDEX_COMPLETE_RCD_INCOMPLETE = "Index complete RCD Incomplete";
+        public static String RCD_COMPLETE_INDEX_INCOMPLETE = "RCD complete Index Incomplete";
+        public static String RCD_INCOMPLETE_INDEX_INCOMPLETE = "RCD Incomplete Index Incomplete";
+
+
+        public static String PARTIALLY_COMPLETE = "Partially complete";
         public static String ALL_TASKS_COMPLETE = "All Tasks Complete";
         public static String INCOMPLETE = "Incomplete";
         public static String NOT_ELIGIBLE = "Not Eligible";
         public static String IN_PROGRESS = "In Progress";
+
+        public static String RCD_PARTIALLY_COMPLETE = "RCD Partially complete";
 
 
         //MDA status
@@ -409,6 +442,18 @@ public interface Constants {
         public static String INELIGIBLE = "Ineligible";
         public static String TASKS_INCOMPLETE = "Tasks Incomplete";
         public static String NOT_DISPENSED = "Not Dispensed";
+
+        public static String MONTHTHREECOMPLETE = "monththreecomplete";
+        public static String MONTHSIXCOMPLETE = "monthsixcomplete";
+        public static String NOTENROLLED = "notenrolled";
+        public static String ENROLLED = "enrolled";
+        public static String ENROLLED_NOT_COMPLETE = "enrollednotcomplete";
+
+
+        public static String INDEX_CASE_NOT_VISITED = "Index Case Not Visited";
+        public static String INDEX_CASE_COMPLETE = "Index Case Complete";
+
+
         public static String FAMILY_NO_TASK_REGISTERED = "Family No Task Registered";
 
         // Following are for grouped structure tasks. Not synced to server
@@ -605,6 +650,20 @@ public interface Constants {
 
         public static String STRUCTURE_SURVEY_NIGERIA = "json.form/structure_survey_form_nigeria.json";
 
+        public static String GDRS_RCD = "json.form/gdrs_rcd_form.json";
+
+        public static String GDRS_PASSIVE_CASE_DETECTION_FORM = "json.form/gdrs_passive_case_detection_form.json";
+
+        public static String GDRS_HEALTH_FACILITY_SCREENING = "json.form/gdrs_passive_case_detection_form.json";
+
+        public static String GDRS_HEALTH_FACILITY_PARASITOLOGY = "json.form/gdrs_health_facility_parasitology.json";
+
+        public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_individual_member.json";
+
+        public static String GDRS_INDEX_CASE = "json.form/gdrs_index_case.json";
+
+        public static String STRUCTURE_SURVEY_UW = "json.form/structure_survey_form_uw.json";
+
         public static String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form.json";
 
         public static String MDA_ONCHO_SURVEY_FORM_OTHER = "json.form/mda_oncho_survey_form_other.json";
@@ -712,6 +771,12 @@ public interface Constants {
         public static String SPRAY_OPERATOR_CODE = "sprayop_code";
 
         public static String SPRAY_OPERATOR_CODE_CONFIRMATION ="sprayop_code_confirm";
+
+        public static String ROUND_ONE_THRESHOLD ="round_one_threshold";
+
+        public static String ROUND_TWO_THRESHOLD ="round_two_threshold";
+
+        public static String ROUND_THREE_THRESHOLD ="round_three_threshold";
 
         public static String DATA_COLLECTOR = "datacollector";
 
@@ -853,6 +918,17 @@ public interface Constants {
         public static String STRUCTURE_SURVEY =  "Structure Survey";
         public static String MDA_ONCHOCERCIASIS_SURVEY = "MDA Onchocerciasis Survey";
 
+        public static String RCD = "RCD";
+        public static String RCD_MEMBER = "RCD Member";
+
+        public static String SCREENING = "Screening";
+
+        public static String INDEX_CASE = "Index Case";
+
+        public static String INDEX_CASE_MEMBER = "Index Case Member";
+
+        public static String PASSIVE_CASE_DETECTION = "Passive Case Detection";
+
     }
 
     public interface ECClientConfig {
@@ -917,6 +993,10 @@ public interface Constants {
 
         public static String FOR = "for";
 
+        public static String JSON = "json";
+
+        public static String HOUSEHOLD_ID = "household_id";
+
         public static String BUSINESS_STATUS = "business_status";
 
         public static String STATUS = "status";
@@ -948,6 +1028,8 @@ public interface Constants {
         public static String TASK_COUNT = "task_count";
 
         public static String BASE_ENTITY_ID = "base_entity_id";
+
+        public static String BASEENTITYID = "baseEntityId";
 
         public static String FIRST_NAME = "first_name";
 
@@ -1047,6 +1129,9 @@ public interface Constants {
         public static String COMPOUND_STRUCTURE = "compound_structure";
 
         public static String SPRAY_DATE = "spray_date";
+
+        public static String UPDATED_AT = "updatedAt";
+
         public static String ADMINISTERED_SPAQ = "administered_spaq";
 
         public static String NUMBER_OF_ADDITIONAL_DOSES = "number_of_additional_doses";

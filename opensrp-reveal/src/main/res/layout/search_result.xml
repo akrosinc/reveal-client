@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_result_background"
+        android:orientation="vertical">
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp"
+            >
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+
+        <android.widget.LinearLayout
+            android:id="@+id/search_result_layout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <android.widget.TextView
+                android:id="@+id/search_result_label6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <android.widget.TextView
+                android:id="@+id/search_result_field6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:padding="10dp" />
+
+        </android.widget.LinearLayout>
+    </android.widget.LinearLayout>
+</android.widget.LinearLayout>

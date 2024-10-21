@@ -1,14 +1,19 @@
 package org.smartregister.reveal.util;
 
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOTENROLLED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_DISPENSED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYABLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHTHREECOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHSIXCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.TASKS_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPING;
@@ -23,7 +28,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+
 import org.smartregister.AllConstants;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -35,6 +42,9 @@ import org.smartregister.reveal.model.SprayCardDetails;
 import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
+
+import java.util.List;
+
 import timber.log.Timber;
 
 /**
@@ -79,6 +89,18 @@ public class CardDetailsUtil {
             case BusinessStatus.PARTIALLY_RECEIVED:
                 cardDetails.setStatusColor(R.color.partially_sprayed);
                 break;
+            case BusinessStatus.INDEX_CASE_NOT_VISITED:
+                cardDetails.setStatusColor(R.color.cyan);
+                break;
+            case BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE:
+            case BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE:
+                cardDetails.setStatusColor(R.color.dark_cyan);
+                break;
+            case BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE:
+                cardDetails.setStatusColor(R.color.purple);
+                break;
+            case BusinessStatus.RCD_PARTIALLY_COMPLETE:
+                cardDetails.setStatusColor(R.color.orange);
             case PARTIALLY_SPRAYED:
                 if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry()
                         == Country.SENEGAL_EN) {
@@ -159,7 +181,7 @@ public class CardDetailsUtil {
             tvLarvicideDate.setText(activity.getResources().getString(R.string.larval_breeding_larvacide_date_test_text) + endDate);
             activity.findViewById(R.id.larval_breeding_card_view).setVisibility(View.VISIBLE);
         } else if (PAOT.equals(interventionType)) {
-            String lastUpdatedDate =  mosquitoHarvestCardDetails.getStartDate();
+            String lastUpdatedDate = mosquitoHarvestCardDetails.getStartDate();
 
             TextView lastUpdatedDateView = activity.findViewById(R.id.paot_last_updated_date);
             lastUpdatedDateView.setText(activity.getResources().getString(R.string.paot_last_updated_date_test_text) + lastUpdatedDate);
@@ -173,12 +195,12 @@ public class CardDetailsUtil {
             TextView tvIneligibleStructuresLabel = activity.findViewById(R.id.ineligible_structures_label);
             ScrollView svEligibleStructuresScrollView = activity.findViewById(R.id.eligible_structures_scrollview);
 
-            if(cardDetails.getTrueStructure().equalsIgnoreCase(AllConstants.BOOLEAN_FALSE)) {
+            if (cardDetails.getTrueStructure().equalsIgnoreCase(AllConstants.BOOLEAN_FALSE)) {
 
                 tvIneligibleStructuresLabel.setText(activity.getResources().getString(R.string.not_true_structure));
                 tvIneligibleStructuresLabel.setVisibility(View.VISIBLE);
                 svEligibleStructuresScrollView.setVisibility(View.GONE);
-            } else if(cardDetails.getEligStruc().equalsIgnoreCase(AllConstants.BOOLEAN_FALSE)) {
+            } else if (cardDetails.getEligStruc().equalsIgnoreCase(AllConstants.BOOLEAN_FALSE)) {
 
                 tvIneligibleStructuresLabel.setText(activity.getResources().getString(R.string.structure_ineligible));
                 tvIneligibleStructuresLabel.setVisibility(View.VISIBLE);
@@ -224,7 +246,7 @@ public class CardDetailsUtil {
             TextView tvFamilyHead = activity.findViewById(R.id.family_head);
             TextView tvReason = activity.findViewById(R.id.reason);
             Button changeSprayStatus = activity.findViewById(R.id.change_spray_status);
-            Button registerFamily  =  activity.findViewById(R.id.register_family);
+            Button registerFamily = activity.findViewById(R.id.register_family);
 
             Integer color = familyCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
@@ -253,17 +275,19 @@ public class CardDetailsUtil {
             TextView tvSprayOperator = activity.findViewById(R.id.user_id);
             TextView tvFamilyHead = activity.findViewById(R.id.family_head);
             TextView tvReason = activity.findViewById(R.id.reason);
+            TextView gdrsInterventonTextView = activity.findViewById(R.id.gdrs_intervention);
             TextView tvStructureNum = activity.findViewById(R.id.structure_number);
             Button changeSprayStatus = activity.findViewById(R.id.change_spray_status);
             Button registerFamily = activity.findViewById(R.id.register_family);
 
-            Button changeHouseholdStatus  =  activity.findViewById(R.id.change_household_status);
-            Button changeHabitatStatus  =  activity.findViewById(R.id.change_habitat_status);
-            Button changeLsmHouseholdStatus  =  activity.findViewById(R.id.change_lsm_household_status);
+            Button changeHouseholdStatus = activity.findViewById(R.id.change_household_status);
+            Button changeHabitatStatus = activity.findViewById(R.id.change_habitat_status);
+            Button changeLsmHouseholdStatus = activity.findViewById(R.id.change_lsm_household_status);
             Button changeOnchoStatus = activity.findViewById(R.id.change_oncho_status);
             Button changeStructureSurveyStatus = activity.findViewById(R.id.change_structure_survey_status);
             Button undoStructureSurveyStatus = activity.findViewById(R.id.btn_undo_structure_status);
-
+            Button changeGdrsRcdStatus = activity.findViewById(R.id.change_gdrs_rcd_status);
+            Button changeGdrsIndexStatus = activity.findViewById(R.id.change_gdrs_index_status);
 
             Integer color = surveyCardDetails.getStatusColor();
             tvSprayStatus.setTextColor(color == null ? activity.getResources().getColor(R.color.black) : activity.getResources().getColor(color));
@@ -273,16 +297,24 @@ public class CardDetailsUtil {
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
 
-            if (Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType())){
+            if (List.of(Action.MDA_SURVEY, Action.RCD, Action.INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
                 tvStructureNum.setVisibility(View.VISIBLE);
                 tvStructureNum.setText(String.format(activity.getResources().getString(R.string.structure_number), surveyCardDetails.getStructureNumber()));
+                if (List.of(Action.RCD, Action.INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
+                    gdrsInterventonTextView.setText(surveyCardDetails.getInterventionType());
+                    gdrsInterventonTextView.setVisibility(View.VISIBLE);
+                } else {
+                    gdrsInterventonTextView.setVisibility(View.GONE);
+                }
             }
             changeHouseholdStatus.setVisibility(Action.MDA_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeHabitatStatus.setVisibility(Action.HABITAT_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeOnchoStatus.setVisibility(Action.MDA_ONCHOCERCIASIS_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
-            changeStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType())?View.VISIBLE:View.GONE);
-            undoStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType())?View.VISIBLE:View.GONE);
+            changeStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            undoStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeGdrsRcdStatus.setVisibility(Action.RCD.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            changeGdrsIndexStatus.setVisibility(Action.INDEX_CASE.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeSprayStatus.setVisibility(View.GONE);
             registerFamily.setVisibility(View.GONE);
             tvPropertyType.setVisibility(View.GONE);
@@ -301,7 +333,7 @@ public class CardDetailsUtil {
      * @return status Translated status according to locale set
      */
     public static String getTranslatedBusinessStatus(String businessStatus) {
-        Context context =  RevealApplication.getInstance().getContext().applicationContext();
+        Context context = RevealApplication.getInstance().getContext().applicationContext();
 
         if (businessStatus == null)
             return context.getString(R.string.not_eligible);
@@ -339,10 +371,19 @@ public class CardDetailsUtil {
                 return context.getString(R.string.partially_complete_or_temp_absent);
             case "MDA complete":
                 return context.getString(R.string.mda_complete);
+            case ENROLLED:
+                return context.getString(R.string.enrolled);
+            case ENROLLED_NOT_COMPLETE:
+                return context.getString(R.string.enrollednotcomplete);
+            case MONTHTHREECOMPLETE:
+                return context.getString(R.string.month_three_complete);
+            case MONTHSIXCOMPLETE:
+                return context.getString(R.string.month_six_complete);
+            case NOTENROLLED:
+                return context.getString(R.string.notenrolled);
             default:
                 return businessStatus;
         }
-
     }
 
     /**
@@ -372,28 +413,28 @@ public class CardDetailsUtil {
 
     }
 
-    public static String getBaseBusinessStatus(String businessStatus){
-        Context context =  RevealApplication.getInstance().getContext().applicationContext();
-        if(context.getString(R.string.not_visited).equals(businessStatus)){
+    public static String getBaseBusinessStatus(String businessStatus) {
+        Context context = RevealApplication.getInstance().getContext().applicationContext();
+        if (context.getString(R.string.not_visited).equals(businessStatus)) {
             return NOT_VISITED;
-        } else if (context.getString(R.string.not_sprayed).equals(businessStatus)){
+        } else if (context.getString(R.string.not_sprayed).equals(businessStatus)) {
             return NOT_SPRAYED;
-        } else if (context.getString(R.string.sprayed).equals(businessStatus)){
+        } else if (context.getString(R.string.sprayed).equals(businessStatus)) {
             return SPRAYED;
-        } else if (context.getString(R.string.not_sprayable).equals(businessStatus)){
+        } else if (context.getString(R.string.not_sprayable).equals(businessStatus)) {
             return NOT_SPRAYABLE;
-        } else if (context.getString(R.string.complete).equals(businessStatus)){
+        } else if (context.getString(R.string.complete).equals(businessStatus)) {
             return COMPLETE;
-        } else if (context.getString(R.string.incomplete).equals(businessStatus)){
+        } else if (context.getString(R.string.incomplete).equals(businessStatus)) {
             return INCOMPLETE;
-        } else if (context.getString(R.string.not_eligible).equals(businessStatus)){
+        } else if (context.getString(R.string.not_eligible).equals(businessStatus)) {
             return NOT_ELIGIBLE;
-        } else if (context.getString(R.string.in_progress).equals(businessStatus)){
+        } else if (context.getString(R.string.in_progress).equals(businessStatus)) {
             return IN_PROGRESS;
         } else if (context.getString(R.string.sprayed).equals(businessStatus) && (getBuildCountry() == Country.ZAMBIA || getBuildCountry()
-                == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN)){
+                == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN)) {
             return PARTIALLY_SPRAYED;
-        } else if( context.getString(R.string.partially_sprayed).equals(businessStatus)){
+        } else if (context.getString(R.string.partially_sprayed).equals(businessStatus)) {
             return PARTIALLY_SPRAYED;
         }
         return businessStatus;

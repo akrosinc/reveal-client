@@ -52,6 +52,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
 
     private TableLayout tempTableLayoutViewMali;
 
+    private TableLayout tempTableLayoutViewGdrs;
+
 
     public IndicatorsCalculatorTask(Activity context, List<TaskDetails> tasks) {
         this.activity = context;
@@ -73,6 +75,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         tempTableLayoutViewNGSurvey = activity.findViewById(R.id.tempTableViewNGSurvey);
         tempTableLayoutViewKenya = activity.findViewById(R.id.tempTableViewKenya);
         tempTableLayoutViewMali = activity.findViewById(R.id.tempTableViewMALI);
+        tempTableLayoutViewGdrs = activity.findViewById(R.id.tempTableViewGDRS);
     }
 
     @Override
@@ -110,6 +113,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if (getBuildCountry() == Country.KENYA) {
             indicatorDetails = IndicatorUtils.processIndicatorsKenya(tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateKenyaIndicators(activity, indicatorDetails));
+        } else if (getBuildCountry() == Country.GDRS) {
+            indicatorDetails = IndicatorUtils.processIndicatorsGdrs(this.tasks);
+            indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateGdrsIndicators(this.activity, indicatorDetails));
         }
         return indicatorDetails;
 
@@ -172,12 +178,15 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
                 setNigeriaProgressIndicators(indicatorDetails);
             }
 
+        } else if (getBuildCountry() == Country.GDRS) {
+            setGdrsProgressIndicators(indicatorDetails);
         }
         tempTableLayoutView.setVisibility(View.GONE);
         tempTableLayoutViewKenya.setVisibility(View.GONE);
         tempTableLayoutViewMali.setVisibility(View.GONE);
         tempTableLayoutViewNG.setVisibility(View.GONE);
         tempTableLayoutViewNGSurvey.setVisibility(View.GONE);
+        tempTableLayoutViewGdrs.setVisibility(View.GONE);
 
         if (getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.RWANDA) {
             tempTableLayoutView.setVisibility(View.VISIBLE);
@@ -194,9 +203,14 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
 
             String interventionTypeForPlan = PreferencesUtil.getInstance().getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId());
 
-            if (interventionTypeForPlan != null && interventionTypeForPlan.equals(Constants.Intervention.SURVEY)){
-                tempTableLayoutViewNGSurvey.setVisibility(View.VISIBLE);
-                populateTableView(getTableRowsNigeriaSurvey(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNGSurvey);
+            if (interventionTypeForPlan != null){
+                if (interventionTypeForPlan.equals(Constants.Intervention.SURVEY)){
+                    tempTableLayoutViewNGSurvey.setVisibility(View.VISIBLE);
+                    populateTableView(getTableRowsNigeriaSurvey(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNGSurvey);
+                } else {
+                    tempTableLayoutViewNGSurvey.setVisibility(View.VISIBLE);
+                    populateTableView(getTableRowsNigeriaSurvey(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNGSurvey);
+                }
             } else {
                 tempTableLayoutViewNG.setVisibility(View.VISIBLE);
                 populateTableView(getTableRowsNigeria(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNG);
@@ -207,6 +221,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             tempTableLayoutViewKenya.setVisibility(View.VISIBLE);
             tableView.setVisibility(View.GONE);
             populateTableView(getTableRowsKenya(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewKenya);
+        } else if (getBuildCountry() == Country.GDRS) {
+            tempTableLayoutViewGdrs.setVisibility(View.VISIBLE);
+            populateTableView(getTableRowsGdrs(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewGdrs);
         } else {
             tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
         }
@@ -264,6 +281,22 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
 
     }
 
+    private void setGdrsProgressIndicators(final IndicatorDetails indicatorDetails) {
+
+        progressIndicator.setProgress(indicatorDetails.getIndexStructureCoverage());
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getIndexStructureCoverage()));
+        progressIndicator.setSubTitle(activity.getString(R.string.index_case_coverage));
+
+        progressIndicator2.setProgress(indicatorDetails.getRcdStructureCoverage());
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getRcdStructureCoverage()));
+        progressIndicator2.setSubTitle(activity.getString(R.string.rcd_coverage));
+
+        progressIndicator3.setProgress(indicatorDetails.getVisitedGDRSCoverage());
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getVisitedGDRSCoverage()));
+        progressIndicator.setSubTitle(activity.getString(R.string.gdrs_visited_coverage));
+
+    }
+
     private void setNigeriaProgressIndicators(final IndicatorDetails indicatorDetails) {
         int totalStructures = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
         int visited = totalStructures - indicatorDetails.getNotVisited();
@@ -292,14 +325,6 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         progressIndicator.setSubTitle(this.activity.getString(R.string.visitation_coverage));
         progressIndicator.setProgress(visitationCoverage);
         progressIndicator.setTitle(this.activity.getString(R.string.n_percent, visitationCoverage));
-
-
-//        int totalEligible = indicatorDetails.getTotalStructures() - indicatorDetails.getIneligible();
-//        int surveyed = indicatorDetails.getSurveyedStructures();
-//        int surveyCoverage = totalEligible > 0 ? Math.round(surveyed * 100 / totalEligible) : 0;
-//        progressIndicator2.setSubTitle(this.activity.getString(R.string.survey_coverage));
-//        progressIndicator2.setProgress(surveyCoverage);
-//        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, surveyCoverage));
 
         progressIndicator2.setVisibility(View.GONE);
         progressIndicator3.setVisibility(View.GONE);
@@ -365,9 +390,24 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
                 R.id.mali_individual_total_treated_cell);
     }
 
+    private List<Integer> getTableRowsGdrs() {
+        return Arrays.asList(R.id.gdrs_totalRcdStructures,
+                R.id.gdrs_totalRcdMemberTasks,
+                R.id.gdrs_totalIndexStructure,
+                R.id.gdrs_totalIndexMemberTasks,
+                R.id.gdrs_totalCompleteRcdStructures,
+                R.id.gdrs_totalCompleteRcdMemberTasks,
+                R.id.gdrs_totalCompleteIndexStructure,
+                R.id.gdrs_totalCompleteIndexMemberTasks,
+                R.id.gdrs_totalUnVisitRcdStructures,
+                R.id.gdrs_totalUnVisitIndexStructure,
+                R.id.gdrs_totalVisitIndexStructure,
+                R.id.gdrs_totalVisitRCDStructure);
+    }
+
     private boolean shouldIndicatorsBeVisible() {
         return Utils.getInterventionLabel() == R.string.irs || getBuildCountry() == Country.RWANDA || getBuildCountry()
-                == Country.RWANDA_EN || Country.NIGERIA == getBuildCountry() || Country.KENYA == getBuildCountry();
+                == Country.RWANDA_EN || Country.NIGERIA == getBuildCountry() || Country.KENYA == getBuildCountry() || Country.GDRS == getBuildCountry();
     }
 
 
