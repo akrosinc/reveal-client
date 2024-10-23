@@ -10,6 +10,7 @@ import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_I
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_TARGET_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PROVINCE;
 import static org.smartregister.reveal.util.Constants.Preferences.FACILITY_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.HDSS_MAX_SERVER_VERSION;
 import static org.smartregister.reveal.util.Constants.Preferences.HIGHEST_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.IS_GDRS_PLAN;
 import static org.smartregister.reveal.util.Constants.Preferences.SELECTED_COMPOUND_ID;
@@ -249,4 +250,13 @@ public class PreferencesUtil {
     public String getSelectedHouseholdID() {
         return allSharedPreferences.getPreference(SELECTED_HOUSEHOLD_ID);
     }
+
+    public void setHdssMaxServerVersion(long hdssMaxServerVersion) {
+        allSharedPreferences.setLongPreference(HDSS_MAX_SERVER_VERSION,hdssMaxServerVersion);
+    }
+
+    public long getHdssMaxServerVersion(){
+        return allSharedPreferences.getLongPreference(HDSS_MAX_SERVER_VERSION);
+    }
+
 }

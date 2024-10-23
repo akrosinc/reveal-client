@@ -9,4 +9,5 @@ import lombok.Data;
 @Builder
 public class HdssCompound implements Serializable {
     private String compoundId;
+    private long serverVersion;
 }

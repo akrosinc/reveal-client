@@ -20,5 +20,8 @@ public class HdssCompoundObj implements Serializable {
     List<HdssHouseholdStructure> allHouseholdStructure;
 
     List<HdssIndividual> allIndividuals;
+    boolean isEmpty;
+
+    long serverVersion;
 
 }

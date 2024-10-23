@@ -13,4 +13,5 @@ public class HdssCompoundHousehold implements Serializable {
 
     private String compoundId;
     private String householdId;
+    private long serverVersion;
 }

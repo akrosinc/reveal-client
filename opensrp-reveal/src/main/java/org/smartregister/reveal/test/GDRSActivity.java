@@ -452,10 +452,13 @@ public class GDRSActivity extends AppCompatActivity {
                         dob = dobObj.optString("value");
                     }
 
-                    HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId);
+                    long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
+
+                    hdssMaxServerVersion++;
+                    HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId,hdssMaxServerVersion);
                     hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender);
+                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender,hdssMaxServerVersion);
                     hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
 
                     taskUtils.generateTask(this, uuid.toString(), locationUUID, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);

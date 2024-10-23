@@ -10,4 +10,5 @@ import lombok.Data;
 public class HdssHouseholdStructure implements Serializable {
     private String householdId;
     private String structureId;
+    private long serverVersion;
 }

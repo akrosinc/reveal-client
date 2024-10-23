@@ -1,13 +1,10 @@
 package org.smartregister.sync.intent;
 
-import static org.smartregister.util.Log.logError;
-
 import android.content.Intent;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.HdssRepository;
 import org.smartregister.sync.helper.HdssServiceHelper;
-
 
 
 public class HdssSyncIntentService extends BaseSyncIntentService {
@@ -29,12 +26,9 @@ public class HdssSyncIntentService extends BaseSyncIntentService {
         HdssRepository.createHouseholdStructureTable(hdssRepository.getWritableDatabase());
         HdssRepository.createHouseholdIndividualTable(hdssRepository.getWritableDatabase());
         HdssRepository.createIndividualTable(hdssRepository.getWritableDatabase());
-        HdssRepository.deleteData(hdssRepository.getWritableDatabase());
+        this.hdssServiceHelper.syncHdssDetails();
+        CoreLibrary.getInstance().context().setFetchedHdssDetails(true);
 
-//        if (!CoreLibrary.getInstance().context().hasFetchedHdssDetails()) {
-            this.hdssServiceHelper.syncHdssDetails();
-            CoreLibrary.getInstance().context().setFetchedHdssDetails(true);
-//        }
     }
 
     @Override

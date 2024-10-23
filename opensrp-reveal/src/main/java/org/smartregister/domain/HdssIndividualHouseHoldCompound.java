@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class HdssIndividualHouseHoldCompound implements Serializable {
     private String identifier;
     private String individualId;
@@ -15,4 +14,15 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
     private String gender;
     private String householdId;
     private String compoundId;
+    private int serverVersion;
+    private String structureId;
+
+    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId) {
+        this.identifier = identifier;
+        this.individualId = individualId;
+        this.dob = dob;
+        this.gender = gender;
+        this.householdId = householdId;
+        this.compoundId = compoundId;
+    }
 }

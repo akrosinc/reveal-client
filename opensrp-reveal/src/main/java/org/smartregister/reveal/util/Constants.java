@@ -193,6 +193,8 @@ public interface Constants {
 
         public static String SELECTED_COMPOUND_ID = "SELECTED_COMPOUND_ID";
         public static String SELECTED_HOUSEHOLD_ID = "SELECTED_HOUSEHOLD_ID";
+        public static String HDSS_MAX_SERVER_VERSION = "HDSS_MAX_SERVER_VERSION";
+        public static String HDSS_MAX_SYNCED_SERVER_VERSION = "HDSS_MAX_SYNCED_SERVER_VERSION";
 
     }
 

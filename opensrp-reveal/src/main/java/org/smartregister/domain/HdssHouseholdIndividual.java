@@ -13,4 +13,5 @@ public class HdssHouseholdIndividual implements Serializable {
 
     private String householdId;
     private String individualId;
+    private long serverVersion;
 }

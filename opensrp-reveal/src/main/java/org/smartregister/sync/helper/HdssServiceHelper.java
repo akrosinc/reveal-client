@@ -1,6 +1,8 @@
 package org.smartregister.sync.helper;
 
+import static org.smartregister.AllConstants.BATCH_SIZE;
 import static org.smartregister.AllConstants.PerformanceMonitoring.HDSS_SYNC;
+import static org.smartregister.reveal.api.RevealService.HDSS_PUSH_URL;
 import static org.smartregister.reveal.api.RevealService.HDSS_SYNC_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
@@ -17,6 +19,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.HdssCompoundObj;
+import org.smartregister.domain.HdssIndividualHouseHoldCompound;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncProgress;
@@ -63,22 +66,56 @@ public class HdssServiceHelper extends BaseHelper {
 //        syncProgress.setSyncEntity(SyncEntity.HDSS);
 //
 //        syncProgress.setTotalRecords(totalRecords);
-        String currentOperationalAreaId = PreferencesUtil.getInstance().getCurrentOperationalAreaId();
-        batchhdssEntities(currentOperationalAreaId);
+
+        try {
+            pushHdssEntities();
+        } catch (Exception e){
+            Timber.tag("Reveal Exception").e("cannot push down hdss items");
+        }
+
+
+        batchhdssEntities();
+
 //        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locationStructures.size()));
 //        sendSyncProgressBroadcast(syncProgress, context);
     }
 
-    private void batchhdssEntities(String currentOperationalAreaId ) {
-        long serverVersion = 0;
+    private void pushHdssEntities() throws Exception {
+        long minServerVersion = hdssRepository.getMinServerVersionFromMaxOfAllHdssTables();
+
+        List<HdssIndividualHouseHoldCompound> itemsGreateThanServerVersion = hdssRepository.getItemsGreateThanServerVersion(minServerVersion);
+
+        String json = hdssGson.toJson(itemsGreateThanServerVersion);
+
+        pushHdssEntities(json);
+
+    }
+
+    private void batchhdssEntities() {
+        long serverVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
         String providerId = allSharedPreferences.fetchRegisteredANM();
 
         try {
 
             startTrace(hdssSyncTrace);
-            String hdssResponse = fetchHdssEntities(providerId, serverVersion, currentOperationalAreaId);
-            HdssCompoundObj hdssCompounds = hdssGson.fromJson(hdssResponse, HdssCompoundObj.class);
+            boolean isEmpty = false;
 
+            do {
+                String hdssResponse = fetchHdssEntities(providerId, serverVersion, 400);
+                HdssCompoundObj hdssCompounds = hdssGson.fromJson(hdssResponse, HdssCompoundObj.class);
+                isEmpty = hdssCompounds.isEmpty();
+
+                if (!isEmpty) {
+                    PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
+                    serverVersion = hdssCompounds.getServerVersion();
+                    hdssRepository.addOrUpdateCompounds(hdssCompounds.getAllCompounds());
+                    hdssRepository.addOrUpdateCompoundHouseholds(hdssCompounds.getCompoundHouseHolds());
+                    hdssRepository.addOrUpdateHouseholdStructure(hdssCompounds.getAllHouseholdStructure());
+                    hdssRepository.addOrUpdateHouseholdIndividual(hdssCompounds.getAllHouseholdIndividual());
+                    hdssRepository.addOrUpdateIndividual(hdssCompounds.getAllIndividuals());
+                }
+
+            } while (!isEmpty);
 //            addAttribute(hdssSyncTrace, COUNT, String.valueOf(hdssCompounds.size()));
 //            stopTrace(hdssSyncTrace);
 
@@ -101,19 +138,41 @@ public class HdssServiceHelper extends BaseHelper {
 //                                    HdssCompound.HdssHousehold::getIndividuals));
 
             
-            hdssRepository.addOrUpdateCompounds(hdssCompounds.getAllCompounds());
-            hdssRepository.addOrUpdateCompoundHouseholds(hdssCompounds.getCompoundHouseHolds());
-            hdssRepository.addOrUpdateHouseholdStructure(hdssCompounds.getAllHouseholdStructure());
-            hdssRepository.addOrUpdateHouseholdIndividual(hdssCompounds.getAllHouseholdIndividual());
-            hdssRepository.addOrUpdateIndividual(hdssCompounds.getAllIndividuals());
+
 
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
     }
 
+    private String pushHdssEntities(String json) throws Exception {
 
-    private String fetchHdssEntities(String userId, Long serverVersion,String currentOperationalAreaId) throws Exception {
+        HTTPAgent httpAgent = getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(HDSS_PUSH_URL + " http agent is null");
+        }
+
+        String baseUrl = getFormattedBaseUrl();
+
+        Response<String> resp;
+
+        resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, HDSS_PUSH_URL),
+                json);
+
+        if (resp.isFailure()) {
+            FirebaseLogger.logApiFailures(json, resp);
+            throw new NoHttpResponseException(HDSS_PUSH_URL + " not returned data");
+        }
+
+
+//        totalRecords = resp.getTotalRecords();
+
+
+        return resp.payload();
+    }
+
+
+    private String fetchHdssEntities(String userId, Long serverVersion,int batchSize) throws Exception {
 
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
@@ -126,8 +185,8 @@ public class HdssServiceHelper extends BaseHelper {
 
         JSONObject request = new JSONObject();
         request.put(USERID, userId);
-        request.put(CURRENT_OPERATIONAL_AREA_ID, currentOperationalAreaId);
         request.put(AllConstants.SERVER_VERSION, serverVersion);
+        request.put(BATCH_SIZE,batchSize);
 
         resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, HDSS_SYNC_URL),
                 request.toString());

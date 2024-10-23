@@ -234,6 +234,13 @@ public class AllSharedPreferences {
         return preferences.getString(key, "");
     }
 
+    public long getLongPreference(String key){
+        return preferences.getLong(key,0L);
+    }
+    public void setLongPreference(String key, long value){
+        preferences.edit().putLong(key,value).commit();
+    }
+
     public boolean getBooleanPreference(String key) {
         return preferences.getBoolean(key, false);
     }
