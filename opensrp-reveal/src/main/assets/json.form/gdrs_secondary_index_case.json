@@ -1,6 +1,6 @@
 {
   "count": "1",
-  "encounter_type": "parasitology",
+  "encounter_type": "secondary_index_case_member",
   "form_version": "0.0.2",
   "entity_id": "",
   "metadata": {
@@ -48,129 +48,61 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Health Facility Parasitology form",
+    "title": "Index Case Confirmation form",
     "display_back_button": true,
     "no_padding": true,
     "fields": [
       {
-        "key": "barcode",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "barcode",
-        "barcode_type": "qrcode",
-        "hint": "Referral QR Code",
-        "scanButtonText": "Scan QR Code",
-        "v_required": {
-          "value": "true",
-          "err": "Please scan QR Code"
-        }
-      },
-      {
-        "key": "date",
-        "type": "date_picker",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "hint": "Date of microscopy",
-        "max_date": "today",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the date"
-        }
-      },
-      {
-        "key": "microscopy_results",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Microscopy results",
-        "options": [
-          {
-            "key": "negative",
-            "text": "Negative"
-          },
-          {
-            "key": "positive",
-            "text": "Positive"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please scan QR Code"
-        }
-      },
-      {
-        "key": "species",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Species",
-        "options": [
-          {
-            "key": "plasFalc",
-            "text": "Plasmodium falciparum"
-          },
-          {
-            "key": "plasOv",
-            "text": "Plasmodium ovale"
-          },
-          {
-            "key": "plasMal",
-            "text": "Plasmodium malariae"
-          },
-          {
-            "key": "pfpo",
-            "text": "Pf + Po"
-          },
-          {
-            "key": "pfpm",
-            "text": "Pf + Pm"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Please scan QR Code"
-        },
-        "relevance": {
-          "step1:microscopy_results": {
-            "type": "string",
-            "ex": "equalTo(., \"positive\")"
-          }
-        }
-      },
-      {
-        "key": "parasitaemia",
+        "key": "individual",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "Parasitaemia (per/200WBCs)",
-        "edit_type": "number",
-        "v_required": {
-          "value": true,
-          "err": "This field is required"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Must be a number"
-        },
-        "relevance": {
-          "step1:microscopy_results": {
-            "type": "string",
-            "ex": "equalTo(., \"positive\")"
-          }
-        }
+        "read_only": "true",
+        "hint": "Current Individual ID",
+        "edit_type": "name",
+        "text_size": "8sp"
       },
       {
-        "key": "gametocytes",
+        "key": "household",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Current Household ID",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
+        "key": "compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Current Compound ID",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
+        "key": "structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Current Structure ID",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
+        "key": "correct_structure",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Gametocytes (per/200 WBCs)",
+        "label": "Is this the correct structure of the Secondary Index Case?",
         "options": [
           {
             "key": "yes",
@@ -183,35 +115,85 @@
         ],
         "v_required": {
           "value": "true",
-          "err": "Please scan QR Code"
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "correct_household_compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this the correct Household ID and correct Compound ID?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         },
         "relevance": {
-          "step1:microscopy_results": {
+          "step1:correct_structure": {
             "type": "string",
-            "ex": "equalTo(., \"positive\")"
+            "ex": "equalTo(., \"no\")"
           }
         }
       },
       {
-        "key": "total_gametocytes",
+        "key": "household_compound",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Total gametocytes",
-        "edit_type": "number",
+        "type": "reveal_multi_select_list",
+        "dialogTitle": "Select the correct Household and Compound ID",
+        "buttonText": "+ Select the correct Household and Compound ID",
+        "searchHint": "Type household or compound ID",
+        "maxSelectable": "1",
+        "source": "true",
+        "repositoryClass":"org.smartregister.reveal.model.HdssCompoundHouseholdRepository",
         "v_required": {
           "value": true,
-          "err": "This field is required"
-        },
-        "v_numeric": {
-          "value": "true",
-          "err": "Must be a number"
+          "err": "Please select the correct Household and Compound ID"
         },
         "relevance": {
-          "step1:gametocytes": {
+          "step1:correct_household_compound": {
             "type": "string",
-            "ex": "equalTo(., \"yes\")"
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "correcting_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the household ID associated with this structure correct?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:correct_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
           }
         }
       },
@@ -223,12 +205,12 @@
         "type": "hidden"
       },
       {
-        "key": "comments",
+        "key": "business_status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Comments"
+        "type": "hidden",
+        "value": "Complete"
       }
     ]
   }

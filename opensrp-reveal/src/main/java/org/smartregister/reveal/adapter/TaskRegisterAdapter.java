@@ -85,7 +85,11 @@ public class TaskRegisterAdapter extends RecyclerView.Adapter<TaskRegisterViewHo
             name = "Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
                     .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
             action = context.getString(R.string.view);
-        } else {
+        } else if (Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())) {
+            name = "Secondary Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            action = context.getString(R.string.view);
+        }else {
             name = NOT_ELIGIBLE.equals(task.getBusinessStatus()) ? context.getString(R.string.ineligible_location) : task.getFamilyName();
             if (name == null) {
                 name = task.getStructureName() != null ? task.getStructureName() : context.getString(R.string.unenumerated_structure);

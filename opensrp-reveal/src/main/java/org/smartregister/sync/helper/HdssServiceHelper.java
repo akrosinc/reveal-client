@@ -82,7 +82,6 @@ public class HdssServiceHelper extends BaseHelper {
 
     private void pushHdssEntities() throws Exception {
         long minServerVersion = hdssRepository.getMinServerVersionFromMaxOfAllHdssTables();
-
         List<HdssIndividualHouseHoldCompound> itemsGreateThanServerVersion = hdssRepository.getItemsGreateThanServerVersion(minServerVersion);
 
         String json = hdssGson.toJson(itemsGreateThanServerVersion);
@@ -106,13 +105,14 @@ public class HdssServiceHelper extends BaseHelper {
                 isEmpty = hdssCompounds.isEmpty();
 
                 if (!isEmpty) {
-                    PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
+
                     serverVersion = hdssCompounds.getServerVersion();
                     hdssRepository.addOrUpdateCompounds(hdssCompounds.getAllCompounds());
                     hdssRepository.addOrUpdateCompoundHouseholds(hdssCompounds.getCompoundHouseHolds());
                     hdssRepository.addOrUpdateHouseholdStructure(hdssCompounds.getAllHouseholdStructure());
                     hdssRepository.addOrUpdateHouseholdIndividual(hdssCompounds.getAllHouseholdIndividual());
                     hdssRepository.addOrUpdateIndividual(hdssCompounds.getAllIndividuals());
+                    PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
                 }
 
             } while (!isEmpty);

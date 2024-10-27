@@ -1046,7 +1046,9 @@
     <string name="current_server">Current Server: %s</string>
     <string name="reveal_language_selector">Select Language</string>
     <string name="edit_index_case">Edit Index Case</string>
-    <string name="action_index_case">Action Index Case</string>
+    <string name="confirm_index_case">Confirm Index Case</string>
+    <string name="edit_secondary">Edit Secondary Index</string>
+    <string name="confirm_secondary">Confirm Secondary Index</string>
     <string name="edit_racd">Edit RACD</string>
     <string name="action_racd">Action RACD</string>
 </resources>

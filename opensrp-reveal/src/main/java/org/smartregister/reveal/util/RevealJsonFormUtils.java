@@ -83,6 +83,7 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -963,11 +964,15 @@ public class RevealJsonFormUtils {
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.GDRS_INDEX_CASE:
+            case JsonForm.GDRS_SECONDARY_INDEX_CASE:
             case JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY:
             case JsonForm.GDRS_RCD:
             case JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM:
                 setDefaultValue(formJSON, JsonForm.HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+                if (formName.equals(JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM)){
+                    setDefaultValue(formJSON, DATE, LocalDate.now().toString("dd-MM-yyyy"));
+                }
                 break;
             case JsonForm.DAILY_SUMMARY_SENEGAL:
             case JsonForm.DAILY_SUMMARY_SENEGAL_EN:
@@ -1059,7 +1064,6 @@ public class RevealJsonFormUtils {
                         PreferencesUtil.getInstance().getCurrentDistrict());
 
             case JsonForm.SPRAY_FORM_ZAMBIA:
-                Timber.tag("UserDetails").d("IRS Form");
                 setDefaultValue(formJSON, SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
 

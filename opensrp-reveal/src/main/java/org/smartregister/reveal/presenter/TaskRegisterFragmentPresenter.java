@@ -45,6 +45,7 @@ import timber.log.Timber;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
 import static org.smartregister.reveal.util.Constants.Intervention.BLOOD_SCREENING;
 import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
@@ -247,7 +248,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
                             && !(REGISTER_FAMILY.equals(details.getTaskCode()) && Task.TaskStatus.READY.name().equals(details.getTaskStatus())))) { // skip if we have a READY family reg task
                 setTaskDetails(details);
                 interactor.fetchFamilyDetails(details.getStructureId());
-            } else if (List.of(RCD,INDEX_CASE).contains(details.getTaskCode())){
+            } else if (List.of(RCD,INDEX_CASE,SECONDARY_INDEX_CASE).contains(details.getTaskCode())){
                 interactor.startGDRSActivity(this.getView().getContext(),details);
             } else {
                 getView().showProgressDialog(R.string.opening_form_title, R.string.opening_form_message);

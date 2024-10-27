@@ -1,7 +1,10 @@
 package org.smartregister.reveal.searchbox;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.icu.util.Calendar;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,13 +30,18 @@ import androidx.work.WorkManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
 import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.interfaces.JsonApi;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.widget.RevealSearchBoxFactory;
 
@@ -42,16 +51,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
 
+    public static final String SEARCH_STRING = "searchString";
+    public static final String GENDER = "gender";
+    public static final String DOB = "dob";
+    public static final String BATCH_NUMBER = "batchNumber";
+    public static final String BATCH_SIZE = "batchSize";
     public static String REVEAL_SEARCH_BOX = "reveal_search_box";
     private String gender;
 
-    private String searchText;
+    private String searchText = null;
 
     private JsonFormFragment formFragment;
 
@@ -59,50 +74,99 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
     private boolean popup;
 
+    private HdssRepository hdssRepository;
+
+    private static int batchSize = 7;
+
+    private int batchNumber = 0;
+
+    private boolean isLoading = false;
+
+    private RecyclerView recyclerView;
+
+    private SearchItemAdapter searchItemAdapter;
+
+    List<SearchItem> searchItems;
+
+    EditText editTextDate;
+
+    String localSearchDate;
+
+    public HdssSearchBoxFactory() {
+        this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
+        HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase());
+    }
+
     @Override
     public List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener listener, boolean popup, JsonFormFragment formFragment) throws JSONException {
 
         List<View> views = new ArrayList<>(1);
         LayoutInflater inflater = formFragment.getLayoutInflater();
         this.formFragment = formFragment;
-
         this.stepName = stepName;
         this.popup = popup;
-
         LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.search_box, null, false);
-
         addHeaderTextView(linearLayout, jsonObject);
-
-        addSpinner(linearLayout);
-
-        addEditText(linearLayout);
-
+        addGenderSpinner(linearLayout);
+        addSearchEditText(linearLayout);
         NativeEditText resultTextView = addTextView(linearLayout);
-
         addButton(context, linearLayout, jsonObject, resultTextView);
-
         addClearButton(linearLayout, resultTextView);
-
         attachLogic(jsonObject, context, linearLayout);
-
         setTags(stepName, jsonObject, resultTextView, popup);
 
-        views.add(linearLayout);
+        addDatePickerEditText(linearLayout, context);
+        addDateClearButton(linearLayout);
 
+        views.add(linearLayout);
         formFragment.getJsonApi().addFormDataView(resultTextView);
         return views;
+    }
 
+    private void addDateClearButton(LinearLayout linearLayout) {
+        Button clearButton = linearLayout.findViewById(R.id.buttonClear);
+        clearButton.setOnClickListener(v -> {
+            editTextDate.setText(null);
+            localSearchDate = null;
+        });
+    }
+
+    private void addDatePickerEditText(LinearLayout linearLayout, Context context) {
+        editTextDate = linearLayout.findViewById(R.id.editTextDate);
+        editTextDate.setOnClickListener(v -> showDatePickerDialog(context));
 
     }
 
-    private void addSpinner(LinearLayout view) {
+    private void showDatePickerDialog(Context context) {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context, (view, selectedYear, selectedMonth, selectedDay) -> {
+            LocalDate searchDate = new LocalDate(selectedYear, selectedMonth + 1, selectedDay);
+
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MM-yyyy");
+            String formattedDate = searchDate.toString(formatter);
+
+            localSearchDate = formattedDate;
+
+            editTextDate.setText(formattedDate);
+
+        }, year, month, day);
+
+        datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
+        datePickerDialog.show();
+    }
+    private void addGenderSpinner(LinearLayout view) {
         Spinner spinner = view.findViewById(R.id.gender_select);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-
+                    gender = null;
                 } else {
                     gender = parent.getItemAtPosition(position).toString();
                 }
@@ -110,7 +174,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                gender = null;
             }
         });
     }
@@ -125,7 +189,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     private void addButton(Context context, LinearLayout view, JSONObject jsonObject, NativeEditText resultTextView) {
         Button button = view.findViewById(R.id.search_button);
         button.setOnClickListener(v -> {
-            if (searchText.length() < 3) {
+
+            if (searchText!= null && searchText.length() < 3) {
                 Toast.makeText(context, "must capture > 3 characters to search", Toast.LENGTH_LONG).show();
             } else {
                 enqueueSearchWork(getSearchRequest(), v.getContext(), resultTextView);
@@ -146,50 +211,39 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
     }
 
-    private void addEditText(LinearLayout view) {
+    private void addSearchEditText(LinearLayout view) {
         EditText editText = view.findViewById(R.id.search_text);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
+                if (searchText.isEmpty()){
+                    searchText = null;
+                }
             }
         });
     }
 
     @Override
     public void enqueueSearchWork(SearchRequest request, Context context, TextView resultTextView) {
+
         HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
-
-        Data.Builder builder = new Data.Builder();
-
-        if (hdssSearchRequest.getSearchString() != null) {
-            builder.putString("searchString", hdssSearchRequest.getSearchString());
-        }
-
-        if (hdssSearchRequest.getGender() != null) {
-            builder.putString("gender", hdssSearchRequest.getGender());
-        }
-
-        if (hdssSearchRequest.getDob() != null) {
-            builder.putString("dob", hdssSearchRequest.getDob());
-        }
-
-        Data inputData = builder.build();
-
+        batchNumber = 0;
+        Data inputData = getSearchRequest(hdssSearchRequest);
         OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
-
         WorkManager.getInstance(context).enqueue(searchWorkRequest);
+        observeWorkInfo(context, resultTextView, searchWorkRequest);
+    }
 
+    private void observeWorkInfo(Context context, TextView resultTextView, OneTimeWorkRequest searchWorkRequest) {
         WorkManager.getInstance(context)
                 .getWorkInfoByIdLiveData(searchWorkRequest.getId())
                 .observe(this.formFragment.getViewLifecycleOwner(), new Observer<WorkInfo>() {
@@ -197,106 +251,177 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo != null && workInfo.getState().isFinished()) {
                             // Handle the result or update the UI
-                            if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                                // Update the UI for success
-                                Data outputData = workInfo.getOutputData();
-
-                                String json = outputData.getString("result");
-                                Gson gson = new Gson();
-
-                                List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
-                                }.getType());
-                                if (resultList != null && !resultList.isEmpty()) {
-                                    List<SearchItem> searchItems = resultList.stream().map(result -> {
-                                        SearchItem searchItem = new SearchItem();
-                                        if (result.getCompoundId() != null) {
-                                            searchItem.setLabel1("Compound Id");
-                                            searchItem.setField1(result.getCompoundId());
-                                        }
-                                        if (result.getHouseholdId() != null) {
-                                            searchItem.setLabel2("Household Id");
-                                            searchItem.setField2(result.getHouseholdId());
-                                        }
-                                        if (result.getIndividualId() != null) {
-                                            searchItem.setResult(result.getIndividualId());
-                                            searchItem.setLabel3("Individual Id");
-                                            searchItem.setField3(result.getIndividualId());
-                                        }
-                                        if (result.getGender() != null) {
-                                            searchItem.setLabel4("Gender");
-                                            searchItem.setField4(result.getGender());
-                                        }
-                                        if (result.getDob() != null) {
-                                            searchItem.setLabel5("Date of Birth");
-                                            searchItem.setField5(result.getDob());
-                                        }
-                                        return searchItem;
-                                    }).collect(Collectors.toList());
-
-                                    Dialog dialog = new Dialog(context);
-                                    dialog.setContentView(R.layout.search_dialog);
-
-                                    TextView headerTextView = dialog.findViewById(R.id.dialogTitle);
-                                    headerTextView.setText("Results");
-
-                                    Button closebutton = dialog.findViewById(R.id.closeButton);
-                                    closebutton.setText("Close");
-                                    closebutton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-
-
-                                    if (dialog.getWindow() != null) {
-                                        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    }
-
-                                    RecyclerView recyclerView = dialog.findViewById(R.id.search_recycler_view);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-                                    SearchItemAdapter searchItemAdapter = new SearchItemAdapter(context, searchItems, new SearchItemAdapter.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(SearchItem item) {
-                                            Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
-                                            for (View view : formDataViews){
-                                                if (view.getTag(R.id.key).equals("date_of_birth")){
-                                                    MaterialEditText textView = (MaterialEditText) view;
-                                                    textView.setText(item.getField5());
-                                                }
-                                                if (view.getTag(R.id.key).equals("gender")){
-                                                    MaterialEditText textView = (MaterialEditText) view;
-                                                    textView.setText(item.getField4());
-                                                }
-                                            }
-                                            resultTextView.setText(item.getResult());
-                                            formFragment.writeValue(stepName,"individual_household_compound_search",item.getResult(),getOpenMrsEntityParent(),getOpenMrsEntity(),getOpenMrsEntityId(),popup);
-                                            formFragment.writeValue(stepName,"date_of_birth",item.getField5(),getOpenMrsEntityParent(),getOpenMrsEntity(),getOpenMrsEntityId(),popup);
-                                            formFragment.writeValue(stepName,"gender",item.getField4(),getOpenMrsEntityParent(),getOpenMrsEntity(),getOpenMrsEntityId(),popup);
-
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    recyclerView.setAdapter(searchItemAdapter);
-
-                                    dialog.show();
-                                } else {
-                                    Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
-                                }
-
-                            } else if (workInfo.getState() == WorkInfo.State.FAILED) {
-                                Data outputData = workInfo.getOutputData();
-                                if (outputData.getString("error")!=null){
-                                    Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG).show();
-                                }
-                            }
+                            handleWorkResult(workInfo, context, resultTextView);
                         }
                     }
                 });
+    }
 
+    private void handleWorkResult(WorkInfo workInfo, Context context, TextView resultTextView) {
+        if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+            // Update the UI for success
+            handleSucceeded(workInfo, context, resultTextView);
+
+        } else if (workInfo.getState() == WorkInfo.State.FAILED) {
+            handleFailure(workInfo, context);
+        }
+    }
+
+    private static void handleFailure(WorkInfo workInfo, Context context) {
+        Data outputData = workInfo.getOutputData();
+        if (outputData.getString("error") != null) {
+            Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void handleSucceeded(WorkInfo workInfo, Context context, TextView resultTextView) {
+        Data outputData = workInfo.getOutputData();
+
+        String json = outputData.getString("result");
+        Gson gson = new Gson();
+
+        List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
+        }.getType());
+        if (resultList != null && !resultList.isEmpty()) {
+            searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
+            Dialog dialog = setupDialog(context);
+            setupRecyclerView(context, resultTextView, dialog);
+            dialog.show();
+        } else {
+            Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private static @NonNull Dialog setupDialog(Context context) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.search_dialog);
+        TextView headerTextView = dialog.findViewById(R.id.dialogTitle);
+        headerTextView.setText("Results");
+
+        Button closebutton = dialog.findViewById(R.id.closeButton);
+        closebutton.setText("Close");
+        closebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        return dialog;
+    }
+
+    private void setupRecyclerView(Context context, TextView resultTextView, Dialog dialog) {
+        recyclerView = dialog.findViewById(R.id.search_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (!isLoading && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == searchItems.size() - 1) {
+                    // Load next batch
+                    batchNumber++;
+                    Toast.makeText(context,"loading",Toast.LENGTH_SHORT).show();
+                    loadItems(batchNumber, batchSize,context);
+                }
+            }
+        });
+
+        searchItemAdapter = new SearchItemAdapter(context, searchItems, item -> handleItemOnClick(item, dialog, resultTextView));
+        recyclerView.setAdapter(searchItemAdapter);
+    }
+
+    private void handleItemOnClick(SearchItem item, Dialog dialog, TextView resultTextView) {
+        Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
+        for (View view : formDataViews) {
+            if (view.getTag(R.id.key).equals("date_of_birth")) {
+                MaterialEditText textView = (MaterialEditText) view;
+                textView.setText(item.getField5());
+            }
+            if (view.getTag(R.id.key).equals(GENDER)) {
+                MaterialEditText textView = (MaterialEditText) view;
+                textView.setText(item.getField4());
+            }
+        }
+        resultTextView.setText(item.getResult());
+        formFragment.writeValue(stepName, "individual_household_compound_search", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        formFragment.writeValue(stepName, "date_of_birth", item.getField5(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+
+        dialog.dismiss();
+    }
+
+    private @NonNull Data getSearchRequest(HdssSearchRequest hdssSearchRequest) {
+        Data.Builder builder = new Data.Builder();
+
+        if (hdssSearchRequest.getSearchString() != null) {
+            builder.putString(SEARCH_STRING, hdssSearchRequest.getSearchString());
+        }
+
+        if (hdssSearchRequest.getGender() != null) {
+            builder.putString(GENDER, hdssSearchRequest.getGender());
+        }
+
+        if (hdssSearchRequest.getDob() != null) {
+            builder.putString(DOB, hdssSearchRequest.getDob());
+        }
+
+        builder.putInt(BATCH_NUMBER, batchNumber);
+        builder.putInt(BATCH_SIZE, batchSize);
+
+        Data inputData = builder.build();
+        return inputData;
+    }
+
+    private static @NonNull SearchItem getSearchItem(SearchResponse result) {
+        SearchItem searchItem = new SearchItem();
+        if (result.getCompoundId() != null) {
+            searchItem.setLabel1("Compound Id");
+            searchItem.setField1(result.getCompoundId());
+        }
+        if (result.getHouseholdId() != null) {
+            searchItem.setLabel2("Household Id");
+            searchItem.setField2(result.getHouseholdId());
+        }
+        if (result.getIndividualId() != null) {
+            searchItem.setResult(result.getIndividualId());
+            searchItem.setLabel3("Individual Id");
+            searchItem.setField3(result.getIndividualId());
+        }
+        if (result.getGender() != null) {
+            searchItem.setLabel4("Gender");
+            searchItem.setField4(result.getGender());
+        }
+        if (result.getDob() != null) {
+            searchItem.setLabel5("Date of Birth");
+            searchItem.setField5(result.getDob());
+        }
+        return searchItem;
+    }
+
+    private void loadItems(int batchNumber, int batchSize,Context context) {
+        isLoading = true;
+
+        new Handler().postDelayed(() -> {
+            // Replace this with your actual data fetching logic
+            List<SearchItem> nextBatch = fetchData(batchNumber, batchSize);
+            searchItems.addAll(nextBatch);
+            searchItemAdapter.notifyDataSetChanged();
+            isLoading = false;
+            if (nextBatch.isEmpty()){
+                Toast.makeText(context,"no more items",Toast.LENGTH_SHORT).show();
+            }
+        }, 2000);
+    }
+
+    private List<SearchItem> fetchData(int batchNumber, int batchSize) {
+        List<SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchSize * batchNumber);
+
+        return searchResultsInBatches.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
     }
 
     @Override
@@ -305,6 +430,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         HdssSearchRequest request = new HdssSearchRequest();
         request.setGender(gender);
         request.setSearchString(searchText);
+        request.setDob(localSearchDate);
 
         return request;
     }
@@ -312,6 +438,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     @lombok.Data
     @Setter
     @Getter
+    @AllArgsConstructor
     public static class SearchResponse implements Serializable {
         private String id;
         private String individualId;

@@ -2,6 +2,11 @@ package org.smartregister.reveal.searchbox;
 
 import static org.smartregister.reveal.api.RevealService.HDSS_SEARCH_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_NUMBER;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_SIZE;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.DOB;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.GENDER;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.SEARCH_STRING;
 
 import android.content.Context;
 
@@ -11,19 +16,28 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 public class HdssSearchWorker extends Worker {
 
+    private HdssRepository hdssRepository;
+
     public HdssSearchWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
+        HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase());
     }
 
     @NonNull
@@ -32,14 +46,31 @@ public class HdssSearchWorker extends Worker {
 
         Data data = getInputData();
 
-        String searchString = data.getString("searchString");
-        String gender = data.getString("gender");
+        String searchString = data.getString(SEARCH_STRING);
+        String gender = data.getString(GENDER);
+        String dob = data.getString(DOB);
+
+        int batchSize = data.getInt(BATCH_SIZE,0);
+        int batchNumber = data.getInt(BATCH_NUMBER,0);
+
 
         try {
+            hdssRepository.deleteSearchResultsData();
 
-            String s = searchHdssEntities(searchString, gender);
+            String s = searchHdssEntities(searchString, gender, dob);
+
+            Gson gson = new Gson();
+
+            List<HdssSearchBoxFactory.SearchResponse> resultList = gson.fromJson(s, new TypeToken<List<HdssSearchBoxFactory.SearchResponse>>() {}.getType());
+
+            hdssRepository.addOrUpdateSearchResults(resultList);
+
+            List<HdssSearchBoxFactory.SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchNumber*batchSize);
+
+            String json = gson.toJson(searchResultsInBatches);
+
             Data output = new Data.Builder()
-                    .putString("result", s)
+                    .putString("result",json)
                     .build();
 
             return Result.success(output);
@@ -54,7 +85,7 @@ public class HdssSearchWorker extends Worker {
 
     }
 
-    private String searchHdssEntities(String searchString, String gender) throws Exception {
+    private String searchHdssEntities(String searchString, String gender, String dob) throws Exception {
 
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
@@ -70,6 +101,10 @@ public class HdssSearchWorker extends Worker {
 
         if (gender != null) {
             request.put("gender", gender);
+        }
+
+        if (dob != null) {
+            request.put("dob", dob);
         }
 
         resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, HDSS_SEARCH_URL),

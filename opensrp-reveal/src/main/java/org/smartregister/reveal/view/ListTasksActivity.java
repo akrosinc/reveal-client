@@ -8,6 +8,7 @@ import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVE
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
@@ -299,6 +300,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         findViewById(R.id.change_oncho_status).setOnClickListener(this);
         findViewById(R.id.change_structure_survey_status).setOnClickListener(this);
         findViewById(R.id.change_gdrs_index_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_secondary_index_status).setOnClickListener(this);
         findViewById(R.id.change_gdrs_rcd_status).setOnClickListener(this);
 
         findViewById(R.id.btn_undo_spray).setOnClickListener(this);
@@ -556,6 +558,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             listTaskPresenter.onChangeInterventionStatus(RCD);
         } else if (v.getId() == R.id.change_gdrs_index_status) {
             listTaskPresenter.onChangeInterventionStatus(INDEX_CASE);
+        } else if (v.getId() == R.id.change_gdrs_secondary_index_status) {
+            listTaskPresenter.onChangeInterventionStatus(SECONDARY_INDEX_CASE);
         } else if (v.getId() == R.id.change_habitat_status) {
             listTaskPresenter.onChangeInterventionStatus(HABITAT_SURVEY);
         } else if (v.getId() == R.id.change_lsm_household_status) {

@@ -3,6 +3,7 @@ package org.smartregister.reveal.presenter;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.SCREENING;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Tags.CANTON;
 import static org.smartregister.reveal.util.Constants.Tags.DISTRICT;
 import static org.smartregister.reveal.util.Constants.Tags.HEALTH_CENTER;
@@ -304,7 +305,7 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
 
         List<String> collect = planDefinition.getActions().stream().map(Action::getTitle).collect(Collectors.toList());
         prefsUtil.setIsGdrsPlan("FALSE");
-        if (collect.contains(Constants.Action.RCD) || collect.contains(INDEX_CASE) || collect.contains(SCREENING)) {
+        if (collect.contains(Constants.Action.RCD) || collect.contains(INDEX_CASE)  || collect.contains(SECONDARY_INDEX_CASE) || collect.contains(SCREENING)) {
             Intent createDB = new Intent(view.getContext(), HdssSyncIntentService.class);
             view.getContext().getApplicationContext().startService(createDB);
             prefsUtil.setIsGdrsPlan("TRUE");

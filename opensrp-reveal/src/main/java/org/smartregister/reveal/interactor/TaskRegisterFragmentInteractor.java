@@ -49,6 +49,7 @@ import androidx.core.util.Pair;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import net.sqlcipher.Cursor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -237,8 +238,23 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
 
 
             getHdssDetailsForTasks(tasks, lastLocation,structuresWithinBuffer);
-            
-            Collections.sort(tasks);
+
+            if (PreferencesUtil.getInstance().isGdrsPlan()!=null && PreferencesUtil.getInstance().isGdrsPlan().equals("TRUE")){
+                tasks.sort(new Comparator<TaskDetails>() {
+                    @Override
+                    public int compare(TaskDetails o1, TaskDetails o2) {
+                        Timber.tag("syncCreatedTaskToServer").i("sort %s %s",o1.getHouseHoldId(),o2.getHouseHoldId());
+                        if (o2.getHouseHoldId()!=null && o1.getHouseHoldId()!=null){
+                            return o1.getHouseHoldId().compareTo( o2.getHouseHoldId());
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
+            } else {
+                Collections.sort(tasks);
+            }
+
             appExecutors.mainThread().execute(() -> {
                 getPresenter().onTasksFound(tasks, structuresWithinBuffer);
             });
@@ -367,7 +383,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
             return;
         appExecutors.diskIO().execute(() -> {
             for (TaskDetails taskDetails : tasks) {
-                if (List.of(Constants.Action.RCD, Constants.Action.INDEX_CASE).contains(taskDetails.getTaskCode())) {
+                if (List.of(Constants.Action.RCD, Constants.Action.INDEX_CASE, Constants.Action.SECONDARY_INDEX_CASE).contains(taskDetails.getTaskCode())) {
 
                     List<HdssCompoundHousehold> compoundAndHouseholdByStructureId
                             = hdssRepository.getCompoundAndHouseholdByStructureId(taskDetails.getTaskEntity());
@@ -378,8 +394,16 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor implements Ta
                     }
                 }
             }
+            tasks.sort(new Comparator<TaskDetails>() {
+                @Override
+                public int compare(TaskDetails o1, TaskDetails o2) {
+                    Timber.tag("syncCreatedTaskToServer async").i("sort %s %s",o1.getHouseHoldId(),o2.getHouseHoldId());
+                    return o1.getHouseHoldId().compareTo( o2.getHouseHoldId());
+                }
+            });
 
         });
+
     }
 
     public void getStructure(TaskDetails taskDetails) {

@@ -14,6 +14,7 @@ import org.smartregister.domain.HdssIndividualHouseHoldCompound;
 import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.reveal.application.RevealApplication;
+import org.smartregister.reveal.searchbox.HdssSearchBoxFactory;
 import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class HdssRepository extends BaseRepository {
     public static final String SERVER_VERSION = "server_version";
 
     public static final String HDSS_INDIVIDUAL = "hdss_individual";
+    public static final String HDSS_SEARCH_RESULTS = "hdss_search_results";
     private static final String CREATE_HDSS_COMPOUND =
             "CREATE TABLE IF NOT EXISTS " + HDSS_COMPOUND + " ( " +
                     " " + COMPOUND_ID + " TEXT NOT NULL, " +
@@ -87,6 +89,18 @@ public class HdssRepository extends BaseRepository {
                     " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
                     ");";
 
+    private static final String CREATE_HDSS_SEARCH_RESULTS =
+            "CREATE TABLE IF NOT EXISTS " + HDSS_SEARCH_RESULTS + "  ( " +
+                    "  " + IDENTIFIER + "  TEXT NOT NULL, " +
+                    "  " + INDIVIDUAL_ID + "  TEXT NOT NULL, " +
+                    " " + COMPOUND_ID + " TEXT NOT NULL, " +
+                    " " + HOUSEHOLD_ID + "  TEXT NOT NULL, " +
+                    "  " + DOB + "  TEXT NOT NULL, " +
+                    "  " + GENDER + "  TEXT NOT NULL, " +
+                    "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
+                    " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
+                    ");";
+
     public static void createCompoundTable(SQLiteDatabase database) {
         database.execSQL(CREATE_HDSS_COMPOUND);
     }
@@ -105,6 +119,10 @@ public class HdssRepository extends BaseRepository {
 
     public static void createIndividualTable(SQLiteDatabase database) {
         database.execSQL(CREATE_HDSS_INDIVIDUAL);
+    }
+
+    public static void createSearchResultsTable(SQLiteDatabase database) {
+        database.execSQL(CREATE_HDSS_SEARCH_RESULTS);
     }
 
     public static void deleteData(SQLiteDatabase database) {
@@ -356,6 +374,64 @@ public class HdssRepository extends BaseRepository {
         });
     }
 
+    public void addOrUpdateSearchResults(List<HdssSearchBoxFactory.SearchResponse> householdIndividuals) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        householdIndividuals.forEach(individual -> {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(IDENTIFIER, individual.getId());
+            contentValues.put(INDIVIDUAL_ID, individual.getIndividualId());
+            contentValues.put(DOB, individual.getDob());
+            contentValues.put(GENDER, individual.getGender());
+            contentValues.put(COMPOUND_ID, individual.getCompoundId());
+            contentValues.put(HOUSEHOLD_ID,individual.getHouseholdId());
+            contentValues.put(SERVER_VERSION,0);
+            writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
+        });
+    }
+
+    public  void deleteSearchResultsData() {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        writableDatabase.execSQL("DELETE FROM " + HDSS_SEARCH_RESULTS);
+
+    }
+
+    public List<HdssSearchBoxFactory.SearchResponse> getSearchResultsInBatches(int limit, int offset) {
+
+        String query = "SELECT * from "+HDSS_SEARCH_RESULTS+ " order by "+INDIVIDUAL_ID+" LIMIT ? OFFSET ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(limit), String.valueOf(offset)});
+        List<HdssSearchBoxFactory.SearchResponse> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String identifier = cursor.getString(cursor.getColumnIndexOrThrow(IDENTIFIER));
+
+                    String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
+
+                    String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
+
+                    String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+
+                    String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
+
+                    HdssSearchBoxFactory.SearchResponse hdssIndividual =
+                            new HdssSearchBoxFactory.SearchResponse(identifier, individualId,compoundId,householdId, dob, gender);
+
+
+                    values.add(hdssIndividual);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+
+    }
+
+
+
+
     public List<String> getCompounds() {
 
         String query = "SELECT hc." + COMPOUND_ID + " from " + HDSS_COMPOUND + " hc";
@@ -550,14 +626,16 @@ public class HdssRepository extends BaseRepository {
 
     public Set<Task> getTasksByStructure(String structureId, String planIdentifier) {
 
-        String query = "SELECT * from task t where t.for in (\n" +
-                "SELECT i.identifier\n" +
+        String query = "SELECT * from task t " +
+                " left join hdss_individual hc on hc.identifier = t.for" +
+                " where t.for in (\n" +
+                " SELECT i.identifier\n" +
                 "--,hi.*, hs.*\n" +
                 " From hdss_individual i \n" +
                 "inner join hdss_household_individual hi on hi.individual_id = i.individual_id\n" +
                 "inner join hdss_household_structure hs on hi.household_id = hs.household_id\n" +
-                "where hs.structure_id = ? and t.plan_id = ?\n" +
-                ")";
+                "where hs.structure_id = ? and t.plan_id = ? \n" +
+                ") and t.status <> 'CANCELLED' order by hc.individual_id ";
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, new String[]{structureId, planIdentifier});
@@ -643,6 +721,36 @@ public class HdssRepository extends BaseRepository {
 
                     HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, serverVersion);
                     values.put(identifier, hdssIndividual);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+
+    public  HdssIndividual getIndividualsByHdssId(String id) {
+
+        String query = "SELECT " + " i." + IDENTIFIER + "," +
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + SERVER_VERSION
+                + " From " + HDSS_INDIVIDUAL + " i " +
+                " WHERE i.identifier = ? LIMIT 1";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{id});
+       HdssIndividual values = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String identifier = cursor.getString(cursor.getColumnIndexOrThrow(IDENTIFIER));
+                    String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
+                    String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
+                    long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
+
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, serverVersion);
+                    cursor.close();
+                    return hdssIndividual;
                 } while (cursor.moveToNext());
             }
             cursor.close();

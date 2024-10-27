@@ -13,6 +13,7 @@ import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVE
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
@@ -29,6 +30,8 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_S
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
@@ -450,7 +453,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
-        } else if(Arrays.asList(MDA_SURVEY,STRUCTURE_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,RCD,INDEX_CASE).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
+        } else if(Arrays.asList(MDA_SURVEY,STRUCTURE_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,RCD,INDEX_CASE, SECONDARY_INDEX_CASE).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
             listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
         }
 
@@ -460,7 +463,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
         return (Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
                 && (List.of(INDEX_CASE_NOT_VISITED,NOT_VISITED,INDEX_CASE_COMPLETE,INDEX_COMPLETE_RCD_INCOMPLETE
-                ,RCD_PARTIALLY_COMPLETE,RCD_COMPLETE_INDEX_INCOMPLETE,RCD_INCOMPLETE_INDEX_INCOMPLETE).contains(businessStatus) || businessStatus == null)
+                ,RCD_PARTIALLY_COMPLETE,RCD_COMPLETE_INDEX_INCOMPLETE,RCD_INCOMPLETE_INDEX_INCOMPLETE,SECONDARY_INDEX_CASE_NOT_VISITED,
+                SECONDARY_INDEX_CASE_COMPLETE).contains(businessStatus) || businessStatus == null)
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
                 || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
     }
@@ -855,7 +859,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
             displayMarkStructureIneligibleDialog();
             RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
-        } else if (List.of(RCD,INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS){
+        } else if (List.of(RCD,INDEX_CASE,SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS){
             listTaskView.openRCD();
         } else if (cardDetails == null || !changeInterventionStatus) {
             startForm(selectedFeature, null, selectedFeatureInterventionType);
@@ -880,7 +884,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
               findLastEvent(selectedFeature.id(),MDA_ONCHO_EVENT);
             } else if(STRUCTURE_SURVEY.equals(cardDetails.getInterventionType())){
                 findLastEvent(selectedFeature.id(),STRUCTURE_SURVEY_EVENT);
-            } else if (List.of(RCD,INDEX_CASE).contains(cardDetails.getInterventionType())) {
+            } else if (List.of(RCD,INDEX_CASE,SECONDARY_INDEX_CASE).contains(cardDetails.getInterventionType())) {
                 findLastEvent(selectedFeature.id(),RCD_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);

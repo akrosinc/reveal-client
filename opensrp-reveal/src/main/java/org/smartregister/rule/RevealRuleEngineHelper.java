@@ -17,7 +17,6 @@ public class RevealRuleEngineHelper {
     }
 
     public String nonNull(Object value) {
-        Timber.tag("loadlistitems").i(" loadlistitems %s",value);
 
         return value == null ?  "false" :  value instanceof String && ((String)value).isEmpty() ? "false" : "true" ;
     }

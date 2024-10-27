@@ -92,6 +92,9 @@ public class CardDetailsUtil {
             case BusinessStatus.INDEX_CASE_NOT_VISITED:
                 cardDetails.setStatusColor(R.color.cyan);
                 break;
+            case BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED:
+                cardDetails.setStatusColor(R.color.orange);
+                break;
             case BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE:
             case BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE:
                 cardDetails.setStatusColor(R.color.dark_cyan);
@@ -297,10 +300,10 @@ public class CardDetailsUtil {
             tvSprayDate.setText(surveyCardDetails.getDateCreated());
             tvSprayOperator.setText(surveyCardDetails.getOwner());
 
-            if (List.of(Action.MDA_SURVEY, Action.RCD, Action.INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
+            if (List.of(Action.MDA_SURVEY, Action.RCD, Action.INDEX_CASE,Action.SECONDARY_INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
                 tvStructureNum.setVisibility(View.VISIBLE);
                 tvStructureNum.setText(String.format(activity.getResources().getString(R.string.structure_number), surveyCardDetails.getStructureNumber()));
-                if (List.of(Action.RCD, Action.INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
+                if (List.of(Action.RCD, Action.INDEX_CASE,Action.SECONDARY_INDEX_CASE).contains(surveyCardDetails.getInterventionType())) {
                     gdrsInterventonTextView.setText(surveyCardDetails.getInterventionType());
                     gdrsInterventonTextView.setVisibility(View.VISIBLE);
                 } else {

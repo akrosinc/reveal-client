@@ -375,6 +375,7 @@ public interface Constants {
 
         public static String RCD_EVENT =  "rcd";
         public static String INDEX_CASE_MEMBER_EVENT =  "index_case_member";
+        public static String SECONDARY_INDEX_CASE_MEMBER_EVENT =  "secondary_index_case_member";
 
         public static String PASSIVE_CASE_DETECTION_EVENT = "passive_case_detection";
 
@@ -452,6 +453,8 @@ public interface Constants {
         public static String ENROLLED_NOT_COMPLETE = "enrollednotcomplete";
 
 
+        public static String SECONDARY_INDEX_CASE_NOT_VISITED = "Secondary Index Case Not Visited";
+        public static String SECONDARY_INDEX_CASE_COMPLETE = "Secondary Index Case Complete";
         public static String INDEX_CASE_NOT_VISITED = "Index Case Not Visited";
         public static String INDEX_CASE_COMPLETE = "Index Case Complete";
 
@@ -663,6 +666,7 @@ public interface Constants {
         public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_individual_member.json";
 
         public static String GDRS_INDEX_CASE = "json.form/gdrs_index_case.json";
+        public static String GDRS_SECONDARY_INDEX_CASE = "gdrs_secondary_index_case.json";
 
         public static String STRUCTURE_SURVEY_UW = "json.form/structure_survey_form_uw.json";
 
@@ -927,7 +931,10 @@ public interface Constants {
 
         public static String INDEX_CASE = "Index Case";
 
+        public static String SECONDARY_INDEX_CASE = "Secondary Index Case";
+
         public static String INDEX_CASE_MEMBER = "Index Case Member";
+        public static String SECONDARY_INDEX_CASE_MEMBER = "Secondary Index Case Member";
 
         public static String PASSIVE_CASE_DETECTION = "Passive Case Detection";
 

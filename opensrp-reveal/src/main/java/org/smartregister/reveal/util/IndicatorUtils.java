@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
@@ -16,6 +17,8 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIAL
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
@@ -618,13 +621,13 @@ public class IndicatorUtils {
                 .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
 
         List<TaskDetails> total = tasks.stream()
-                .filter(details->List.of(RCD,INDEX_CASE).contains(details.getTaskCode()))
-                .collect( toList());
+                .filter(details -> List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(details.getTaskCode()))
+                .collect(toList());
 
         List<TaskDetails> totalVisited = tasks.stream()
-                .filter(details->List.of(RCD,INDEX_CASE).contains(details.getTaskCode()))
-                .filter(details -> !List.of(NOT_VISITED, INDEX_CASE_NOT_VISITED).contains(details.getBusinessStatus()))
-                .collect( toList());
+                .filter(details -> List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(details.getTaskCode()))
+                .filter(details -> !List.of(NOT_VISITED, INDEX_CASE_NOT_VISITED, SECONDARY_INDEX_CASE_NOT_VISITED).contains(details.getBusinessStatus()))
+                .collect(toList());
 
         List<TaskDetails> indexStructuresVisited = tasks.stream()
                 .filter(details -> Constants.Action.INDEX_CASE.equals(details.getTaskCode()))
@@ -633,28 +636,29 @@ public class IndicatorUtils {
 
         List<TaskDetails> rcdStructuresVisited = tasks.stream()
                 .filter(details -> RCD.equals(details.getTaskCode()))
-                .filter(details -> !INDEX_CASE_COMPLETE.equals(details.getBusinessStatus()))
+                .filter(details -> !INDEX_CASE_COMPLETE.equals(details.getBusinessStatus())
+                        && !SECONDARY_INDEX_CASE_COMPLETE.equals(details.getBusinessStatus()))
                 .collect(Collectors.toList());
 
 
-        int totalRcdStructures = tasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(tasksByTaskCode.get(RCD)).size() : 0;
-        int totalRcdMemberTasks = tasksByTaskCode.containsKey(RCD_MEMBER) ?  Objects.requireNonNull(tasksByTaskCode.get(RCD_MEMBER)).size() : 0;
-        int totalIndexStructure = tasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE)).size() : 0;
-        int totalIndexMemberTasks = tasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ?  Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
+        int totalRcdStructures = tasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(tasksByTaskCode.get(RCD)).size() : 0;
+        int totalRcdMemberTasks = tasksByTaskCode.containsKey(RCD_MEMBER) ? Objects.requireNonNull(tasksByTaskCode.get(RCD_MEMBER)).size() : 0;
+        int totalIndexStructure = tasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE)).size() : 0;
+        int totalIndexMemberTasks = tasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
 
-        int totalCompleteRcdStructures = completedTasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(completedTasksByTaskCode.get(RCD)).size() : 0;
-        int totalCompleteRcdMemberTasks = completedTasksByTaskCode.containsKey(RCD_MEMBER) ?  Objects.requireNonNull(completedTasksByTaskCode.get(RCD_MEMBER)).size() : 0;
-        int totalCompleteIndexStructure = completedTasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
-        int totalCompleteIndexMemberTasks = completedTasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ?  Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
+        int totalCompleteRcdStructures = completedTasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(completedTasksByTaskCode.get(RCD)).size() : 0;
+        int totalCompleteRcdMemberTasks = completedTasksByTaskCode.containsKey(RCD_MEMBER) ? Objects.requireNonNull(completedTasksByTaskCode.get(RCD_MEMBER)).size() : 0;
+        int totalCompleteIndexStructure = completedTasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
+        int totalCompleteIndexMemberTasks = completedTasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
 
-        int totalUnVisitRcdStructures = unvisitedTasksByTaskCode.containsKey(RCD) ?  Objects.requireNonNull(unvisitedTasksByTaskCode.get(RCD)).size() : 0;
-        int totalUnVisitIndexStructure = unvisitedTasksByTaskCode.containsKey(INDEX_CASE) ?  Objects.requireNonNull(unvisitedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
+        int totalUnVisitRcdStructures = unvisitedTasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(unvisitedTasksByTaskCode.get(RCD)).size() : 0;
+        int totalUnVisitIndexStructure = unvisitedTasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(unvisitedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
 
         int totalVisitIndexStructure = indexStructuresVisited.size();
         int totalVisitRCDStructure = rcdStructuresVisited.size();
 
-        int indexStructureCoverage = totalIndexStructure>0 ? totalCompleteIndexStructure / totalIndexStructure : 0;
-        int rcdStructureCoverage = totalRcdStructures>0 ? totalCompleteRcdStructures / totalRcdStructures : 0;
+        int indexStructureCoverage = totalIndexStructure > 0 ? totalCompleteIndexStructure / totalIndexStructure : 0;
+        int rcdStructureCoverage = totalRcdStructures > 0 ? totalCompleteRcdStructures / totalRcdStructures : 0;
         int visitedCoverage = !total.isEmpty() ? totalVisited.size() / total.size() : 0;
 
 

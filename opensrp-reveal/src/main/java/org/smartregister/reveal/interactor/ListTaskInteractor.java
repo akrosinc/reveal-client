@@ -170,7 +170,7 @@ public class ListTaskInteractor extends BaseInteractor {
             sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
         } else if (Action.STRUCTURE_SURVEY.equals(interventionType)){
             sql = String.format("SELECT t.%s, ss.%s, ss.%s, ss.%s from task t left join sprayed_structures ss on t.structure_id = ss.id where id = ?", BUSINESS_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR);
-        } else if (List.of(Action.INDEX_CASE,Action.RCD).contains(interventionType)) {
+        } else if (List.of(Action.SECONDARY_INDEX_CASE,Action.INDEX_CASE,Action.RCD).contains(interventionType)) {
             sql = "SELECT  t.business_status,e.updatedAt,t.for,e.json,hhi.household_id  from task t \n" +
                     "left join hdss_household_structure hhs on hhs.structure_id = t.for\n" +
                     "left join hdss_household_individual hhi on hhi.household_id = hhs.household_id\n" +
@@ -247,7 +247,7 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createSurveyCardDetailsWithSprayDetails(cursor, interventionType,location);
         } else if (Action.STRUCTURE_SURVEY.equals(interventionType)){
             cardDetails = createSurveyCardDetails(cursor, interventionType,location);
-        } else if (List.of(Action.INDEX_CASE,Action.RCD).contains(interventionType)){
+        } else if (List.of(Action.SECONDARY_INDEX_CASE,Action.INDEX_CASE,Action.RCD).contains(interventionType)){
             cardDetails = createGdrsCardDetails(cursor,interventionType,location);
         }
 

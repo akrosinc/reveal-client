@@ -111,7 +111,7 @@ public class GeoJsonUtils {
                     taskProperties.put(IS_INDEX_CASE, Boolean.FALSE.toString());
                 }
 
-                if (List.of(Constants.Action.INDEX_CASE, Constants.Action.RCD).contains(task.getCode())){
+                if (List.of(Constants.Action.INDEX_CASE, Constants.Action.RCD, Constants.Action.SECONDARY_INDEX_CASE).contains(task.getCode())){
                     if (task.getHouseholdId() != null) {
                         taskProperties.put(HOUSEHOLD_ID, task.getHouseholdId());
                     }
