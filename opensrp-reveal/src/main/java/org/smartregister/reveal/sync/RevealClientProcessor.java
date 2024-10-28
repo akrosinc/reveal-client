@@ -7,6 +7,8 @@ import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_D
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_LITE_VERIFICATION;
 import static org.smartregister.reveal.util.Constants.EventType.PAOT_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PARASITOLOGY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.SUMMARY_EVENT_TYPES;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_PARENT;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
@@ -22,10 +24,13 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_ME
 
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.domain.Client;
@@ -39,17 +44,16 @@ import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.BusinessStatus;
 import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.Constants.StructureType;
-import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.FamilyConstants.EventType;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.sync.ClientProcessorForJava;
+
 import timber.log.Timber;
 
 /**
@@ -91,7 +95,6 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         ClientClassification clientClassification = assetJsonToJava("ec_client_classification.json", ClientClassification.class);
 
 
-
         if (clientClassification == null) {
             return;
         }
@@ -109,9 +112,16 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 }
 
                 String eventType = event.getEventType();
-                if (eventType.equals(SPRAY_EVENT) || eventType.equals(IRS_LITE_VERIFICATION) || CDD_SUPERVISOR_DAILY_SUMMARY.equals(eventType) || CELL_COORDINATOR_DAILY_SUMMARY.equals(eventType)) {
+                if (eventType.equals(SPRAY_EVENT)
+                        || eventType.equals(IRS_LITE_VERIFICATION)
+                        || CDD_SUPERVISOR_DAILY_SUMMARY.equals(eventType)
+                        || CELL_COORDINATOR_DAILY_SUMMARY.equals(eventType)
+                ) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents, JsonForm.STRUCTURE_TYPE);
-                } else if (isEventForCard(eventType)){
+                } else if (PASSIVE_CASE_DETECTION_EVENT.equals(eventType)
+                        || PARASITOLOGY_EVENT.equals(eventType)) {
+                    operationalAreaId = processEvent(event, clientClassification, localEvents);
+                } else if (isEventForCard(eventType)) {
                     operationalAreaId = processEvent(event, clientClassification, localEvents);
                 } else if (eventType.equals(REGISTER_STRUCTURE_EVENT)) {
                     operationalAreaId = processRegisterStructureEvent(event, clientClassification);
@@ -243,6 +253,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         if (event.getDetails() != null && event.getDetails().get(TASK_IDENTIFIER) != null) {
             operationalAreaId = updateTask(event, localEvents);
             try {
+                Timber.tag("ec_events").i("in processEvent");
                 Client client = new Client(event.getBaseEntityId());
                 processEvent(event, client, clientClassification);
             } catch (Exception e) {

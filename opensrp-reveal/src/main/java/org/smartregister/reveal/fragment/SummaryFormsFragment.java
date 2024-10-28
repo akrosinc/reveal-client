@@ -400,7 +400,7 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
                 presenter.showBasicForm(JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM);
                 break;
             case R.id.health_facility_parasitology:
-                presenter.showBasicForm(JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY);
+                presenter.showBasicForm(JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM);
                 break;
             default:
                 break;

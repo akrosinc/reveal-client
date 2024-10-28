@@ -7,9 +7,11 @@ import android.icu.util.Calendar;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -247,19 +249,21 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     @Override
     public void enqueueSearchWork(SearchRequest request, Context context, TextView resultTextView) {
 
-        if (searchItems!=null) {
-            searchItems.clear();
-            if (searchItemAdapter!=null) {
-                searchItemAdapter.notifyDataSetChanged();
+        if (!isLoading) {
+            if (searchItems != null) {
+                searchItems.clear();
+                if (searchItemAdapter != null) {
+                    searchItemAdapter.notifyDataSetChanged();
+                }
             }
-        }
 
-        HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
-        batchNumber = 0;
-        Data inputData = getSearchRequest(hdssSearchRequest);
-        OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
-        WorkManager.getInstance(context).enqueue(searchWorkRequest);
-        observeWorkInfo(context, resultTextView, searchWorkRequest);
+            HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
+            batchNumber = 0;
+            Data inputData = getSearchRequest(hdssSearchRequest);
+            OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
+            WorkManager.getInstance(context).enqueue(searchWorkRequest);
+            observeWorkInfo(context, resultTextView, searchWorkRequest);
+        }
     }
 
     private void observeWorkInfo(Context context, TextView resultTextView, OneTimeWorkRequest searchWorkRequest) {
@@ -305,15 +309,15 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         }.getType());
         if (resultList != null && !resultList.isEmpty()) {
             searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
-//            Dialog dialog = setupDialog(context);
-            setupRecyclerView(context, resultTextView);
-//            dialog.show();
+            Dialog dialog = setupDialog(context, resultTextView);
+            setupRecyclerView(context, resultTextView,dialog);
+            dialog.show();
         } else {
             Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
         }
     }
 
-    private static @NonNull Dialog setupDialog(Context context) {
+    private static @NonNull Dialog setupDialog(Context context, View anchorView) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.search_dialog);
         TextView headerTextView = dialog.findViewById(R.id.dialogTitle);
@@ -329,12 +333,22 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            int[] location = new int[2];
+            anchorView.getLocationOnScreen(location);
+
+            // Set the dialog position below the resultTextView
+            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+            params.gravity = Gravity.TOP | Gravity.START; // Align to top left
+            params.x = location[0]; // X position (align with the left of the anchor)
+            params.y = location[1] + anchorView.getHeight(); // Y position (just below the anchor)
+            dialog.getWindow().setAttributes(params);
         }
         return dialog;
     }
 
-    private void setupRecyclerView(Context context, TextView resultTextView) {
-        recyclerView = linearLayout.findViewById(R.id.search_recycler_view);
+    private void setupRecyclerView(Context context, TextView resultTextView,Dialog dialog) {
+        recyclerView = dialog.findViewById(R.id.search_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -350,11 +364,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             }
         });
 
-        searchItemAdapter = new SearchItemAdapter(context, searchItems, item -> handleItemOnClick(item, resultTextView));
+        searchItemAdapter = new SearchItemAdapter(context, searchItems, item -> handleItemOnClick(item, resultTextView,dialog));
         recyclerView.setAdapter(searchItemAdapter);
     }
 
-    private void handleItemOnClick(SearchItem item, TextView resultTextView) {
+    private void handleItemOnClick(SearchItem item, TextView resultTextView,Dialog dialog) {
         Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
         for (View view : formDataViews) {
             if (view.getTag(R.id.key).equals("date_of_birth")) {
@@ -378,7 +392,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             }
         }
 
-
+        dialog.dismiss();
     }
 
     private @NonNull Data getSearchRequest(HdssSearchRequest hdssSearchRequest) {

@@ -66,6 +66,14 @@
           "type": "Event",
           "json_mapping": {
             "field": "obs.fieldCode",
+            "concept": "barcode"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
             "concept": "household"
           }
         },
@@ -79,6 +87,23 @@
           }
         },
 
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_household_compound"
+          }
+        },
+
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_household_compound_search"
+          }
+        },
         {
           "column_name": "entity",
           "type": "Event",

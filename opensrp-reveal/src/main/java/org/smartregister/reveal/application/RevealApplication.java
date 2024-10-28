@@ -131,6 +131,8 @@ public class RevealApplication extends DrishtiApplication
     @Override
     public void onCreate() {
         super.onCreate();
+
+
         mInstance = this;
         context = Context.getInstance();
         context.updateApplicationContext(getApplicationContext());
@@ -139,8 +141,10 @@ public class RevealApplication extends DrishtiApplication
         P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, new RevealSyncConfiguration(), BuildConfig.BUILD_TIMESTAMP, p2POptions);
         forceRemoteLoginForInConsistentUsername();
-        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI || getBuildCountry() == Country.GDRS) {
+        if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.MALI ) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
+        } else if (getBuildCountry() == Country.GDRS){
+            CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.NIGERIA_EC_CLIENT_FIELDS);
         } else if (getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN) {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.SENEGAL_EC_CLIENT_FIELDS);
         } else if (getBuildCountry() == Country.KENYA) {
@@ -179,6 +183,7 @@ public class RevealApplication extends DrishtiApplication
     }
 
     private void loadRevealEnvironments() {
+        Timber.tag("ec_event").i("loadRevealEnvironments %s",getBuildCountry().toString());
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
                 .build();

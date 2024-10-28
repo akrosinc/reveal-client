@@ -378,8 +378,7 @@ public interface Constants {
         public static String SECONDARY_INDEX_CASE_MEMBER_EVENT =  "secondary_index_case_member";
 
         public static String PASSIVE_CASE_DETECTION_EVENT = "passive_case_detection";
-
-        public static String PARASITOLOGY = "parasitology";
+        public static String PARASITOLOGY_EVENT = "parasitology";
 
         public static List<String> SUMMARY_EVENT_TYPES = Arrays.asList(DAILY_SUMMARY_EVENT, IRS_FIELD_OFFICER_EVENT,
                 IRS_SA_DECISION_EVENT, MOBILIZATION_EVENT, TEAM_LEADER_DOS_EVENT, VERIFICATION_EVENT,TABLET_ACCOUNTABILITY_EVENT,FPP_EVENT,
@@ -389,6 +388,7 @@ public interface Constants {
         public static String MDA_DRUG_RECON = "mda_drug_reconciliation";
         public static String TREATMENT_OUTSIDE_HOUSEHOLD_EVENT = "treatment_outside_household";
         public static String ADVERSE_EVENTS_RECORD_EVENT = "adverse_events_record";
+
 
 
 
@@ -661,7 +661,7 @@ public interface Constants {
 
         public static String GDRS_HEALTH_FACILITY_SCREENING = "json.form/gdrs_passive_case_detection_form.json";
 
-        public static String GDRS_HEALTH_FACILITY_PARASITOLOGY = "json.form/gdrs_health_facility_parasitology.json";
+        public static String GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM = "json.form/gdrs_health_facility_parasitology.json";
 
         public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_individual_member.json";
 
@@ -938,6 +938,8 @@ public interface Constants {
 
         public static String PASSIVE_CASE_DETECTION = "Passive Case Detection";
 
+        public static String PARASITOLOGY = "Parasitology";
+
     }
 
     public interface ECClientConfig {
@@ -946,6 +948,7 @@ public interface Constants {
         public static String KENYA_EC_CLIENT_FIELDS = "ec_client_fields_kenya.json";
         public static String RWANDA_EC_CLIENT_FIELDS = "ec_client_fields_rwanda.json";
         public static String NIGERIA_EC_CLIENT_FIELDS = "ec_client_fields_nigeria.json";
+        public static String GDRS_EC_CLIENT_FIELDS = "ec_client_fields_gdrs.json";
     }
 
 

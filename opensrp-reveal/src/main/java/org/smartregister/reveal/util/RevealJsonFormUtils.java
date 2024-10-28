@@ -11,6 +11,7 @@ import static org.smartregister.AllConstants.JSON_FILE_EXTENSION;
 import static org.smartregister.AllConstants.OPTIONS;
 import static org.smartregister.AllConstants.TEXT;
 import static org.smartregister.reveal.util.Constants.Action;
+import static org.smartregister.reveal.util.Constants.Action.PARASITOLOGY;
 import static org.smartregister.reveal.util.Constants.Action.PASSIVE_CASE_DETECTION;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
@@ -27,6 +28,7 @@ import static org.smartregister.reveal.util.Constants.EventType.IRS_VERIFICATION
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PARASITOLOGY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
@@ -540,6 +542,8 @@ public class RevealJsonFormUtils {
             formName = JsonForm.GDRS_RCD;
         } else if ((PASSIVE_CASE_DETECTION_EVENT.equals(encounterType) || PASSIVE_CASE_DETECTION.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
             formName = JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM;
+        } else if ((PARASITOLOGY_EVENT.equals(encounterType) || PARASITOLOGY.equals(taskCode)) && getBuildCountry() == Country.GDRS){
+            formName = JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM;
         }
         return formName;
     }
@@ -965,7 +969,7 @@ public class RevealJsonFormUtils {
                 break;
             case JsonForm.GDRS_INDEX_CASE:
             case JsonForm.GDRS_SECONDARY_INDEX_CASE:
-            case JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY:
+            case JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM:
             case JsonForm.GDRS_RCD:
             case JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM:
                 setDefaultValue(formJSON, JsonForm.HEALTH_WORKER_SUPERVISOR,
