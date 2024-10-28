@@ -56,6 +56,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import timber.log.Timber;
 
 public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
@@ -78,7 +79,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
     private HdssRepository hdssRepository;
 
-    private static int batchSize = 7;
+    private static int batchSize = 15;
 
     private int batchNumber = 0;
 
@@ -95,6 +96,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     String localSearchDate;
 
     LinearLayout linearLayout;
+    Dialog dialog;
+
+    private Runnable searchRunnable;
+    private static final long SEARCH_DELAY = 800;
+    private Handler handler = new Handler();
 
     public HdssSearchBoxFactory() {
         this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
@@ -158,6 +164,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             localSearchDate = formattedDate;
 
             editTextDate.setText(formattedDate);
+            Timber.tag("hdsssearch").i("datePickerDialog");
 
             enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
 
@@ -179,6 +186,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 } else {
                     gender = parent.getItemAtPosition(position).toString();
                 }
+                Timber.tag("hdsssearch").i("addGenderSpinner");
                 enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
             }
 
@@ -203,6 +211,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             if (searchText != null && searchText.length() < 3) {
                 Toast.makeText(context, "must capture > 3 characters to search", Toast.LENGTH_LONG).show();
             } else {
+                Timber.tag("hdsssearch").i("addButton");
                 enqueueSearchWork(getSearchRequest(), v.getContext(), resultTextView);
             }
         });
@@ -218,6 +227,27 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         Button button = linearLayout.findViewById(R.id.clear_button);
         button.setOnClickListener(v -> {
             resultTextView.setText(null);
+
+            Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
+            for (View view : formDataViews) {
+                if (view.getTag(R.id.key).equals("date_of_birth")) {
+                    MaterialEditText textView = (MaterialEditText) view;
+                    textView.setText("");
+                }
+                if (view.getTag(R.id.key).equals(GENDER)) {
+                    MaterialEditText textView = (MaterialEditText) view;
+                    textView.setText("");
+                }
+                if (view.getTag(R.id.key).equals("individual")) {
+                    MaterialEditText textView = (MaterialEditText) view;
+                    textView.setText("");
+                }
+            }
+
+            formFragment.writeValue(stepName, "individual_ho", "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+            formFragment.writeValue(stepName, "date_of_birth", "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+            formFragment.writeValue(stepName, GENDER, "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+
         });
     }
 
@@ -230,25 +260,34 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                handler.removeCallbacks(searchRunnable);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                searchText = s.toString();
-                if (searchText.isEmpty()) {
-                    searchText = null;
-                } else if (searchText.length() >= 3) {
-                    enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
-                }
 
+//                searchRunnable = new Runnable() {
+//                    @Override
+//                    public void run() {
+                        searchText = s.toString();
+//                        if (searchText.isEmpty()) {
+//                            searchText = null;
+//                        } else if (searchText.length() >= 3 && !isLoading) {
+//                            Timber.tag("hdsssearch").i("addSearchEditText");
+//
+//
+//                            enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
+//                        }
+//                    }
+//                };
+//                handler.postDelayed(searchRunnable, SEARCH_DELAY);
             }
         });
     }
 
     @Override
     public void enqueueSearchWork(SearchRequest request, Context context, TextView resultTextView) {
-
+        Timber.tag("hdsssearch").i("about to search");
         if (!isLoading) {
             if (searchItems != null) {
                 searchItems.clear();
@@ -257,12 +296,23 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 }
             }
 
-            HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
-            batchNumber = 0;
-            Data inputData = getSearchRequest(hdssSearchRequest);
-            OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
-            WorkManager.getInstance(context).enqueue(searchWorkRequest);
-            observeWorkInfo(context, resultTextView, searchWorkRequest);
+            if (gender==null && searchText==null && localSearchDate==null) {
+
+            } else {
+                if (gender == null && (searchText == null || searchText.length() < 3)){
+
+                } else {
+                    HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
+                    batchNumber = 0;
+                    Data inputData = getSearchRequest(hdssSearchRequest);
+                    Timber.tag("hdsssearch").i("submit search");
+                    isLoading=true;
+                    Toast.makeText(context,"Searching...",Toast.LENGTH_SHORT).show();
+                    OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
+                    WorkManager.getInstance(context).enqueue(searchWorkRequest);
+                    observeWorkInfo(context, resultTextView, searchWorkRequest);
+                }
+            }
         }
     }
 
@@ -274,6 +324,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo != null && workInfo.getState().isFinished()) {
                             // Handle the result or update the UI
+                            Timber.tag("hdsssearch").i("got response");
                             handleWorkResult(workInfo, context, resultTextView);
                         }
                     }
@@ -305,16 +356,26 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         String json = outputData.getString("result");
         Gson gson = new Gson();
 
+        if (searchItems!=null){
+            searchItems.clear();
+            if (searchItemAdapter!=null){
+                searchItemAdapter.notifyDataSetChanged();
+            }
+        }
         List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
         }.getType());
         if (resultList != null && !resultList.isEmpty()) {
             searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
-            Dialog dialog = setupDialog(context, resultTextView);
+            if (dialog == null) {
+                dialog = setupDialog(context, resultTextView);
+            }
             setupRecyclerView(context, resultTextView,dialog);
+
             dialog.show();
         } else {
             Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
         }
+        isLoading = false;
     }
 
     private static @NonNull Dialog setupDialog(Context context, View anchorView) {
@@ -358,7 +419,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 if (!isLoading && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == searchItems.size() - 1) {
                     // Load next batch
                     batchNumber++;
-                    Toast.makeText(context, "loading", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "checking for more results", Toast.LENGTH_SHORT).show();
                     loadItems(batchNumber, batchSize, context);
                 }
             }
@@ -379,11 +440,16 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 MaterialEditText textView = (MaterialEditText) view;
                 textView.setText(item.getField4());
             }
+            if (view.getTag(R.id.key).equals("individual")) {
+                MaterialEditText textView = (MaterialEditText) view;
+                textView.setText(item.getResult());
+            }
         }
         resultTextView.setText(item.getResult());
-        formFragment.writeValue(stepName, "individual_household_compound_search", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+//        formFragment.writeValue(stepName, "individual_household_compound_search", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "date_of_birth", item.getField5(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        formFragment.writeValue(stepName, "individual", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
 
         if (searchItems!=null) {
             searchItems.clear();
@@ -454,6 +520,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             isLoading = false;
             if (nextBatch.isEmpty()) {
                 Toast.makeText(context, "no more items", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "loaded new results", Toast.LENGTH_SHORT).show();
             }
         }, 2000);
     }

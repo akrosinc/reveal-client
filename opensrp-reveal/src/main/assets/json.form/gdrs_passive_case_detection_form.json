@@ -76,10 +76,20 @@
         "key": "individual_household_compound_search",
         "type": "reveal_search_box",
         "header": "Search Individuals",
-        "repositoryClass": "org.smartregister.reveal.searchbox.HdssSearch",
+        "repositoryClass": "org.smartregister.reveal.searchbox.HdssSearch"
+      },
+      {
+        "key": "individual",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Individual Id",
+        "edit_type": "name",
+        "text_size": "8sp",
         "v_required": {
-          "value": true,
-          "err": "Please select household ID"
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -297,7 +307,7 @@
         }
       },
       {
-        "key": "drug_given",
+        "key": "drug_given_other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

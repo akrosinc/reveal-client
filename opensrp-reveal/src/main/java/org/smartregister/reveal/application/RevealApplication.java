@@ -183,7 +183,6 @@ public class RevealApplication extends DrishtiApplication
     }
 
     private void loadRevealEnvironments() {
-        Timber.tag("ec_event").i("loadRevealEnvironments %s",getBuildCountry().toString());
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
                 .build();

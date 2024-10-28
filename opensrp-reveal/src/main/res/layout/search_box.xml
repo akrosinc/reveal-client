@@ -115,18 +115,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:visibility="gone">
+        android:padding="2dp"
+        >
 
         <android.widget.Button
             android:id="@+id/search_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="2dp"
             android:layout_weight="1"
-            android:padding="8dp"
+            android:padding="0dp"
             android:text="Search"
-            android:visibility="gone"/>
+            android:textSize="11sp"
+            />
     </android.widget.LinearLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -141,7 +142,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:visibility="gone">
 
         <com.vijay.jsonwizard.customviews.NativeEditText
             android:id="@+id/search_result_text"

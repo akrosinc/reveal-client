@@ -117,11 +117,9 @@ public class ClientProcessorForJava {
         }
         CoreLibrary.getInstance().context()
                 .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
-        Timber.tag("ec_events").i("in completeProcessing");
     }
 
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
-        Timber.tag("ec_events").i("in processEvent22");
         try {
             // mark event as processed regardless of any errors
             completeProcessing(event);
@@ -165,7 +163,6 @@ public class ClientProcessorForJava {
     }
 
     public Boolean processClientClass(ClassificationRule clientClass, Event event, Client client) {
-        Timber.tag("ec_events").i("in processClientClass");
 
         try {
             if (clientClass == null) {
@@ -194,7 +191,6 @@ public class ClientProcessorForJava {
     }
 
     public Boolean processField(org.smartregister.domain.jsonmapping.Field field, Event event, Client client) {
-        Timber.tag("ec_events").i("in processField");
 
         try {
             if (field == null) {
@@ -278,7 +274,6 @@ public class ClientProcessorForJava {
                     closeCase(client, closesCase);
                 }
             }
-            Timber.tag("ec_events").i("in processField done");
             return true;
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e);
@@ -307,7 +302,6 @@ public class ClientProcessorForJava {
     }
 
     public Boolean processCaseModel(Event event, Client client, List<String> createsCase) {
-        Timber.tag("ec_events").i("in processCaseModel");
         try {
 
             if (createsCase == null || createsCase.isEmpty()) {
@@ -361,7 +355,6 @@ public class ClientProcessorForJava {
     }
 
     public void processCaseModel(Event event, Client client, Column column, ContentValues contentValues) {
-        Timber.tag("ec_events").i("in processCaseModel2");
         try {
             String expectedEncounterType = event.getEventType();
             String docType = column.type;

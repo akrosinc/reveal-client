@@ -253,7 +253,6 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         if (event.getDetails() != null && event.getDetails().get(TASK_IDENTIFIER) != null) {
             operationalAreaId = updateTask(event, localEvents);
             try {
-                Timber.tag("ec_events").i("in processEvent");
                 Client client = new Client(event.getBaseEntityId());
                 processEvent(event, client, clientClassification);
             } catch (Exception e) {
