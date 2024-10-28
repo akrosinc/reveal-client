@@ -11,87 +11,95 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="5dp">
-    <android.widget.TextView
-        android:id="@+id/header_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="5dp"
-        android:text="Header"/>
+
+        <android.widget.TextView
+            android:id="@+id/header_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:text="Header" />
     </android.widget.LinearLayout>
-    <android.widget.LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <!-- Date Selection Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="2dp"
+            android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/editTextDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Select a date"
                 android:focusable="false"
-                android:padding="12dp"
-              />
+                android:hint="Select a date"
+                android:padding="8dp" />
 
             <Button
                 android:id="@+id/buttonClear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clear"
                 android:layout_gravity="end"
-                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
 
-                android:textColor="@android:color/white"
-                android:layout_marginTop="8dp" />
+                android:text="Clear"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <!-- Clear Button -->
 
     </android.widget.LinearLayout>
+
     <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="8dp">
+
         <android.widget.TextView
             android:id="@+id/gender_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".2"
-            android:padding="10dp"
-            android:text="Gender"/>
+            android:padding="8dp"
+            android:text="Gender" />
+
         <android.widget.Spinner
             android:id="@+id/gender_select"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".8"
             android:background="@drawable/search_box_text"
-            android:padding="10dp"
-            android:entries="@array/gender"/>
+            android:entries="@array/gender"
+            android:padding="8dp" />
     </android.widget.LinearLayout>
 
     <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="2dp">
+
         <android.widget.TextView
             android:id="@+id/search_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".2"
-            android:padding="10dp"
-            android:text="Text"/>
+            android:padding="8dp"
+            android:text="Text" />
+
         <android.widget.EditText
             android:id="@+id/search_text"
             android:layout_width="0dp"
@@ -99,14 +107,16 @@
             android:layout_weight=".8"
             android:background="@drawable/search_box_text"
             android:hint="Type here..."
-            android:padding="10dp" />
+            android:padding="8dp" />
 
     </android.widget.LinearLayout>
+
     <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="8dp"
+        android:visibility="gone">
 
         <android.widget.Button
             android:id="@+id/search_button"
@@ -114,16 +124,28 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:padding="10dp"
+            android:padding="8dp"
             android:text="Search"
-            />
+            android:visibility="gone"/>
     </android.widget.LinearLayout>
-    <android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="false" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
-        >
+        android:padding="8dp">
 
         <com.vijay.jsonwizard.customviews.NativeEditText
             android:id="@+id/search_result_text"
@@ -131,17 +153,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/search_box_text"
-            android:padding="10dp" />
+            android:padding="8dp" />
 
         <android.widget.Button
             android:id="@+id/clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:padding="10dp"
+            android:padding="8dp"
             android:text="Clear"
-            android:textColor="@android:color/white"
-            />
+            android:textColor="@android:color/white" />
     </android.widget.LinearLayout>
 
 </android.widget.LinearLayout>

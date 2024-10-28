@@ -92,6 +92,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
     String localSearchDate;
 
+    LinearLayout linearLayout;
+
     public HdssSearchBoxFactory() {
         this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
         HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase());
@@ -105,25 +107,27 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         this.formFragment = formFragment;
         this.stepName = stepName;
         this.popup = popup;
-        LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.search_box, null, false);
-        addHeaderTextView(linearLayout, jsonObject);
-        addGenderSpinner(linearLayout);
-        addSearchEditText(linearLayout);
-        NativeEditText resultTextView = addTextView(linearLayout);
-        addButton(context, linearLayout, jsonObject, resultTextView);
-        addClearButton(linearLayout, resultTextView);
+        linearLayout = (LinearLayout) inflater.inflate(R.layout.search_box, null, false);
+        addHeaderTextView(jsonObject);
+
+
+        NativeEditText resultTextView = addTextView();
+        addSearchEditText(resultTextView);
+        addButton(context, jsonObject, resultTextView);
+        addGenderSpinner(resultTextView);
+        addClearButton(resultTextView);
         attachLogic(jsonObject, context, linearLayout);
         setTags(stepName, jsonObject, resultTextView, popup);
 
-        addDatePickerEditText(linearLayout, context);
-        addDateClearButton(linearLayout);
+        addDatePickerEditText(context,resultTextView);
+        addDateClearButton();
 
         views.add(linearLayout);
         formFragment.getJsonApi().addFormDataView(resultTextView);
         return views;
     }
 
-    private void addDateClearButton(LinearLayout linearLayout) {
+    private void addDateClearButton() {
         Button clearButton = linearLayout.findViewById(R.id.buttonClear);
         clearButton.setOnClickListener(v -> {
             editTextDate.setText(null);
@@ -131,13 +135,13 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
     }
 
-    private void addDatePickerEditText(LinearLayout linearLayout, Context context) {
+    private void addDatePickerEditText(Context context,NativeEditText view) {
         editTextDate = linearLayout.findViewById(R.id.editTextDate);
-        editTextDate.setOnClickListener(v -> showDatePickerDialog(context));
+        editTextDate.setOnClickListener(v -> showDatePickerDialog(context,view));
 
     }
 
-    private void showDatePickerDialog(Context context) {
+    private void showDatePickerDialog(Context context,NativeEditText resultTextView) {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -153,14 +157,17 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             editTextDate.setText(formattedDate);
 
+            enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
+
         }, year, month, day);
 
         datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
 
         datePickerDialog.show();
     }
-    private void addGenderSpinner(LinearLayout view) {
-        Spinner spinner = view.findViewById(R.id.gender_select);
+
+    private void addGenderSpinner(NativeEditText resultTextView) {
+        Spinner spinner = linearLayout.findViewById(R.id.gender_select);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -170,6 +177,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 } else {
                     gender = parent.getItemAtPosition(position).toString();
                 }
+                enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
             }
 
             @Override
@@ -179,18 +187,18 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
     }
 
-    private NativeEditText addTextView(LinearLayout view) {
-        NativeEditText textView = view.findViewById(R.id.search_result_text);
+    private NativeEditText addTextView() {
+        NativeEditText textView = linearLayout.findViewById(R.id.search_result_text);
         textView.setFocusable(false);
         textView.setFocusableInTouchMode(false);
         return textView;
     }
 
-    private void addButton(Context context, LinearLayout view, JSONObject jsonObject, NativeEditText resultTextView) {
-        Button button = view.findViewById(R.id.search_button);
+    private void addButton(Context context, JSONObject jsonObject, NativeEditText resultTextView) {
+        Button button = linearLayout.findViewById(R.id.search_button);
         button.setOnClickListener(v -> {
 
-            if (searchText!= null && searchText.length() < 3) {
+            if (searchText != null && searchText.length() < 3) {
                 Toast.makeText(context, "must capture > 3 characters to search", Toast.LENGTH_LONG).show();
             } else {
                 enqueueSearchWork(getSearchRequest(), v.getContext(), resultTextView);
@@ -198,21 +206,21 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
     }
 
-    private void addHeaderTextView(LinearLayout view, JSONObject jsonObject) {
-        TextView textView = view.findViewById(R.id.header_text);
+    private void addHeaderTextView(JSONObject jsonObject) {
+        TextView textView = linearLayout.findViewById(R.id.header_text);
         String header = jsonObject.optString(HEADER);
         textView.setText(header);
     }
 
-    private void addClearButton(LinearLayout view, NativeEditText resultTextView) {
-        Button button = view.findViewById(R.id.clear_button);
+    private void addClearButton(NativeEditText resultTextView) {
+        Button button = linearLayout.findViewById(R.id.clear_button);
         button.setOnClickListener(v -> {
             resultTextView.setText(null);
         });
     }
 
-    private void addSearchEditText(LinearLayout view) {
-        EditText editText = view.findViewById(R.id.search_text);
+    private void addSearchEditText(NativeEditText resultTextView) {
+        EditText editText = linearLayout.findViewById(R.id.search_text);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -220,20 +228,31 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 searchText = s.toString();
-                if (searchText.isEmpty()){
+                if (searchText.isEmpty()) {
                     searchText = null;
+                } else if (searchText.length() >= 3) {
+                    enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
                 }
+
             }
         });
     }
 
     @Override
     public void enqueueSearchWork(SearchRequest request, Context context, TextView resultTextView) {
+
+        if (searchItems!=null) {
+            searchItems.clear();
+            if (searchItemAdapter!=null) {
+                searchItemAdapter.notifyDataSetChanged();
+            }
+        }
 
         HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
         batchNumber = 0;
@@ -286,9 +305,9 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         }.getType());
         if (resultList != null && !resultList.isEmpty()) {
             searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
-            Dialog dialog = setupDialog(context);
-            setupRecyclerView(context, resultTextView, dialog);
-            dialog.show();
+//            Dialog dialog = setupDialog(context);
+            setupRecyclerView(context, resultTextView);
+//            dialog.show();
         } else {
             Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
         }
@@ -314,8 +333,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         return dialog;
     }
 
-    private void setupRecyclerView(Context context, TextView resultTextView, Dialog dialog) {
-        recyclerView = dialog.findViewById(R.id.search_recycler_view);
+    private void setupRecyclerView(Context context, TextView resultTextView) {
+        recyclerView = linearLayout.findViewById(R.id.search_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -325,17 +344,17 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 if (!isLoading && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == searchItems.size() - 1) {
                     // Load next batch
                     batchNumber++;
-                    Toast.makeText(context,"loading",Toast.LENGTH_SHORT).show();
-                    loadItems(batchNumber, batchSize,context);
+                    Toast.makeText(context, "loading", Toast.LENGTH_SHORT).show();
+                    loadItems(batchNumber, batchSize, context);
                 }
             }
         });
 
-        searchItemAdapter = new SearchItemAdapter(context, searchItems, item -> handleItemOnClick(item, dialog, resultTextView));
+        searchItemAdapter = new SearchItemAdapter(context, searchItems, item -> handleItemOnClick(item, resultTextView));
         recyclerView.setAdapter(searchItemAdapter);
     }
 
-    private void handleItemOnClick(SearchItem item, Dialog dialog, TextView resultTextView) {
+    private void handleItemOnClick(SearchItem item, TextView resultTextView) {
         Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
         for (View view : formDataViews) {
             if (view.getTag(R.id.key).equals("date_of_birth")) {
@@ -352,7 +371,14 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         formFragment.writeValue(stepName, "date_of_birth", item.getField5(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
 
-        dialog.dismiss();
+        if (searchItems!=null) {
+            searchItems.clear();
+            if (searchItemAdapter!=null){
+                searchItemAdapter.notifyDataSetChanged();
+            }
+        }
+
+
     }
 
     private @NonNull Data getSearchRequest(HdssSearchRequest hdssSearchRequest) {
@@ -403,7 +429,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         return searchItem;
     }
 
-    private void loadItems(int batchNumber, int batchSize,Context context) {
+    private void loadItems(int batchNumber, int batchSize, Context context) {
         isLoading = true;
 
         new Handler().postDelayed(() -> {
@@ -412,8 +438,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             searchItems.addAll(nextBatch);
             searchItemAdapter.notifyDataSetChanged();
             isLoading = false;
-            if (nextBatch.isEmpty()){
-                Toast.makeText(context,"no more items",Toast.LENGTH_SHORT).show();
+            if (nextBatch.isEmpty()) {
+                Toast.makeText(context, "no more items", Toast.LENGTH_SHORT).show();
             }
         }, 2000);
     }
