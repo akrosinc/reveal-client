@@ -815,27 +815,28 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
                     @Override
                     public void onCameraMove() {
-                        final FeatureCollection lambdaFeatureCollection = featureCollection;
-                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
-                        if (mMapboxMap.getStyle() != null) {
-                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
-                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
-
-                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
-                                            .filter(f -> f.id()
-                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
-                                            .findAny();
-                                    if (feature.isPresent()) {
-                                        layer.setProperties(
-                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
-                                    }
-                                });
-                            } else {
-                                mMapboxMap.getStyle().getLayers().stream()
-                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
-                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
-                            }
-                        }
+                        Timber.tag("revealmove").i("moving");
+//                        final FeatureCollection lambdaFeatureCollection = featureCollection;
+//                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
+//                        if (mMapboxMap.getStyle() != null) {
+//                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
+//                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+//
+//                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
+//                                            .filter(f -> f.id()
+//                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
+//                                            .findAny();
+//                                    if (feature.isPresent()) {
+//                                        layer.setProperties(
+//                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
+//                                    }
+//                                });
+//                            } else {
+//                                mMapboxMap.getStyle().getLayers().stream()
+//                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
+//                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+//                            }
+//                        }
                     }
                 });
             }
@@ -1094,6 +1095,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK && data.hasExtra(JSON_FORM_PARAM_JSON)) {
             String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
             Timber.d(json);
