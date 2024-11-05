@@ -114,6 +114,7 @@ import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.util.JsonFormUtils;
 
+import lombok.Getter;
 import timber.log.Timber;
 
 /**
@@ -134,6 +135,9 @@ public class ListTaskInteractor extends BaseInteractor {
     private RevealApplication revealApplication;
 
     private List<TaskDetails> taskDetails;
+
+    @Getter
+    private List<Feature> parentLocations;
 
 
     public ListTaskInteractor(ListTaskContract.Presenter presenter) {
@@ -374,91 +378,93 @@ public class ListTaskInteractor extends BaseInteractor {
         );
     }
 
-    public void fetchLocations(String plan, String operationalArea) {
-        fetchLocations(plan, operationalArea, null, null);
-    }
+//    public void fetchLocations(String plan, String operationalArea) {
+//        fetchLocations(plan, operationalArea, null, null);
+//    }
 
     public void fetchLocationsWithParents(String plan, String operationalArea) {
         fetchLocationsWithParents(plan, operationalArea, null, null);
     }
 
 
-    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                JSONObject featureCollection = null;
-
-                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
-                List<TaskDetails> taskDetailsList = null;
-                List<Location> adjacentOperationalAreaLocations  = null;
-
-                try {
-                    featureCollection = createFeatureCollection();
-                    if (operationalAreaLocation != null) {
-                        Map<String, Set<Task>> tasks;
-                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
-                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
-                        } else {
-                            tasks = taskRepository
-                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
-                        }
-                        List<Location> structures ;
-                        if(Utils.isCurrentTargetLevelStructure()){
-                            structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
-                        } else {
-                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
-                        }
-                        Map<String, StructureDetails> structureNames = getStructureName(
-                                operationalAreaLocation.getId());
-                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
-                        String indexCase = null;
-                        if (getInterventionLabel() == R.string.focus_investigation) {
-                            indexCase = getIndexCaseStructure(plan);
-                        }
-                        String features = GeoJsonUtils
-                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
-                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
-
-                        adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
-                    }
-                } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w(e);
-                }
-                JSONObject finalFeatureCollection = featureCollection;
-                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
-                final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
-                appExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (operationalAreaLocation != null) {
-                            operationalAreaId = operationalAreaLocation.getId();
-                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
-                           List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
-                                   gson.toJson(location))).collect(Collectors.toList());
-                            if (locationComponentActive != null) {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
-                                        finalTaskDetailsList, point, locationComponentActive);
-                            } else  {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
-                                        finalTaskDetailsList);
-                            }
-                        } else {
-                            getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
-                        }
-                    }
-                });
-
-            }
-
-        };
-
-        appExecutors.diskIO().execute(runnable);
-    }
+//    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
+//        Runnable runnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                JSONObject featureCollection = null;
+//
+//                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+//                List<TaskDetails> taskDetailsList = null;
+//                List<Location> adjacentOperationalAreaLocations  = null;
+//
+//
+//
+//                try {
+//                    featureCollection = createFeatureCollection();
+//                    if (operationalAreaLocation != null) {
+//                        Map<String, Set<Task>> tasks;
+//                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
+//                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
+//                        } else {
+//                            tasks = taskRepository
+//                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+//                        }
+//                        List<Location> structures ;
+//                        if(Utils.isCurrentTargetLevelStructure()){
+//                            structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
+//                        } else {
+//                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
+//                        }
+//                        Map<String, StructureDetails> structureNames = getStructureName(
+//                                operationalAreaLocation.getId());
+//                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
+//                        String indexCase = null;
+//                        if (getInterventionLabel() == R.string.focus_investigation) {
+//                            indexCase = getIndexCaseStructure(plan);
+//                        }
+//                        String features = GeoJsonUtils
+//                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+//                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+//
+//                        adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
+//                    }
+//                } catch (Exception e) {
+//                    Timber.tag("Reveal Exception").w(e);
+//                }
+//                JSONObject finalFeatureCollection = featureCollection;
+//                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+//                final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
+//                appExecutors.mainThread().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (operationalAreaLocation != null) {
+//                            operationalAreaId = operationalAreaLocation.getId();
+//                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
+//                           List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
+//                                   gson.toJson(location))).collect(Collectors.toList());
+//                            if (locationComponentActive != null) {
+//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+//                                        finalTaskDetailsList, point, locationComponentActive);
+//                            } else  {
+//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+//                                        finalTaskDetailsList);
+//                            }
+//                        } else {
+//                            getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
+//                        }
+//                    }
+//                });
+//
+//            }
+//
+//        };
+//
+//        appExecutors.diskIO().execute(runnable);
+//    }
 
     private void getParentLocations(List<Feature> locations, Location location){
-        if (location.getProperties() != null) {
+        if (location!=null && location.getProperties() != null) {
             if (location.getProperties().getParentId()!=null){
                Location parentlocation =  Utils.getLocationById(location.getProperties().getParentId());
                if (parentlocation !=null){
@@ -469,6 +475,8 @@ public class ListTaskInteractor extends BaseInteractor {
             }
         }
     }
+
+
 
     public void fetchLocationsWithParents(String plan, String operationalArea,
                                           String point, Boolean locationComponentActive) {
@@ -481,8 +489,9 @@ public class ListTaskInteractor extends BaseInteractor {
 
                 Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
 
-                List<Feature> parentLocations = new ArrayList<>();
-                if (operationalAreaLocation.getProperties() != null){
+                parentLocations = new ArrayList<>();
+
+                if (operationalAreaLocation!=null && operationalAreaLocation.getProperties() != null){
                     if (operationalAreaLocation.getProperties().getParentId()!=null){
                         getParentLocations(parentLocations,operationalAreaLocation);
                     }

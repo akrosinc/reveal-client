@@ -5,11 +5,14 @@ import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.GDRS_ADD_MEMBER;
@@ -22,7 +25,13 @@ import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_G
 import static org.smartregister.reveal.util.Utils.getOperationalAreaLocation;
 import static org.smartregister.util.JsonFormUtils.VALUE;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -30,6 +39,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +48,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
@@ -85,6 +98,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import lombok.Data;
@@ -117,6 +132,7 @@ public class GDRSActivity extends AppCompatActivity {
     private int position;
     private TaskRepository taskRepository;
     private TaskUtils taskUtils;
+//    private LinearLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +145,15 @@ public class GDRSActivity extends AppCompatActivity {
         // Set up toolbar
         setToolBar();
         recyclerView = findViewById(R.id.recyclerView);
+//        progressBar = findViewById(R.id.progressBar);
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         presenter = new GDRSPresenter(this);
         populateActionList();
         recyclerView.setAdapter(actionAdapter);
@@ -162,9 +186,13 @@ public class GDRSActivity extends AppCompatActivity {
 
     private void setToolBar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        String title = houseHoldId != null ? houseHoldId.concat("-") : "";
-        title = title.concat(taskCode);
-        toolbar.setTitle(title);
+        TextView viewLeft = toolbar.findViewById(R.id.textViewLeft);
+        viewLeft.setText(taskCode);
+        TextView viewCenter = toolbar.findViewById(R.id.textViewCenter);
+        viewCenter.setText(houseHoldId);
+//        String title = houseHoldId != null ? houseHoldId.concat("-") : "";
+//        title = title.concat(taskCode);
+//        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
     }
 
@@ -184,27 +212,47 @@ public class GDRSActivity extends AppCompatActivity {
     }
 
     public void populateActionList() {
-        actionList = new ArrayList<>();
+        // Create an ExecutorService for background tasks
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+        List<Action> actionList = new ArrayList<>();
+//        actionAdapter = new ActionAdapter(actionList, presenter);
+
+//        executor.execute(() -> {
+        // This code runs in the background
+
         Set<Task> tasksByStructure = hdssRepository.getTasksByStructure(locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
         Map<String, HdssIndividual> individualsByStructureId = hdssRepository.getIndividualsByStructureId(locationUUID);
-        for (Task task : tasksByStructure) {
-            if (individualsByStructureId.containsKey(task.getForEntity())) {
 
+        Timber.tag("RevealMap").i("got tasks");
+
+        for (Task task : tasksByStructure) {
+            Timber.tag("RevealMap").i("got individual task %s", task.getIdentifier());
+            if (individualsByStructureId.containsKey(task.getForEntity())) {
                 HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
                 if (hdssIndividual != null) {
-                    actionList.add(new Action(hdssIndividual.getIndividualId(), hdssIndividual.getGender(), hdssIndividual.getDob(), task));
+                    actionList.add(new Action(hdssIndividual.getIndividualId(), hdssIndividual.getGender()
+                            , hdssIndividual.getDob(), task.getAuthoredOn().toString("yyyy-MM-dd"), task));
                 }
             }
-
         }
+
+        // Update UI on the main thread
+//            runOnUiThread(() -> {
+//                progressBar.setVisibility(View.GONE);
         if (actionAdapter != null) {
             actionAdapter.setActions(actionList);
             actionAdapter.notifyDataSetChanged();
         } else {
             actionAdapter = new ActionAdapter(actionList, presenter);
         }
+//            });
+//        });
+    }
 
-
+    private void copyToClipboard(String text) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Copied Text", text);
+        clipboard.setPrimaryClip(clip);
     }
 
     @Override
@@ -261,36 +309,61 @@ public class GDRSActivity extends AppCompatActivity {
         public void onBindViewHolder(ActionViewHolder holder, int position) {
             Action action = getAction(holder, position);
             Task task = action.getTask();
+            Drawable background = holder.actionButton.getBackground();
+
+
+            if (task.getAuthoredOn().isBefore(DateTime.now().minusDays(3))) {
+                holder.createdDate.setTextColor(getResources().getColor(android.R.color.holo_red_dark, null));
+                holder.oldTaskMessage.setVisibility(View.VISIBLE);
+            }
 
 
             if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
 
                 if (task.getCode().equals(INDEX_CASE_MEMBER)) {
                     if (COMPLETE.equals(task.getBusinessStatus())) {
-                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.purple, null));
+                        if (background instanceof GradientDrawable) {
+                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.purple, null));
+                        }
+//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.purple, null));
                         holder.actionButton.setTextColor(getResources().getColor(R.color.cyan, null));
                         holder.actionButton.setText(R.string.edit_index_case);
                     } else {
-                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.cyan, null));
+                        if (background instanceof GradientDrawable) {
+                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.cyan, null));
+                        }
+//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.cyan, null));
                         holder.actionButton.setText(R.string.confirm_index_case);
                     }
                 } else {
                     if (COMPLETE.equals(task.getBusinessStatus())) {
-                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
+                        if (background instanceof GradientDrawable) {
+                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.pnc_circle_green, null));
+                        }
+//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
                         holder.actionButton.setTextColor(getResources().getColor(R.color.purple, null));
                         holder.actionButton.setText(R.string.edit_secondary);
                     } else {
-                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.orange, null));
+                        if (background instanceof GradientDrawable) {
+                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.orange, null));
+                        }
+//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.orange, null));
                         holder.actionButton.setText(R.string.confirm_secondary);
                     }
                 }
             } else {
 
                 if (COMPLETE.equals(task.getBusinessStatus())) {
-                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
+                    if (background instanceof GradientDrawable) {
+                        ((GradientDrawable) background).setColor(getResources().getColor(R.color.pnc_circle_green, null));
+                    }
+//                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
                     holder.actionButton.setText(R.string.edit_racd);
                 } else {
-                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.not_visited_yellow, null));
+                    if (background instanceof GradientDrawable) {
+                        ((GradientDrawable) background).setColor(getResources().getColor(R.color.not_visited_yellow, null));
+                    }
+//                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.not_visited_yellow, null));
                     holder.actionButton.setText(R.string.action_racd);
                 }
             }
@@ -314,9 +387,9 @@ public class GDRSActivity extends AppCompatActivity {
                             JSONObject formJSON;
 
                             if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                                if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)){
+                                if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
                                     formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
-                                }else {
+                                } else {
                                     formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
                                 }
                             } else {
@@ -396,6 +469,7 @@ public class GDRSActivity extends AppCompatActivity {
             holder.gender.setText(action.getGender());
             holder.individualId.setText(action.getIndividualId());
             holder.dob.setText(action.getDob());
+            holder.createdDate.setText(action.createdDate);
             return action;
         }
 
@@ -410,6 +484,8 @@ public class GDRSActivity extends AppCompatActivity {
             TextView individualId;
             TextView gender;
             TextView dob;
+            TextView createdDate;
+            TextView oldTaskMessage;
             Button actionButton;
 
             ActionViewHolder(View itemView) {
@@ -418,6 +494,12 @@ public class GDRSActivity extends AppCompatActivity {
                 gender = itemView.findViewById(R.id.individualGender);
                 dob = itemView.findViewById(R.id.individualDob);
                 actionButton = itemView.findViewById(R.id.actionButton);
+                createdDate = itemView.findViewById(R.id.createdDate);
+                oldTaskMessage = itemView.findViewById(R.id.oldTaskMessage);
+                individualId.setOnLongClickListener(view -> {
+                    copyToClipboard(individualId.getText().toString());
+                    return true; // Indicates that the long click was handled
+                });
             }
         }
     }
@@ -431,13 +513,16 @@ public class GDRSActivity extends AppCompatActivity {
         @Getter
         private final String dob;
         @Getter
+        private final String createdDate;
+        @Getter
         private final Task task;
 
-        Action(String individualId, String gender, String dob, Task task) {
+        Action(String individualId, String gender, String dob, String createdDate, Task task) {
             this.individualId = individualId;
             this.gender = gender;
             this.dob = dob;
             this.task = task;
+            this.createdDate = createdDate;
         }
 
     }
@@ -445,6 +530,7 @@ public class GDRSActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK && data != null
                 && data.hasExtra(JSON_FORM_PARAM_JSON)) {
             String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
@@ -482,13 +568,42 @@ public class GDRSActivity extends AppCompatActivity {
                     long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
 
                     hdssMaxServerVersion++;
-                    HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId,hdssMaxServerVersion);
+                    HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId, hdssMaxServerVersion);
                     hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender,hdssMaxServerVersion);
+                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender, hdssMaxServerVersion);
                     hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
 
                     taskUtils.generateTask(this, uuid.toString(), locationUUID, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);
+
+                    Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
+                    Set<Task> tasksByStructure = hdssRepository.getTasksByStructure(locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
+
+                    if (RCD.equals(task.getCode())) {
+                        boolean anyRCDComplete = false;
+
+                        anyRCDComplete = tasksByStructure.stream()
+                                .anyMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+                        if (anyRCDComplete){
+                           String businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
+                           task.setBusinessStatus(businessStatusIndexCase);
+                           taskRepository.addOrUpdate(task);
+                        }
+
+                    } else if (INDEX_CASE.equals(task.getCode())){
+                        if (COMPLETE.equals(task.getBusinessStatus())){
+                            task.setBusinessStatus(INDEX_CASE_COMPLETE);
+                            taskRepository.addOrUpdate(task);
+                        }
+                    } else {
+                        if (COMPLETE.equals(task.getBusinessStatus())){
+                            task.setBusinessStatus(SECONDARY_INDEX_CASE_COMPLETE);
+                            taskRepository.addOrUpdate(task);
+                        }
+                    }
+
+
                 } else if (encounter.equals("index_case_member") && PreferencesUtil.getInstance().getInterventionTypeForPlan(planId).equals(Constants.Intervention.SURVEY)) {
 
                     JSONArray fields = JsonFormUtils.fields(jsonForm);
@@ -531,7 +646,7 @@ public class GDRSActivity extends AppCompatActivity {
 
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Data
@@ -603,38 +718,81 @@ public class GDRSActivity extends AppCompatActivity {
                 task.setStatus(Task.TaskStatus.COMPLETED);
                 task.setLastModified(new DateTime());
                 taskRepository.addOrUpdate(task);
-            } else {
+            } else if (INDEX_CASE.equals(task.getCode())) {
 
-                String businessStatusIndexCase = Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
+                String businessStatusIndexCase;
                 boolean allIndexCaseComplete = false;
                 boolean allRCDComplete = false;
                 boolean allRCDInComplete = false;
+
 
                 allIndexCaseComplete = tasksByStructure.stream().filter(innerTask -> INDEX_CASE_MEMBER.equals(innerTask.getCode()))
                         .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
 
                 allRCDComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
                         .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+//
+//                allRCDInComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
+//                        .anyMatch(innerTask -> Constants.BusinessStatus.NOT_VISITED.equals(innerTask.getBusinessStatus()));
 
-                allRCDInComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
-                        .anyMatch(innerTask -> Constants.BusinessStatus.NOT_VISITED.equals(innerTask.getBusinessStatus()));
 
-
-                businessStatusIndexCase = Constants.BusinessStatus.NOT_VISITED;
+                businessStatusIndexCase = Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
 
                 if (allIndexCaseComplete) {
                     if (allRCDComplete) {
                         businessStatusIndexCase = COMPLETE;
-                    } else if (allRCDInComplete) {
-                        businessStatusIndexCase = INDEX_COMPLETE_RCD_INCOMPLETE;
-                    }
-                } else {
-                    if (allRCDComplete) {
-                        businessStatusIndexCase = RCD_COMPLETE_INDEX_INCOMPLETE;
+//                    } else if (allRCDInComplete) {
+//                        businessStatusIndexCase = INDEX_COMPLETE_RCD_INCOMPLETE;
                     } else {
-                        businessStatusIndexCase = RCD_INCOMPLETE_INDEX_INCOMPLETE;
+                        businessStatusIndexCase = INDEX_CASE_COMPLETE;
                     }
                 }
+//                else {
+//                    if (allRCDComplete) {
+//                        businessStatusIndexCase = RCD_COMPLETE_INDEX_INCOMPLETE;
+//                    } else {
+//                        businessStatusIndexCase = RCD_INCOMPLETE_INDEX_INCOMPLETE;
+//                    }
+//                }
+                task.setBusinessStatus(businessStatusIndexCase);
+                task.setStatus(Task.TaskStatus.COMPLETED);
+                task.setLastModified(new DateTime());
+                taskRepository.addOrUpdate(task);
+            } else {
+                String businessStatusIndexCase;
+                boolean allIndexCaseComplete = false;
+                boolean allRCDComplete = false;
+                boolean allRCDInComplete = false;
+
+
+                allIndexCaseComplete = tasksByStructure.stream().filter(innerTask -> SECONDARY_INDEX_CASE_MEMBER.equals(innerTask.getCode()))
+                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+                allRCDComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
+                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+//
+//                allRCDInComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
+//                        .anyMatch(innerTask -> Constants.BusinessStatus.NOT_VISITED.equals(innerTask.getBusinessStatus()));
+
+
+                businessStatusIndexCase = Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
+
+                if (allIndexCaseComplete) {
+                    if (allRCDComplete) {
+//                    } else if (allRCDInComplete) {
+                        businessStatusIndexCase = COMPLETE;
+                    } else {
+                        businessStatusIndexCase = SECONDARY_INDEX_CASE_COMPLETE;
+
+                    }
+                }
+//                else {
+//                    if (allRCDComplete) {
+//                        businessStatusIndexCase = RCD_COMPLETE_INDEX_INCOMPLETE;
+//                    } else {
+//                        businessStatusIndexCase = RCD_INCOMPLETE_INDEX_INCOMPLETE;
+//                    }
+//                }
                 task.setBusinessStatus(businessStatusIndexCase);
                 task.setStatus(Task.TaskStatus.COMPLETED);
                 task.setLastModified(new DateTime());
@@ -685,8 +843,8 @@ public class GDRSActivity extends AppCompatActivity {
                 PreferencesUtil.getInstance().setSelectedHouseholdID(houseHoldId);
                 JSONObject formJSON;
 
-                if (task.getCode().equals(INDEX_CASE_MEMBER) ||task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)  ) {
-                    if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER) ){
+                if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
+                    if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
                         formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, location);
                     } else {
                         formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_INDEX_CASE, details, location);

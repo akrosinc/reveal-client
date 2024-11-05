@@ -66,28 +66,6 @@
         }
       },
       {
-        "key": "gender",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Gender?",
-        "options": [
-          {
-            "key": "male",
-            "text": "Male"
-          },
-          {
-            "key": "female",
-            "text": "Female"
-          }
-        ],
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        }
-      },
-      {
         "key": "health_worker_supervisor",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -95,68 +73,46 @@
         "type": "hidden"
       },
       {
-        "key": "date_of_birth",
-        "type": "date_picker",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "hint": "Date of Birth",
-        "max_date": "today",
-        "v_required": {
-          "value": true,
-          "err": "Please specify the date"
-        }
-      },
-      {
-        "key": "individual_household_compound",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "multi_select_list",
-        "dialogTitle": "Select compound",
-        "buttonText": "+ Select compound",
-        "searchHint": "Type compound ID",
-        "maxSelectable": "1",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.HdssCompoundRepository",
-        "v_required": {
-          "value": true,
-          "err": "Please select compound ID"
-        }
-      },
-      {
-        "key": "household",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "multi_select_list",
-        "dialogTitle": "Select household",
-        "buttonText": "+ Select household",
-        "searchHint": "Type household ID",
-        "maxSelectable": "1",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.HdssHouseholdRepository",
-        "v_required": {
-          "value": true,
-          "err": "Please select household ID"
-        }
+        "key": "individual_household_compound_search",
+        "type": "reveal_search_box",
+        "header": "Search Individuals",
+        "repositoryClass": "org.smartregister.reveal.searchbox.HdssSearch"
       },
       {
         "key": "individual",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "multi_select_list",
-        "dialogTitle": "Select individual",
-        "buttonText": "+ Select individual",
-        "searchHint": "Type individual ID",
-        "maxSelectable": "1",
-        "source": "true",
-        "repositoryClass":"org.smartregister.reveal.model.HdssIndividualRepository",
+        "type": "edit_text",
+        "hint": "Individual Id",
+        "edit_type": "name",
+        "text_size": "8sp",
         "v_required": {
-          "value": true,
-          "err": "Please select individual ID"
+          "value": "true",
+          "err": "Required field"
         }
+      },
+      {
+        "key": "date_of_birth",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Date of Birth",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
+        "key": "gender",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Gender",
+        "edit_type": "name",
+        "text_size": "8sp"
       },
       {
         "key": "receive_treatment",
@@ -186,6 +142,13 @@
         "v_required": {
           "value": "true",
           "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "gdrs-passive-case-relevance-rules.yml"
+            }
+          }
         }
       },
       {
@@ -253,7 +216,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "Consent to be tested?",
+        "label": "RDT",
         "options": [
           {
             "key": "negative",
@@ -289,9 +252,9 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:consent": {
+          "step1:rdt": {
             "type": "string",
-            "ex": "equalTo(., \"yes\")"
+            "ex": "equalTo(., \"positive\")"
           }
         }
       },
@@ -340,6 +303,25 @@
           "step1:rdt": {
             "type": "string",
             "ex": "equalTo(., \"positive\")"
+          }
+        }
+      },
+      {
+        "key": "drug_given_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Other specify",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:drug_given": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
           }
         }
       },

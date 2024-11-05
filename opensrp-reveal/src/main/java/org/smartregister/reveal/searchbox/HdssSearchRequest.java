@@ -10,4 +10,6 @@ public class HdssSearchRequest extends SearchRequest{
     private String gender;
 
     private String dob;
+
+    private boolean searchOnline;
 }

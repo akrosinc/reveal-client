@@ -6,6 +6,7 @@ import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_NUMB
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_SIZE;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.DOB;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.GENDER;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.SEARCH_ONLINE;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.SEARCH_STRING;
 
 import android.content.Context;
@@ -21,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.HdssIndividualHouseHoldCompound;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.HdssRepository;
@@ -34,10 +36,13 @@ public class HdssSearchWorker extends Worker {
 
     private HdssRepository hdssRepository;
 
+    private Gson gson;
+
     public HdssSearchWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
         HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase());
+        gson = new Gson();
     }
 
     @NonNull
@@ -49,39 +54,63 @@ public class HdssSearchWorker extends Worker {
         String searchString = data.getString(SEARCH_STRING);
         String gender = data.getString(GENDER);
         String dob = data.getString(DOB);
+        boolean searchOnline = data.getBoolean(SEARCH_ONLINE,true);
 
         int batchSize = data.getInt(BATCH_SIZE,0);
         int batchNumber = data.getInt(BATCH_NUMBER,0);
 
 
-        try {
-            hdssRepository.deleteSearchResultsData();
+        if (searchOnline){
+            try {
+                hdssRepository.deleteSearchResultsData();
 
-            String s = searchHdssEntities(searchString, gender, dob);
+                String s = searchHdssEntities(searchString, gender, dob);
 
-            Gson gson = new Gson();
+                List<HdssSearchBoxFactory.SearchResponse> resultList = gson.fromJson(s, new TypeToken<List<HdssSearchBoxFactory.SearchResponse>>() {}.getType());
 
-            List<HdssSearchBoxFactory.SearchResponse> resultList = gson.fromJson(s, new TypeToken<List<HdssSearchBoxFactory.SearchResponse>>() {}.getType());
+                hdssRepository.addOrUpdateSearchResults(resultList);
 
-            hdssRepository.addOrUpdateSearchResults(resultList);
+                List<HdssSearchBoxFactory.SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchNumber*batchSize);
 
-            List<HdssSearchBoxFactory.SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchNumber*batchSize);
+                String json = gson.toJson(searchResultsInBatches);
 
-            String json = gson.toJson(searchResultsInBatches);
+                Data output = new Data.Builder()
+                        .putString("result",json)
+                        .build();
 
-            Data output = new Data.Builder()
-                    .putString("result",json)
-                    .build();
+                return Result.success(output);
+            } catch (IllegalStateException e) {
+                Data output = new Data.Builder()
+                        .putString("error", "Too much data returned, please narrow your search")
+                        .build();
+                return Result.failure(output);
+            } catch (Exception e) {
+                return Result.failure();
+            }
+        } else {
+            try {
+                hdssRepository.deleteSearchResultsData();
+                List<HdssIndividualHouseHoldCompound> hdssIndividualHouseHoldCompounds = hdssRepository.searchHouseholdIndividual(searchString, gender);
+                hdssRepository.addOrUpdateLocalSearchResults(hdssIndividualHouseHoldCompounds);
+                List<HdssSearchBoxFactory.SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchNumber * batchSize);
 
-            return Result.success(output);
-        } catch (IllegalStateException e) {
-            Data output = new Data.Builder()
-                    .putString("error", "Too much data returned, please narrow your search")
-                    .build();
-            return Result.failure(output);
-        } catch (Exception e) {
-            return Result.failure();
+                String json = gson.toJson(searchResultsInBatches);
+
+                Data output = new Data.Builder()
+                        .putString("result", json)
+                        .build();
+                return Result.success(output);
+            } catch (IllegalStateException e) {
+                Data output = new Data.Builder()
+                        .putString("error", "Too much data returned, please narrow your search")
+                        .build();
+                return Result.failure(output);
+            } catch (Exception e) {
+                return Result.failure();
+            }
         }
+
+
 
     }
 

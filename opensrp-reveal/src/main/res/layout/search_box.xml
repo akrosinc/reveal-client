@@ -128,6 +128,11 @@
             android:text="Search"
             android:textSize="11sp"
             />
+        <CheckBox
+            android:id="@+id/myCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="search online" />
     </android.widget.LinearLayout>
 
     <androidx.core.widget.NestedScrollView

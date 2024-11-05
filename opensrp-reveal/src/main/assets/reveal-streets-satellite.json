@@ -85,8 +85,7 @@
             "MDA complete",
             "round_three",
             "round_three_skip",
-            "monthsixcomplete",
-            "Secondary Index Case Not Visited"
+            "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
           [
@@ -97,7 +96,8 @@
             "round_one_refused",
             "round_two_refused",
             "round_three_refused",
-            "enrollednotcomplete"
+            "enrollednotcomplete",
+            "RCD Partially complete"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -111,9 +111,10 @@
           "hsl(335, 100%, 79%)",
           [
             "Bednet Distributed",
-            "Adherence Visit Done"
+            "Adherence Visit Done",
+            "Secondary Index Case Not Visited"
           ],
-          "hsl(199, 68%, 55%)",
+          "hsl(199, 68%, 40%)",
           [
             "Blood Screening Complete"
           ],
@@ -127,8 +128,10 @@
           "hsl(191, 89%, 61%)",
           ["round_two","round_two_skip"],
           "hsl(227, 66%, 55%)",
-          ["Index complete RCD Incomplete"],
+          ["Index complete RCD Incomplete","Index Case Complete"],
           "hsl(272, 100%, 43%)",
+          [ "Secondary Index Case Complete"],
+          "hsl(272, 40%, 43%)",
           ["RCD Incomplete Index Incomplete", "RCD complete Index Incomplete"],
           "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"

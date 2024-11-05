@@ -211,7 +211,7 @@
         }
       },
       {
-        "key": "drug_given",
+        "key": "drug_given_other",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

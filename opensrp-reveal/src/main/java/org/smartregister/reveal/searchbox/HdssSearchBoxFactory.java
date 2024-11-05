@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -37,6 +38,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -63,6 +65,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
     public static final String SEARCH_STRING = "searchString";
     public static final String GENDER = "gender";
+    public static final String SEARCH_ONLINE = "search_online";
     public static final String DOB = "dob";
     public static final String BATCH_NUMBER = "batchNumber";
     public static final String BATCH_SIZE = "batchSize";
@@ -98,6 +101,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     LinearLayout linearLayout;
     Dialog dialog;
 
+    boolean searchOnlineChecked = false;
     private Runnable searchRunnable;
     private static final long SEARCH_DELAY = 800;
     private Handler handler = new Handler();
@@ -129,10 +133,16 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
         addDatePickerEditText(context,resultTextView);
         addDateClearButton();
+        addSearchOnlineCheckBox(context,linearLayout);
 
         views.add(linearLayout);
         formFragment.getJsonApi().addFormDataView(resultTextView);
         return views;
+    }
+
+    private void addSearchOnlineCheckBox(Context context, LinearLayout linearLayout) {
+        CheckBox checkBox = linearLayout.findViewById(R.id.myCheckbox);
+        checkBox.setOnCheckedChangeListener((v,isChecked)-> searchOnlineChecked = isChecked);
     }
 
     private void addDateClearButton() {
@@ -447,7 +457,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         }
         resultTextView.setText(item.getResult());
 //        formFragment.writeValue(stepName, "individual_household_compound_search", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
-        formFragment.writeValue(stepName, "date_of_birth", item.getField5(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+
+
+        DateTime dateOfBirth = DateTime.parse(item.getField5(),DateTimeFormat.forPattern("yyyy-MM-dd"));
+
+        formFragment.writeValue(stepName, "date_of_birth", dateOfBirth.toString(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "individual", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
 
@@ -478,6 +492,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
         builder.putInt(BATCH_NUMBER, batchNumber);
         builder.putInt(BATCH_SIZE, batchSize);
+
+        builder.putBoolean(SEARCH_ONLINE,searchOnlineChecked);
 
         Data inputData = builder.build();
         return inputData;

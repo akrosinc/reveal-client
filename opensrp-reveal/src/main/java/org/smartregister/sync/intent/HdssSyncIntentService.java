@@ -26,6 +26,12 @@ public class HdssSyncIntentService extends BaseSyncIntentService {
         HdssRepository.createHouseholdStructureTable(hdssRepository.getWritableDatabase());
         HdssRepository.createHouseholdIndividualTable(hdssRepository.getWritableDatabase());
         HdssRepository.createIndividualTable(hdssRepository.getWritableDatabase());
+
+        HdssRepository.createIndividualTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdIndividualTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdStructureTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createCompoundHouseholdTableIndex(hdssRepository.getWritableDatabase());
+
         this.hdssServiceHelper.syncHdssDetails();
         CoreLibrary.getInstance().context().setFetchedHdssDetails(true);
 

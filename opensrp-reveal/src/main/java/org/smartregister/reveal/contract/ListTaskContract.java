@@ -47,7 +47,7 @@ public interface ListTaskContract {
 
         void openRCD();
 
-        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition);
+//        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition);
 
         void setGeoJsonSourceWithParents(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition, List<Feature> parentLocations);
 
@@ -89,11 +89,11 @@ public interface ListTaskContract {
 
     interface Presenter extends BaseContract.BasePresenter {
 
-        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationAreas, List<TaskDetails> taskDetailsList);
+//        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationAreas, List<TaskDetails> taskDetailsList);
 
         void onStructuresAndParentsFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList,List<Feature> parentLocations);
 
-        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas,List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive);
+//        void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas,List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive);
 
         void onStructuresAndParentsFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas,List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive,List<Feature> parentLocations);
 

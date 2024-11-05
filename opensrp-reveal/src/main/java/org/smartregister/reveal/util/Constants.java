@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVE
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 
 import java.util.Arrays;
@@ -316,7 +317,7 @@ public interface Constants {
 
         public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING
                 ,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY
-                ,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY,RCD,INDEX_CASE);
+                ,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY,RCD,INDEX_CASE,SECONDARY_INDEX_CASE);
 
         public static String LSM = "LSM";
     }

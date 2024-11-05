@@ -63,6 +63,10 @@ public class HdssRepository extends BaseRepository {
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY(" + HOUSEHOLD_ID + ") " +
                     ");";
+
+    private static final String CREATE_HDSS_COMPOUND_HOUSEHOLD_INDEX =
+            "CREATE INDEX IF NOT EXISTS hdss_compound_household_household_id_idx ON hdss_compound_household (household_id);";
+
     private static final String CREATE_HDSS_HOUSEHOLD_STRUCTURE =
             "CREATE TABLE IF NOT EXISTS " + HDSS_HOUSEHOLD_STRUCTURE + " ( " +
                     " " + HOUSEHOLD_ID + " TEXT NOT NULL, " +
@@ -70,6 +74,10 @@ public class HdssRepository extends BaseRepository {
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY(" + HOUSEHOLD_ID + ") " +
                     ");";
+
+    private static final String CREATE_HDSS_HOUSEHOLD_STRUCTURE_INDEX =
+            "CREATE INDEX IF NOT EXISTS hdss_household_structure_structure_id_idx ON hdss_household_structure (structure_id);";
+
     private static final String CREATE_HDSS_HOUSEHOLD_INDIVIDUAL =
             "CREATE TABLE IF NOT EXISTS " + HDSS_HOUSEHOLD_INDIVIDUAL + "  ( " +
                     "  " + HOUSEHOLD_ID + "  TEXT NOT NULL, " +
@@ -77,6 +85,9 @@ public class HdssRepository extends BaseRepository {
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
                     ");";
+
+    private static final String CREATE_HDSS_HOUSEHOLD_INDIVIDUAL_INDEX =
+            "CREATE INDEX IF NOT EXISTS hdss_household_individual_individual_id_idx ON hdss_household_individual (individual_id);";
 
 
     private static final String CREATE_HDSS_INDIVIDUAL =
@@ -87,6 +98,11 @@ public class HdssRepository extends BaseRepository {
                     "  " + GENDER + "  TEXT NOT NULL, " +
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
+                    ");";
+
+    private static final String CREATE_HDSS_INDIVIDUAL_INDEX =
+            "CREATE INDEX IF NOT EXISTS  hdss_individual_identifier_idx ON hdss_individual ( " +
+                    " identifier " +
                     ");";
 
     private static final String CREATE_HDSS_SEARCH_RESULTS =
@@ -109,16 +125,32 @@ public class HdssRepository extends BaseRepository {
         database.execSQL(CREATE_HDSS_COMPOUND_HOUSEHOLD);
     }
 
+    public static void createCompoundHouseholdTableIndex(SQLiteDatabase database) {
+        database.execSQL(CREATE_HDSS_COMPOUND_HOUSEHOLD_INDEX);
+    }
+
     public static void createHouseholdStructureTable(SQLiteDatabase database) {
         database.execSQL(CREATE_HDSS_HOUSEHOLD_STRUCTURE);
+    }
+
+    public static void createHouseholdStructureTableIndex(SQLiteDatabase database) {
+        database.execSQL(CREATE_HDSS_HOUSEHOLD_STRUCTURE_INDEX);
     }
 
     public static void createHouseholdIndividualTable(SQLiteDatabase database) {
         database.execSQL(CREATE_HDSS_HOUSEHOLD_INDIVIDUAL);
     }
 
+    public static void createHouseholdIndividualTableIndex(SQLiteDatabase database) {
+        database.execSQL(CREATE_HDSS_HOUSEHOLD_INDIVIDUAL_INDEX);
+    }
+
     public static void createIndividualTable(SQLiteDatabase database) {
         database.execSQL(CREATE_HDSS_INDIVIDUAL);
+    }
+
+    public static void createIndividualTableIndex(SQLiteDatabase database) {
+        database.execSQL(CREATE_HDSS_INDIVIDUAL_INDEX);
     }
 
     public static void createSearchResultsTable(SQLiteDatabase database) {
@@ -371,6 +403,21 @@ public class HdssRepository extends BaseRepository {
             contentValues.put(GENDER, individual.getGender());
             contentValues.put(SERVER_VERSION, individual.getServerVersion());
             writableDatabase.replace(HDSS_INDIVIDUAL, null, contentValues);
+        });
+    }
+
+    public void addOrUpdateLocalSearchResults(List<HdssIndividualHouseHoldCompound> householdIndividuals) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        householdIndividuals.forEach(individual -> {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(IDENTIFIER, individual.getIdentifier());
+            contentValues.put(INDIVIDUAL_ID, individual.getIndividualId());
+            contentValues.put(DOB, individual.getDob());
+            contentValues.put(GENDER, individual.getGender());
+            contentValues.put(COMPOUND_ID, individual.getCompoundId());
+            contentValues.put(HOUSEHOLD_ID,individual.getHouseholdId());
+            contentValues.put(SERVER_VERSION,0);
+            writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
         });
     }
 

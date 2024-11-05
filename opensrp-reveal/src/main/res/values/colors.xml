@@ -81,6 +81,7 @@
     <color name="alert_urgent_red">#f04646</color>
     <color name="alert_in_progress_blue">#389cc8</color>
     <color name="alert_complete_green">#25aa4a</color>
+    <color name="parent_boundary_grey">#BBBBBB</color>
 
     <color name="pnc_pp_fp_grey">#f5f5f5</color>
 
