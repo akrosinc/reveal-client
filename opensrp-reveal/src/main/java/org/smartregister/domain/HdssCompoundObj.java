@@ -1,6 +1,8 @@
 package org.smartregister.domain;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,8 +22,15 @@ public class HdssCompoundObj implements Serializable {
     List<HdssHouseholdStructure> allHouseholdStructure;
 
     List<HdssIndividual> allIndividuals;
-    boolean isEmpty;
+
+    boolean empty;
 
     long serverVersion;
+
+    int totalRecords;
+
+    public boolean getEmpty(){
+        return empty;
+    }
 
 }

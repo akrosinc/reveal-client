@@ -84,6 +84,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
+        "read_only": "true",
         "hint": "Individual Id",
         "edit_type": "name",
         "text_size": "8sp",
@@ -94,15 +95,17 @@
       },
       {
         "key": "date_of_birth",
-        "type": "date_picker",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
         "hint": "Date of birth",
-        "max_date": "today",
+        "edit_type": "name",
+        "text_size": "8sp",
         "v_required": {
-          "value": true,
-          "err": "Please specify the date"
+          "value": "true",
+          "err": "Required field"
         }
       },
       {
@@ -114,7 +117,11 @@
         "read_only": "true",
         "hint": "Gender",
         "edit_type": "name",
-        "text_size": "8sp"
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
       },
       {
         "key": "receive_treatment",

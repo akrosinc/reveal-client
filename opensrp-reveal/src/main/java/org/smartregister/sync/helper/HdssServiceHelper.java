@@ -1,12 +1,15 @@
 package org.smartregister.sync.helper;
 
 import static org.smartregister.AllConstants.BATCH_SIZE;
+import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.PerformanceMonitoring.HDSS_SYNC;
 import static org.smartregister.reveal.api.RevealService.HDSS_PUSH_URL;
 import static org.smartregister.reveal.api.RevealService.HDSS_SYNC_URL;
 import static org.smartregister.reveal.api.RevealService.LOCATION_STRUCTURE_URL;
+import static org.smartregister.util.PerformanceMonitoringUtils.addAttribute;
 import static org.smartregister.util.PerformanceMonitoringUtils.initTrace;
 import static org.smartregister.util.PerformanceMonitoringUtils.startTrace;
+import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 import android.content.Context;
 
@@ -22,13 +25,16 @@ import org.smartregister.domain.HdssCompoundObj;
 import org.smartregister.domain.HdssIndividualHouseHoldCompound;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.HdssRepository;
+import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -49,7 +55,7 @@ public class HdssServiceHelper extends BaseHelper {
     private HdssRepository hdssRepository;
     private Trace hdssSyncTrace;
     private String team;
-    private long totalRecords;
+    private long totalRecords = 0;
     private SyncProgress syncProgress;
 
     public HdssServiceHelper(HdssRepository hdssRepository) {
@@ -60,24 +66,39 @@ public class HdssServiceHelper extends BaseHelper {
         team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
 
+    public static HdssServiceHelper getInstance() {
+        return RevealApplication.getInstance().getContext().hdssServiceHelper();
+    }
+
     public void syncHdssDetails() {
-//        syncProgress = new SyncProgress();
-//
-//        syncProgress.setSyncEntity(SyncEntity.HDSS);
-//
-//        syncProgress.setTotalRecords(totalRecords);
+
+
+        Timber.tag("syncing").i("start sync");
+            syncProgress = new SyncProgress();
+            syncProgress.setSyncEntity(SyncEntity.HDSS);
+            syncProgress.setTotalRecords(totalRecords);
+
+        HdssRepository.createCompoundTable(hdssRepository.getWritableDatabase());
+        HdssRepository.createCompoundHouseholdTable(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdStructureTable(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdIndividualTable(hdssRepository.getWritableDatabase());
+        HdssRepository.createIndividualTable(hdssRepository.getWritableDatabase());
+
+        HdssRepository.createIndividualTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdIndividualTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdStructureTableIndex(hdssRepository.getWritableDatabase());
+        HdssRepository.createCompoundHouseholdTableIndex(hdssRepository.getWritableDatabase());
+
 
         try {
-            pushHdssEntities();
-        } catch (Exception e){
-            Timber.tag("Reveal Exception").e("cannot push down hdss items");
-        }
+                pushHdssEntities();
+            } catch (Exception e) {
+                Timber.tag("Reveal Exception").e("cannot push down hdss items");
+            }
 
 
-        batchhdssEntities();
-
-//        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locationStructures.size()));
-//        sendSyncProgressBroadcast(syncProgress, context);
+            batchhdssEntities();
+        Timber.tag("syncing").i("finish sync");
     }
 
     private void pushHdssEntities() throws Exception {
@@ -92,6 +113,7 @@ public class HdssServiceHelper extends BaseHelper {
 
     private void batchhdssEntities() {
         long serverVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
+        Timber.tag("syncing").i("starting serverVersion %s",serverVersion);
         String providerId = allSharedPreferences.fetchRegisteredANM();
 
         try {
@@ -99,23 +121,56 @@ public class HdssServiceHelper extends BaseHelper {
             startTrace(hdssSyncTrace);
             boolean isEmpty = false;
 
+            int totalCount = 0;
+            int totalSumCount = 0;
             do {
-                String hdssResponse = fetchHdssEntities(providerId, serverVersion, 400);
+                Timber.tag("syncing").i("doing http call");
+                String hdssResponse = fetchHdssEntities(providerId, serverVersion, 500);
+                Timber.tag("syncing").i("before gson");
                 HdssCompoundObj hdssCompounds = hdssGson.fromJson(hdssResponse, HdssCompoundObj.class);
-                isEmpty = hdssCompounds.isEmpty();
 
+                isEmpty = hdssCompounds.getEmpty();
+                Timber.tag("syncing").i("done with http call is empty %s",isEmpty);
                 if (!isEmpty) {
-
+                    totalCount = hdssCompounds.getTotalRecords();
                     serverVersion = hdssCompounds.getServerVersion();
-                    hdssRepository.addOrUpdateCompounds(hdssCompounds.getAllCompounds());
-                    hdssRepository.addOrUpdateCompoundHouseholds(hdssCompounds.getCompoundHouseHolds());
-                    hdssRepository.addOrUpdateHouseholdStructure(hdssCompounds.getAllHouseholdStructure());
-                    hdssRepository.addOrUpdateHouseholdIndividual(hdssCompounds.getAllHouseholdIndividual());
-                    hdssRepository.addOrUpdateIndividual(hdssCompounds.getAllIndividuals());
+                    Timber.tag("1").i("from server %s total count %s",serverVersion,totalCount);
+                    hdssRepository.addOrUpdateCompoundsBatched(hdssCompounds.getAllCompounds());
+                    hdssRepository.addOrUpdateCompoundHouseholdsBatched(hdssCompounds.getCompoundHouseHolds());
+                    hdssRepository.addOrUpdateHouseholdStructureBatched(hdssCompounds.getAllHouseholdStructure());
+                    hdssRepository.addOrUpdateHouseholdIndividualBatched(hdssCompounds.getAllHouseholdIndividual());
+                    hdssRepository.addOrUpdateIndividualBatched(hdssCompounds.getAllIndividuals());
                     PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
+                    Timber.tag("syncing").e("end setting at serverVersion %s",serverVersion);
+
+                    int countOfIndividuals = hdssRepository.getCountOfIndividuals();
+                    totalSumCount += countOfIndividuals;
+
+                    Timber.tag("syncing").e("total %s vs in db %s",totalCount,countOfIndividuals);
+                    syncProgress.setPercentageSynced(Utils.calculatePercentage(totalCount, countOfIndividuals));
+                    Timber.tag("syncing").e("hdss send broadcast %s",syncProgress.getSyncEntity().value());
+                    sendSyncProgressBroadcast(syncProgress, context);
+                } else {
+                    Timber.tag("syncing").e("no data returned");
+
+                    if (hdssCompounds.getTotalRecords()>0){
+                        Timber.tag("syncing").e("hdssCompounds.getTotalRecords()>0");
+                        int countOfIndividuals = hdssRepository.getCountOfIndividuals();
+                        totalCount = hdssCompounds.getTotalRecords();
+                        Timber.tag("syncing").e("total %s vs in db %s",totalCount,countOfIndividuals);
+
+                        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalCount, countOfIndividuals));
+                        sendSyncProgressBroadcast(syncProgress, context);
+                    } else {
+                        Timber.tag("syncing").i("total records not > 0");
+                    }
                 }
 
             } while (!isEmpty);
+
+            addAttribute(hdssSyncTrace, COUNT, String.valueOf(totalSumCount));
+            Timber.tag("syncing").e("end of syncing batch");
+            stopTrace(hdssSyncTrace);
 //            addAttribute(hdssSyncTrace, COUNT, String.valueOf(hdssCompounds.size()));
 //            stopTrace(hdssSyncTrace);
 

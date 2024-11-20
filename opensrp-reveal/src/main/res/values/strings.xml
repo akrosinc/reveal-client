@@ -1051,4 +1051,5 @@
     <string name="confirm_secondary">Confirm Secondary Index</string>
     <string name="edit_racd">Edit RACD</string>
     <string name="action_racd">Action RACD</string>
+    <string name="hdss">Hdss</string>
 </resources>

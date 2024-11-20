@@ -61,7 +61,7 @@
         android:id="@+id/sync_progress_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/overall_sync_progress_view_separator">
 
         <TextView
@@ -171,6 +171,36 @@
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/event_sync_progress_bar_label" />
+
+
+        <TextView
+            android:id="@+id/hdss_sync_progress_bar_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
+            android:textColor="@color/text_gray"
+            android:textSize="10sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/event_sync_progress_bar" />
+
+        <ProgressBar
+            android:id="@+id/hdss_sync_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_marginStart="@dimen/drawer_margin"
+            android:layout_marginTop="@dimen/drawer_margin_vertical"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="0"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hdss_sync_progress_bar_label" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--sync progress indication end-->

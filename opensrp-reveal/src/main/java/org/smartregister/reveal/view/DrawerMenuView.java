@@ -83,12 +83,15 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     private DristhiConfiguration configuration;
 
+    private PreferencesUtil preferencesUtil;
+
     public DrawerMenuView(BaseDrawerContract.DrawerActivity activity) {
         this.activity = activity;
         presenter = new BaseDrawerPresenter(this, activity);
         interactor = new BaseDrawerInteractor(presenter);
         planDefinitionRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
         configuration = CoreLibrary.getInstance().context().configuration();
+        this.preferencesUtil = PreferencesUtil.getInstance();
     }
 
     @Override
@@ -311,6 +314,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             TreeViewDialog treeViewDialog = new TreeViewDialog(getContext(),
                     R.style.AppTheme_WideDialog,
                     new JSONArray(locationHierarchy.first), locationHierarchy.second, locationHierarchy.second);
+
             treeViewDialog.setCancelable(true);
             treeViewDialog.setCanceledOnTouchOutside(true);
             treeViewDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -478,6 +482,16 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
         TextView eventSyncLabel = this.activity.getActivity().findViewById(R.id.event_sync_progress_bar_label);
         ProgressBar eventSyncProgressBar = this.activity.getActivity().findViewById(R.id.event_sync_progress_bar);
+
+        if ("TRUE".equals(preferencesUtil.isGdrsPlan())){
+
+            TextView hdssSyncLabel = this.activity.getActivity().findViewById(R.id.hdss_sync_progress_bar_label);
+            ProgressBar hdssSyncProgressBar = this.activity.getActivity().findViewById(R.id.hdss_sync_progress_bar);
+
+            hdssSyncLabel.setText(String.format(this.activity.getActivity().getResources().getString(R.string.progressBarLabel), "HDSS", 0));
+            hdssSyncProgressBar.setProgress(0);
+        }
+
 
         totalProgressIndicatorView.setProgress(0);
         totalProgressIndicatorView.setTitle("Sync Progress: 0%");

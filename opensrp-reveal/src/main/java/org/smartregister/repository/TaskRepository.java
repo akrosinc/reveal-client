@@ -37,7 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.DataTypes.INTEGER;
@@ -197,7 +201,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
         } else {
             long replace = getWritableDatabase().replace(TASK_TABLE, null, contentValues);
-            Timber.tag("Database").i("After task replace %s",String.valueOf(replace));
+            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
         }
 
         if (task.getNotes() != null) {
@@ -214,8 +218,8 @@ public class TaskRepository extends BaseRepository {
         try {
             String[] params = new String[]{planId, groupId};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                            TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
@@ -245,7 +249,7 @@ public class TaskRepository extends BaseRepository {
                                     "LEFT JOIN hdss_household_structure hhs on hhs.structure_id = t.for " +
                                     "left join hdss_compound_household hch on hch.household_id = hhs.household_id " +
                                     "WHERE t.%s=? AND t.%s =? AND t.%s NOT IN (%s)",
-                             PLAN_ID, GROUP_ID, STATUS,
+                            PLAN_ID, GROUP_ID, STATUS,
                             TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
@@ -267,6 +271,87 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
+    public Map<String, TaskCount> getGdrsMemberTaskCounts(List<String> structureIds
+            , List<String> businessStatuses, List<String> taskStates) {
+        Cursor cursor = null;
+
+
+        StringBuilder inClause = new StringBuilder();
+        for (int i = 0; i < structureIds.size(); i++) {
+            inClause.append("?");
+            if (i < structureIds.size() - 1) {
+                inClause.append(", ");
+            }
+        }
+
+        StringBuilder statesInClause = new StringBuilder();
+        for (int i = 0; i < taskStates.size(); i++) {
+            statesInClause.append("?");
+            if (i < taskStates.size() - 1) {
+                statesInClause.append(", ");
+            }
+        }
+
+        StringBuilder businessStatesInClause = new StringBuilder();
+        for (int i = 0; i < businessStatuses.size(); i++) {
+            businessStatesInClause.append("?");
+            if (i < taskStates.size() - 1) {
+                businessStatesInClause.append(", ");
+            }
+        }
+
+
+        String sql = "SELECT " +
+                " hs.structure_id as structureId, t.code as code,t.business_status as businessStatus, count(*) as count \n" +
+                " from task t\n" +
+                " inner join hdss_individual i on t.for = i.identifier\n" +
+                " left join hdss_household_individual hi on hi.individual_id = i.individual_id\n" +
+                " left join hdss_household_structure hs on hs.household_id = hi.household_id\n" +
+                " WHERE t.status not in (" + statesInClause + ") and t.business_status not in (" + businessStatesInClause + ")\n" +
+                " and hs.structure_id in (" + inClause + ")\n" +
+                " group by hs.structure_id, t.code,t.business_status";
+
+
+        List<String> parameters = new ArrayList<>();
+        parameters.addAll(taskStates); // Example status to exclude (replace with your actual value)
+        parameters.addAll(businessStatuses); // Example business status to exclude (replace with your actual value)
+        parameters.addAll(structureIds);
+
+        cursor = getReadableDatabase().rawQuery(sql, parameters.toArray(new String[0]));
+
+        List<TaskCount> taskCounts = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            TaskCount taskCount = new TaskCount();
+            taskCount.setCount(cursor.getInt(cursor.getColumnIndexOrThrow("count")));
+            taskCount.setBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow("businessStatus")));
+            taskCount.setStructureId(cursor.getString(cursor.getColumnIndexOrThrow("structureId")));
+            taskCount.setCode(cursor.getString(cursor.getColumnIndexOrThrow("code")));
+
+            taskCounts.add(taskCount);
+        }
+        Map<String, TaskCount> collect = taskCounts.stream()
+                .collect(Collectors.toMap(
+                        taskCount -> taskCount.getStructureId().concat("-").concat(taskCount.getCode())
+                        , taskCount -> taskCount, (a, b) -> a));
+
+        return collect;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class TaskCount {
+
+        private String structureId;
+
+        private String code;
+
+        private String businessStatus;
+
+        private int count;
+    }
+
     /**
      * Accepts a stream of tasks
      *
@@ -279,8 +364,8 @@ public class TaskRepository extends BaseRepository {
         try {
             String[] params = new String[]{planId, groupId, code};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                            TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);
@@ -293,7 +378,6 @@ public class TaskRepository extends BaseRepository {
                 cursor.close();
         }
     }
-
 
 
     public Task getTaskByIdentifier(String identifier) {
@@ -328,22 +412,22 @@ public class TaskRepository extends BaseRepository {
 
     public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
     }
 
     public Set<Task> getTasksByPlanAndEntity(String planId, String forEntity) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, PLAN_ID, FOR, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, PLAN_ID, FOR, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{planId, forEntity}, INACTIVE_TASK_STATUS));
     }
 
     public Set<Task> getTasksByEntity(String forEntity) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, FOR, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, FOR, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{forEntity}, INACTIVE_TASK_STATUS));
     }
 
@@ -398,15 +482,16 @@ public class TaskRepository extends BaseRepository {
         }
         return task;
     }
+
     public Task readCursorGdrs(Cursor cursor) {
         Task task = readCursor(cursor);
         String householdId = cursor.getString(cursor.getColumnIndex(HOUSEHOLD_ID));
-        if (householdId != null){
+        if (householdId != null) {
             task.setHouseholdId(householdId);
         }
 
         String compoundId = cursor.getString(cursor.getColumnIndex(COMPOUND_ID));
-        if (householdId != null){
+        if (householdId != null) {
             task.setCompoundId(compoundId);
         }
 
@@ -741,7 +826,7 @@ public class TaskRepository extends BaseRepository {
         int unsyncedRecordsCount = 0;
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s =? OR %s IS NULL OR %s = ?"
-                    , TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SYNC_STATUS)
+                            , TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SYNC_STATUS)
                     , new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced});
             if (cursor.moveToNext()) {
                 unsyncedRecordsCount = cursor.getInt(0);

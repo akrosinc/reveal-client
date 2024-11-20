@@ -497,6 +497,8 @@ public class Utils {
                 return context.getString(R.string.structures);
             case TASKS:
                 return context.getString(R.string.tasks_text);
+            case HDSS:
+                return context.getString(R.string.hdss);
             default:
                 throw new IllegalStateException("Invalid Sync Entity");
         }

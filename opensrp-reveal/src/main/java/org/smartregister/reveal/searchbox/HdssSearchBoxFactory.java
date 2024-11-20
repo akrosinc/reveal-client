@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
+import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -67,12 +69,14 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     public static final String GENDER = "gender";
     public static final String SEARCH_ONLINE = "search_online";
     public static final String DOB = "dob";
+    public static final String NAME = "name";
     public static final String BATCH_NUMBER = "batchNumber";
     public static final String BATCH_SIZE = "batchSize";
     public static String REVEAL_SEARCH_BOX = "reveal_search_box";
     private String gender;
 
     private String searchText = null;
+    private String nameText = null;
 
     private JsonFormFragment formFragment;
 
@@ -125,6 +129,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
         NativeEditText resultTextView = addTextView();
         addSearchEditText(resultTextView);
+        addSearchNameEditText(resultTextView);
+
         addButton(context, jsonObject, resultTextView);
         addGenderSpinner(resultTextView);
         addClearButton(resultTextView);
@@ -276,21 +282,30 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             @Override
             public void afterTextChanged(Editable s) {
 
-//                searchRunnable = new Runnable() {
-//                    @Override
-//                    public void run() {
+
                         searchText = s.toString();
-//                        if (searchText.isEmpty()) {
-//                            searchText = null;
-//                        } else if (searchText.length() >= 3 && !isLoading) {
-//                            Timber.tag("hdsssearch").i("addSearchEditText");
-//
-//
-//                            enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
-//                        }
-//                    }
-//                };
-//                handler.postDelayed(searchRunnable, SEARCH_DELAY);
+
+            }
+        });
+    }
+    private void addSearchNameEditText(NativeEditText resultTextView) {
+        EditText editText = linearLayout.findViewById(R.id.name_text);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(searchRunnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                nameText = s.toString();
+
             }
         });
     }
@@ -306,12 +321,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 }
             }
 
-            if (gender==null && searchText==null && localSearchDate==null) {
 
-            } else {
-                if (gender == null && (searchText == null || searchText.length() < 3)){
-
-                } else {
                     HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
                     batchNumber = 0;
                     Data inputData = getSearchRequest(hdssSearchRequest);
@@ -321,8 +331,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                     OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
                     WorkManager.getInstance(context).enqueue(searchWorkRequest);
                     observeWorkInfo(context, resultTextView, searchWorkRequest);
-                }
-            }
+
         }
     }
 
@@ -490,6 +499,10 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             builder.putString(DOB, hdssSearchRequest.getDob());
         }
 
+        if (hdssSearchRequest.getNameString() != null) {
+            builder.putString(NAME, hdssSearchRequest.getNameString());
+        }
+
         builder.putInt(BATCH_NUMBER, batchNumber);
         builder.putInt(BATCH_SIZE, batchSize);
 
@@ -522,6 +535,10 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             searchItem.setLabel5("Date of Birth");
             searchItem.setField5(result.getDob());
         }
+        if (result.getName() != null) {
+            searchItem.setLabel6("Name");
+            searchItem.setField6(result.getName());
+        }
         return searchItem;
     }
 
@@ -553,8 +570,10 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
         HdssSearchRequest request = new HdssSearchRequest();
         request.setGender(gender);
+        request.setNameString(nameText);
         request.setSearchString(searchText);
         request.setDob(localSearchDate);
+
 
         return request;
     }
@@ -570,5 +589,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         private String householdId;
         private String dob;
         private String gender;
+        private String name;
     }
 }

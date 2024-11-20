@@ -22,7 +22,6 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHSIXCOM
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
-import static org.smartregister.reveal.util.Constants.DatabaseKeys.PARENT_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_ID;
 import static org.smartregister.reveal.util.Constants.Filter.FILTER_CONFIGURATION;
@@ -43,7 +42,6 @@ import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTR
 import static org.smartregister.reveal.util.Utils.displayDistanceScale;
 import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
-import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
 import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
@@ -74,7 +72,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,9 +91,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.UiSettings;
-import com.mapbox.mapboxsdk.style.layers.Property;
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
@@ -122,6 +116,7 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
 import org.smartregister.reveal.contract.ListTaskContract;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
+import org.smartregister.reveal.layer.LabelLayer;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.FilterConfiguration;
@@ -145,12 +140,10 @@ import org.smartregister.reveal.util.RevealMapHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
@@ -177,6 +170,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private TextView tvReason;
 
+    private PreferencesUtil preferencesUtil;
+
     private CardView mosquitoCollectionCardView;
     private CardView larvalBreedingCardView;
     private CardView potentialAreaOfTransmissionCardView;
@@ -196,6 +191,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private BaseDrawerContract.View drawerView;
 
     private RevealJsonFormUtils jsonFormUtils;
+
+    private LabelLayer rcdLabelLayer;
+
+    private LabelLayer indexCaseLabelLayer;
+
+    private LabelLayer secondaryIndexCaseLabelLayer;
 
     private BoundaryLayer boundaryLayer;
 
@@ -229,6 +230,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.preferencesUtil = PreferencesUtil.getInstance();
         this.savedInstanceState = savedInstanceState;
         if (getCountry() == Country.THAILAND || getCountry() == Country.THAILAND_EN) {
             setContentView(R.layout.thailand_activity_list_tasks);
@@ -880,7 +882,25 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     mMapboxMap.setCameraPosition(cameraPosition);
                 }
 
+                if ("TRUE".equals(this.preferencesUtil.isGdrsPlan())){
+                    if (rcdLabelLayer!=null){
+                        rcdLabelLayer.removeLayerOnMap(mMapboxMap);
+                    }
+                    rcdLabelLayer = createRcdLabelLayer(featureCollection);
+                    kujakuMapView.addLayer(rcdLabelLayer);
 
+                    if (indexCaseLabelLayer!=null){
+                        indexCaseLabelLayer.removeLayerOnMap(mMapboxMap);
+                    }
+                    indexCaseLabelLayer = createIndexCaseLabelLayer(featureCollection);
+                    kujakuMapView.addLayer(indexCaseLabelLayer);
+
+                    if (secondaryIndexCaseLabelLayer!=null){
+                        secondaryIndexCaseLabelLayer.removeLayerOnMap(mMapboxMap);
+                    }
+                    secondaryIndexCaseLabelLayer = createSecondaryIndexCaseLabelLayer(featureCollection);
+                    kujakuMapView.addLayer(secondaryIndexCaseLabelLayer);
+                }
 
 
                 Boolean drawOperationalAreaBoundaryAndLabel = getDrawOperationalAreaBoundaryAndLabel();
@@ -966,31 +986,36 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
                     @Override
                     public void onCameraMove() {
-                        final FeatureCollection lambdaFeatureCollection = featureCollection;
-                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
-                        if (mMapboxMap.getStyle() != null) {
-                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
-                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
-
-                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
-                                            .filter(f -> f.id()
-                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
-                                            .findAny();
-                                    if (feature.isPresent()) {
-                                        layer.setProperties(
-                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
-                                    }
-                                });
-                            } else {
-                                mMapboxMap.getStyle().getLayers().stream()
-                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
-                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
-                            }
-                        }
+//                        final FeatureCollection lambdaFeatureCollection = featureCollection;
+//                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
+//                        if (mMapboxMap.getStyle() != null) {
+//                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
+//                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
+//
+//                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
+//                                            .filter(f -> f.id()
+//                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
+//                                            .findAny();
+//                                    if (feature.isPresent()) {
+//                                        layer.setProperties(
+//                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
+//                                    }
+//                                });
+//                            } else {
+//                                mMapboxMap.getStyle().getLayers().stream()
+//                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
+//                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
+//                            }
+//                        }
                     }
                 });
+                mMapboxMap.addOnCameraIdleListener(this::logZoomLevel);
             }
         }
+    }
+    private void logZoomLevel() {
+        double currentZoom = mMapboxMap.getCameraPosition().zoom;
+        Timber.tag("batching").d("Current zoom level: %f", currentZoom);
     }
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
@@ -999,6 +1024,30 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.YELLOW)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width_thick)).build();
+    }
+
+    private LabelLayer createRcdLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("rcdCountKey")
+                .setLabelColorInt(Color.YELLOW)
+                .setTextOffSetTuple(new Float[]{0.5f,0f})
+                .build();
+    }
+
+    private LabelLayer createIndexCaseLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("indexCaseCountKey")
+                .setLabelColorInt(Color.CYAN)
+                .setTextOffSetTuple(new Float[]{-0.5f,0f})
+                .build();
+    }
+
+    private LabelLayer createSecondaryIndexCaseLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("secondaryIndexCaseCountKey")
+                .setLabelColorInt(Color.BLUE)
+                .setTextOffSetTuple(new Float[]{-0.5f,1.0f})
+                .build();
     }
 
     private BoundaryLayer createBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
@@ -1358,8 +1407,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void onSyncProgress(SyncProgress syncProgress) {
+
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
+
+        Timber.tag("syncing").i("broadcast received %s",entity);
         if (syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)) {
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
@@ -1397,6 +1449,17 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         } else if (syncProgress.getSyncEntity().equals(SyncEntity.EVENTS)) {
             ProgressBar syncProgressBar = findViewById(R.id.event_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.event_sync_progress_bar_label);
+            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if (progress == 100) {
+                PreferencesUtil.getInstance().setAllEventsSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllEventsSynced(false);
+            }
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.HDSS)){
+            ProgressBar syncProgressBar = findViewById(R.id.hdss_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.hdss_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);

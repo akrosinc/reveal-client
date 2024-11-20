@@ -117,6 +117,8 @@ public class GDRSActivity extends AppCompatActivity {
     public static final String HOUSEHOLD = "household";
     public static final String GENDER = "gender";
 
+    public static final String NAME = "name";
+
     private RecyclerView recyclerView;
     private ActionAdapter actionAdapter;
     private List<Action> actionList;
@@ -231,7 +233,7 @@ public class GDRSActivity extends AppCompatActivity {
                 HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
                 if (hdssIndividual != null) {
                     actionList.add(new Action(hdssIndividual.getIndividualId(), hdssIndividual.getGender()
-                            , hdssIndividual.getDob(), task.getAuthoredOn().toString("yyyy-MM-dd"), task));
+                            , hdssIndividual.getDob(), task.getAuthoredOn().toString("yyyy-MM-dd"), task,hdssIndividual.getName()));
                 }
             }
         }
@@ -470,6 +472,7 @@ public class GDRSActivity extends AppCompatActivity {
             holder.individualId.setText(action.getIndividualId());
             holder.dob.setText(action.getDob());
             holder.createdDate.setText(action.createdDate);
+            holder.name.setText(action.getName());
             return action;
         }
 
@@ -485,6 +488,7 @@ public class GDRSActivity extends AppCompatActivity {
             TextView gender;
             TextView dob;
             TextView createdDate;
+            TextView name;
             TextView oldTaskMessage;
             Button actionButton;
 
@@ -495,6 +499,7 @@ public class GDRSActivity extends AppCompatActivity {
                 dob = itemView.findViewById(R.id.individualDob);
                 actionButton = itemView.findViewById(R.id.actionButton);
                 createdDate = itemView.findViewById(R.id.createdDate);
+                name = itemView.findViewById(R.id.individualName);
                 oldTaskMessage = itemView.findViewById(R.id.oldTaskMessage);
                 individualId.setOnLongClickListener(view -> {
                     copyToClipboard(individualId.getText().toString());
@@ -511,18 +516,21 @@ public class GDRSActivity extends AppCompatActivity {
         @Getter
         private final String gender;
         @Getter
+        private final String name;
+        @Getter
         private final String dob;
         @Getter
         private final String createdDate;
         @Getter
         private final Task task;
 
-        Action(String individualId, String gender, String dob, String createdDate, Task task) {
+        Action(String individualId, String gender, String dob, String createdDate, Task task, String name) {
             this.individualId = individualId;
             this.gender = gender;
             this.dob = dob;
             this.task = task;
             this.createdDate = createdDate;
+            this.name = name;
         }
 
     }
@@ -549,6 +557,7 @@ public class GDRSActivity extends AppCompatActivity {
                     JSONObject individualIdObj = JsonFormUtils.getFieldJSONObject(fields, "individual_id");
                     JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, GENDER);
                     JSONObject dobObj = JsonFormUtils.getFieldJSONObject(fields, "date_of_birth");
+                    JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name");
 
                     String individualId = null;
                     if (individualIdObj != null) {
@@ -564,6 +573,12 @@ public class GDRSActivity extends AppCompatActivity {
                     if (dobObj != null) {
                         dob = dobObj.optString("value");
                     }
+                    String name = null;
+                    if (nameObj != null) {
+                        name = nameObj.optString("value");
+                    }
+
+
 
                     long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
 
@@ -571,7 +586,7 @@ public class GDRSActivity extends AppCompatActivity {
                     HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId, hdssMaxServerVersion);
                     hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender, hdssMaxServerVersion);
+                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender,name, hdssMaxServerVersion);
                     hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
 
                     taskUtils.generateTask(this, uuid.toString(), locationUUID, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);

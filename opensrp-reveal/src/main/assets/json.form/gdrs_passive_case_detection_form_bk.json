@@ -94,14 +94,16 @@
       },
       {
         "key": "date_of_birth",
+        "type": "date_picker",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "edit_text",
-        "read_only": "true",
-        "hint": "Date of Birth",
-        "edit_type": "name",
-        "text_size": "8sp"
+        "hint": "Date of birth",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        }
       },
       {
         "key": "gender",

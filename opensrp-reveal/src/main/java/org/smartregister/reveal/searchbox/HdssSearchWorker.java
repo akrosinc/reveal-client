@@ -6,6 +6,7 @@ import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_NUMB
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.BATCH_SIZE;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.DOB;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.GENDER;
+import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.NAME;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.SEARCH_ONLINE;
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.SEARCH_STRING;
 
@@ -20,6 +21,8 @@ import androidx.work.WorkerParameters;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.HdssIndividualHouseHoldCompound;
@@ -31,6 +34,8 @@ import org.smartregister.service.HTTPAgent;
 
 import java.text.MessageFormat;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class HdssSearchWorker extends Worker {
 
@@ -54,6 +59,7 @@ public class HdssSearchWorker extends Worker {
         String searchString = data.getString(SEARCH_STRING);
         String gender = data.getString(GENDER);
         String dob = data.getString(DOB);
+        String name = data.getString(NAME);
         boolean searchOnline = data.getBoolean(SEARCH_ONLINE,true);
 
         int batchSize = data.getInt(BATCH_SIZE,0);
@@ -64,7 +70,7 @@ public class HdssSearchWorker extends Worker {
             try {
                 hdssRepository.deleteSearchResultsData();
 
-                String s = searchHdssEntities(searchString, gender, dob);
+                String s = searchHdssEntities(searchString, gender, dob,name);
 
                 List<HdssSearchBoxFactory.SearchResponse> resultList = gson.fromJson(s, new TypeToken<List<HdssSearchBoxFactory.SearchResponse>>() {}.getType());
 
@@ -90,7 +96,15 @@ public class HdssSearchWorker extends Worker {
         } else {
             try {
                 hdssRepository.deleteSearchResultsData();
-                List<HdssIndividualHouseHoldCompound> hdssIndividualHouseHoldCompounds = hdssRepository.searchHouseholdIndividual(searchString, gender);
+
+                String dobFormatted = null;
+                if (dob!=null){
+                    DateTime dateTime = DateTime.parse(dob, DateTimeFormat.forPattern("dd-MM-yyyy"));
+                    dobFormatted = dateTime.toString("yyyy-MM-dd");
+                }
+
+
+                List<HdssIndividualHouseHoldCompound> hdssIndividualHouseHoldCompounds = hdssRepository.searchHouseholdIndividual(searchString, gender,dobFormatted, name);
                 hdssRepository.addOrUpdateLocalSearchResults(hdssIndividualHouseHoldCompounds);
                 List<HdssSearchBoxFactory.SearchResponse> searchResultsInBatches = hdssRepository.getSearchResultsInBatches(batchSize, batchNumber * batchSize);
 
@@ -106,6 +120,7 @@ public class HdssSearchWorker extends Worker {
                         .build();
                 return Result.failure(output);
             } catch (Exception e) {
+                Timber.tag("searching").e(e,"error");
                 return Result.failure();
             }
         }
@@ -114,7 +129,7 @@ public class HdssSearchWorker extends Worker {
 
     }
 
-    private String searchHdssEntities(String searchString, String gender, String dob) throws Exception {
+    private String searchHdssEntities(String searchString, String gender, String dob, String name) throws Exception {
 
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
@@ -134,6 +149,10 @@ public class HdssSearchWorker extends Worker {
 
         if (dob != null) {
             request.put("dob", dob);
+        }
+
+        if (name != null) {
+            request.put("name", name);
         }
 
         resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, HDSS_SEARCH_URL),

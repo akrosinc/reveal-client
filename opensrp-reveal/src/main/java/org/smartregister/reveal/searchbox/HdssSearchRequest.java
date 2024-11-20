@@ -7,6 +7,8 @@ import lombok.Setter;
 public class HdssSearchRequest extends SearchRequest{
     private String searchString;
 
+    private String nameString;
+
     private String gender;
 
     private String dob;

@@ -136,7 +136,7 @@ public class RevealMultiSelectListFactory extends MultiSelectListFactory {
                     break;
                 }
             }
-            if (fieldToCheck.optString("value").equals("[]")) {
+            if (fieldToCheck!=null && fieldToCheck.optString("value").equals("[]")) {
                 return new ValidationStatus(false, error, fragmentView, multiselectLayout);
             }
         } catch (JSONException e) {

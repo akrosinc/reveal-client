@@ -1,6 +1,9 @@
 package org.smartregister.reveal.util;
 
 import static org.smartregister.reveal.interactor.ListTaskInteractor.gson;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BEDNET_DISTRIBUTED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.BLOOD_SCREENING_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
@@ -43,13 +46,17 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER
 import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 
 import androidx.annotation.NonNull;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
+import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.model.StructureDetails;
 
 /**
@@ -135,6 +142,100 @@ public class GeoJsonUtils {
                 taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getId()).getStructureName());
                 taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getId()).getFamilyMembersNames());
             }
+            structure.getProperties().setCustomProperties(taskProperties);
+
+        }
+        return gson.toJson(structures);
+    }
+
+    public static String getGeoJsonFromStructuresAndTasksForGdrs(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames, Map<String, TaskRepository.TaskCount> taskCountMap) {
+        for (Location structure : structures) {
+            Set<Task> taskSet = tasks.get(structure.getId());
+            HashMap<String, String> taskProperties = new HashMap<>();
+
+            StringBuilder interventionList = new StringBuilder();
+
+            Map<String, Integer> mdaStatusMap = new HashMap<>();
+
+            StateWrapper state = new StateWrapper();
+            if (taskSet == null) {
+                handleFamilyRegDoneInOtherPlan(structureNames,taskProperties,structure);
+                continue;
+            }
+            for (Task task : taskSet) {
+
+                calculateState(task, state, mdaStatusMap);
+
+                taskProperties = new HashMap<>();
+                taskProperties.put(TASK_IDENTIFIER, task.getIdentifier());
+                if ((getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry()
+                        == Country.SENEGAL_EN)
+                        && PARTIALLY_SPRAYED.equals(task.getBusinessStatus())) { // Set here for non residential structures
+                    taskProperties.put(TASK_BUSINESS_STATUS, SPRAYED);
+                } else {
+                    taskProperties.put(TASK_BUSINESS_STATUS, task.getBusinessStatus());
+                }
+                taskProperties.put(FEATURE_SELECT_TASK_BUSINESS_STATUS, task.getBusinessStatus()); // used to determine action to take when a feature is selected
+                taskProperties.put(TASK_STATUS, task.getStatus().name());
+                taskProperties.put(TASK_CODE, task.getCode());
+
+                if (indexCase != null && structure.getId().equals(indexCase)) {
+                    taskProperties.put(IS_INDEX_CASE, Boolean.TRUE.toString());
+                } else {
+                    taskProperties.put(IS_INDEX_CASE, Boolean.FALSE.toString());
+                }
+
+                if (List.of(Constants.Action.INDEX_CASE, Constants.Action.RCD, Constants.Action.SECONDARY_INDEX_CASE).contains(task.getCode())){
+                    if (task.getHouseholdId() != null) {
+                        taskProperties.put(HOUSEHOLD_ID, task.getHouseholdId());
+                    }
+                    if (task.getCompoundId() != null) {
+                        taskProperties.put(COMPOUND_ID, task.getCompoundId());
+                    }
+                }
+
+                taskProperties.put(LOCATION_UUID, structure.getProperties().getUid());
+                taskProperties.put(LOCATION_VERSION, structure.getProperties().getVersion() + "");
+                taskProperties.put(LOCATION_TYPE, structure.getProperties().getType());
+
+
+                String rcdCountKey = task.getForEntity().concat("-").concat(RCD_MEMBER);
+                String indexCaseCountKey = task.getForEntity().concat("-").concat(INDEX_CASE_MEMBER);
+                String secondaryIndexCaseCountKey = task.getForEntity().concat("-").concat(SECONDARY_INDEX_CASE_MEMBER);
+
+                if (taskCountMap.containsKey(rcdCountKey)){
+                    taskProperties.put("rcdCountKey",
+                            String.valueOf(taskCountMap.get(rcdCountKey)!=null? Objects.requireNonNull(taskCountMap.get(rcdCountKey)).getCount():null));
+                }
+                if (taskCountMap.containsKey(indexCaseCountKey)){
+                    taskProperties.put("indexCaseCountKey",
+                            String.valueOf(taskCountMap.get(indexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(indexCaseCountKey)).getCount():null));
+                }
+                if (taskCountMap.containsKey(secondaryIndexCaseCountKey)){
+                    taskProperties.put("secondaryIndexCaseCountKey",
+                            String.valueOf(taskCountMap.get(secondaryIndexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(secondaryIndexCaseCountKey)).getCount():null));
+                }
+
+                interventionList.append(task.getCode());
+                interventionList.append("~");
+
+            }
+
+            populateBusinessStatus(taskProperties, mdaStatusMap, state);
+
+            taskProperties.put(TASK_CODE_LIST, interventionList.toString());
+            if (structureNames.get(structure.getId()) != null) {
+                taskProperties.put(STRUCTURE_NAME, structureNames.get(structure.getId()).getStructureName());
+                taskProperties.put(FAMILY_MEMBER_NAMES, structureNames.get(structure.getId()).getFamilyMembersNames());
+            }
+
+
+
+
+
+
+
+
             structure.getProperties().setCustomProperties(taskProperties);
 
         }

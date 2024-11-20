@@ -16,13 +16,15 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
     private String compoundId;
     private int serverVersion;
     private String structureId;
+    private String name;
 
-    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId) {
+    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name) {
         this.identifier = identifier;
         this.individualId = individualId;
         this.dob = dob;
         this.gender = gender;
         this.householdId = householdId;
         this.compoundId = compoundId;
+        this.name = name;
     }
 }

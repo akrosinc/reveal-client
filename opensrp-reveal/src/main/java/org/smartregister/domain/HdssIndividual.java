@@ -13,5 +13,6 @@ public class HdssIndividual implements Serializable {
     private String individualId;
     private String dob;
     private String gender;
+    private String name;
     private long serverVersion;
 }

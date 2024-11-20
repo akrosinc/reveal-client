@@ -65,6 +65,18 @@
         }
       },
       {
+        "key": "name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Input Individual's name",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the name"
+        }
+      },
+      {
         "key": "gender",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
