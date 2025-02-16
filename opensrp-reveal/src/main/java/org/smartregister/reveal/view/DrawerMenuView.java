@@ -65,6 +65,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     private TextView facilityTextView;
     private TextView operatorTextView;
     private TextView p2pSyncTextView;
+    private TextView hdssIndexCases;
     private TextView dashboardLink;
 
     private DrawerLayout mDrawerLayout;
@@ -164,6 +165,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         facilityTextView = headerView.findViewById(R.id.facility_label);
         operatorTextView = headerView.findViewById(R.id.operator_label);
         p2pSyncTextView = headerView.findViewById(R.id.btn_navMenu_p2pSyncBtn);
+        hdssIndexCases = headerView.findViewById(R.id.btn_hdss_index_cases);
 
         TextView offlineMapTextView = headerView.findViewById(R.id.btn_navMenu_offline_maps);
 
@@ -176,19 +178,27 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
         dashboardLink = headerView.findViewById(R.id.btn_link_dashboard);
 
         if (getBuildCountry() == Country.ZAMBIA || getBuildCountry() == Country.SENEGAL || getBuildCountry() == Country.SENEGAL_EN || getBuildCountry()
-                == Country.NIGERIA || getBuildCountry() == Country.MALI || getBuildCountry() == Country.GDRS || getBuildCountry() == Country.UW) { // Enable P2P sync and other forms
-            p2pSyncTextView.setVisibility(View.VISIBLE);
-            p2pSyncTextView.setOnClickListener(this);
+                == Country.NIGERIA || getBuildCountry() == Country.MALI || getBuildCountry() == Country.GDRS || getBuildCountry() == Country.UW || getBuildCountry() == Country.VL_ZM) { // Enable P2P sync and other forms
 
-            if (getBuildCountry() != Country.UW) {
+            if (getBuildCountry() != Country.MALI) {
+                p2pSyncTextView.setVisibility(View.VISIBLE);
+                p2pSyncTextView.setOnClickListener(this);
+            }
+
+            if (getBuildCountry() != Country.UW && getBuildCountry() != Country.VL_ZM) {
                 summaryFormsTextView.setVisibility(View.VISIBLE);
                 summaryFormsTextView.setOnClickListener(this);
             }
+
             if(getBuildCountry() != Country.NIGERIA && getBuildCountry() != Country.UW){
                 //Nigeria build currently does not have support for filled forms
                 TextView filledForms = headerView.findViewById(R.id.btn_navMenu_filled_forms);
                 filledForms.setVisibility(View.VISIBLE);
                 filledForms.setOnClickListener(this);
+            }
+            if (getBuildCountry()== Country.GDRS){
+                hdssIndexCases.setVisibility(View.VISIBLE);
+                hdssIndexCases.setOnClickListener(this);
             }
 
         } else if(getBuildCountry() == Country.KENYA || getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.GDRS){
@@ -203,8 +213,10 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             dashboardLink.setOnClickListener(this);
         }
 
-        offlineMapTextView.setVisibility(View.VISIBLE);
-        offlineMapTextView.setOnClickListener(this);
+        if (getBuildCountry() != Country.MALI) {
+            offlineMapTextView.setVisibility(View.VISIBLE);
+            offlineMapTextView.setOnClickListener(this);
+        }
 
         headerView.findViewById(R.id.logout_button).setOnClickListener(this);
         headerView.findViewById(R.id.sync_button).setOnClickListener(this);
@@ -394,6 +406,8 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
             RevealApplication.getInstance().logoutCurrentUser();
         else if (v.getId() == R.id.btn_navMenu_p2pSyncBtn)
             startP2PActivity();
+        else if (v.getId() == R.id.btn_hdss_index_cases)
+            startIndexCaseActivity();
         else if (v.getId() == R.id.btn_navMenu_summaryForms){
             if (StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentPlan()) || StringUtils.isBlank(PreferencesUtil.getInstance().getCurrentFacility())) {
 //                AlertDialogUtils.displayNotification(v.getContext(),R.string.select_campaign_operational_area_title,R.string.select_campaign_operational_area);
@@ -433,6 +447,10 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
 
     private void startP2PActivity() {
         getContext().startActivity(new Intent(getContext(), LocationPickerActivity.class));
+    }
+
+    private void startIndexCaseActivity() {
+        getContext().startActivity(new Intent(getContext(), OutstandingIndexCaseActivity.class));
     }
 
     @Override

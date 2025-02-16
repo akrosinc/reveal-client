@@ -53,6 +53,18 @@
     "no_padding": true,
     "fields": [
       {
+        "key": "household_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select HouseholdId",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        }
+      },
+      {
         "key": "individual_id",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

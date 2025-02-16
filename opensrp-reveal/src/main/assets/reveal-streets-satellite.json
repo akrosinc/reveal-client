@@ -64,7 +64,9 @@
             "Not Visited"
           ],
           "hsl(46, 88%, 62%)",
-          ["enrolled"],
+          [
+            "enrolled"
+          ],
           "hsl(303, 86%, 57%)",
           [
             "Not Sprayed",
@@ -75,7 +77,8 @@
             "Refused",
             "notenrolled",
             "Permanently Absent",
-            "MDA refused or absent"
+            "MDA refused or absent",
+            "No Eligible People"
           ],
           "hsl(3, 71%, 54%)",
           [
@@ -88,6 +91,10 @@
             "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
+          [
+            "Structure part of HOH"
+          ],
+          "hsl(117, 52%, 29%)",
           [
             "Partially complete or Temporarily Absent",
             "Partially complete",
@@ -124,15 +131,32 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
-          ["round_one","round_one_skip","Index Case Not Visited","monththreecomplete"],
+          [
+            "round_one",
+            "round_one_skip",
+            "Index Case Not Visited",
+            "monththreecomplete",
+            "Require Revisit"
+          ],
           "hsl(191, 89%, 61%)",
-          ["round_two","round_two_skip"],
+          [
+            "round_two",
+            "round_two_skip"
+          ],
           "hsl(227, 66%, 55%)",
-          ["Index complete RCD Incomplete","Index Case Complete"],
+          [
+            "Index complete RCD Incomplete",
+            "Index Case Complete"
+          ],
           "hsl(272, 100%, 43%)",
-          [ "Secondary Index Case Complete"],
+          [
+            "Secondary Index Case Complete"
+          ],
           "hsl(272, 40%, 43%)",
-          ["RCD Incomplete Index Incomplete", "RCD complete Index Incomplete"],
+          [
+            "RCD Incomplete Index Incomplete",
+            "RCD complete Index Incomplete"
+          ],
           "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],
@@ -174,7 +198,7 @@
       ],
       "layout": {},
       "paint": {
-        "circle-radius":  [
+        "circle-radius": [
           "interpolate",
           [
             "linear"
@@ -199,7 +223,9 @@
             "Not Visited"
           ],
           "hsl(46, 88%, 62%)",
-          ["enrolled"],
+          [
+            "enrolled"
+          ],
           "hsl(303, 86%, 57%)",
           [
             "Not Sprayed",
@@ -257,13 +283,26 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
-          ["round_one","round_one_skip","Index Case Not Visited","monththreecomplete"],
+          [
+            "round_one",
+            "round_one_skip",
+            "Index Case Not Visited",
+            "monththreecomplete"
+          ],
           "hsl(191, 89%, 61%)",
-          ["round_two","round_two_skip"],
+          [
+            "round_two",
+            "round_two_skip"
+          ],
           "hsl(227, 66%, 55%)",
-          ["Index complete RCD Incomplete"],
+          [
+            "Index complete RCD Incomplete"
+          ],
           "hsl(272, 100%, 43%)",
-          ["RCD Incomplete Index Incomplete", "RCD complete Index Incomplete"],
+          [
+            "RCD Incomplete Index Incomplete",
+            "RCD complete Index Incomplete"
+          ],
           "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],

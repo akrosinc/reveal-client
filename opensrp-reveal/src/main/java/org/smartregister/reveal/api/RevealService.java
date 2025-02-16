@@ -26,7 +26,7 @@ public interface RevealService {
 
     String HDSS_SEARCH_URL = "/rest/hdss/search";
     String HDSS_SYNC_URL = "/rest/hdss/sync";
-    String HDSS_PUSH_URL = "/rest/hdss/add";
+    String HDSS_PUSH_URL = "/rest/hdss/addOrUpdate";
     String CREATE_STRUCTURE_URL = "/rest/location/add";
 
    String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";

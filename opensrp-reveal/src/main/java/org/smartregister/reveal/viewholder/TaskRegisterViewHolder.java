@@ -29,6 +29,8 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView iconView;
 
+    private TextView codeView;
+
     private TextView nameView;
 
     private TextView distanceView;
@@ -46,6 +48,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
         context = itemView.getContext();
         iconView = itemView.findViewById(R.id.task_icon);
         nameView = itemView.findViewById(R.id.task_name);
+        codeView = itemView.findViewById(R.id.code);
         distanceView = itemView.findViewById(R.id.distance_from_structure);
         taskDetailsView = itemView.findViewById(R.id.task_details);
         actionView = itemView.findViewById(R.id.task_action);
@@ -60,6 +63,14 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
 
     public void setTaskName(String taskName) {
         nameView.setText(taskName);
+    }
+
+    public void setCode(String code){
+        codeView.setText(code);
+    }
+
+    public void showCode(){
+        codeView.setVisibility(View.VISIBLE);
     }
 
     public void setDistanceFromStructure(float distance, boolean distanceFromCenter) {
@@ -115,23 +126,16 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
             if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())||Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())){
 
                 if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
-                    if (Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE.equals(task.getBusinessStatus())) {
+                    if (Constants.BusinessStatus.INDEX_CASE_COMPLETE.equals(task.getBusinessStatus())) {
                         actionView.setBackgroundColor(context.getResources().getColor(R.color.purple, null));
-                    } else if (List.of(Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE
-                            , Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE).contains(task.getBusinessStatus())) {
-                        actionView.setBackgroundColor(context.getResources().getColor(R.color.dark_cyan, null));
                     } else if (Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
                         actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));
                     } else {
                         actionView.setBackgroundColor(context.getResources().getColor(R.color.cyan, null));
                     }
                 } else {
-                    if (Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE.equals(task.getBusinessStatus())) {
+                    if (Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE.equals(task.getBusinessStatus())) {
                         actionView.setBackgroundColor(context.getResources().getColor(R.color.purple, null));
-                        actionView.setTextColor(context.getResources().getColor(R.color.alert_complete_green, null));
-                    } else if (List.of(Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE
-                            , Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE).contains(task.getBusinessStatus())) {
-                        actionView.setBackgroundColor(context.getResources().getColor(R.color.dark_cyan, null));
                         actionView.setTextColor(context.getResources().getColor(R.color.alert_complete_green, null));
                     } else if (Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
                         actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));

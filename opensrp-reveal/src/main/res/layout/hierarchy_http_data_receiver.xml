@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#6200EE"
+        android:padding="5dp"
+        android:paddingBottom="8dp"> <!-- Set background color here (Purple) -->
+
+        <!-- Title Text -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Select Cluster"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Close Button -->
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="Close"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+    </RelativeLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+
+        <android.widget.TextView
+            android:id="@+id/text_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:id="@+id/linear_layout_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="10sp">
+
+        <android.widget.TextView
+            android:id="@+id/text_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="operational"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="5sp"/>
+
+        <com.vijay.jsonwizard.customviews.MaterialSpinner
+            android:id="@+id/material_spinner_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@+id/spinner_edit_button"
+            android:layout_toLeftOf="@+id/spinner_edit_button"
+            android:entries="@array/spinnerItems"
+
+            android:textSize="@dimen/default_text_size"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/text_hint_color"
+            app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+            app:ms_baseColor="@color/text_hint_color"
+            app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+            app:ms_floatingLabelColor="@color/floating_label_color"
+            app:ms_hintView="@layout/spinner_prompt_text"
+            app:ms_multiline="true" />
+
+    </android.widget.LinearLayout>
+
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+
+        <android.widget.TextView
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".4"
+            android:padding="8dp"
+            android:text="Selected Cluster" />
+
+        <android.widget.TextView
+            android:id="@+id/target"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".6"
+            android:background="@drawable/hierarchy_data_result"
+            android:padding="5sp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+    </android.widget.LinearLayout>
+    <android.widget.TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/you_must_select_a_cluster_in_order_to_save"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="16sp"
+        android:textStyle="italic|bold"
+        android:visibility="gone"
+        />
+    <android.widget.Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Save" />
+</android.widget.LinearLayout>

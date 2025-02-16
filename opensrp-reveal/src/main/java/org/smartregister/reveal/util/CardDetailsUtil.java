@@ -95,13 +95,6 @@ public class CardDetailsUtil {
             case BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED:
                 cardDetails.setStatusColor(R.color.orange);
                 break;
-            case BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE:
-            case BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE:
-                cardDetails.setStatusColor(R.color.dark_cyan);
-                break;
-            case BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE:
-                cardDetails.setStatusColor(R.color.purple);
-                break;
             case BusinessStatus.RCD_PARTIALLY_COMPLETE:
                 cardDetails.setStatusColor(R.color.orange);
             case PARTIALLY_SPRAYED:

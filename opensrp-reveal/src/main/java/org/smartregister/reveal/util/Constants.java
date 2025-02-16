@@ -375,6 +375,7 @@ public interface Constants {
         public static String STRUCTURE_SURVEY_EVENT =  "structure_survey";
 
         public static String RCD_EVENT =  "rcd";
+        public static String INDEX_CASE_EVENT = "index_case";
         public static String INDEX_CASE_MEMBER_EVENT =  "index_case_member";
         public static String SECONDARY_INDEX_CASE_MEMBER_EVENT =  "secondary_index_case_member";
 
@@ -469,8 +470,11 @@ public interface Constants {
         public static String PARTIALLY_SPRAYED = "Partially Sprayed";
 
         public static String MDA_COMPLETE = "MDA complete";
+        public static String STRUCTURE_PART_OF_HOH = "Structure part of HOH";
         public static String MDA_PARTIALLY_COMPLETE = "MDA partially complete";
         public static String MDA_REFUSED_OR_ABSENT = "MDA refused or absent";
+        public static String REQUIRE_REVISIT = "Require Revisit";
+        public static String NO_ELIGIBLE_PEOPLE = "No Eligible People";
 
         public static List<String> IRS_BUSINESS_STATUS = Arrays.asList(NOT_VISITED, NOT_SPRAYED,
                 SPRAYED, NOT_SPRAYABLE, COMPLETE, INCOMPLETE, NOT_ELIGIBLE, IN_PROGRESS);
@@ -667,11 +671,17 @@ public interface Constants {
         public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_individual_member.json";
 
         public static String GDRS_INDEX_CASE = "json.form/gdrs_index_case.json";
+
+        public static String GDRS_INDEX_CASE_FLOATING = "json.form/gdrs_index_case_floating_individual.json";
         public static String GDRS_SECONDARY_INDEX_CASE = "gdrs_secondary_index_case.json";
 
         public static String STRUCTURE_SURVEY_UW = "json.form/structure_survey_form_uw.json";
 
-        public static String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form.json";
+        public static String STRUCTURE_SURVEY_VL_ZM = "json.form/structure_survey_form_vl_zm.json";
+
+        public static String STRUCTURE_SURVEY_NIH_STR = "json.form/structure_survey_nih_str.json";
+
+        public static String MDA_ONCHO_SURVEY_FORM = "json.form/mda_oncho_survey_form3.json";
 
         public static String MDA_ONCHO_SURVEY_FORM_OTHER = "json.form/mda_oncho_survey_form_other.json";
 
@@ -1159,6 +1169,7 @@ public interface Constants {
 
     public interface UseContextCode {
         public static String INTERVENTION_TYPE = "interventionType";
+        public static String LOCATION_HIERARCHY = "locationHierarchy";
     }
 
     public interface IRSVerificationStatus {

@@ -277,7 +277,7 @@
           "err": "Field required"
         },
         "relevance": {
-          "step1:refused": {
+          "step1:notenrolled_reason": {
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }

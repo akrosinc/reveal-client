@@ -24,21 +24,20 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mapbox.turf.TurfMeasurement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.reveal.R;
-import org.smartregister.reveal.layer.DigitalGlobeLayer;
 import org.smartregister.reveal.layer.MapBoxLayer;
 import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.util.Constants.StructureType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import io.ona.kujaku.KujakuLibrary;
 import io.ona.kujaku.plugin.switcher.BaseLayerSwitcherPlugin;
 import io.ona.kujaku.views.KujakuMapView;
 import timber.log.Timber;
@@ -304,16 +303,78 @@ public class RevealMapHelper {
     }
 
     public FeatureCollection splitMultiPolygonsToSingleFeatureCollection(Feature multiPolygonFeatureCollection) {
+        List<Feature> polygonFeatures = getFeaturesFromMultiPolygonFeature(multiPolygonFeatureCollection);
+        // Create a FeatureCollection containing all the individual Polygon features
+        return FeatureCollection.fromFeatures(polygonFeatures);
+    }
+
+    public FeatureCollection getFeatureCollectionFromMultiPolygonList(List<Feature> features) {
+
+        List<Feature> featureListOutput = new ArrayList<>();
+        for (Feature feature : features) {
+            Geometry geometry = feature.geometry();
+            if (geometry instanceof MultiPolygon) {
+                List<Feature> featuresFromMultiPolygonFeature = getFeaturesFromMultiPolygonFeature(feature);
+                featureListOutput.addAll(featuresFromMultiPolygonFeature);
+            } else {
+                featureListOutput.add(feature);
+            }
+        }
+        return FeatureCollection.fromFeatures(featureListOutput);
+    }
+
+    public Map<String, List<Feature>> getFeatureCollectionMapFromMultiPolygonList(List<Feature> features) {
+
+        Map<String, List<Feature>> featureMap = new HashMap<>();
+        for (Feature feature : features) {
+
+            if (feature.properties() != null) {
+                JsonObject properties = feature.properties();
+                if (properties.has("geographicLevel")) {
+
+                    String geographicLevel = properties.get("geographicLevel").getAsString();
+
+                    if (featureMap.containsKey(geographicLevel)) {
+                        List<Feature> features1 = featureMap.get(geographicLevel);
+
+                        if (features1 == null) {
+                            features1 = new ArrayList<>();
+                        }
+
+                        List<Feature> featuresFromMultiPolygonFeature = getFeaturesFromMultiPolygonFeature(feature);
+
+                        features1.addAll(featuresFromMultiPolygonFeature);
+                        featureMap.put(geographicLevel, features1);
+
+                    } else {
+
+                        List<Feature> featuresFromMultiPolygonFeature = getFeaturesFromMultiPolygonFeature(feature);
+
+                        List<Feature> features1 = new ArrayList<>(featuresFromMultiPolygonFeature);
+                        featureMap.put(geographicLevel, features1);
+                    }
+                }
+            }
+
+        }
+        return featureMap;
+    }
+
+    private static @NonNull List<Feature> getFeaturesFromMultiPolygonFeature(Feature multiPolygonFeatureCollection) {
         List<Feature> polygonFeatures = new ArrayList<>();
 
         // Iterate through each feature in the FeatureCollection
 
         String name = null;
+        String geographicLevel = null;
         if (multiPolygonFeatureCollection.properties() != null) {
             JsonObject properties = multiPolygonFeatureCollection.properties();
 
             if (properties.has("name")) {
                 name = properties.get("name").getAsString();
+            }
+            if (properties.has("geographicLevel")){
+                geographicLevel = properties.get("geographicLevel").getAsString();
             }
         }
 
@@ -334,15 +395,15 @@ public class RevealMapHelper {
                     polygonFeature.addStringProperty("name", name.concat("_").concat(String.valueOf(count)));
                 }
 
+                if (geographicLevel!=null){
+                    polygonFeature.addStringProperty("geographicLevel", geographicLevel);
+                }
                 // Add the polygon feature to the list
                 polygonFeatures.add(polygonFeature);
                 count++;
             }
         }
-
-
-        // Create a FeatureCollection containing all the individual Polygon features
-        return FeatureCollection.fromFeatures(polygonFeatures);
+        return polygonFeatures;
     }
 
     public FeatureCollection getLabels(FeatureCollection multiPolygonFeatureCollection) {
@@ -353,15 +414,15 @@ public class RevealMapHelper {
 
         List<Feature> features = multiPolygonFeatureCollection.features();
         List<Point> points = new ArrayList<>();
-        for (Feature feature: features){
+        for (Feature feature : features) {
             Geometry geometry = feature.geometry();
             if (geometry instanceof Polygon) {
 
                 Polygon polygon = (Polygon) geometry;
                 Point point = calculateCentroid(polygon);
                 Feature pointFeature = Feature.fromGeometry(point);
-                if (feature.properties()!=null && feature.properties().has("added_label")){
-                    pointFeature.addStringProperty("added_label",feature.properties().get("added_label").getAsString());
+                if (feature.properties() != null && feature.properties().has("added_label")) {
+                    pointFeature.addStringProperty("added_label", feature.properties().get("added_label").getAsString());
                     polygonFeatures.add(pointFeature);
                 }
             }

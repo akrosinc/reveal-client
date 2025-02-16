@@ -156,8 +156,8 @@ public class TaskRepository extends BaseRepository {
             if (existingTask.getLastModified().isAfter(task.getLastModified())) {
                 return task;
             }
-            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
-            contentValues.put(ROWID, ++maxRowId);
+//            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+//            contentValues.put(ROWID, ++maxRowId);
         }
 
         contentValues.put(ID, task.getIdentifier());
@@ -201,7 +201,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
         } else {
             long replace = getWritableDatabase().replace(TASK_TABLE, null, contentValues);
-            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
+//            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
         }
 
         if (task.getNotes() != null) {
@@ -246,8 +246,8 @@ public class TaskRepository extends BaseRepository {
         try {
             String[] params = new String[]{planId, groupId};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT t.*,hch.compound_id,hch.household_id  from task t " +
-                                    "LEFT JOIN hdss_household_structure hhs on hhs.structure_id = t.for " +
-                                    "left join hdss_compound_household hch on hch.household_id = hhs.household_id " +
+                                    "INNER JOIN hdss_household_structure hhs on hhs.structure_id = t.for " +
+                                    "INNER join hdss_compound_household hch on hch.household_id = hhs.household_id " +
                                     "WHERE t.%s=? AND t.%s =? AND t.%s NOT IN (%s)",
                             PLAN_ID, GROUP_ID, STATUS,
                             TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),

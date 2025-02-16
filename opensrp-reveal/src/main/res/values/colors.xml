@@ -82,6 +82,12 @@
     <color name="alert_in_progress_blue">#389cc8</color>
     <color name="alert_complete_green">#25aa4a</color>
     <color name="parent_boundary_grey">#BBBBBB</color>
+    <color name="parent_boundary_grey_1">#BBBBBB</color>
+    <color name="parent_boundary_grey_2">#888888</color>
+    <color name="parent_boundary_grey_3">#555555</color>
+    <color name="parent_boundary_grey_4">#333333</color>
+    <color name="parent_boundary_grey_5">#202020</color>
+    <color name="parent_boundary_grey_6">#000000</color>
 
     <color name="pnc_pp_fp_grey">#f5f5f5</color>
 

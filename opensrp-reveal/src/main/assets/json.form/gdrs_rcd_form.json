@@ -64,6 +64,17 @@
         "text_size": "8sp"
       },
       {
+        "key": "name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Name",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
         "key": "dob",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -81,7 +92,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "read_only": "true",
-        "hint": "Date of Birth",
+        "hint": "Gender",
         "edit_type": "name",
         "text_size": "8sp"
       },

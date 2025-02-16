@@ -5,8 +5,15 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.reveal.util.Constants.Action;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_ELIGIBLE_PEOPLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.REQUIRE_REVISIT;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.STRUCTURE_PART_OF_HOH;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
@@ -36,14 +43,18 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.StringRes;
 import androidx.cardview.widget.CardView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import io.ona.kujaku.utils.Constants;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -222,7 +233,7 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
     }
 
     public void displayTaskActionDialog(TaskDetails details, View view) {
-        int viewDetailsStringResource =  PAOT.equals(details.getTaskCode()) ? R.string.view_paot_details : R.string.view_details;
+        int viewDetailsStringResource = PAOT.equals(details.getTaskCode()) ? R.string.view_paot_details : R.string.view_details;
         AlertDialogUtils.displayNotificationWithCallback(getContext(), R.string.select_task_action,
                 R.string.choose_action, viewDetailsStringResource, R.string.undo, new Dialog.OnClickListener() {
                     @Override
@@ -422,12 +433,27 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
                     .sortOptions(R.array.task_sort_options_namibia);
-        }   else if (getBuildCountry().equals(Country.UW)) {
+        } else if (getBuildCountry().equals(Country.UW)) {
             builder.taskCodeLayoutEnabled(false)
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, MONTHTHREECOMPLETE
-                            , MONTHSIXCOMPLETE, ENROLLED,NOT_ELIGIBLE,ENROLLED_NOT_COMPLETE, NOTENROLLED))
+                            , MONTHSIXCOMPLETE, ENROLLED, NOT_ELIGIBLE, ENROLLED_NOT_COMPLETE, NOTENROLLED))
                     .sortOptions(R.array.task_sort_options_uw);
+        } else if (getBuildCountry().equals(Country.VL_ZM)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_ELIGIBLE, COMPLETE))
+                    .sortOptions(R.array.task_sort_options_vl_zm);
+        } else if (getBuildCountry().equals(Country.MALI)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED
+                            , NOT_ELIGIBLE, COMPLETE
+                            , STRUCTURE_PART_OF_HOH
+                            , MDA_REFUSED_OR_ABSENT
+                            , MDA_PARTIALLY_COMPLETE
+                            , MDA_COMPLETE,REQUIRE_REVISIT,NO_ELIGIBLE_PEOPLE))
+                    .sortOptions(R.array.task_sort_options_mali);
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         getActivity().startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);

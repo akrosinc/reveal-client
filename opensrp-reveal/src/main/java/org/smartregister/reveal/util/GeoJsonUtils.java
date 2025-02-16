@@ -58,6 +58,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.model.StructureDetails;
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 1/7/19.
@@ -145,10 +146,15 @@ public class GeoJsonUtils {
             structure.getProperties().setCustomProperties(taskProperties);
 
         }
-        return gson.toJson(structures);
+        String json = gson.toJson(structures);
+        Timber.tag("TaskList").i(json);
+        return json;
     }
 
-    public static String getGeoJsonFromStructuresAndTasksForGdrs(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames, Map<String, TaskRepository.TaskCount> taskCountMap) {
+    public static String getGeoJsonFromStructuresAndTasksForGdrs(List<Location> structures, Map<String
+            , Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames
+            , Map<String, TaskRepository.TaskCount> taskCountMap
+            , Map<String,Boolean> isAHouseholdMap) {
         for (Location structure : structures) {
             Set<Task> taskSet = tasks.get(structure.getId());
             HashMap<String, String> taskProperties = new HashMap<>();
@@ -158,10 +164,19 @@ public class GeoJsonUtils {
             Map<String, Integer> mdaStatusMap = new HashMap<>();
 
             StateWrapper state = new StateWrapper();
+
+            if ((taskSet == null || taskSet.isEmpty())) {
+                if (isAHouseholdMap.containsKey(structure.getId()) && Boolean.TRUE.equals(isAHouseholdMap.get(structure.getId()))) {
+                    taskProperties.put("isAHousehold", "*");
+                }
+                structure.getProperties().setCustomProperties(taskProperties);
+            }
+
             if (taskSet == null) {
                 handleFamilyRegDoneInOtherPlan(structureNames,taskProperties,structure);
                 continue;
             }
+
             for (Task task : taskSet) {
 
                 calculateState(task, state, mdaStatusMap);
@@ -203,17 +218,19 @@ public class GeoJsonUtils {
                 String indexCaseCountKey = task.getForEntity().concat("-").concat(INDEX_CASE_MEMBER);
                 String secondaryIndexCaseCountKey = task.getForEntity().concat("-").concat(SECONDARY_INDEX_CASE_MEMBER);
 
-                if (taskCountMap.containsKey(rcdCountKey)){
-                    taskProperties.put("rcdCountKey",
-                            String.valueOf(taskCountMap.get(rcdCountKey)!=null? Objects.requireNonNull(taskCountMap.get(rcdCountKey)).getCount():null));
-                }
-                if (taskCountMap.containsKey(indexCaseCountKey)){
-                    taskProperties.put("indexCaseCountKey",
-                            String.valueOf(taskCountMap.get(indexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(indexCaseCountKey)).getCount():null));
-                }
-                if (taskCountMap.containsKey(secondaryIndexCaseCountKey)){
-                    taskProperties.put("secondaryIndexCaseCountKey",
-                            String.valueOf(taskCountMap.get(secondaryIndexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(secondaryIndexCaseCountKey)).getCount():null));
+                if (taskCountMap!=null){
+                    if (taskCountMap.containsKey(rcdCountKey)){
+                        taskProperties.put("rcdCountKey",
+                                String.valueOf(taskCountMap.get(rcdCountKey)!=null? Objects.requireNonNull(taskCountMap.get(rcdCountKey)).getCount():null));
+                    }
+                    if (taskCountMap.containsKey(indexCaseCountKey)){
+                        taskProperties.put("indexCaseCountKey",
+                                String.valueOf(taskCountMap.get(indexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(indexCaseCountKey)).getCount():null));
+                    }
+                    if (taskCountMap.containsKey(secondaryIndexCaseCountKey)){
+                        taskProperties.put("secondaryIndexCaseCountKey",
+                                String.valueOf(taskCountMap.get(secondaryIndexCaseCountKey)!=null? Objects.requireNonNull(taskCountMap.get(secondaryIndexCaseCountKey)).getCount():null));
+                    }
                 }
 
                 interventionList.append(task.getCode());
@@ -231,13 +248,7 @@ public class GeoJsonUtils {
 
 
 
-
-
-
-
-
             structure.getProperties().setCustomProperties(taskProperties);
-
         }
         return gson.toJson(structures);
     }

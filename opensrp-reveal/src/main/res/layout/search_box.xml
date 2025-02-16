@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:focusable="false"
-                android:hint="Select a date"
+                android:hint="Select DOB"
                 android:padding="8dp" />
 
             <Button
@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".2"
             android:padding="8dp"
-            android:text="Text" />
+            android:text="HDSS ID:" />
 
         <android.widget.EditText
             android:id="@+id/search_text"
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".2"
             android:padding="8dp"
-            android:text="Text" />
+            android:text="Name Search" />
 
         <android.widget.EditText
             android:id="@+id/name_text"

@@ -107,6 +107,8 @@ public class GeoWidgetFactory implements FormWidgetFactory, LifeCycleListener, O
     }
 
     public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RevealMapView mapView, JsonFormFragmentPresenter presenter) {
+        Timber.tag("RevealMap").i("GeoWidgetFactory: is this being called?");
+
         writeValues(mapView, formFragmentView);
 
         if (!Utils.isEmptyCollection(mapView.getValidators())) {

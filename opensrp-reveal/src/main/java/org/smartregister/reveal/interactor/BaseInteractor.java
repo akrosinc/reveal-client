@@ -7,10 +7,13 @@ import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
 import static org.smartregister.family.util.Utils.metadata;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
@@ -27,11 +30,14 @@ import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_D
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.INDEX_CASE_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.INDEX_CASE_MEMBER_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.SECONDARY_INDEX_CASE_MEMBER_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.BCC;
 import static org.smartregister.reveal.util.Constants.Intervention.BEDNET_DISTRIBUTION;
@@ -363,6 +369,10 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 interventionType = STRUCTURE_SURVEY;
             } else if (RCD_EVENT.equals(encounterType)) {
                 interventionType = RCD;
+            }else if (INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
+                interventionType = INDEX_CASE_MEMBER;
+            }else if (SECONDARY_INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
+                interventionType = SECONDARY_INDEX_CASE_MEMBER;
             }
         } catch (JSONException e) {
             Timber.tag("Reveal Exception").w(e);
@@ -463,7 +473,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, HABITAT_SURVEY, R.string.habitat_survey);
                     } else if (StructureType.RESIDENTIAL.equals(structureType) && Constants.Intervention.LSM.equals(interventionType)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, LSM_HOUSEHOLD_SURVEY, R.string.lsm_household_survey);
-                    } else if (SURVEY.equals(interventionType) && (getCountry() == Country.NIGERIA || getCountry() == Country.UW)) {
+                    } else if (SURVEY.equals(interventionType) && (getCountry() == Country.NIGERIA || getCountry() == Country.UW || getCountry() == Country.VL_ZM)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, STRUCTURE_SURVEY, R.string.structure_survey);
                     } else if (SURVEY.equals(interventionType) && (getCountry() == Country.GDRS)) {
                         task = taskUtils.generateTask(applicationContext, structure.getId(), structure.getId(), BusinessStatus.NOT_VISITED, RCD, R.string.rcd);

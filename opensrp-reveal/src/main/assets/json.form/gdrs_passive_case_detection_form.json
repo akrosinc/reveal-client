@@ -94,6 +94,21 @@
         }
       },
       {
+        "key": "name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Name",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
         "key": "date_of_birth",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -166,7 +181,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "No of SMC round received?",
+        "label": "No of SMC cycle received?",
         "options": [
           {
             "key": "one",
@@ -183,7 +198,12 @@
           {
             "key": "four",
             "text": "4"
+          },
+          {
+            "key": "five",
+            "text": "5"
           }
+
         ],
         "v_required": {
           "value": "true",
@@ -332,6 +352,20 @@
             "type": "string",
             "ex": "equalTo(., \"other\")"
           }
+        }
+      },
+      {
+        "key": "icc_phone",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Phone number of ICC",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_regex": {
+          "value": "^$|0[0-9]{9}",
+          "err": "Please enter a valid number"
         }
       },
       {

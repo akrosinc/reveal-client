@@ -68,6 +68,7 @@ import org.smartregister.reveal.view.RevealMapView;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
 import org.smartregister.reveal.widget.RevealMultiSelectListFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
+import org.smartregister.reveal.widget.StructurePickerFactoryExtended;
 import org.smartregister.util.JsonFormUtils;
 
 /**
@@ -363,9 +364,21 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         String multiSelectFieldKey = null;
         for (View childAt : formFragment.getJsonApi().getFormDataViews()) {
             if (childAt instanceof RevealMapView) {
-                RevealMapView mapView = (RevealMapView) childAt;
-                ValidationStatus validationStatus = GeoWidgetFactory.validate(formFragment, mapView, this);
+
                 String key = (String) childAt.getTag(com.vijay.jsonwizard.R.id.key);
+                String type = (String) childAt.getTag(com.vijay.jsonwizard.R.id.type);
+                Timber.tag("RevealMap").i("instanceof RevealMapView: is this being called? %s %s",key,type);
+
+                RevealMapView mapView = (RevealMapView) childAt;
+                ValidationStatus validationStatus;
+                if (type.equals(StructurePickerFactoryExtended.STRUCTURE_PICKER_FACTORY_EXTENDED)){
+                    Timber.tag("RevealMap").i("is mapView Visible %s or shown %s or active %s",mapView.getVisibility(),mapView.isShown(),mapView.isActivated());
+
+                    validationStatus = StructurePickerFactoryExtended.validate(formFragment, mapView, this);
+                } else {
+                    validationStatus = GeoWidgetFactory.validate(formFragment, mapView, this);
+                }
+
                 String mStepName = this.getView().getArguments().getString("stepName");
                 String fieldKey = mStepName + " (" + mStepDetails.optString("title") + ") :" + key;
                 if (!validationStatus.isValid()) {

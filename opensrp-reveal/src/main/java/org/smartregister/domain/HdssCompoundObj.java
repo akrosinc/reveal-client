@@ -23,6 +23,8 @@ public class HdssCompoundObj implements Serializable {
 
     List<HdssIndividual> allIndividuals;
 
+    List<String> allHouseholdIndividualToDelete;
+
     boolean empty;
 
     long serverVersion;

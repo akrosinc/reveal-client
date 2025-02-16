@@ -1,18 +1,17 @@
 package org.smartregister.reveal.test;
 
-import static org.smartregister.reveal.interactor.BaseInteractor.gson;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE;
-import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.GDRS_ADD_MEMBER;
@@ -20,890 +19,1007 @@ import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.RequestCode.REQUEST_CODE_GET_JSON;
-import static org.smartregister.reveal.util.Utils.getOperationalAreaLocation;
-import static org.smartregister.util.JsonFormUtils.VALUE;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Pair;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
 
-import org.joda.time.DateTime;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.HdssCompound;
 import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.HdssHouseholdIndividual;
+import org.smartregister.domain.HdssHouseholdStructure;
 import org.smartregister.domain.HdssIndividual;
-import org.smartregister.domain.Location;
+import org.smartregister.domain.IndividualsAndTasksForCompound;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.StructureTaskForCompound;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.HdssRepository;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.contract.BaseContract;
-import org.smartregister.reveal.interactor.BaseInteractor;
 import org.smartregister.reveal.model.BaseTaskDetails;
-import org.smartregister.reveal.model.StructureDetails;
 import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.GeoJsonUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.TaskUtils;
 import org.smartregister.util.JsonFormUtils;
 
-
 import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import timber.log.Timber;
 
 public class GDRSActivity extends AppCompatActivity {
 
-    public static final String INDIVIDUAL = "individual";
-    public static final String INDIVIDUAL_ID = "individual_id";
-    public static final String DOB = "dob";
-    public static final String COMPOUND = "compound";
-    public static final String STRUCTURE = "structure";
-    public static final String HOUSEHOLD = "household";
-    public static final String GENDER = "gender";
+  public static final String INDIVIDUAL = "individual";
+  public static final String INDIVIDUAL_ID = "individual_id";
+  public static final String DOB = "dob";
+  public static final String COMPOUND = "compound";
+  public static final String STRUCTURE = "structure";
+  public static final String HOUSEHOLD = "household";
+  public static final String GENDER = "gender";
 
-    public static final String NAME = "name";
+  public static final String NAME = "name";
+  public static final String OPERATIONAL = "operational";
+  public static final String ADD_MEMBER = "add_member";
 
-    private RecyclerView recyclerView;
-    private ActionAdapter actionAdapter;
-    private List<Action> actionList;
-    private RevealJsonFormUtils formUtils;
-    @Getter
-    private HdssRepository hdssRepository;
-    private String taskIdentifier;
-    private String locationUUID;
-    private String taskCode;
-    private String houseHoldId;
-    private String compoundId;
-    private GDRSPresenter presenter;
-    private int position;
-    private TaskRepository taskRepository;
-    private TaskUtils taskUtils;
-//    private LinearLayout progressBar;
+  private RecyclerView recyclerView;
+  @Getter @Setter
+  private ActionAdapter actionAdapter;
+  private List<Action> actionList;
+  @Getter
+  private RevealJsonFormUtils formUtils;
+  @Getter private HdssRepository hdssRepository;
+  private String taskIdentifier;
+  private String locationUUID;
+  private String taskCode;
+  private Set<String> houseHoldIds = new HashSet<>();
+  private String thisCompoundId;
+  private GDRSPresenter presenter;
+  private int position;
+  @Getter private TaskRepository taskRepository;
+  private TaskUtils taskUtils;
+  private LocationRepository locationRepository;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        init();
+  //    private LinearLayout progressBar;
 
-        taskUtils = TaskUtils.getInstance();
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    init();
 
-        getHouseHoldData();
-        // Set up toolbar
-        setToolBar();
-        recyclerView = findViewById(R.id.recyclerView);
-//        progressBar = findViewById(R.id.progressBar);
+    taskUtils = TaskUtils.getInstance();
+
+    getHouseHoldData();
+    // Set up toolbar
+    setToolBar();
+    recyclerView = findViewById(R.id.recyclerView);
+    //        progressBar = findViewById(R.id.progressBar);
+
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    DividerItemDecoration dividerItemDecoration =
+        new DividerItemDecoration(
+            recyclerView.getContext(),
+            ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation());
+    recyclerView.addItemDecoration(dividerItemDecoration);
+
+    presenter = new GDRSPresenter(this, thisCompoundId,locationUUID, taskIdentifier);
+    populateActionList();
+    recyclerView.setAdapter(actionAdapter);
+  }
+
+  public JSONObject createFeatureCollection() throws JSONException {
+    JSONObject featureCollection = new JSONObject();
+    featureCollection.put(Constants.GeoJSON.TYPE, Constants.GeoJSON.FEATURE_COLLECTION);
+    return featureCollection;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+  }
+
+  private void getHouseHoldData() {
+
+    List<HdssCompoundHousehold> householdAndCompound =
+        hdssRepository.getCompoundAndHouseholdListByStructureId(locationUUID);
+    if (householdAndCompound != null && !householdAndCompound.isEmpty()) {
+
+      HdssCompoundHousehold houseHoldIdAndCompoundId = householdAndCompound.get(0);
+
+      if (houseHoldIdAndCompoundId != null) {
+        if (houseHoldIdAndCompoundId.getCompoundId() != null) {
+          thisCompoundId = houseHoldIdAndCompoundId.getCompoundId();
+        }
+      }
+      houseHoldIds =
+          householdAndCompound.stream()
+              .map(HdssCompoundHousehold::getHouseholdId)
+              .collect(Collectors.toSet());
+    }
+  }
+
+  private void setToolBar() {
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    TextView viewLeft = toolbar.findViewById(R.id.textViewLeft);
+    viewLeft.setText(taskCode);
+    TextView viewCenter = toolbar.findViewById(R.id.textViewCenter);
+
+    viewCenter.setText(String.join(" / ", houseHoldIds));
+    //        String title = houseHoldId != null ? houseHoldId.concat("-") : "";
+    //        title = title.concat(taskCode);
+    //        toolbar.setTitle(title);
+    setSupportActionBar(toolbar);
+  }
+
+  private void init() {
+    hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
+    locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
+    formUtils = new RevealJsonFormUtils();
+    setContentView(R.layout.activity_gdrs_main);
+    taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
+
+    // Get the menu type from the intent
+    Intent intent = getIntent();
+    taskIdentifier = intent.getStringExtra(TASK_IDENTIFIER);
+    locationUUID = intent.getStringExtra(Constants.Properties.LOCATION_UUID);
+    taskCode = intent.getStringExtra(Constants.Properties.TASK_CODE);
+  }
 
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+  public void copyToClipboard(String text) {
+    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+    ClipData clip = ClipData.newPlainText("Copied Text", text);
+    clipboard.setPrimaryClip(clip);
+  }
 
-        presenter = new GDRSPresenter(this);
-        populateActionList();
-        recyclerView.setAdapter(actionAdapter);
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.gdrs_menu, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.action_add_member) {
+      JSONObject formJSON = formUtils.getFormJSON(GDRSActivity.this, GDRS_ADD_MEMBER, null, null);
+      formUtils.populateFormWithServerOptions(GDRS_ADD_MEMBER, formJSON, null);
+      AllSharedPreferences sharedPreferences =
+          new AllSharedPreferences(
+              PreferenceManager.getDefaultSharedPreferences(
+                  RevealApplication.getInstance().getApplicationContext()));
+      sharedPreferences.savePreference(EVENT_LATITUDE, "");
+      sharedPreferences.savePreference(EVENT_LONGITUDE, "");
+      sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED, "");
+      sharedPreferences.savePreference(GPS_ACCURACY, "");
+      try {
+        List<Pair<String, String>> householdPairs = new ArrayList<>();
+        for (String householdId : houseHoldIds) {
+          householdPairs.add(new Pair<>(householdId, householdId));
+        }
+
+        formUtils.populateSpinner(formJSON, HOUSEHOLD_ID, householdPairs);
+      } catch (JSONException e) {
+        throw new RuntimeException(e);
+      }
+      formUtils.startJsonForm(formJSON, this);
+      return true;
+    } else if (item.getItemId() == R.id.gdrs_close) {
+      finish();
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
+
+
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    Timber.tag("RevealMap").i("GDRSActivity: here 1");
+
+    if (requestCode == REQUEST_CODE_GET_JSON
+        && resultCode == RESULT_OK
+        && data != null
+        && data.hasExtra(JSON_FORM_PARAM_JSON)) {
+      Timber.tag("RevealMap").i("GDRSActivity: here 2");
+      String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
+      Timber.tag("RevealMap").d(json);
+      try {
+        JSONObject jsonForm = new JSONObject(json);
+        String encounter = jsonForm.optString(ENCOUNTER_TYPE);
+        String planId = PreferencesUtil.getInstance().getCurrentPlanId();
+        Timber.tag("RevealMap").i("GDRSActivity: here 3");
+        if (encounter.equals(ADD_MEMBER)
+            && PreferencesUtil.getInstance()
+                .getInterventionTypeForPlan(planId)
+                .equals(Constants.Intervention.SURVEY)) {
+          handleAddMemberTask(jsonForm);
+        } else if (encounter.equals("index_case_member")
+            && PreferencesUtil.getInstance()
+                .getInterventionTypeForPlan(planId)
+                .equals(Constants.Intervention.SURVEY)) {
+          handleIndexCaseMemberTask(jsonForm, planId);
+        }
+      } catch (JSONException e) {
+        Timber.tag("RevealMap").i("GDRSActivity: here 8");
+      } catch (Exception e) {
+        Timber.tag("RevealMap").e(e, "GDRSActivity: ee 9");
+      }
+      presenter.saveJsonForm(json);
+      populateActionList();
+    }
+  }
+  public void populateActionList() {
+    // Create an ExecutorService for background tasks
+    //        ExecutorService executor = Executors.newSingleThreadExecutor();
+    List<Action> actionList = new ArrayList<>();
+    //        actionAdapter = new ActionAdapter(actionList, presenter);
+
+    //        executor.execute(() -> {
+    // This code runs in the background
+
+    Set<HdssTask> tasksByStructure =
+        hdssRepository.getTasksByStructure(
+            locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
+    Map<String, HdssIndividual> individualsByStructureId =
+        hdssRepository.getIndividualsByStructureId(locationUUID);
+
+    Timber.tag("RevealMap").i("got tasks");
+
+    Set<HdssTask> sorted =
+        tasksByStructure.stream()
+            .sorted(Comparator.comparing(HdssTask::getHouseholdId))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    for (HdssTask task : sorted) {
+      Timber.tag("RevealMap").i("got individual task %s", task.getIdentifier());
+      if (individualsByStructureId.containsKey(task.getForEntity())) {
+        HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
+        if (hdssIndividual != null) {
+          actionList.add(
+              new Action(
+                  hdssIndividual.getIndividualId(),
+                  hdssIndividual.getGender(),
+                  hdssIndividual.getDob(),
+                  task.getAuthoredOn().toString("yyyy-MM-dd"),
+                  task,
+                  hdssIndividual.getName(),
+                  task.getHouseholdId()));
+        }
+      }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    // Update UI on the main thread
+    //            runOnUiThread(() -> {
+    //                progressBar.setVisibility(View.GONE);
+    if (actionAdapter != null) {
+      actionAdapter.setActions(actionList);
+      actionAdapter.notifyDataSetChanged();
+    } else {
+      actionAdapter =
+          new ActionAdapter(
+              this,
+              actionList,
+              this.presenter,
+              thisCompoundId,
+              locationUUID);
+    }
+    //            });
+    //        });
+  }
+
+  private void handleAddMemberTask(JSONObject jsonForm) {
+    UUID uuid = UUID.randomUUID();
+    JSONArray fields = JsonFormUtils.fields(jsonForm);
+    JSONObject individualIdObj = JsonFormUtils.getFieldJSONObject(fields, "individual_id");
+    JSONObject householdIdObj = JsonFormUtils.getFieldJSONObject(fields, HOUSEHOLD_ID);
+    JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, GENDER);
+    JSONObject dobObj = JsonFormUtils.getFieldJSONObject(fields, "date_of_birth");
+    JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name");
+
+    String individualId = null;
+    if (individualIdObj != null) {
+      individualId = individualIdObj.optString("value");
     }
 
-    private void getHouseHoldData() {
+    String gender = null;
+    if (genderObj != null) {
+      gender = genderObj.optString("value");
+    }
 
-        List<HdssCompoundHousehold> householdAndCompound = hdssRepository.getCompoundAndHouseholdByStructureId(locationUUID);
-        if (householdAndCompound != null && !householdAndCompound.isEmpty()) {
+    String dob = null;
+    if (dobObj != null) {
+      dob = dobObj.optString("value");
+    }
+    String name = null;
+    if (nameObj != null) {
+      name = nameObj.optString("value");
+    }
+    String householdId = null;
+    if (householdIdObj != null) {
+      householdId = householdIdObj.optString("value");
+    }
 
-            HdssCompoundHousehold houseHoldIdAndCompoundId = householdAndCompound.get(0);
+    long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
 
-            if (houseHoldIdAndCompoundId != null) {
-                if (houseHoldIdAndCompoundId.getCompoundId() != null) {
-                    compoundId = houseHoldIdAndCompoundId.getCompoundId();
+    hdssMaxServerVersion++;
+    HdssHouseholdIndividual hdssHouseholdIndividual =
+        new HdssHouseholdIndividual(householdId, individualId, hdssMaxServerVersion);
+    hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
+
+    HdssIndividual hdssIndividual =
+        new HdssIndividual(
+            uuid.toString(),
+            individualId,
+            dob,
+            gender,
+            name,
+            hdssMaxServerVersion,
+            null,
+            null,
+            null);
+    hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
+
+    taskUtils.generateTask(
+        this, uuid.toString(), locationUUID, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);
+
+    Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
+    Set<HdssTask> tasksByStructure =
+        hdssRepository.getTasksByStructure(
+            locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
+
+    if (RCD.equals(task.getCode())) {
+      boolean anyRCDComplete = false;
+
+      anyRCDComplete =
+          tasksByStructure.stream()
+              .anyMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+      if (anyRCDComplete) {
+        String businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
+        task.setBusinessStatus(businessStatusIndexCase);
+        taskRepository.addOrUpdate(task);
+      }
+
+    } else if (INDEX_CASE.equals(task.getCode())) {
+      if (COMPLETE.equals(task.getBusinessStatus())) {
+        task.setBusinessStatus(INDEX_CASE_COMPLETE);
+        taskRepository.addOrUpdate(task);
+      }
+    } else {
+      if (COMPLETE.equals(task.getBusinessStatus())) {
+        task.setBusinessStatus(SECONDARY_INDEX_CASE_COMPLETE);
+        taskRepository.addOrUpdate(task);
+      }
+    }
+  }
+
+  private void handleIndexCaseMemberTask(JSONObject jsonForm, String planId) throws JSONException {
+    Timber.tag("RevealMap").i("GDRSActivity: here 4");
+    JSONArray fields = JsonFormUtils.fields(jsonForm);
+    JSONObject individualObj = JsonFormUtils.getFieldJSONObject(fields, "individual");
+    JSONObject correctHouseholdCompoundObj =
+        JsonFormUtils.getFieldJSONObject(fields, "household_compound");
+    JSONObject geoStructure = JsonFormUtils.getFieldJSONObject(fields, "geo_structure");
+    JSONObject operational = JsonFormUtils.getFieldJSONObject(fields, "operational");
+    JSONObject compound = JsonFormUtils.getFieldJSONObject(fields, "compound");
+    JSONObject currentHouseholdIdOfIndexCase =
+        JsonFormUtils.getFieldJSONObject(fields, "household");
+    JSONObject capturedCompound = JsonFormUtils.getFieldJSONObject(fields, "captured_compound");
+    JSONObject capturedHousehold = JsonFormUtils.getFieldJSONObject(fields, "captured_household");
+
+    String individualIdValue = null;
+
+    if (individualObj != null) {
+      try {
+        individualIdValue = individualObj.getString("value");
+      } catch (Exception e) {
+        Timber.tag("RevealMap").i("GDRSActivity: Err 1");
+      }
+
+      if (individualIdValue != null) {
+        Timber.tag("RevealMap").i("GDRSActivity: here 5 %s", correctHouseholdCompoundObj);
+
+        if (correctHouseholdCompoundObj != null) {
+          handleHouseholdIdSelection(
+              correctHouseholdCompoundObj,
+              planId,
+              individualIdValue,
+              currentHouseholdIdOfIndexCase,
+              individualObj,
+              individualIdValue);
+        }
+
+        if (geoStructure != null) {
+          handleStructureSelection(
+              geoStructure,
+              individualIdValue,
+              planId,
+              currentHouseholdIdOfIndexCase,
+              capturedHousehold,
+              capturedCompound);
+        }
+
+        if (operational != null) {
+          handleOperationalAreaSelection(operational, planId, individualIdValue);
+        }
+      }
+    }
+  }
+
+  private void handleHouseholdIdSelection(
+      JSONObject correctHouseholdCompoundObj,
+      String planId,
+      String finalIndividualIdValue,
+      JSONObject household,
+      JSONObject individualObj,
+      String individualIdValue) {
+    String correctHouseholdCompoundString = null;
+    try {
+      correctHouseholdCompoundString = correctHouseholdCompoundObj.getString("value");
+    } catch (Exception e) {
+      Timber.tag("RevealMap").i("GDRSActivity: Err 2");
+    }
+
+    if (correctHouseholdCompoundString != null) {
+      handleIndexCaseChangeHousehold(
+          correctHouseholdCompoundString,
+          planId,
+          finalIndividualIdValue,
+          household,
+          individualObj,
+          individualIdValue);
+    }
+  }
+
+  private void handleOperationalAreaSelection(
+      JSONObject operational, String planId, String individualIdValue) {
+    String operationalValue = null;
+    try {
+      operationalValue = operational.getString("value");
+    } catch (Exception e) {
+      Timber.tag("RevealMap").i("GDRSActivity: Err 4");
+    }
+    if (operationalValue != null) {
+
+      handleIndexCaseMoveToFloatingOperationalArea(planId, individualIdValue, operationalValue);
+    }
+  }
+
+  private void handleStructureSelection(
+      JSONObject geoStructure,
+      String individualIdValue,
+      String planId,
+      JSONObject currentHouseholdIdOfIndexCase,
+      JSONObject capturedHousehold,
+      JSONObject capturedCompound)
+      throws JSONException {
+    Timber.tag("RevealMap").i("GDRSActivity: geoStructure %s", geoStructure);
+
+    String geoStructureValue = null;
+    try {
+      geoStructureValue = geoStructure.getString("value");
+    } catch (Exception e) {
+      Timber.tag("RevealMap").i("GDRSActivity: Err 3");
+    }
+
+    String currentHouseholdIdOfIndexCaseString = null;
+
+    try {
+      currentHouseholdIdOfIndexCaseString = currentHouseholdIdOfIndexCase.getString("value");
+    } catch (Exception e) {
+
+    }
+
+    if (geoStructureValue != null && currentHouseholdIdOfIndexCaseString != null) {
+      Timber.tag("RevealMap").i("GDRSActivity: here 7");
+
+      Timber.tag("RevealMap")
+          .i(
+              "GDRSActivity: updating structure for individual 1 %s %s %s",
+              individualIdValue, geoStructureValue, houseHoldIds);
+
+      handleIndexCaseToNewStructure(planId, geoStructureValue, currentHouseholdIdOfIndexCaseString);
+    }
+  }
+
+  private void handleIndexCaseChangeHousehold(
+      String correctHouseholdCompoundString,
+      String planId,
+      String finalIndividualIdValue,
+      JSONObject household,
+      JSONObject individualObj,
+      String individualIdValue) {
+    Timber.tag("RevealMap").i("GDRSActivity: here 6");
+
+    try {
+      List<MultiSelectValue> maps =
+          new Gson()
+              .<List<MultiSelectValue>>fromJson(
+                  correctHouseholdCompoundString,
+                  new TypeToken<List<MultiSelectValue>>() {}.getType());
+
+      if (maps != null && !maps.isEmpty() && maps.get(0).getKey() != null) {
+        String correctHousehold = maps.get(0).getKey();
+
+        if (correctHousehold != null) {
+
+          List<String> tasksForCompoundLinkedToHouseholdId =
+              hdssRepository.getTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId, "");
+          for (String id : tasksForCompoundLinkedToHouseholdId) {
+            taskRepository.cancelTaskByIdentifier(id);
+          }
+          String structureIdByHouseholdId =
+              hdssRepository.getStructureIdByHouseholdId(correctHousehold);
+          List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
+              hdssRepository.getStructuresAndTasksForCompoundByHouseholdId(
+                  correctHousehold, planId);
+
+          boolean hasExistingIndexCase = false;
+          List<StructureTaskForCompound> potentialStructuresForTaskGeneration = new ArrayList<>();
+          for (StructureTaskForCompound structure : structuresAndTasksForCompoundByHouseholdId) {
+
+            if (structure.getBusinessStatus() != null
+                && structure.getStatus() != null
+                && structure.getCode() != null
+                && !structure.getCode().equals(RCD)) {
+              if (structure.getCode().equals(INDEX_CASE)) {
+                if (!structure.getStatus().equals(Task.TaskStatus.CANCELLED.toString())
+                    && structure.getBusinessStatus().equals(INDEX_CASE_NOT_VISITED)) {
+                  hasExistingIndexCase = true;
                 }
-
-                if (houseHoldIdAndCompoundId.getHouseholdId() != null) {
-                    houseHoldId = houseHoldIdAndCompoundId.getHouseholdId();
-                }
-            }
-
-        }
-    }
-
-    private void setToolBar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        TextView viewLeft = toolbar.findViewById(R.id.textViewLeft);
-        viewLeft.setText(taskCode);
-        TextView viewCenter = toolbar.findViewById(R.id.textViewCenter);
-        viewCenter.setText(houseHoldId);
-//        String title = houseHoldId != null ? houseHoldId.concat("-") : "";
-//        title = title.concat(taskCode);
-//        toolbar.setTitle(title);
-        setSupportActionBar(toolbar);
-    }
-
-
-    private void init() {
-        hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
-        formUtils = new RevealJsonFormUtils();
-        setContentView(R.layout.activity_gdrs_main);
-        taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
-
-        // Get the menu type from the intent
-        Intent intent = getIntent();
-        taskIdentifier = intent.getStringExtra(TASK_IDENTIFIER);
-        locationUUID = intent.getStringExtra(Constants.Properties.LOCATION_UUID);
-        taskCode = intent.getStringExtra(Constants.Properties.TASK_CODE);
-
-    }
-
-    public void populateActionList() {
-        // Create an ExecutorService for background tasks
-//        ExecutorService executor = Executors.newSingleThreadExecutor();
-        List<Action> actionList = new ArrayList<>();
-//        actionAdapter = new ActionAdapter(actionList, presenter);
-
-//        executor.execute(() -> {
-        // This code runs in the background
-
-        Set<Task> tasksByStructure = hdssRepository.getTasksByStructure(locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
-        Map<String, HdssIndividual> individualsByStructureId = hdssRepository.getIndividualsByStructureId(locationUUID);
-
-        Timber.tag("RevealMap").i("got tasks");
-
-        for (Task task : tasksByStructure) {
-            Timber.tag("RevealMap").i("got individual task %s", task.getIdentifier());
-            if (individualsByStructureId.containsKey(task.getForEntity())) {
-                HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
-                if (hdssIndividual != null) {
-                    actionList.add(new Action(hdssIndividual.getIndividualId(), hdssIndividual.getGender()
-                            , hdssIndividual.getDob(), task.getAuthoredOn().toString("yyyy-MM-dd"), task,hdssIndividual.getName()));
-                }
-            }
-        }
-
-        // Update UI on the main thread
-//            runOnUiThread(() -> {
-//                progressBar.setVisibility(View.GONE);
-        if (actionAdapter != null) {
-            actionAdapter.setActions(actionList);
-            actionAdapter.notifyDataSetChanged();
-        } else {
-            actionAdapter = new ActionAdapter(actionList, presenter);
-        }
-//            });
-//        });
-    }
-
-    private void copyToClipboard(String text) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Copied Text", text);
-        clipboard.setPrimaryClip(clip);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.gdrs_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_add_member) {
-            JSONObject formJSON = formUtils.getFormJSON(GDRSActivity.this, GDRS_ADD_MEMBER, null, null);
-            formUtils.populateFormWithServerOptions(GDRS_ADD_MEMBER, formJSON, null);
-            AllSharedPreferences sharedPreferences = new AllSharedPreferences(PreferenceManager.getDefaultSharedPreferences(RevealApplication.getInstance().getApplicationContext()));
-            sharedPreferences.savePreference(EVENT_LATITUDE, "");
-            sharedPreferences.savePreference(EVENT_LONGITUDE, "");
-            sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED, "");
-            sharedPreferences.savePreference(GPS_ACCURACY, "");
-            try {
-                formUtils.populateField(formJSON, INDIVIDUAL_ID, houseHoldId, VALUE);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            formUtils.startJsonForm(formJSON, this);
-            return true;
-        } else if (item.getItemId() == R.id.gdrs_close) {
-            finish();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder> {
-
-        @Setter
-        private List<Action> actions;
-
-        private GDRSPresenter gdrsPresenter;
-
-        ActionAdapter(List<Action> actions, GDRSPresenter gdrsPresenter) {
-            this.actions = actions;
-            this.gdrsPresenter = gdrsPresenter;
-        }
-
-
-        @Override
-        public ActionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = getLayoutInflater().inflate(R.layout.gdrs_item_action, parent, false);
-            return new ActionViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ActionViewHolder holder, int position) {
-            Action action = getAction(holder, position);
-            Task task = action.getTask();
-            Drawable background = holder.actionButton.getBackground();
-
-
-            if (task.getAuthoredOn().isBefore(DateTime.now().minusDays(3))) {
-                holder.createdDate.setTextColor(getResources().getColor(android.R.color.holo_red_dark, null));
-                holder.oldTaskMessage.setVisibility(View.VISIBLE);
-            }
-
-
-            if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-
-                if (task.getCode().equals(INDEX_CASE_MEMBER)) {
-                    if (COMPLETE.equals(task.getBusinessStatus())) {
-                        if (background instanceof GradientDrawable) {
-                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.purple, null));
-                        }
-//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.purple, null));
-                        holder.actionButton.setTextColor(getResources().getColor(R.color.cyan, null));
-                        holder.actionButton.setText(R.string.edit_index_case);
-                    } else {
-                        if (background instanceof GradientDrawable) {
-                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.cyan, null));
-                        }
-//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.cyan, null));
-                        holder.actionButton.setText(R.string.confirm_index_case);
-                    }
-                } else {
-                    if (COMPLETE.equals(task.getBusinessStatus())) {
-                        if (background instanceof GradientDrawable) {
-                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.pnc_circle_green, null));
-                        }
-//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
-                        holder.actionButton.setTextColor(getResources().getColor(R.color.purple, null));
-                        holder.actionButton.setText(R.string.edit_secondary);
-                    } else {
-                        if (background instanceof GradientDrawable) {
-                            ((GradientDrawable) background).setColor(getResources().getColor(R.color.orange, null));
-                        }
-//                        holder.actionButton.setBackgroundColor(getResources().getColor(R.color.orange, null));
-                        holder.actionButton.setText(R.string.confirm_secondary);
-                    }
-                }
+              }
             } else {
-
-                if (COMPLETE.equals(task.getBusinessStatus())) {
-                    if (background instanceof GradientDrawable) {
-                        ((GradientDrawable) background).setColor(getResources().getColor(R.color.pnc_circle_green, null));
-                    }
-//                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green, null));
-                    holder.actionButton.setText(R.string.edit_racd);
-                } else {
-                    if (background instanceof GradientDrawable) {
-                        ((GradientDrawable) background).setColor(getResources().getColor(R.color.not_visited_yellow, null));
-                    }
-//                    holder.actionButton.setBackgroundColor(getResources().getColor(R.color.not_visited_yellow, null));
-                    holder.actionButton.setText(R.string.action_racd);
-                }
+              potentialStructuresForTaskGeneration.add(structure);
             }
-
-            holder.actionButton.setOnClickListener(v -> {
-                        if (!NOT_VISITED.equals(task.getBusinessStatus())) {
-                            String eventType;
-                            if (RCD_MEMBER.equals(task.getCode())) {
-                                eventType = Constants.EventType.RCD_EVENT;
-                            } else if (INDEX_CASE_MEMBER.equals(task.getCode())) {
-                                eventType = Constants.EventType.INDEX_CASE_MEMBER_EVENT;
-                            } else {
-                                eventType = Constants.EventType.SECONDARY_INDEX_CASE_MEMBER_EVENT;
-                            }
-                            gdrsPresenter.findLastEvent(task.getForEntity(), eventType);
-                        } else {
-
-                            BaseTaskDetails details = getBaseTaskDetails(task, task.getIdentifier(), null);
-
-                            PreferencesUtil.getInstance().setSelectedHouseholdID(houseHoldId);
-                            JSONObject formJSON;
-
-                            if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                                if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                                    formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
-                                } else {
-                                    formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
-                                }
-                            } else {
-                                formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_RCD, details, null);
-                            }
-                            try {
-                                JSONObject featureCollection = createFeatureCollection();
-                                Location operationalAreaLocation = getOperationalAreaLocation(PreferencesUtil.getInstance().getCurrentOperationalArea());
-                                List<Location> structures = RevealApplication.getInstance().getContext().getStructureRepository().getLocationsByParentIdForGdrs(operationalAreaLocation.getId(), "structure");
-
-                                Map<String, StructureDetails> collect = structures.stream().map(structure -> new AbstractMap.SimpleEntry<>(structure.getId()
-                                                , new StructureDetails(structure.getProperties().getName(), structure.getProperties().getName())))
-                                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b));
-
-                                Map<String, Set<Task>> map = new HashMap<>();
-
-                                Set<Task> set = Set.of(task);
-                                map.put(locationUUID, set);
-
-                                String features = GeoJsonUtils
-                                        .getGeoJsonFromStructuresAndTasks(structures, map, null, collect);
-
-                                featureCollection.put(Constants.GeoJSON.FEATURES, new JSONArray(features));
-                                RevealApplication.getInstance().setFeatureCollection(FeatureCollection.fromJson(featureCollection.toString()));
-                                RevealApplication.getInstance().setOperationalArea(
-                                        Feature.fromJson(gson.toJson(operationalAreaLocation))
-                                );
-                            } catch (Exception e) {
-                                Toast.makeText(GDRSActivity.this, "Cannot open geo widget to capture structure", Toast.LENGTH_LONG).show();
-                            }
-                            formUtils.setDefaultValue(formJSON, Constants.JsonForm.HEALTH_WORKER_SUPERVISOR,
-                                    RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-
-
-                            if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                                if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                                    formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
-                                } else {
-                                    formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
-                                }
-
-                                try {
-                                    formUtils.populateField(formJSON, INDIVIDUAL, action.individualId, JsonFormConstants.VALUE);
-                                    formUtils.populateField(formJSON, HOUSEHOLD, houseHoldId, JsonFormConstants.VALUE);
-                                    formUtils.populateField(formJSON, COMPOUND, compoundId, JsonFormConstants.VALUE);
-                                    formUtils.populateField(formJSON, STRUCTURE, locationUUID, JsonFormConstants.VALUE);
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-
-
-                            } else {
-                                formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_RCD, details, null);
-                                try {
-                                    formUtils.populateField(formJSON, INDIVIDUAL, action.individualId, JsonFormConstants.VALUE);
-                                    formUtils.populateField(formJSON, DOB, action.dob, JsonFormConstants.VALUE);
-                                    formUtils.populateField(formJSON, GENDER, action.gender, JsonFormConstants.VALUE);
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                            formUtils.startJsonForm(formJSON, GDRSActivity.this);
-                        }
-                    }
-            );
-        }
-
-
-        private JSONObject createFeatureCollection() throws JSONException {
-            JSONObject featureCollection = new JSONObject();
-            featureCollection.put(Constants.GeoJSON.TYPE, Constants.GeoJSON.FEATURE_COLLECTION);
-            return featureCollection;
-        }
-
-        private @NonNull Action getAction(ActionViewHolder holder, int position) {
-            Action action = actions.get(position);
-            holder.gender.setText(action.getGender());
-            holder.individualId.setText(action.getIndividualId());
-            holder.dob.setText(action.getDob());
-            holder.createdDate.setText(action.createdDate);
-            holder.name.setText(action.getName());
-            return action;
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return actions.size();
-        }
-
-        class ActionViewHolder extends RecyclerView.ViewHolder {
-
-            TextView individualId;
-            TextView gender;
-            TextView dob;
-            TextView createdDate;
-            TextView name;
-            TextView oldTaskMessage;
-            Button actionButton;
-
-            ActionViewHolder(View itemView) {
-                super(itemView);
-                individualId = itemView.findViewById(R.id.individualId);
-                gender = itemView.findViewById(R.id.individualGender);
-                dob = itemView.findViewById(R.id.individualDob);
-                actionButton = itemView.findViewById(R.id.actionButton);
-                createdDate = itemView.findViewById(R.id.createdDate);
-                name = itemView.findViewById(R.id.individualName);
-                oldTaskMessage = itemView.findViewById(R.id.oldTaskMessage);
-                individualId.setOnLongClickListener(view -> {
-                    copyToClipboard(individualId.getText().toString());
-                    return true; // Indicates that the long click was handled
-                });
-            }
-        }
-    }
-
-
-    private static class Action {
-        @Getter
-        private final String individualId;
-        @Getter
-        private final String gender;
-        @Getter
-        private final String name;
-        @Getter
-        private final String dob;
-        @Getter
-        private final String createdDate;
-        @Getter
-        private final Task task;
-
-        Action(String individualId, String gender, String dob, String createdDate, Task task, String name) {
-            this.individualId = individualId;
-            this.gender = gender;
-            this.dob = dob;
-            this.task = task;
-            this.createdDate = createdDate;
-            this.name = name;
-        }
-
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK && data != null
-                && data.hasExtra(JSON_FORM_PARAM_JSON)) {
-            String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
-            Timber.d(json);
-            presenter.saveJsonForm(json);
-
-            try {
-                JSONObject jsonForm = new JSONObject(json);
-                String encounter = jsonForm.optString(ENCOUNTER_TYPE);
-                String planId = PreferencesUtil.getInstance().getCurrentPlanId();
-
-                if (encounter.equals("add_member") && PreferencesUtil.getInstance().getInterventionTypeForPlan(planId).equals(Constants.Intervention.SURVEY)) {
-
-                    UUID uuid = UUID.randomUUID();
-                    JSONArray fields = JsonFormUtils.fields(jsonForm);
-                    JSONObject individualIdObj = JsonFormUtils.getFieldJSONObject(fields, "individual_id");
-                    JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, GENDER);
-                    JSONObject dobObj = JsonFormUtils.getFieldJSONObject(fields, "date_of_birth");
-                    JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name");
-
-                    String individualId = null;
-                    if (individualIdObj != null) {
-                        individualId = individualIdObj.optString("value");
-                    }
-
-                    String gender = null;
-                    if (genderObj != null) {
-                        gender = genderObj.optString("value");
-                    }
-
-                    String dob = null;
-                    if (dobObj != null) {
-                        dob = dobObj.optString("value");
-                    }
-                    String name = null;
-                    if (nameObj != null) {
-                        name = nameObj.optString("value");
-                    }
-
-
-
-                    long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
-
-                    hdssMaxServerVersion++;
-                    HdssHouseholdIndividual hdssHouseholdIndividual = new HdssHouseholdIndividual(houseHoldId, individualId, hdssMaxServerVersion);
-                    hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
-
-                    HdssIndividual hdssIndividual = new HdssIndividual(uuid.toString(), individualId, dob, gender,name, hdssMaxServerVersion);
-                    hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
-
-                    taskUtils.generateTask(this, uuid.toString(), locationUUID, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);
-
-                    Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
-                    Set<Task> tasksByStructure = hdssRepository.getTasksByStructure(locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
-
-                    if (RCD.equals(task.getCode())) {
-                        boolean anyRCDComplete = false;
-
-                        anyRCDComplete = tasksByStructure.stream()
-                                .anyMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-
-                        if (anyRCDComplete){
-                           String businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
-                           task.setBusinessStatus(businessStatusIndexCase);
-                           taskRepository.addOrUpdate(task);
-                        }
-
-                    } else if (INDEX_CASE.equals(task.getCode())){
-                        if (COMPLETE.equals(task.getBusinessStatus())){
-                            task.setBusinessStatus(INDEX_CASE_COMPLETE);
-                            taskRepository.addOrUpdate(task);
-                        }
-                    } else {
-                        if (COMPLETE.equals(task.getBusinessStatus())){
-                            task.setBusinessStatus(SECONDARY_INDEX_CASE_COMPLETE);
-                            taskRepository.addOrUpdate(task);
-                        }
-                    }
-
-
-                } else if (encounter.equals("index_case_member") && PreferencesUtil.getInstance().getInterventionTypeForPlan(planId).equals(Constants.Intervention.SURVEY)) {
-
-                    JSONArray fields = JsonFormUtils.fields(jsonForm);
-                    JSONObject individualObj = JsonFormUtils.getFieldJSONObject(fields, "individual");
-
-                    JSONObject correctHouseholdCompoundObj = JsonFormUtils.getFieldJSONObject(fields, "household_compound");
-
-                    if (individualObj != null && correctHouseholdCompoundObj != null) {
-                        String individualIdValue = individualObj.getString("value");
-
-
-                        String correctHouseholdCompoundJsonObject = correctHouseholdCompoundObj.getString("value");
-
-
-                        try {
-                            List<MultiSelectValue> maps = new Gson().<List<MultiSelectValue>>fromJson(
-                                    correctHouseholdCompoundJsonObject,
-                                    new TypeToken<List<MultiSelectValue>>() {
-                                    }.getType());
-
-                            if (maps != null && !maps.isEmpty() && maps.get(0).getKey() != null) {
-                                String correctHousehold = maps.get(0).getKey();
-
-                                if (correctHousehold != null) {
-                                    hdssRepository.moveIndividualFromHouseholdToHousehold(houseHoldId, correctHousehold, individualIdValue);
-                                }
-
-                            }
-                        } catch (JsonSyntaxException js) {
-                            Timber.tag("jsonException").e(" err %s", js.getMessage());
-                        } catch (Exception e) {
-                            Timber.tag("jsonException").e(" err %s", e.getMessage());
-                        }
-
-                    }
-
-
-                }
-            } catch (JSONException e) {
-
-            }
-        }
-
-    }
-
-    @Data
-    public static class MultiSelectValue implements Serializable {
-        private String key;
-        private String text;
-        @SerializedName("openmrs_entity")
-        private String openMrsEntity;
-        @SerializedName("openmrs_entity_id")
-        private String openMrsEntityId;
-        @SerializedName("openmrs_entity_parent")
-
-        private String openMrsEntityParent;
-        private Property property;
-
-
-    }
-
-    @Data
-    public static class Property implements Serializable {
-        @SerializedName("presumed-id")
-        private String presumedId;
-        @SerializedName("confirmed-id")
-        private String confirmedId;
-    }
-
-    public class GDRSPresenter implements BaseContract.BasePresenter {
-
-        private final GDRSInteractor gdrsInteractor;
-
-        private final GDRSActivity activity;
-
-        public GDRSPresenter(GDRSActivity activity) {
-            this.gdrsInteractor = new GDRSInteractor(this);
-            this.activity = activity;
-        }
-
-        public void saveJsonForm(String json) {
-            gdrsInteractor.saveJsonForm(json);
-        }
-
-        @Override
-        public void onFormSaved(@NonNull String structureId, String taskID, @NonNull Task.TaskStatus taskStatus, @NonNull String businessStatus, String interventionType) {
-            activity.populateActionList();
-
-            Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
-            Set<Task> tasksByStructure = hdssRepository.getTasksByStructure(locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
-
-
-            if (RCD.equals(task.getCode())) {
-                String businessStatusIndexCase = Constants.BusinessStatus.NOT_VISITED;
-                boolean allRCDComplete = false;
-                boolean allRCDInComplete = false;
-
-                allRCDComplete = tasksByStructure.stream()
-                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-
-                allRCDInComplete = tasksByStructure.stream()
-                        .allMatch(innerTask -> NOT_VISITED.equals(innerTask.getBusinessStatus()));
-
-                if (allRCDComplete) {
-                    businessStatusIndexCase = COMPLETE;
-                } else if (!allRCDInComplete) {
-                    businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
-                } else {
-                    businessStatusIndexCase = Constants.BusinessStatus.NOT_VISITED;
-                }
-                task.setBusinessStatus(businessStatusIndexCase);
-                task.setStatus(Task.TaskStatus.COMPLETED);
-                task.setLastModified(new DateTime());
-                taskRepository.addOrUpdate(task);
-            } else if (INDEX_CASE.equals(task.getCode())) {
-
-                String businessStatusIndexCase;
-                boolean allIndexCaseComplete = false;
-                boolean allRCDComplete = false;
-                boolean allRCDInComplete = false;
-
-
-                allIndexCaseComplete = tasksByStructure.stream().filter(innerTask -> INDEX_CASE_MEMBER.equals(innerTask.getCode()))
-                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-
-                allRCDComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
-                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-//
-//                allRCDInComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
-//                        .anyMatch(innerTask -> Constants.BusinessStatus.NOT_VISITED.equals(innerTask.getBusinessStatus()));
-
-
-                businessStatusIndexCase = Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
-
-                if (allIndexCaseComplete) {
-                    if (allRCDComplete) {
-                        businessStatusIndexCase = COMPLETE;
-//                    } else if (allRCDInComplete) {
-//                        businessStatusIndexCase = INDEX_COMPLETE_RCD_INCOMPLETE;
-                    } else {
-                        businessStatusIndexCase = INDEX_CASE_COMPLETE;
-                    }
-                }
-//                else {
-//                    if (allRCDComplete) {
-//                        businessStatusIndexCase = RCD_COMPLETE_INDEX_INCOMPLETE;
-//                    } else {
-//                        businessStatusIndexCase = RCD_INCOMPLETE_INDEX_INCOMPLETE;
-//                    }
-//                }
-                task.setBusinessStatus(businessStatusIndexCase);
-                task.setStatus(Task.TaskStatus.COMPLETED);
-                task.setLastModified(new DateTime());
-                taskRepository.addOrUpdate(task);
+          }
+          for (StructureTaskForCompound taskForCompound : potentialStructuresForTaskGeneration) {
+            if (taskForCompound.getBusinessStatus() != null) {
+              if (taskForCompound.getStructureId().equals(structureIdByHouseholdId)
+                  && taskForCompound.getCode().equals(RCD)) {
+                taskRepository.cancelTaskByIdentifier(taskForCompound.getTaskId());
+              }
             } else {
-                String businessStatusIndexCase;
-                boolean allIndexCaseComplete = false;
-                boolean allRCDComplete = false;
-                boolean allRCDInComplete = false;
-
-
-                allIndexCaseComplete = tasksByStructure.stream().filter(innerTask -> SECONDARY_INDEX_CASE_MEMBER.equals(innerTask.getCode()))
-                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-
-                allRCDComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
-                        .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
-//
-//                allRCDInComplete = tasksByStructure.stream().filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
-//                        .anyMatch(innerTask -> Constants.BusinessStatus.NOT_VISITED.equals(innerTask.getBusinessStatus()));
-
-
-                businessStatusIndexCase = Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
-
-                if (allIndexCaseComplete) {
-                    if (allRCDComplete) {
-//                    } else if (allRCDInComplete) {
-                        businessStatusIndexCase = COMPLETE;
-                    } else {
-                        businessStatusIndexCase = SECONDARY_INDEX_CASE_COMPLETE;
-
-                    }
-                }
-//                else {
-//                    if (allRCDComplete) {
-//                        businessStatusIndexCase = RCD_COMPLETE_INDEX_INCOMPLETE;
-//                    } else {
-//                        businessStatusIndexCase = RCD_INCOMPLETE_INDEX_INCOMPLETE;
-//                    }
-//                }
-                task.setBusinessStatus(businessStatusIndexCase);
-                task.setStatus(Task.TaskStatus.COMPLETED);
-                task.setLastModified(new DateTime());
-                taskRepository.addOrUpdate(task);
+              if (!taskForCompound.getStructureId().equals(structureIdByHouseholdId)) {
+                taskUtils.generateTask(
+                    this,
+                    taskForCompound.getStructureId(),
+                    taskForCompound.getStructureId(),
+                    NOT_VISITED,
+                    RCD,
+                    R.string.rcd);
+              }
             }
+          }
+          List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
+              hdssRepository.getIndividualsAndTasksForCompoundByHouseholdId(
+                  correctHousehold, planId);
 
-        }
+          String groupNameForSelectedStructure = locationRepository.getLocationsParentName(
+              structureIdByHouseholdId);
 
-        @Override
-        public void onStructureAdded(Feature feature, JSONArray featureCoordinates, double zoomlevel) {
+          if (groupNameForSelectedStructure==null){
+            groupNameForSelectedStructure = PreferencesUtil.getInstance().getCurrentOperationalArea();
+          }
 
-        }
+          for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
+              individualsAndTasksForCompoundByHouseholdId) {
+            if (individualsAndTasksForCompound.getBusinessStatus() == null) {
 
-        @Override
-        public void onFormSaveFailure(String eventType) {
-            Toast.makeText(GDRSActivity.this, "Failure to save form data", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onFamilyFound(CommonPersonObjectClient finalFamily) {
-
-        }
-
-        public void findLastEvent(String baseEntityId, String eventType) {
-            gdrsInteractor.findLastEvent(baseEntityId, eventType);
-        }
-
-    }
-
-    public class GDRSInteractor extends BaseInteractor {
-
-        public GDRSInteractor(BaseContract.BasePresenter presenter) {
-            super(presenter);
-        }
-
-        @Override
-        public void handleLasteventFound(org.smartregister.domain.Event event) {
-
-            if (event != null) {
-
-                String taskID = event.getDetails().get(Constants.Properties.TASK_IDENTIFIER);
-
-                Task task = taskRepository.getTaskByIdentifier(taskID);
-
-                HdssLocation location = getHdssLocation(locationUUID);
-
-                BaseTaskDetails details = getBaseTaskDetails(task, task.getIdentifier(), locationUUID);
-                PreferencesUtil.getInstance().setSelectedHouseholdID(houseHoldId);
-                JSONObject formJSON;
-
-                if (task.getCode().equals(INDEX_CASE_MEMBER) || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                    if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-                        formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, location);
-                    } else {
-                        formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_INDEX_CASE, details, location);
-                    }
-
-                } else {
-                    formJSON = formUtils.getFormJSON(GDRSActivity.this, Constants.JsonForm.GDRS_RCD, details, location);
-                }
-
-                formUtils.populateForm(event, formJSON);
-                formUtils.startJsonForm(formJSON, GDRSActivity.this);
-
+              taskUtils.generateTaskWithGroupName(
+                  this,
+                  individualsAndTasksForCompound.getIndividualIdentifier(),
+                  structureIdByHouseholdId,
+                  NOT_VISITED,
+                  RCD_MEMBER,
+                  R.string.rcd,
+                  groupNameForSelectedStructure);
             }
+          }
 
+          if (household != null) {
 
+            String householdIdValue = household.getString("value");
+            if (householdIdValue != null) {
+              hdssRepository.moveIndividualFromHouseholdToHousehold(
+                  householdIdValue, correctHousehold, individualIdValue);
+            }
+          }
+
+          if (!hasExistingIndexCase) {
+            taskUtils.generateTaskWithGroupName(
+                this,
+                structureIdByHouseholdId,
+                structureIdByHouseholdId,
+                INDEX_CASE_NOT_VISITED,
+                INDEX_CASE,
+                R.string.index_case,
+                groupNameForSelectedStructure);
+            taskUtils.generateTaskWithGroupName(
+                this,
+                individualIdValue,
+                structureIdByHouseholdId,
+                NOT_VISITED,
+                INDEX_CASE_MEMBER,
+                R.string.index_case,
+                groupNameForSelectedStructure);
+          } else {
+            taskUtils.generateTaskWithGroupName(
+                this,
+                structureIdByHouseholdId,
+                structureIdByHouseholdId,
+                SECONDARY_INDEX_CASE_NOT_VISITED,
+                SECONDARY_INDEX_CASE,
+                R.string.index_case,
+                groupNameForSelectedStructure);
+            taskUtils.generateTaskWithGroupName(
+                this,
+                individualIdValue,
+                structureIdByHouseholdId,
+                NOT_VISITED,
+                SECONDARY_INDEX_CASE_MEMBER,
+                R.string.index_case,
+                groupNameForSelectedStructure);
+          }
+        }
+      }
+    } catch (JsonSyntaxException js) {
+      Timber.tag("RevealMap").e(" err %s", js.getMessage());
+    } catch (Exception e) {
+      Timber.tag("RevealMap").e(e," err %s", e.getMessage());
+    }
+  }
+
+  private void handleIndexCaseMoveToFloatingOperationalArea(
+      String planId, String individualIdValue, String operationalValue) {
+    List<String> tasksForCompoundLinkedToHouseholdId =
+        hdssRepository.getTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId, "");
+    for (String id : tasksForCompoundLinkedToHouseholdId) {
+      taskRepository.cancelTaskByIdentifier(id);
+      Timber.tag("GDRSActivity").d("Operational cancel tasks %s", id);
+    }
+
+    long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
+
+    hdssMaxServerVersion++;
+
+    HdssIndividual individualsByIndividualId =
+        hdssRepository.getIndividualByIndividualId(individualIdValue);
+    Timber.tag("GDRSActivity")
+        .i(
+            "GDRSActivity: individual id %s %s",
+            individualsByIndividualId.getIdentifier(), individualsByIndividualId.getIndividualId());
+
+    individualsByIndividualId.setServerVersion(hdssMaxServerVersion);
+    individualsByIndividualId.setFloatingLocationName(operationalValue);
+    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 2");
+    hdssRepository.deleteIndividualFromHousehold(individualIdValue);
+
+    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 3");
+    hdssRepository.addOrUpdateIndividual(List.of(individualsByIndividualId));
+    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 4");
+  }
+
+  private void handleIndexCaseToNewStructureWithoutHousehold(
+      JSONObject capturedHousehold,
+      JSONObject capturedCompound,
+      String planId,
+      String currentHouseholdIdOfIndexCaseString,
+      String geoStructureValue)
+      throws JSONException {
+
+    hdssRepository.removeHouseholdFromStructure(currentHouseholdIdOfIndexCaseString);
+
+    if (capturedHousehold != null && capturedCompound != null) {
+      String capturedHouseholdValue = capturedHousehold.getString("value");
+      String capturedCompoundValue = capturedCompound.getString("value");
+      if (capturedHouseholdValue != null
+          && !capturedHouseholdValue.isEmpty()
+          && capturedCompoundValue != null
+          && !capturedCompoundValue.isEmpty()) {
+
+        int maxServerVersion = hdssRepository.getMaxServerVersion();
+
+        List<String> tasksForCompoundLinkedToHouseholdId =
+            hdssRepository.getStructureTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId);
+
+        if (tasksForCompoundLinkedToHouseholdId != null
+            && !tasksForCompoundLinkedToHouseholdId.isEmpty()) {
+          for (String id : tasksForCompoundLinkedToHouseholdId) {
+            taskRepository.cancelTaskByIdentifier(id);
+          }
         }
 
+        String householdIdValue = currentHouseholdIdOfIndexCaseString;
 
+        if (householdIdValue != null) {
+
+          hdssRepository.removeHouseholdFromCompound(householdIdValue);
+
+          List<String> individualTasksForCompoundExcludingHousehold =
+              hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
+                  thisCompoundId, householdIdValue, planId);
+
+          if (individualTasksForCompoundExcludingHousehold != null
+              && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
+            for (String id : individualTasksForCompoundExcludingHousehold) {
+              taskRepository.cancelTaskByIdentifier(id);
+            }
+          }
+        }
+
+        HdssCompound hdssCompound =
+            HdssCompound.builder()
+                .compoundId(capturedCompoundValue)
+                .serverVersion(maxServerVersion)
+                .build();
+        hdssRepository.addOrUpdateCompounds(List.of(hdssCompound));
+
+        HdssCompoundHousehold compoundHousehold =
+            HdssCompoundHousehold.builder()
+                .householdId(capturedHouseholdValue)
+                .compoundId(capturedCompoundValue)
+                .serverVersion(maxServerVersion)
+                .build();
+        hdssRepository.addOrUpdateCompoundHouseholds(List.of(compoundHousehold));
+
+        HdssHouseholdStructure hdssHouseholdStructure =
+            HdssHouseholdStructure.builder()
+                .householdId(capturedHouseholdValue)
+                .structureId(geoStructureValue)
+                .serverVersion(maxServerVersion)
+                .build();
+        hdssRepository.addOrUpdateHouseholdStructure(List.of(hdssHouseholdStructure));
+
+        List<HdssIndividual> individualsByHouseholdId =
+            hdssRepository.getIndividualsByHouseholdId(capturedHouseholdValue);
+
+        for (HdssIndividual hdssIndividual : individualsByHouseholdId) {
+          HdssHouseholdIndividual hdssHouseholdIndividual =
+              HdssHouseholdIndividual.builder()
+                  .householdId(capturedHouseholdValue)
+                  .individualId(hdssIndividual.getIndividualId())
+                  .serverVersion(maxServerVersion++)
+                  .build();
+
+          hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
+        }
+
+        taskUtils.generateTask(
+            this,
+            geoStructureValue,
+            geoStructureValue,
+            INDEX_CASE_NOT_VISITED,
+            INDEX_CASE,
+            R.string.index_case);
+      }
+    }
+  }
+
+  private void handleIndexCaseToNewStructure(
+      String planId, String geoStructureValue, String currentHouseholdIdOfIndexCaseString)
+      throws JSONException {
+
+    HdssCompoundHousehold householdIdCompoundIdInSelectedStructure =
+        hdssRepository.getHouseholdIdCompoundIdByStructureId(geoStructureValue);
+
+    List<StructureTaskForCompound> structuresAndTasksForCompound = new ArrayList<>();
+
+    if (householdIdCompoundIdInSelectedStructure != null) {
+      structuresAndTasksForCompound =
+          hdssRepository.getStructuresAndTasksForCompound(
+              householdIdCompoundIdInSelectedStructure.getCompoundId(), planId);
     }
 
-    private static @NonNull HdssLocation getHdssLocation(String locationUUID) {
-        HdssLocation location = new HdssLocation();
-        LocationProperty locationProperty = new LocationProperty();
-        locationProperty.setType(Constants.StructureType.RESIDENTIAL);
-        locationProperty.setUid(locationUUID);
-        locationProperty.setVersion(0);
-        location.setProperties(locationProperty);
-        location.setId(locationUUID);
-        return location;
+    List<StructureTaskForCompound> potentialStructuresForRCDTaskGeneration = new ArrayList<>();
+
+    StructureTaskForCompound existingRCDTaskToConvert = null;
+    StructureTaskForCompound existingIndexCase = null;
+    StructureTaskForCompound existingSecondaryIndexCase = null;
+    for (StructureTaskForCompound structureCompoundTask : structuresAndTasksForCompound) {
+      if (structureCompoundTask.getTaskId() != null
+          && !structureCompoundTask.getStatus().equals(Task.TaskStatus.CANCELLED.toString())) {
+        if (structureCompoundTask.getCode().equals(INDEX_CASE)) {
+          existingIndexCase = structureCompoundTask;
+        } else if (structureCompoundTask.getCode().equals(SECONDARY_INDEX_CASE)) {
+          existingSecondaryIndexCase = structureCompoundTask;
+        } else if (structureCompoundTask.getCode().equals(RCD)) {
+          if (structureCompoundTask.getStructureId().equals(geoStructureValue)) {
+            existingRCDTaskToConvert = structureCompoundTask;
+          }
+        }
+      } else {
+        if (structureCompoundTask.getStructureId().equals(geoStructureValue)) {
+
+        } else {
+          potentialStructuresForRCDTaskGeneration.add(structureCompoundTask);
+        }
+      }
     }
 
-    private static @NonNull BaseTaskDetails getBaseTaskDetails(Task task, String taskIdentifier, String locationUUID) {
-        BaseTaskDetails details = new BaseTaskDetails(taskIdentifier);
-        details.setStructureId(locationUUID);
-        details.setTaskCode(task.getCode());
-        details.setTaskId(task.getIdentifier());
-        details.setTaskStatus(task.getStatus().name());
-        details.setBusinessStatus(task.getBusinessStatus());
-        details.setTaskEntity(task.getForEntity());
-        return details;
+    if (existingRCDTaskToConvert != null) {
+      taskRepository.cancelTaskByIdentifier(existingRCDTaskToConvert.getTaskId());
     }
+
+    if (existingIndexCase == null && existingSecondaryIndexCase == null) {
+      taskUtils.generateTask(
+          this,
+          geoStructureValue,
+          geoStructureValue,
+          INDEX_CASE_NOT_VISITED,
+          INDEX_CASE,
+          R.string.index_case);
+
+      Map<String, HdssIndividual> individualsByStructureId =
+          hdssRepository.getIndividualsByStructureId(geoStructureValue);
+
+      for (Map.Entry<String, HdssIndividual> entry : individualsByStructureId.entrySet()) {
+        taskUtils.generateTask(
+            this, entry.getKey(), geoStructureValue, NOT_VISITED, RCD_MEMBER, R.string.rcd_member);
+      }
+    } else {
+      Timber.tag("RevealMap").i("Dont create any index cases");
+    }
+
+    for (StructureTaskForCompound task : potentialStructuresForRCDTaskGeneration) {
+      taskUtils.generateTask(
+          this, task.getStructureId(), task.getStructureId(), NOT_VISITED, RCD, R.string.rcd);
+      Map<String, HdssIndividual> individualsByStructureId =
+          hdssRepository.getIndividualsByStructureId(task.getStructureId());
+      for (Map.Entry<String, HdssIndividual> entry : individualsByStructureId.entrySet()) {
+        taskUtils.generateTask(
+            this,
+            entry.getKey(),
+            task.getStructureId(),
+            NOT_VISITED,
+            RCD_MEMBER,
+            R.string.rcd_member);
+      }
+    }
+
+    List<String> tasksForCompoundLinkedToHouseholdId =
+        hdssRepository.getStructureTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId);
+
+    if (tasksForCompoundLinkedToHouseholdId != null
+        && !tasksForCompoundLinkedToHouseholdId.isEmpty()) {
+      for (String id : tasksForCompoundLinkedToHouseholdId) {
+        taskRepository.cancelTaskByIdentifier(id);
+      }
+    }
+    if (currentHouseholdIdOfIndexCaseString != null) {
+
+      hdssRepository.removeHouseholdFromStructure(currentHouseholdIdOfIndexCaseString);
+      hdssRepository.removeHouseholdFromCompound(currentHouseholdIdOfIndexCaseString);
+
+      List<String> individualTasksForCompoundExcludingHousehold =
+          hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
+              thisCompoundId, currentHouseholdIdOfIndexCaseString, planId);
+
+      if (individualTasksForCompoundExcludingHousehold != null
+          && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
+        for (String id : individualTasksForCompoundExcludingHousehold) {
+          taskRepository.cancelTaskByIdentifier(id);
+        }
+      }
+
+      int maxServerVersion = hdssRepository.getMaxServerVersion();
+      maxServerVersion++;
+
+      HdssHouseholdStructure householdStructure =
+          HdssHouseholdStructure.builder()
+              .structureId(geoStructureValue)
+              .householdId(currentHouseholdIdOfIndexCaseString)
+              .serverVersion((long) maxServerVersion)
+              .build();
+      hdssRepository.addOrUpdateHouseholdStructure(List.of(householdStructure));
+
+      HdssCompoundHousehold compoundHousehold =
+          HdssCompoundHousehold.builder()
+              .compoundId(householdIdCompoundIdInSelectedStructure.getCompoundId())
+              .householdId(currentHouseholdIdOfIndexCaseString)
+              .serverVersion(maxServerVersion)
+              .build();
+
+      hdssRepository.addOrUpdateCompoundHouseholdsBatched(List.of(compoundHousehold));
+    }
+  }
+
+  @Data
+  public static class MultiSelectValue implements Serializable {
+    private String key;
+    private String text;
+
+    @SerializedName("openmrs_entity")
+    private String openMrsEntity;
+
+    @SerializedName("openmrs_entity_id")
+    private String openMrsEntityId;
+
+    @SerializedName("openmrs_entity_parent")
+    private String openMrsEntityParent;
+
+    private Property property;
+  }
+
+  @Data
+  public static class Property implements Serializable {
+    @SerializedName("presumed-id")
+    private String presumedId;
+
+    @SerializedName("confirmed-id")
+    private String confirmedId;
+  }
+
+
+
+  public static @NonNull HdssLocation getHdssLocation(String locationUUID) {
+    HdssLocation location = new HdssLocation();
+    LocationProperty locationProperty = new LocationProperty();
+    locationProperty.setType(Constants.StructureType.RESIDENTIAL);
+    locationProperty.setUid(locationUUID);
+    locationProperty.setVersion(0);
+    location.setProperties(locationProperty);
+    location.setId(locationUUID);
+    return location;
+  }
+
+  public static @NonNull BaseTaskDetails getBaseTaskDetails(
+      Task task, String taskIdentifier, String locationUUID) {
+    BaseTaskDetails details = new BaseTaskDetails(taskIdentifier);
+    details.setStructureId(locationUUID);
+    details.setTaskCode(task.getCode());
+    details.setTaskId(task.getIdentifier());
+    details.setTaskStatus(task.getStatus().name());
+    details.setBusinessStatus(task.getBusinessStatus());
+    details.setTaskEntity(task.getForEntity());
+    return details;
+  }
+
 
 }
 
-class HdssLocation extends Location {
 
-}

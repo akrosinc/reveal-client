@@ -4,7 +4,7 @@ description: Business status calculation
 priority: 1
 condition: "true"
 actions:
- - "calculation = step1_structure_hoh == 'No' ? 'MDA complete' : step1_structure_type == 'nonResidential' ? 'Not Eligible' : step1_mda_structure"
+ - "calculation = step1_structure_hoh == 'No' ? 'Structure part of HOH' : step1_structure_type == 'nonResidential' ? 'Not Eligible' : step1_mda_structure"
 ---
 name: step1_total_treated
 description: step1_total_treated

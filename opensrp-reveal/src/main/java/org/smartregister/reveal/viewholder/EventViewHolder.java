@@ -152,7 +152,7 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
             statusTextView = itemView.findViewById(R.id.status);
             dataCollectionDateTextView = itemView.findViewById(R.id.data_collection_date);
 
-            if (Country.GDRS.equals(getBuildCountry()) || Country.UW.equals(getBuildCountry())){
+            if (Country.GDRS.equals(getBuildCountry()) || Country.UW.equals(getBuildCountry()) || Country.VL_ZM.equals(getBuildCountry())){
                 sopTextView.setVisibility(View.GONE);
             }
 

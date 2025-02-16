@@ -77,19 +77,38 @@ public class TaskRegisterAdapter extends RecyclerView.Adapter<TaskRegisterViewHo
             if (task.getBusinessStatus() != null) {
                 action = CardDetailsUtil.getTranslatedBusinessStatus(task.getBusinessStatus()).replaceAll(" ", "\n");
             }
-        } else if (Constants.Action.RCD.equals(task.getTaskCode())) {
-            name = "RCD ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
-                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+        }
+        else if (Constants.Action.RCD.equals(task.getTaskCode())) {
+            name = "Household Id: " .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            viewHolder.setCode("RCD");
+            viewHolder.showCode();
             action = context.getString(R.string.view);
         } else if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
-            name = "Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
-                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            name = "Household Id: " .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            viewHolder.setCode("Index Case");
+            viewHolder.showCode();
             action = context.getString(R.string.view);
         } else if (Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())) {
-            name = "Secondary Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
-                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+            name = "Household Id: " .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
             action = context.getString(R.string.view);
-        }else {
+            viewHolder.setCode("Secondary Index Case");
+            viewHolder.showCode();
+        }
+//        else if (Constants.Action.RCD.equals(task.getTaskCode())) {
+//            name = "RCD ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+//                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+//            action = context.getString(R.string.view);
+//        } else if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
+//            name = "Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+//                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+//            action = context.getString(R.string.view);
+//        } else if (Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())) {
+//            name = "Secondary Index Case ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):"")
+//                    .concat(task.getHouseHoldId()!=null?" ".concat(task.getHouseHoldId()):"");
+//            action = context.getString(R.string.view);
+//        }
+
+        else {
             name = NOT_ELIGIBLE.equals(task.getBusinessStatus()) ? context.getString(R.string.ineligible_location) : task.getFamilyName();
             if (name == null) {
                 name = task.getStructureName() != null ? task.getStructureName() : context.getString(R.string.unenumerated_structure);
@@ -123,6 +142,18 @@ public class TaskRegisterAdapter extends RecyclerView.Adapter<TaskRegisterViewHo
             viewHolder.setHouseNumber(context.getString(R.string.numero_sign) + " " + task.getHouseNumber());
         } else {
             viewHolder.hideHouseNumber();
+        }
+
+        if (Constants.Action.RCD.equals(task.getTaskCode())) {
+            viewHolder.setHouseNumber("Compound Id: ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):""));
+            viewHolder.showHouseNumber();
+
+        } else if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
+            viewHolder.setHouseNumber("Compound Id: ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):""));
+            viewHolder.showHouseNumber();
+        } else if (Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())) {
+            viewHolder.setHouseNumber("Compound Id: ".concat(task.getCompoundId()!=null?" ".concat(task.getCompoundId()):""));
+            viewHolder.showHouseNumber();
         }
     }
 

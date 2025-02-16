@@ -401,7 +401,7 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.IRS_ADD_STRUCTURE_FORM;
             } else if (getBuildCountry() == Country.MOZAMBIQUE || getBuildCountry() == Country.MALI) {
                 formName = JsonForm.MDA_SURVEY_ADD_STRUCTURE_FORM;
-            } else if (Intervention.SURVEY.equals(taskCode) && (getBuildCountry() == Country.NIGERIA || getBuildCountry() == Country.UW || getBuildCountry() == Country.GDRS)) {
+            } else if (Intervention.SURVEY.equals(taskCode) && (getBuildCountry() == Country.NIGERIA || getBuildCountry() == Country.UW || getBuildCountry() == Country.GDRS || getBuildCountry() == Country.VL_ZM)) {
                 formName = JsonForm.STRUCTURE_SURVEY_ADD_STRUCTURE_FORM;
             } else {
                 formName = JsonForm.ADD_STRUCTURE_FORM;
@@ -535,14 +535,19 @@ public class RevealJsonFormUtils {
         } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType) || Action.STRUCTURE_SURVEY.equals(taskCode)) {
             if (getBuildCountry() == Country.UW) {
                 formName = JsonForm.STRUCTURE_SURVEY_UW;
-            } else {
+            } else if (getBuildCountry() == Country.VL_ZM) {
+                formName = JsonForm.STRUCTURE_SURVEY_VL_ZM;
+            } else if (getBuildCountry() == Country.NIH) {
+                formName = JsonForm.STRUCTURE_SURVEY_NIH_STR;
+            }
+            else {
                 formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
             }
         } else if ((RCD_EVENT.equals(encounterType) || RCD.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
             formName = JsonForm.GDRS_RCD;
         } else if ((PASSIVE_CASE_DETECTION_EVENT.equals(encounterType) || PASSIVE_CASE_DETECTION.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
             formName = JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM;
-        } else if ((PARASITOLOGY_EVENT.equals(encounterType) || PARASITOLOGY.equals(taskCode)) && getBuildCountry() == Country.GDRS){
+        } else if ((PARASITOLOGY_EVENT.equals(encounterType) || PARASITOLOGY.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
             formName = JsonForm.GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM;
         }
         return formName;
@@ -944,15 +949,15 @@ public class RevealJsonFormUtils {
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;
             case JsonForm.STRUCTURE_SURVEY_UW:
-                setRoundDate(formJSON,JsonForm.ROUND_ONE_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                setRoundDate(formJSON, JsonForm.ROUND_ONE_THRESHOLD, RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SURVEY_ROUND_ONE_DATE,
                         PreferencesUtil.getInstance().getHighestLevel());
 
-                setRoundDate(formJSON,JsonForm.ROUND_TWO_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                setRoundDate(formJSON, JsonForm.ROUND_TWO_THRESHOLD, RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SURVEY_ROUND_TWO_DATE,
                         PreferencesUtil.getInstance().getHighestLevel());
 
-                setRoundDate(formJSON,JsonForm.ROUND_THREE_THRESHOLD,RevealApplication.getInstance().getServerConfigs(),
+                setRoundDate(formJSON, JsonForm.ROUND_THREE_THRESHOLD, RevealApplication.getInstance().getServerConfigs(),
                         CONFIGURATION.SURVEY_ROUND_THREE_DATE,
                         PreferencesUtil.getInstance().getHighestLevel());
 
@@ -974,7 +979,7 @@ public class RevealJsonFormUtils {
             case JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM:
                 setDefaultValue(formJSON, JsonForm.HEALTH_WORKER_SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
-                if (formName.equals(JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM)){
+                if (formName.equals(JsonForm.GDRS_PASSIVE_CASE_DETECTION_FORM)) {
                     setDefaultValue(formJSON, DATE, LocalDate.now().toString("dd-MM-yyyy"));
                 }
                 break;
@@ -1286,6 +1291,33 @@ public class RevealJsonFormUtils {
 
     }
 
+    public void populateSpinner(JSONObject form, String field, List<Pair<String, String>> values) throws JSONException {
+        JSONObject spinnerField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), field);
+
+        if (spinnerField == null) {
+            return;
+        }
+
+        JSONArray options = new JSONArray();
+        JSONObject property = new JSONObject();
+        property.put("presumed-id", "err");
+        property.put("confirmed-id", "err");
+
+        JSONObject option;
+        for (Pair<String, String> pair : values) {
+            option = new JSONObject();
+            option.put(KEY, pair.first);
+            option.put(TEXT, pair.second);
+            if (MULTI_SELECT_LIST.equals(spinnerField.getString(TYPE))) {
+                option.put(JsonFormConstants.MultiSelectUtils.PROPERTY, property);
+            }
+            options.put(option);
+        }
+        spinnerField.put(OPTIONS, options);
+
+
+    }
+
     public void populateSprayAreasField(JSONObject form) {
         JSONObject sprayAreaField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), SPRAY_AREAS);
         if (sprayAreaField == null) {
@@ -1322,6 +1354,47 @@ public class RevealJsonFormUtils {
                 options.put(option);
             }
             sprayAreaField.put(OPTIONS, options);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void populateFieldWithOperationalAreas(JSONObject form, String field) {
+        JSONObject fieldToPopulate = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), field);
+        if (fieldToPopulate == null) {
+            return;
+        }
+
+        PlanDefinition currentPlan = RevealApplication.getInstance().getPlanDefinitionRepository()
+                .findPlanDefinitionById(PreferencesUtil.getInstance().getCurrentPlanId());
+        List<String> hierarchyGeographicLevels = currentPlan.getHierarchyGeographicLevels();
+        List<FormLocation> formLocations = LocationHelper.getInstance().generateLocationHierarchyTree(false, hierarchyGeographicLevels);
+
+        String parentName;
+        if (PreferencesUtil.getInstance().getCurrentPlanTargetLevel().equals("structure")) {
+            parentName = PreferencesUtil.getInstance().getCurrentFacility();
+        } else {
+            parentName = PreferencesUtil.getInstance().getCurrentOperationalArea();
+        }
+        List<String> locationNames = formLocations.get(0).flattened().filter(formLocation -> parentName.equals(formLocation.key)).map(formLocation -> formLocation.nodes).flatMap(
+                Collection::stream).map(formLocation -> formLocation.name).collect(Collectors.toList());
+        try {
+            JSONArray options = new JSONArray();
+            JSONObject property = new JSONObject();
+            property.put("presumed-id", "err");
+            property.put("confirmed-id", "err");
+
+            JSONObject option;
+            for (String name : locationNames) {
+                option = new JSONObject();
+                option.put(KEY, name);
+                option.put(TEXT, name);
+                if (MULTI_SELECT_LIST.equals(fieldToPopulate.getString(TYPE))) {
+                    option.put(JsonFormConstants.MultiSelectUtils.PROPERTY, property);
+                }
+                options.put(option);
+            }
+            fieldToPopulate.put(OPTIONS, options);
         } catch (JSONException e) {
             e.printStackTrace();
         }

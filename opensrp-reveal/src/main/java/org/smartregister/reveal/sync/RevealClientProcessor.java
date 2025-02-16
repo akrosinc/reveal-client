@@ -294,6 +294,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
         if (EventType.FAMILY_REGISTRATION.equals(event.getEventType()) || EventType.FAMILY_MEMBER_REGISTRATION.equals(event.getEventType()) || EventType.UPDATE_FAMILY_MEMBER_REGISTRATION.equals(event.getEventType())) {
             return BusinessStatus.COMPLETE;
         }
+
         Obs businessStatusObs = event.findObs(null, false, JsonForm.BUSINESS_STATUS);
         if (businessStatusObs != null) {
             return businessStatusObs.getValue().toString();

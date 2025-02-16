@@ -856,10 +856,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             onMarkStructureIneligibleConfirmed();
             markStructureIneligibleConfirmed = false;
         } else if (markStructureIneligibleSelected) {
-            listTaskView.registerFamily();
-        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
             displayMarkStructureIneligibleDialog();
             RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
+        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
+            listTaskView.registerFamily();
         } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
             listTaskView.openRCD();
         } else if (cardDetails == null || !changeInterventionStatus) {

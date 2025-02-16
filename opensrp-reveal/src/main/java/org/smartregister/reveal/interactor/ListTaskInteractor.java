@@ -85,7 +85,9 @@ import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Task;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
@@ -135,6 +137,8 @@ public class ListTaskInteractor extends BaseInteractor {
 
     private TaskRepository taskRepository;
 
+    private HdssRepository hdssRepository;
+
     private RevealApplication revealApplication;
 
     private List<TaskDetails> taskDetails;
@@ -152,6 +156,7 @@ public class ListTaskInteractor extends BaseInteractor {
         revealApplication = RevealApplication.getInstance();
         taskDetails = new ArrayList<>();
         locationRepository = RevealApplication.getInstance().getLocationRepository();
+        hdssRepository = RevealApplication.getInstance().getHdssRepository();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -509,11 +514,13 @@ public class ListTaskInteractor extends BaseInteractor {
                     if (operationalAreaLocation != null) {
                         Map<String, Set<Task>> tasks;
                         Map<String, TaskRepository.TaskCount> taskCounts = null;
+
                         if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))) {
                             tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
 
                             List<String> structureIds = tasks.values().stream().flatMap(Collection::stream).map(Task::getForEntity).collect(Collectors.toList());
                              taskCounts = taskRepository.getGdrsMemberTaskCounts(structureIds, List.of(COMPLETE), List.of("CANCELLED"));
+
 
                         } else {
                             tasks = taskRepository
@@ -525,6 +532,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         } else {
                             structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
                         }
+                        Map<String, Boolean> isAHouseholdByStructureList =  hdssRepository.getIsAHouseholdByStructureList(structures.stream().map(PhysicalLocation::getId).collect(Collectors.toList()));
                         Map<String, StructureDetails> structureNames = getStructureName(
                                 operationalAreaLocation.getId());
                         taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
@@ -535,7 +543,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         String features;
                         if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
                             features = GeoJsonUtils
-                                    .getGeoJsonFromStructuresAndTasksForGdrs(structures, tasks, indexCase, structureNames,taskCounts);
+                                    .getGeoJsonFromStructuresAndTasksForGdrs(structures, tasks, indexCase, structureNames,taskCounts, isAHouseholdByStructureList);
                             featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
                         } else {
                            features = GeoJsonUtils

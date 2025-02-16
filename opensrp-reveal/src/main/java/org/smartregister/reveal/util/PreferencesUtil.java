@@ -242,14 +242,14 @@ public class PreferencesUtil {
     public String getSelectedCompoundID() {
         return allSharedPreferences.getPreference(SELECTED_COMPOUND_ID);
     }
-
-    public void setSelectedHouseholdID(String selectedHouseholdID) {
-        allSharedPreferences.savePreference(SELECTED_HOUSEHOLD_ID,selectedHouseholdID);
-    }
-
-    public String getSelectedHouseholdID() {
-        return allSharedPreferences.getPreference(SELECTED_HOUSEHOLD_ID);
-    }
+//
+//    public void setSelectedHouseholdID(String selectedHouseholdID) {
+//        allSharedPreferences.savePreference(SELECTED_HOUSEHOLD_ID,selectedHouseholdID);
+//    }
+//
+//    public String getSelectedHouseholdID() {
+//        return allSharedPreferences.getPreference(SELECTED_HOUSEHOLD_ID);
+//    }
 
     public void setHdssMaxServerVersion(long hdssMaxServerVersion) {
         allSharedPreferences.setLongPreference(HDSS_MAX_SERVER_VERSION,hdssMaxServerVersion);

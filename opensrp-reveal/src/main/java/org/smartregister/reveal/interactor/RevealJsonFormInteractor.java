@@ -8,7 +8,9 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.REPEATING_GROUP;
 import static com.vijay.jsonwizard.constants.JsonFormConstants.TOASTER_NOTES;
 
 import static org.smartregister.reveal.searchbox.HdssSearchBoxFactory.REVEAL_SEARCH_BOX;
+import static org.smartregister.reveal.widget.HierarchyHttpDataRetrieverFactory.HIERARCHY_HTTP_DATA_RETRIEVER;
 import static org.smartregister.reveal.widget.StructurePickerFactory.STRUCTURE_PICKER_FACTORY;
+import static org.smartregister.reveal.widget.StructurePickerFactoryExtended.STRUCTURE_PICKER_FACTORY_EXTENDED;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +21,7 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.reveal.widget.GeoWidgetFactory;
+import org.smartregister.reveal.widget.HierarchyHttpDataRetrieverFactory;
 import org.smartregister.reveal.widget.RevealBarcodeFactory;
 import org.smartregister.reveal.widget.RevealEditTextFactory;
 import org.smartregister.reveal.widget.RevealLabelFactory;
@@ -27,6 +30,7 @@ import org.smartregister.reveal.widget.RevealRadioButtonFactory;
 import org.smartregister.reveal.widget.RevealRepeatingGroupFactory;
 import org.smartregister.reveal.widget.RevealToasterNotesFactory;
 import org.smartregister.reveal.widget.StructurePickerFactory;
+import org.smartregister.reveal.widget.StructurePickerFactoryExtended;
 
 /**
  * Created by samuelgithengi on 12/13/18.
@@ -64,7 +68,8 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         }
         map.put(REVEAL_SEARCH_BOX,new HdssSearchBoxFactory());
         map.put(STRUCTURE_PICKER_FACTORY,new StructurePickerFactory());
-
+        map.put(STRUCTURE_PICKER_FACTORY_EXTENDED,new StructurePickerFactoryExtended(false));
+        map.put(HIERARCHY_HTTP_DATA_RETRIEVER,new HierarchyHttpDataRetrieverFactory());
     }
 
     @NonNull

@@ -64,6 +64,17 @@
         "text_size": "8sp"
       },
       {
+        "key": "name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Name",
+        "edit_type": "name",
+        "text_size": "8sp"
+      },
+      {
         "key": "household",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -191,9 +202,78 @@
           "err": "Required field"
         },
         "relevance": {
-          "step1:correct_structure": {
+          "step1:correct_household_compound": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "same_operational_area",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the household in current operational area?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:correcting_structure": {
             "type": "string",
             "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "operational",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hierarchy_http_data_retriever",
+        "repositoryClass":"org.smartregister.reveal.hierarchydatareceiver.LocationChildrenDataFetcher",
+        "level1": "Continent",
+        "level2": "Country",
+        "level3": "Region",
+        "level4": "Zone",
+        "level5": "Cluster",
+        "targetSelection": "level5",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        },
+        "relevance": {
+          "step1:same_operational_area": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "geo_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "structure_picker_extended",
+        "v_zoom_max": {
+          "value": "16.5",
+          "err": "Please zoom in to add a point"
+        },
+        "relevance": {
+          "step1:same_operational_area": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
           }
         }
       },
@@ -205,12 +285,49 @@
         "type": "hidden"
       },
       {
+        "key": "captured_household",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "captured_compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
         "key": "business_status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "hidden",
-        "value": "Complete"
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "structure-gdrs-business-status-calculation-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "something",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Current Structure ID",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "relevance": {
+          "step1:same_operational_area": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
       }
     ]
   }

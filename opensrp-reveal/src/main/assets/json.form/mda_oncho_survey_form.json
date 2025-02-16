@@ -239,6 +239,14 @@
           "value": "^$|[0-9]{8}",
           "err": "Please enter a valid number"
         },
+        "v_max_length": {
+          "value": "8",
+          "err": "Must be 8 characters"
+        },
+        "v_min_length": {
+          "value": "8",
+          "err": "Must be 8 characters"
+        },
         "relevance": {
           "step1:structure_hoh": {
             "type": "string",

@@ -12,8 +12,11 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.google.gson.Gson;
 
+import org.smartregister.family.FamilyLibrary;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.activity.LoginActivity;
+import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.EnvironmentDetails;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
@@ -23,12 +26,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import timber.log.Timber;
-
 
 public class SettingsActivity extends MultiLanguageActivity {
 
     private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
+
 
 
     @Override
@@ -70,10 +72,17 @@ public class SettingsActivity extends MultiLanguageActivity {
 
     public static class MyPreferenceFragment extends PreferenceFragmentCompat {
 
+        private static final RevealApplication revealApplication = RevealApplication.getInstance();
+
+
         private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
         Context context;
 
-        private static Gson gson = new Gson();
+        private static final Gson gson = new Gson();
+
+        private static final org.smartregister.Context openSRPcontext = org.smartregister.Context.getInstance();
+
+
 
         @Override
         public void onStart(){
@@ -96,6 +105,12 @@ public class SettingsActivity extends MultiLanguageActivity {
                         EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
                         preferenceUtil.setBaseURL(details.getRevealServerUrl());
                         preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
+                        RevealApplication.getInstance().getAppExecutors().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                FamilyLibrary.init(openSRPcontext,revealApplication.getMetadata() , BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
+                            }
+                        });
                     }
 
                     return true;

@@ -15,6 +15,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/task_register_padding"
+        android:paddingTop="@dimen/task_register_padding"
+        android:paddingEnd="@dimen/task_register_padding"
+        android:paddingBottom="@dimen/task_register_vertical_padding"
+        android:scrollHorizontally="false"
+        android:textColor="@color/text_black"
+        android:textSize="@dimen/task_register_text_size"
+        android:visibility="gone"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/separator"
+        app:layout_constraintBottom_toTopOf="@id/task_name"/>
 
     <TextView
         android:id="@+id/task_name"
@@ -30,7 +47,7 @@
         app:layout_constraintBottom_toTopOf="@id/distance_from_structure"
         app:layout_constraintEnd_toStartOf="@id/separator"
         app:layout_constraintStart_toEndOf="@id/task_icon"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/code" />
 
     <TextView
         android:id="@+id/house_number"

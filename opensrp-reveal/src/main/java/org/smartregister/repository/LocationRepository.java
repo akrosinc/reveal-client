@@ -209,6 +209,30 @@ public class LocationRepository extends BaseRepository {
         }
         return locations;
     }
+    public String getLocationsParentName(String locationId) {
+        Cursor cursor = null;
+        String parentName = null;
+        try {
+      cursor =
+          getReadableDatabase()
+              .rawQuery(
+                  "SELECT l.name from structure s "
+                      + "left join "+getLocationTableName()+" l on s.parent_id = l._id "
+                      + "WHERE s._id = ? limit 1",
+                  new String[] {locationId});
+            if (cursor.moveToNext()) {
+                parentName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return parentName;
+    }
+
 
     public Location getLocationByName(String name) {
         Cursor cursor = null;
@@ -261,6 +285,27 @@ public class LocationRepository extends BaseRepository {
 
         try {
             cursor = getReadableDatabase().rawQuery(selectSql, idsArray);
+            while (cursor.moveToNext()) {
+                locations.add(readCursor(cursor));
+            }
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locations;
+    }
+
+    public List<Location> getHighestLocationsList() {
+        Cursor cursor = null;
+        List<Location> locations = new ArrayList<>();
+
+        String selectSql = "SELECT * FROM " + getLocationTableName() +
+                " WHERE " + PARENT_ID + " IS NULL  ";
+
+        try {
+            cursor = getReadableDatabase().rawQuery(selectSql, null);
             while (cursor.moveToNext()) {
                 locations.add(readCursor(cursor));
             }

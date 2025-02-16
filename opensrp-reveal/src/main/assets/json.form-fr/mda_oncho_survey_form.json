@@ -576,7 +576,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ELIGIBLE TREATED: Total number of people treated in household?",
+        "hint": "ADMISSIBLES TRAITÉES : Nombre total de personnes traitées dans le ménage?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -813,7 +813,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "ELIGIBLE BUT UNTREATED: Total number of people eligible but untreated in household?",
+        "hint": "ADMISSIBLES MAIS NON TRAITÉES : Nombre total de personnes éligibles mais non traitées dans le ménage?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -866,7 +866,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "Combien de personnes éligibles au MDA vivent actuellement dans ce ménage ?",
+        "hint": "Combien de personnes éligibles au MDA vivent actuellement dans ce ménage?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -905,8 +905,8 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "label": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage ?",
-        "hint": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage ?",
+        "label": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage?",
+        "hint": "NON ELIGIBLE: Nombre total d'enfants de moins de 5 ans dans le ménage?",
         "is_mandatory": true,
         "v_required": {
           "value": true,
@@ -1017,7 +1017,7 @@
         "openmrs_entity_id": "",
         "type": "edit_text",
         "edit_type": "number",
-        "hint": "NOT ELIGIBLE: Total number of not eligible people in household",
+        "hint": "NON ÉLIGIBLE : Nombre total de personnes non éligibles dans le ménage",
         "is_mandatory": true,
         "v_required": {
           "value": true,

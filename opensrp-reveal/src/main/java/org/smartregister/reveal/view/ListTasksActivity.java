@@ -10,8 +10,13 @@ import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.STRUCTURE_PART_OF_HOH;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
@@ -144,6 +149,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
@@ -197,6 +203,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private LabelLayer indexCaseLabelLayer;
 
     private LabelLayer secondaryIndexCaseLabelLayer;
+
+    private LabelLayer householdLabelLayer;
 
     private BoundaryLayer boundaryLayer;
 
@@ -492,7 +500,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     public void positionMyLocationAndLayerSwitcher() {
         FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
         if (!List.of(Country.MALI, Country.ZAMBIA, Country.NAMIBIA, Country.SENEGAL, Country.RWANDA,
-                        Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS)
+                        Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS, Country.NIH)
                 .contains(getBuildCountry())) {
             positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
         } else {
@@ -630,6 +638,16 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     .businessStatusList(Arrays.asList(NOT_VISITED, MONTHTHREECOMPLETE
                             , MONTHSIXCOMPLETE, ENROLLED, NOT_ELIGIBLE, ENROLLED_NOT_COMPLETE, NOTENROLLED))
                     .sortOptions(R.array.task_sort_options_uw);
+        } else if (getCountry().equals(Country.VL_ZM)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_ELIGIBLE, COMPLETE))
+                    .sortOptions(R.array.task_sort_options_uw);
+        } else if (getCountry().equals(Country.MALI)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_ELIGIBLE, COMPLETE, STRUCTURE_PART_OF_HOH, MDA_REFUSED_OR_ABSENT, MDA_PARTIALLY_COMPLETE, MDA_COMPLETE))
+                    .sortOptions(R.array.task_sort_options_mali);
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
@@ -702,10 +720,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         intent.putExtra(Properties.TASK_IDENTIFIER, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(Properties.TASK_BUSINESS_STATUS, feature.getStringProperty(Properties.TASK_BUSINESS_STATUS));
         intent.putExtra(Properties.TASK_CODE, feature.getStringProperty(Properties.TASK_CODE));
-
-
         startActivity(intent);
-
     }
 
     @Override
@@ -820,7 +835,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 //                mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
 //                    @Override
 //                    public void onCameraMove() {
-//                        Timber.tag("revealmove").i("moving");
 ////                        final FeatureCollection lambdaFeatureCollection = featureCollection;
 ////                        final Map<String, String> lambdaFeatureToLayersMapping = featureToLayerMapping;
 ////                        if (mMapboxMap.getStyle() != null) {
@@ -860,9 +874,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             }
         }
 
-        if (parentLocations == null || parentLocations.isEmpty()) {
-            Timber.tag("ParentLocation").i("Parents are null");
-        }
 
         if (geoJsonSource != null) {
             geoJsonSource.setGeoJson(featureCollection);
@@ -900,6 +911,12 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     }
                     secondaryIndexCaseLabelLayer = createSecondaryIndexCaseLabelLayer(featureCollection);
                     kujakuMapView.addLayer(secondaryIndexCaseLabelLayer);
+
+                    if (householdLabelLayer!=null){
+                        householdLabelLayer.removeLayerOnMap(mMapboxMap);
+                    }
+                    householdLabelLayer = createHouseholdLabelLayer(featureCollection);
+                    kujakuMapView.addLayer(householdLabelLayer);
                 }
 
 
@@ -915,17 +932,73 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                             boundaryLayer = createBoundaryLayer(operationalArea);
                         }
 
+//                        if (parentLocations != null && !parentLocations.isEmpty()) {
+//                            FeatureCollection featureCollection1 = FeatureCollection.fromFeatures(parentLocations);
+//                            String[] layerIds = boundaryLayer.getLayerIds();
+//                            String layerBelow = layerIds[1];
+//                            parentLayer = createParentBoundaryLayerFromFeatureCollection(featureCollection1,layerBelow);
+//                            kujakuMapView.addLayer(parentLayer);
+//                        }
+
+
+//                        if (parentLocations != null && !parentLocations.isEmpty()) {
+//                            FeatureCollection featureCollection1 = revealMapHelper.getFeatureCollectionFromMultiPolygonList(parentLocations);
+//                            String[] layerIds = boundaryLayer.getLayerIds();
+//                            String layerBelow = layerIds[1];
+//                            parentLayer = createParentBoundaryLayerFromFeatureCollection(featureCollection1,layerBelow);
+//                            kujakuMapView.addLayer(parentLayer);
+
+//                        }
+
+
                         if (parentLocations != null && !parentLocations.isEmpty()) {
-                            FeatureCollection featureCollection1 = FeatureCollection.fromFeatures(parentLocations);
-                            String[] layerIds = boundaryLayer.getLayerIds();
-                            String layerBelow = layerIds[1];
-                            parentLayer = createParentBoundaryLayerFromFeatureCollection(featureCollection1,layerBelow);
-                            kujakuMapView.addLayer(parentLayer);
-                            Timber.tag("ParentLocation").i("Adding parent");
+                            Map<String, List<Feature>> featureCollectionMapFromMultiPolygonList = revealMapHelper.getFeatureCollectionMapFromMultiPolygonList(parentLocations);
+
+                            Set<String> levels = featureCollectionMapFromMultiPolygonList.keySet();
+
+                            int[] colorResIds = {
+                                    R.color.parent_boundary_grey_1,
+                                    R.color.parent_boundary_grey_2,
+                                    R.color.parent_boundary_grey_3,
+                                    R.color.parent_boundary_grey_4,
+                                    R.color.parent_boundary_grey_5,
+                                    R.color.parent_boundary_grey_6
+                            };
+                            int counter=1;
+                            for (String level:levels){
+                                String[] layerIds = boundaryLayer.getLayerIds();
+                                String layerBelow = layerIds[1];
+                                List<Feature> parentLevelFeatures = featureCollectionMapFromMultiPolygonList.get(level);
+                                boolean showLabel = true;
+
+                                if (parentLevelFeatures!=null && !parentLevelFeatures.isEmpty()){
+                                    FeatureCollection parentLevelFeatureCollection = FeatureCollection.fromFeatures(parentLevelFeatures);
+
+
+                                    if (operationalArea.properties()!=null && operationalArea.properties().has("geographicLevel")){
+                                        String geographicLevelOperationalArea = operationalArea.properties().get("geographicLevel").getAsString();
+
+                                        if (parentLevelFeatures.get(0)!=null && parentLevelFeatures.get(0).properties() !=null
+                                                && parentLevelFeatures.get(0).properties().has("geographicLevel")){
+
+                                            String geographicLevelParent =  parentLevelFeatures.get(0).properties().get("geographicLevel").getAsString();
+                                            if (geographicLevelParent.equals(geographicLevelOperationalArea) || geographicLevelParent.equals("village")){
+                                                showLabel = false;
+                                            }
+                                        }
+
+                                    }
+
+                                    BoundaryLayer parentBoundaryLayerFromFeatureCollection =
+                                    createParentBoundaryLayerFromFeatureCollectionWithColor(parentLevelFeatureCollection, layerBelow,colorResIds[counter],showLabel);
+                                    kujakuMapView.addLayer(parentBoundaryLayerFromFeatureCollection);
+                                }
+                                counter++;
+                            }
+
                         }
 
                         kujakuMapView.addLayer(boundaryLayer);
-                        Timber.tag("ParentLocation").i("Adding boundary");
 //                        if (mMapboxMap != null) {
 //                            if (mMapboxMap.getStyle() != null) {
 //
@@ -955,8 +1028,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 //                            }
 //                        }, boundaryLayer.getLayerIds());
 //
-//                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
-//                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
+                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
+                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
 
                     } else {
 //                        boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
@@ -1015,7 +1088,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
     private void logZoomLevel() {
         double currentZoom = mMapboxMap.getCameraPosition().zoom;
-        Timber.tag("batching").d("Current zoom level: %f", currentZoom);
+//        Timber.tag("batching").d("Current zoom level: %f", currentZoom);
     }
 
     private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
@@ -1050,9 +1123,17 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 .build();
     }
 
+
+    private LabelLayer createHouseholdLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("isAHousehold")
+                .setLabelColorInt(Color.BLACK)
+                .build();
+    }
+
     private BoundaryLayer createBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
         return new BoundaryLayer.Builder(operationalArea)
-                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+//                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.YELLOW)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width_thick))
@@ -1067,6 +1148,25 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                 .setBoundaryColor(getResources().getColor(R.color.parent_boundary_grey, null))
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
     }
+
+    private BoundaryLayer createParentBoundaryLayerFromFeatureCollectionWithColor(FeatureCollection operationalArea, String layerBelow, int boundaryColor, boolean showLabel) {
+        if (showLabel){
+            return new BoundaryLayer.Builder(operationalArea)
+                    .addBelowLayer(layerBelow)
+                    .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                    .setLabelColorInt(Color.WHITE)
+                    .setBoundaryColor(getResources().getColor(boundaryColor,null))
+                    .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+        } else {
+            return new BoundaryLayer.Builder(operationalArea)
+                    .addBelowLayer(layerBelow)
+                    .setLabelColorInt(Color.WHITE)
+                    .setBoundaryColor(getResources().getColor(boundaryColor,null))
+                    .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+        }
+
+    }
+
 
     private BoundaryLayer createParentBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
         return new BoundaryLayer.Builder(operationalArea)
@@ -1411,7 +1511,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
 
-        Timber.tag("syncing").i("broadcast received %s",entity);
         if (syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)) {
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);

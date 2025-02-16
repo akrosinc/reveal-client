@@ -7,12 +7,14 @@ import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.STRUCTURE_PART_OF_HOH;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
@@ -21,7 +23,6 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_I
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
 import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_EDUCATION_5_TO_15;
@@ -253,34 +254,65 @@ public class IndicatorUtils {
 
     public static List<String> populateMaliIndicators(Context context, IndicatorDetails indicatorDetails) {
 
-        int totalStructures = indicatorDetails.getMdaTotalStructures();
-
         List<String> indicators = new ArrayList<>();
 
-        indicators.add(context.getResources().getString(R.string.total_structures));
-        indicators.add(String.valueOf(totalStructures));
+        indicators.add(context.getResources().getString(R.string.coverage_of_structure_complete));
+        indicators.add(String.valueOf(indicatorDetails.getCoverageOfStructuresCompleted()));
 
-        int structureVisited = totalStructures - indicatorDetails.getMdaNotVisited();
+        indicators.add(context.getResources().getString(R.string.total_structures));
+        indicators.add(String.valueOf(indicatorDetails.getMdaTotalStructures()));
+
         indicators.add(context.getResources().getString(R.string.structure_visited));
-        indicators.add(String.valueOf(structureVisited));
+        indicators.add(String.valueOf(indicatorDetails.getMdaVisited()));
 
         indicators.add(context.getResources().getString(R.string.structure_not_visited));
         indicators.add(String.valueOf(indicatorDetails.getMdaNotVisited()));
 
-        indicators.add(context.getResources().getString(R.string.structure_complete_drug_distribution));
+        indicators.add(context.getResources().getString(R.string.structure_treated_total));
+        indicators.add(String.valueOf(indicatorDetails.getMdaCompleteTotal()));
+
+        indicators.add(context.getResources().getString(R.string.structure_complete_mda));
         indicators.add(String.valueOf(indicatorDetails.getMdaComplete()));
 
-        indicators.add(context.getResources().getString(R.string.structure_partial_drug_distribution));
+        indicators.add(context.getResources().getString(R.string.structure_partial_complete_mda));
         indicators.add(String.valueOf(indicatorDetails.getMdaPartiallyComplete()));
 
         indicators.add(context.getResources().getString(R.string.structure_refused_or_absent));
         indicators.add(String.valueOf(indicatorDetails.getMdaRefusedOrAbsent()));
 
-        indicators.add(context.getResources().getString(R.string.individual_total_number_of_eligible_people));
-        indicators.add(String.valueOf(indicatorDetails.getMdaTotalEligible()));
-
         indicators.add(context.getResources().getString(R.string.individual_total_treated));
         indicators.add(String.valueOf(indicatorDetails.getMdaTotalTreated()));
+
+//        indicators.add(context.getResources().getString(R.string.individual_total_number_of_eligible_people));
+//        indicators.add(String.valueOf(indicatorDetails.getMdaTotalEligible()));
+//
+//        indicators.add(context.getResources().getString(R.string.individual_total_treated));
+//        indicators.add(String.valueOf(indicatorDetails.getMdaTotalTreated()));
+
+        return indicators;
+
+    }
+    public static List<String> populateNIHStrIndicators(Context context, IndicatorDetails indicatorDetails) {
+
+        List<String> indicators = new ArrayList<>();
+
+        indicators.add(context.getResources().getString(R.string.coverage_of_structure_complete));
+        indicators.add(String.valueOf(indicatorDetails.getCompleteCoverage()));
+
+        indicators.add(context.getResources().getString(R.string.total_structures));
+        indicators.add(String.valueOf(indicatorDetails.getTotal()));
+
+        indicators.add(context.getResources().getString(R.string.structure_visited));
+        indicators.add(String.valueOf(indicatorDetails.getVisited()));
+
+        indicators.add(context.getResources().getString(R.string.structure_not_visited));
+        indicators.add(String.valueOf(indicatorDetails.getNotVisited()));
+
+        indicators.add(context.getResources().getString(R.string.structure_incomplete));
+        indicators.add(String.valueOf(indicatorDetails.getIncomplete()));
+
+        indicators.add(context.getResources().getString(R.string.structure_complete));
+        indicators.add(String.valueOf(indicatorDetails.getComplete()));
 
         return indicators;
 
@@ -683,6 +715,7 @@ public class IndicatorUtils {
     }
 
     public static IndicatorDetails processIndicatorsMali(final List<TaskDetails> tasks) {
+
         IndicatorDetails indicatorDetails = new IndicatorDetails();
         List<TaskDetails> validTasks = tasks.stream()
                 .filter(taskDetails -> taskDetails.getTaskCode()
@@ -695,6 +728,13 @@ public class IndicatorUtils {
                                 && taskDetails.getBusinessStatus().equals(MDA_COMPLETE))
                 .map(BaseTaskDetails::getStructureId).distinct().count();
         indicatorDetails.setMdaComplete(Long.valueOf(mdaComplete).intValue());
+        
+        long mdaDone = validTasks.stream()
+                .filter(taskDetails ->
+                        taskDetails.getBusinessStatus() != null
+                                && taskDetails.getBusinessStatus().equals(STRUCTURE_PART_OF_HOH))
+                .map(BaseTaskDetails::getStructureId).distinct().count();
+        indicatorDetails.setMdaDone(Long.valueOf(mdaComplete).intValue());
 
         long notVisited = validTasks.stream().filter(taskDetails ->
                         taskDetails.getBusinessStatus() != null
@@ -717,21 +757,31 @@ public class IndicatorUtils {
                 .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
         indicatorDetails.setMdaNotEligible(Long.valueOf(notEligible).intValue());
 
-        long totalStructures = mdaComplete + notVisited + partiallyComplete + refusedOrAbsent;
+        long totalStructures = mdaComplete + notVisited + partiallyComplete + refusedOrAbsent + mdaDone;
 
         indicatorDetails.setMdaTotalStructures(Long.valueOf(totalStructures).intValue());
 
-        double distributionCoverageDouble = totalStructures > 0 ? (double) (mdaComplete + partiallyComplete) / (double) totalStructures * 100 : 0;
+        long completed = mdaComplete + partiallyComplete + mdaDone;
 
-        indicatorDetails.setMdaDistributionCoverage(Double.valueOf(Math.floor(distributionCoverageDouble)).intValue());
+        indicatorDetails.setMdaCompleteTotal(Long.valueOf(completed).intValue());
 
-        double successRate = (mdaComplete + partiallyComplete + refusedOrAbsent) > 0 ? (double) (mdaComplete + partiallyComplete) / (double) (mdaComplete + partiallyComplete + refusedOrAbsent) * 100 : 0;
+        long visited = mdaComplete + partiallyComplete + refusedOrAbsent + mdaDone;
 
-        indicatorDetails.setMdaSuccessRate(Double.valueOf(Math.floor(successRate)).intValue());
+        indicatorDetails.setMdaVisited(Long.valueOf(visited).intValue());
 
-        double foundCoverageDouble = totalStructures > 0 ? (double) (mdaComplete + partiallyComplete) / (double) totalStructures * 100 : 0;
+        long treated = mdaComplete + partiallyComplete;
 
-        indicatorDetails.setMdaFoundCoverage(Double.valueOf(Math.floor(foundCoverageDouble)).intValue());
+        double coverageOfStructuresCompleted = totalStructures > 0 ? (double) completed / (double) totalStructures * 100 : 0;
+
+        indicatorDetails.setCoverageOfStructuresCompleted(Math.floor(coverageOfStructuresCompleted));
+
+        double treatedOverVisited = (visited) > 0 ? (double) (treated) / (double) (visited) * 100 : 0;
+
+        indicatorDetails.setTreatedOverVisited(Math.floor(treatedOverVisited));
+
+        double visitedOverTotal = totalStructures > 0 ? (double) (visited) / (double) totalStructures * 100 : 0;
+
+        indicatorDetails.setVisitedOverTotal(visitedOverTotal);
 
         InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
 
@@ -751,6 +801,61 @@ public class IndicatorUtils {
             indicatorDetails.setMdaTotalEligible(0);
             indicatorDetails.setMdaTotalTreated(0);
         }
+
+        return indicatorDetails;
+    }
+    public static IndicatorDetails processIndicatorsNIHStr(final List<TaskDetails> tasks) {
+
+        IndicatorDetails indicatorDetails = new IndicatorDetails();
+        List<TaskDetails> validTasks = tasks.stream()
+            .filter(taskDetails -> taskDetails.getTaskCode()
+                .equals(STRUCTURE_SURVEY))
+            .collect(toList());
+
+        long complete = validTasks.stream()
+            .filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                    && taskDetails.getBusinessStatus().equals(COMPLETE))
+            .map(BaseTaskDetails::getStructureId).distinct().count();
+        indicatorDetails.setComplete(Long.valueOf(complete).intValue());
+
+        long incomplete = validTasks.stream()
+            .filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                    && taskDetails.getBusinessStatus().equals(INCOMPLETE))
+            .map(BaseTaskDetails::getStructureId).distinct().count();
+        indicatorDetails.setIncomplete(Long.valueOf(incomplete).intValue());
+
+        long notVisited = validTasks.stream().filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                    && taskDetails.getBusinessStatus().equals(NOT_VISITED))
+            .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setNotVisited(Long.valueOf(notVisited).intValue());
+
+        long notEligible = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+                && taskDetails.getBusinessStatus().equals(NOT_ELIGIBLE))
+            .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+        indicatorDetails.setNotEligible(Long.valueOf(notEligible).intValue());
+
+        long visited = complete + incomplete;
+
+        indicatorDetails.setVisited(Long.valueOf(visited).intValue());
+
+        long total = visited + notVisited;
+
+        indicatorDetails.setTotal(Long.valueOf(total).intValue());
+
+        double coverageOfVisited = total > 0 ? (double) visited / (double) total * 100 : 0;
+
+        indicatorDetails.setVisitedCoverage(Math.floor(coverageOfVisited));
+
+        double coverageOfCompleted = (total) > 0 ? (double) (complete) / (double) (total) * 100 : 0;
+
+        indicatorDetails.setCompleteCoverage(Math.floor(coverageOfCompleted));
+
+        double successRate = visited > 0 ? (double) (complete) / (double) visited * 100 : 0;
+
+        indicatorDetails.setSuccessRate(successRate);
 
         return indicatorDetails;
     }

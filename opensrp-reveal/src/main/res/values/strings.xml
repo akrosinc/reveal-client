@@ -253,15 +253,18 @@
 
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
+    <string name="index_cases">Index Cases</string>
     <string name="structures_surveyed">Structure: SURVEYED</string>
     <string name="structures_found">Structure: FOUND</string>
     <string name="survey_coverage">Survey Coverage</string>
     <string name="survey">Survey</string>
     <string name="found_coverage">Found Coverage</string>
+    <string name="treated_over_visited">Treated over Visited</string>
     <string name="spray_coverage">Spray Coverage</string>
     <string name="visitation_coverage">Visitation Coverage Percentage</string>
     <string name="structures_remaining_90">Structures Remaining 90%</string>
     <string name="total_structures">Total Structures</string>
+    <string name="coverage_of_structure_complete">Coverage of Structures Complete</string>
     <string name="structures_not_visited">Structures Not Visited</string>
     <string name="structures_visited_found">Structures Visited/Found</string>
     <string name="structures_sprayed">Structures Sprayed</string>
@@ -272,6 +275,14 @@
     <string name="n_percent">%1$d%%</string>
     <string name="indicator">Indicator</string>
     <string name="value">Value</string>
+
+    <string name="totalStructures">Total Structures</string>
+    <string name="totalStructuresCompleted">Total Completed Structures</string>
+    <string name="totalStructuresInCompleted">Total Incompleted Structures</string>
+    <string name="totalStructuresVisited">Total Structures Visited</string>
+    <string name="totalStructuresNotVisited">Total Structures Not Visited</string>
+    <string name="totalStructuresNotEligible">Total Structures Not Eligible</string>
+
 
     <string name="totalRcdStructures">Total RCD Structures</string>
     <string name="totalRcdMemberTasks">Total RCD Member Tasks</string>
@@ -289,7 +300,7 @@
     <string name="spray_success_rate">Spray Success Rate</string>
     <string name="success_rate">Success Rate</string>
     <string name="individual_total_number_of_eligible_people">Individual: TOTAL NUMBER OF ELIGIBLE PEOPLE</string>
-    <string name="individual_total_treated">Individual: TOTAL TREATED</string>
+    <string name="individual_total_treated">Individual: TOTAL TREATED INDIVIDUALS</string>
 
     <string name="do_not_edit_client_records_until_complete">Do not edit records until complete.</string>
     <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit records until the process is complete.</string>
@@ -414,6 +425,16 @@
         <item>Status</item>
     </string-array>
 
+    <string-array name="task_sort_options_mali">
+        <item>Distance (nearest first)</item>
+        <item>Status</item>
+    </string-array>
+
+    <string-array name="task_sort_options_vl_zm">
+        <item>Distance (nearest first)</item>
+        <item>Status</item>
+    </string-array>
+
     <string name="select_task_action">Select action to perform</string>
     <string name="choose_action">Choose action</string>
     <string name="view_details">View Details</string>
@@ -463,6 +484,8 @@
     <string name="cdd_drug_withdrawal_form">CDD Drug Withdrawal Form</string>
     <string name="cdd_drug_received_form">CDD Drug Received Form</string>
     <string name="distribution_coverage">Distribution coverage</string>
+    <string name="visited_over_total">Visited over Total</string>
+    <string name="coverage_of_structures_completed">Coverage of Structures Completed</string>
 
 
     <string name="index_case_coverage">Index Case Coverage</string>
@@ -479,6 +502,14 @@
     <string name="structure_not_visited">Structure: NOT VISITED</string>
     <string name="structure_confirmed_eligible">Structure: CONFIRMED ELIGIBLE</string>
     <string name="structure_complete_drug_distribution">Structure: COMPLETE DRUG DISTRIBUTION</string>
+
+    <string name="structure_incomplete">Structure: INCOMPLETE STRUCTURES TOTAL</string>
+    <string name="structure_treated_total">Structure: TREATED STRUCTURE TOTAL</string>
+    <string name="structure_complete_mda">Structure: MDA COMPLETE </string>
+    <string name="structure_complete">Structure: COMPLETED STRUCTURES TOTAL </string>
+
+    <string name="structure_partial_complete_mda">Structure: PARTIALLY COMPLETE </string>
+
     <string name="structure_partial_drug_distribution">Structure: PARTIAL DRUG DISTRIBUTION</string>
     <string name="structure_refused_or_absent">Structure: REFUSED OR ABSENT</string>
     <string name="individual_total_number_of_children_eligible_3_to_49_mos">Individual: TOTAL NUMBER OF ELIGIBLE CHILDREN 3-59 MOS</string>
@@ -1024,6 +1055,8 @@
     <string name="lsm_household_survey">LSM Household Survey</string>
     <string name="structure_survey">Structure Survey</string>
     <string name="rcd">RCD</string>
+    <string name="index_case">Index Case</string>
+    <string name="secondary_index_case">Secondary Index Case</string>
     <string name="rcd_member">RCD Member</string>
     <string name="server">Server</string>
     <string name="enter_base_url_message">Enter Base Server Url</string>
@@ -1045,11 +1078,22 @@
     <string name="reveal_instance_selector">Select Reveal Server</string>
     <string name="current_server">Current Server: %s</string>
     <string name="reveal_language_selector">Select Language</string>
-    <string name="edit_index_case">Edit Index Case</string>
-    <string name="confirm_index_case">Confirm Index Case</string>
-    <string name="edit_secondary">Edit Secondary Index</string>
-    <string name="confirm_secondary">Confirm Secondary Index</string>
-    <string name="edit_racd">Edit RACD</string>
-    <string name="action_racd">Action RACD</string>
+    <string name="edit_index_case">EDIT PRIMARY INDEX</string>
+    <string name="confirm_index_case">CONFIRM INDEX CASE</string>
+    <string name="edit_secondary">EDIT SECONDARY INDEX</string>
+    <string name="confirm_secondary">CONFIRM SECONDARY</string>
+    <string name="edit_racd">EDIT RACD</string>
+    <string name="action_racd">RACD</string>
     <string name="hdss">Hdss</string>
+    <string name="select_structure">Select Structure</string>
+    <string name="must_capture_compound_and_household">Must capture compound and household</string>
+    <string name="must_capture_compound">Must capture compound</string>
+    <string name="must_capture_household">Must capture household</string>
+    <string name="capture_household">household</string>
+    <string name="capture_compound">compound</string>
+    <string name="select_cluster">Select Cluster</string>
+    <string name="location_id">location_id</string>
+    <string name="identifier">identifier</string>
+    <string name="next_identifier">next_identifier</string>
+    <string name="you_must_select_a_cluster_in_order_to_save">You must select a cluster in order to save</string>
 </resources>

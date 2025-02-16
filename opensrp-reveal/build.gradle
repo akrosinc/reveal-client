@@ -84,9 +84,9 @@ android {
     defaultConfig {
         applicationId "org.smartregister.reveal"
         minSdkVersion 26
-        targetSdkVersion 33
+        targetSdkVersion 31
         versionCode 85
-        versionName "10.6.35"
+        versionName "10.6.44"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000l"
         buildConfigField "boolean", "TIME_CHECK", "false"
@@ -174,7 +174,8 @@ android {
 
         debug {
             buildConfigField "Integer", "DATABASE_VERSION", '14'
-            buildConfigField "String","CONFIG_SERVER",'"https://txn4miyxoz5a3n72fll33gbb6m0qyryy.lambda-url.us-east-1.on.aws/"'
+//            buildConfigField "String","CONFIG_SERVER",'"https://txn4miyxoz5a3n72fll33gbb6m0qyryy.lambda-url.us-east-1.on.aws/"'
+            buildConfigField "String","CONFIG_SERVER",'"https://rjvf4ysizlindwvlq52mfw5jqy0wlfti.lambda-url.us-east-1.on.aws/"'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_INITIAL_BATCH_SIZE", '250'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_BATCH_SIZE", '100'
             buildConfigField "int", "OPENMRS_UNIQUE_ID_SOURCE", '2'

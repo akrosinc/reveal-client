@@ -1,5 +1,7 @@
 package org.smartregister.reveal.task;
 
+import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.view.View;
@@ -53,7 +55,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     private TableLayout tempTableLayoutViewMali;
 
     private TableLayout tempTableLayoutViewGdrs;
-
+    private TableLayout tempTableLayoutViewNIH;
 
     public IndicatorsCalculatorTask(Activity context, List<TaskDetails> tasks) {
         this.activity = context;
@@ -76,6 +78,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         tempTableLayoutViewKenya = activity.findViewById(R.id.tempTableViewKenya);
         tempTableLayoutViewMali = activity.findViewById(R.id.tempTableViewMALI);
         tempTableLayoutViewGdrs = activity.findViewById(R.id.tempTableViewGDRS);
+        tempTableLayoutViewNIH = activity.findViewById(R.id.tempTableViewNIH);
+
     }
 
     @Override
@@ -89,6 +93,9 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if (getBuildCountry() == Country.MALI){
             indicatorDetails = IndicatorUtils.processIndicatorsMali(this.tasks);
             indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateMaliIndicators(this.activity, indicatorDetails));
+        } else if (getBuildCountry() == Country.NIH){
+            indicatorDetails = IndicatorUtils.processIndicatorsNIHStr(this.tasks);
+            indicatorDetails.setSprayIndicatorList(IndicatorUtils.populateNIHStrIndicators(this.activity, indicatorDetails));
         }
         else if (getBuildCountry() == Country.NAMIBIA) {
             Location operationalArea = Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea());
@@ -165,7 +172,10 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             setMaliProgressIndicators(indicatorDetails);
         } else if (getBuildCountry() == Country.NAMIBIA) {
             setNamibiaProgressIndicators(indicatorDetails);
-        } else if (getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN || getBuildCountry()
+        } else if (getBuildCountry() == Country.NIH){
+            setNIHProgressIndicators(indicatorDetails);
+        }
+        else if (getBuildCountry() == Country.RWANDA || getBuildCountry() == Country.RWANDA_EN || getBuildCountry()
                 == Country.KENYA) {
             hideProgressIndicators();
         } else if (getBuildCountry() == Country.NIGERIA) {
@@ -187,6 +197,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         tempTableLayoutViewNG.setVisibility(View.GONE);
         tempTableLayoutViewNGSurvey.setVisibility(View.GONE);
         tempTableLayoutViewGdrs.setVisibility(View.GONE);
+        tempTableLayoutViewNIH.setVisibility(View.GONE);
 
         if (getBuildCountry() == Country.RWANDA_EN || getBuildCountry() == Country.RWANDA) {
             tempTableLayoutView.setVisibility(View.VISIBLE);
@@ -224,12 +235,16 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         } else if (getBuildCountry() == Country.GDRS) {
             tempTableLayoutViewGdrs.setVisibility(View.VISIBLE);
             populateTableView(getTableRowsGdrs(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewGdrs);
-        } else {
+        } else if(getBuildCountry() == Country.NIH){
+            tempTableLayoutViewNIH.setVisibility(View.VISIBLE);
+            populateTableView(getTableRowsNIHStr(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewNIH);
+        }
+        else {
             tableView.setTableData(Arrays.asList(new String[]{this.activity.getString(R.string.indicator), this.activity.getString(R.string.value)}), indicatorDetails.getSprayIndicatorList());
         }
 
         //Show or hide depending on plan
-        ((View) progressIndicator.getParent()).setVisibility(shouldIndicatorsBeVisible() ? View.VISIBLE : View.GONE);
+        ((View) progressIndicator.getParent()).setVisibility( buildCountryHasIndicators() ? View.VISIBLE : View.GONE);
         if (activity instanceof ListTasksActivity)
             ((ListTasksActivity) activity).positionMyLocationAndLayerSwitcher();
     }
@@ -265,19 +280,34 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         progressIndicator.setVisibility(View.GONE);
     }
 
+    private void setNIHProgressIndicators(final IndicatorDetails indicatorDetails) {
+
+        progressIndicator.setProgress(Double.valueOf(Math.floor(indicatorDetails.getCompleteCoverage())).intValue());
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getCompleteCoverage())).intValue()));
+        progressIndicator.setSubTitle(activity.getString(R.string.coverage_of_structures_completed));
+
+        progressIndicator2.setProgress(Double.valueOf(Math.floor(indicatorDetails.getVisitedCoverage())).intValue());
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getVisitedCoverage())).intValue()));
+        progressIndicator2.setSubTitle(activity.getString(R.string.visitation_coverage));
+
+        progressIndicator3.setProgress(Double.valueOf(Math.floor(indicatorDetails.getSuccessRate())).intValue());
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getSuccessRate())).intValue()));
+        progressIndicator3.setSubTitle(activity.getString(R.string.success_rate));
+    }
+
     private void setMaliProgressIndicators(final IndicatorDetails indicatorDetails) {
 
-        progressIndicator.setProgress(indicatorDetails.getMdaDistributionCoverage());
-        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getProgress()));
-        progressIndicator.setSubTitle(activity.getString(R.string.distribution_coverage));
+        progressIndicator.setProgress(Double.valueOf(Math.floor(indicatorDetails.getCoverageOfStructuresCompleted())).intValue());
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getCoverageOfStructuresCompleted())).intValue()));
+        progressIndicator.setSubTitle(activity.getString(R.string.coverage_of_structures_completed));
 
-        progressIndicator2.setProgress(indicatorDetails.getMdaFoundCoverage());
-        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getMdaFoundCoverage()));
-        progressIndicator2.setSubTitle(activity.getString(R.string.found_coverage));
+        progressIndicator2.setProgress(Double.valueOf(Math.floor(indicatorDetails.getTreatedOverVisited())).intValue());
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getTreatedOverVisited())).intValue()));
+        progressIndicator2.setSubTitle(activity.getString(R.string.treated_over_visited));
 
-        progressIndicator3.setProgress(indicatorDetails.getMdaSuccessRate());
-        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getMdaSuccessRate()));
-        progressIndicator.setSubTitle(activity.getString(R.string.distribution_coverage));
+        progressIndicator3.setProgress(Double.valueOf(Math.floor(indicatorDetails.getVisitedOverTotal())).intValue());
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, Double.valueOf(Math.floor(indicatorDetails.getVisitedOverTotal())).intValue()));
+        progressIndicator3.setSubTitle(activity.getString(R.string.visited_over_total));
 
     }
 
@@ -380,13 +410,15 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     }
 
     private List<Integer> getTableRowsMali() {
-        return Arrays.asList(R.id.mali_total_structures_cell,
+        return Arrays.asList(
+                R.id.mali_coverage_of_structures_complete,
+                R.id.mali_total_structures_cell,
                 R.id.mali_structures_visited_cell,
                 R.id.mali_structures_not_visited_cell,
-                R.id.mali_structure_complete_drug_distribution_cell,
-                R.id.mali_structure_partial_drug_distribution_cell,
+                R.id.mali_structure_complete_total_cell,
+                R.id.mali_structure_complete_mda_cell,
+                R.id.mali_structure_partial_complete_mda_cell,
                 R.id.mali_structure_refused_or_absent_cell,
-                R.id.mali_individual_total_number_of_eligible_people_cell,
                 R.id.mali_individual_total_treated_cell);
     }
 
@@ -404,10 +436,19 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
                 R.id.gdrs_totalVisitIndexStructure,
                 R.id.gdrs_totalVisitRCDStructure);
     }
+    private List<Integer> getTableRowsNIHStr() {
+        return Arrays.asList(R.id.nih_total_structures,
+            R.id.nih_totalStructuresCompleted,
+            R.id.nih_totalStructuresInCompleted,
+            R.id.nih_totalStructuresVisited,
+            R.id.nih_totalStructuresNotVisited,
+            R.id.nih_totalStructuresNotEligible);
+    }
 
     private boolean shouldIndicatorsBeVisible() {
         return Utils.getInterventionLabel() == R.string.irs || getBuildCountry() == Country.RWANDA || getBuildCountry()
-                == Country.RWANDA_EN || Country.NIGERIA == getBuildCountry() || Country.KENYA == getBuildCountry() || Country.GDRS == getBuildCountry();
+                == Country.RWANDA_EN || Country.NIGERIA == getBuildCountry() || Country.KENYA == getBuildCountry() || Country.GDRS == getBuildCountry() || Country.MALI == getBuildCountry()
+            || Country.NIH == getBuildCountry();
     }
 
 

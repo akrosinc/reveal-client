@@ -11,10 +11,14 @@ import org.smartregister.domain.HdssHouseholdIndividual;
 import org.smartregister.domain.HdssHouseholdStructure;
 import org.smartregister.domain.HdssIndividual;
 import org.smartregister.domain.HdssIndividualHouseHoldCompound;
+import org.smartregister.domain.IndividualsAndTasksForCompound;
 import org.smartregister.domain.Period;
+import org.smartregister.domain.StructureTaskForCompound;
 import org.smartregister.domain.Task;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.searchbox.HdssSearchBoxFactory;
+import org.smartregister.reveal.test.GDRSActivity;
+import org.smartregister.reveal.test.HdssTask;
 import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
@@ -31,6 +35,7 @@ public class HdssRepository extends BaseRepository {
 
     public static final String COMPOUND_ID = "compound_id";
     public static final String HOUSEHOLD_ID = "household_id";
+    public static final String _ID = "_id";
 
     public static final String IDENTIFIER = "identifier";
 
@@ -46,6 +51,12 @@ public class HdssRepository extends BaseRepository {
     public static final String HDSS_HOUSEHOLD_INDIVIDUAL = "hdss_household_individual";
     public static final String HDSS_HOUSEHOLD_STRUCTURE = "hdss_household_structure";
     public static final String SERVER_VERSION = "server_version";
+
+    public static final String NAME = "name";
+
+    public static final String FLOATING_LOCATION_ID = "floating_location_id";
+    public static final String FLOATING_LOCATION_NAME = "floating_location_name";
+    public static final String FLOATING_LOCATION_GEOGRAPHIC_LEVEL = "floating_location_geographic_level";
 
     public static final String HDSS_INDIVIDUAL = "hdss_individual";
     public static final String HDSS_SEARCH_RESULTS = "hdss_search_results";
@@ -96,7 +107,12 @@ public class HdssRepository extends BaseRepository {
                     "  " + INDIVIDUAL_ID + "  TEXT NOT NULL, " +
                     "  " + DOB + "  TEXT NOT NULL, " +
                     "  " + GENDER + "  TEXT NOT NULL, " +
-                    "   name  TEXT NOT NULL, " +
+                    "  " + NAME + "  TEXT NOT NULL, " +
+
+                    "  " + FLOATING_LOCATION_ID + "  TEXT , " +
+                    "  " + FLOATING_LOCATION_NAME + "  TEXT , " +
+                    "  " + FLOATING_LOCATION_GEOGRAPHIC_LEVEL + "  TEXT , " +
+
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
                     ");";
@@ -113,7 +129,7 @@ public class HdssRepository extends BaseRepository {
                     " " + COMPOUND_ID + " TEXT NOT NULL, " +
                     " " + HOUSEHOLD_ID + "  TEXT NOT NULL, " +
                     "  " + DOB + "  TEXT NOT NULL, " +
-                    "   name   TEXT NOT NULL, " +
+                    "   " + NAME + "   TEXT NOT NULL, " +
                     "  " + GENDER + "  TEXT NOT NULL, " +
                     "  " + SERVER_VERSION + " INTEGER NOT NULL, " +
                     " PRIMARY KEY( " + INDIVIDUAL_ID + " ) " +
@@ -177,6 +193,68 @@ public class HdssRepository extends BaseRepository {
 
     }
 
+    public void addIndividualToHousehold( String toHousehold, String individual) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Get the current server version (you can use your own method to get this value)
+        long hdssMaxServerVersion = getMaxServerVersion();
+        hdssMaxServerVersion++; // Increment to get the new server version
+
+        // Define ContentValues for the record
+        ContentValues values = new ContentValues();
+        values.put(HOUSEHOLD_ID, toHousehold);
+        values.put(INDIVIDUAL_ID, individual);
+        values.put(SERVER_VERSION, hdssMaxServerVersion);
+
+        // Check if the individual already exists in the table
+        Cursor cursor = db.query(HDSS_HOUSEHOLD_INDIVIDUAL,
+                new String[] { INDIVIDUAL_ID },
+                INDIVIDUAL_ID+" = ?",
+
+                new String[] { individual },
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            // If individual exists, update the record
+            db.update("hdss_household_individual",
+                    values,
+                    "individual_id = ?",
+                    new String[] { individual });
+            cursor.close();
+        } else {
+            // If individual doesn't exist, insert the new record
+            db.insert("hdss_household_individual", null, values);
+        }
+
+        // Close the cursor and the database
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+
+    }
+
+
+
+    public void deleteIndividualFromHousehold(String individual) {
+        getReadableDatabase().delete(HDSS_HOUSEHOLD_INDIVIDUAL, INDIVIDUAL_ID + " = ?", new String[]{
+                individual
+        });
+    }
+
+    public void removeHouseholdFromStructure(String householdId) {
+        getReadableDatabase().delete(HDSS_HOUSEHOLD_STRUCTURE, HOUSEHOLD_ID + " = ?", new String[]{
+                householdId
+        });
+    }
+
+    public void removeHouseholdFromCompound(String householdId) {
+        getReadableDatabase().delete(HDSS_COMPOUND_HOUSEHOLD, HOUSEHOLD_ID + " = ?", new String[]{
+                householdId
+        });
+    }
+
     public void addOrUpdateCompounds(List<HdssCompound> compounds) {
         SQLiteDatabase writableDatabase = getWritableDatabase();
         compounds.forEach(compound -> {
@@ -186,6 +264,7 @@ public class HdssRepository extends BaseRepository {
             writableDatabase.replace(HDSS_COMPOUND, null, contentValues);
         });
     }
+
     public void addOrUpdateCompoundsBatched(List<HdssCompound> compounds) {
         SQLiteDatabase writableDatabase = getWritableDatabase();
 
@@ -224,7 +303,7 @@ public class HdssRepository extends BaseRepository {
             writableDatabase.setTransactionSuccessful();
         } catch (Exception e) {
             // Handle any errors
-            Timber.tag("batching").e(e,"error");
+            Timber.tag("batching").e(e, "error");
         } finally {
             // End the transaction
             writableDatabase.endTransaction();
@@ -303,6 +382,7 @@ public class HdssRepository extends BaseRepository {
 
         });
     }
+
     public void addOrUpdateHouseholdStructureBatched(List<HdssHouseholdStructure> householdStructures) {
         SQLiteDatabase writableDatabase = getWritableDatabase();
 
@@ -359,6 +439,48 @@ public class HdssRepository extends BaseRepository {
             writableDatabase.replace(HDSS_HOUSEHOLD_INDIVIDUAL, null, contentValues);
         });
     }
+
+    public void deleteFromHouseholdIndividualByIndividualIds(List<String> individuals) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+
+        // Start a transaction for better performance and atomicity
+        writableDatabase.beginTransaction();
+
+        try {
+            int batchSize = 30; // Batch size of 30 items
+            for (int i = 0; i < individuals.size(); i += batchSize) {
+                int end = Math.min(i + batchSize, individuals.size());
+                List<String> batch = individuals.subList(i, end);
+
+                // Build the WHERE clause with IN for the batch
+                StringBuilder whereClause = new StringBuilder("individual_id IN (");
+                for (int j = 0; j < batch.size(); j++) {
+                    whereClause.append("?");
+                    if (j < batch.size() - 1) {
+                        whereClause.append(", ");
+                    }
+                }
+                whereClause.append(")");
+
+                // Prepare and execute the delete statement
+                String[] args = new String[batch.size()];
+                for (int j = 0; j < batch.size(); j++) {
+                    args[j] = batch.get(j);
+                }
+
+                writableDatabase.delete(HDSS_HOUSEHOLD_INDIVIDUAL, whereClause.toString(), args);
+            }
+            writableDatabase.setTransactionSuccessful();
+        } catch (Exception e) {
+            // Handle any exceptions
+            e.printStackTrace();
+        } finally {
+            // End the transaction, whether successful or not
+            writableDatabase.endTransaction();
+        }
+
+    }
+
     public void addOrUpdateHouseholdIndividualBatched(List<HdssHouseholdIndividual> householdIndividuals) {
         SQLiteDatabase writableDatabase = getWritableDatabase();
 
@@ -479,20 +601,29 @@ public class HdssRepository extends BaseRepository {
                 "hi.individual_id,\n" +
                 "hi.dob,\n" +
                 "hi.gender,\n" +
-                "hi.name,\n" +
+                "hi." + NAME + ",\n" +
                 "hi.server_version,\n" +
                 "hhi.household_id,\n" +
                 "hhs.structure_id,\n" +
                 "hc.compound_id\n" +
+                "hi." + FLOATING_LOCATION_ID + "\n" +
+                "hi." + FLOATING_LOCATION_NAME + "\n" +
+                "hi." + FLOATING_LOCATION_GEOGRAPHIC_LEVEL + "\n" +
                 "\n" +
                 " from hdss_individual hi\n" +
                 "left join hdss_household_individual hhi on hhi.individual_id = hi.individual_id\n" +
                 "left join hdss_compound_household hch on hch.household_id = hhi.household_id\n" +
                 "left join hdss_household_structure hhs on hhs.household_id = hhi.household_id\n" +
                 "left join hdss_compound hc on hc.compound_id = hch.compound_id \n" +
-                "WHERE hi.server_version > ?";
+                "WHERE hi.server_version > ? \n" +
+                "OR hi.server_version > ? \n" +
+                "OR hhi.server_version > ? \n" +
+                "OR hch.server_version > ? \n" +
+                "OR hhs.server_version > ? \n" +
+                "OR hc.server_version > ?";
         try {
-            cursor = readableDatabase.rawQuery(query, new String[]{String.valueOf(serverVersion)});
+            cursor = readableDatabase.rawQuery(query, new String[]{String.valueOf(serverVersion), String.valueOf(serverVersion),
+                    String.valueOf(serverVersion), String.valueOf(serverVersion), String.valueOf(serverVersion), String.valueOf(serverVersion)});
 
 
             if (cursor != null) {
@@ -511,13 +642,16 @@ public class HdssRepository extends BaseRepository {
 
                         String structureId = cursor.getString(cursor.getColumnIndexOrThrow(STRUCTURE_ID));
 
+                        String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+                        String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+                        String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
                         int serverVersionFromDB = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                        String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
-                        HdssIndividualHouseHoldCompound hdssIndividual = new HdssIndividualHouseHoldCompound(identifier, individualId, dob, gender, householdId, compoundId, name);
-                        hdssIndividual.setServerVersion(serverVersionFromDB);
-                        hdssIndividual.setStructureId(structureId);
+                        HdssIndividualHouseHoldCompound hdssIndividual = new HdssIndividualHouseHoldCompound(identifier, individualId, dob, gender
+                                , householdId, compoundId, structureId, serverVersionFromDB, name, floatingLocationId, floatingLocationName, floatingLocationGeographicLevel);
 
                         values.add(hdssIndividual);
                     } while (cursor.moveToNext());
@@ -531,15 +665,15 @@ public class HdssRepository extends BaseRepository {
 
     }
 
-    public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual(String searchtext, String genderSearch, String dob, String name) {
-        Timber.tag("searching").i("searchtext %s genderSearch %s dob %s", searchtext,genderSearch,dob);
+    public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual2(String searchtext, String genderSearch, String dob, String name) {
+        Timber.tag("searching").i("searchtext %s genderSearch %s dob %s", searchtext, genderSearch, dob);
         SQLiteDatabase readableDatabase = getReadableDatabase();
 
         String query;
-        Cursor cursor= null;
+        Cursor cursor = null;
 
-        if (dob != null && genderSearch != null && searchtext!=null&& name!=null) {
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi.name   from hdss_individual hi  \n" +
+        if (dob != null && genderSearch != null && searchtext != null && name != null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi." + NAME + "   from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
@@ -548,8 +682,8 @@ public class HdssRepository extends BaseRepository {
             cursor = readableDatabase.rawQuery(query, new String[]{"%" + searchtext + "%", "%" + searchtext + "%", "%" + searchtext + "%", genderSearch, dob});
         }
 
-        if (dob != null && genderSearch == null && searchtext!=null){
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi.name from hdss_individual hi  \n" +
+        if (dob != null && genderSearch == null && searchtext != null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi." + NAME + " from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
@@ -559,8 +693,8 @@ public class HdssRepository extends BaseRepository {
         }
 
 
-        if (dob == null && genderSearch == null && searchtext!=null){
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi.name from hdss_individual hi  \n" +
+        if (dob == null && genderSearch == null && searchtext != null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi." + NAME + " from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
@@ -569,8 +703,8 @@ public class HdssRepository extends BaseRepository {
             cursor = readableDatabase.rawQuery(query, new String[]{"%" + searchtext + "%", "%" + searchtext + "%", "%" + searchtext + "%"});
         }
 
-        if (dob == null && genderSearch != null && searchtext!=null) {
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi.name from hdss_individual hi  \n" +
+        if (dob == null && genderSearch != null && searchtext != null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi." + NAME + " from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
@@ -579,8 +713,8 @@ public class HdssRepository extends BaseRepository {
             cursor = readableDatabase.rawQuery(query, new String[]{"%" + searchtext + "%", "%" + searchtext + "%", "%" + searchtext + "%", genderSearch});
         }
 
-        if (dob != null && genderSearch == null && searchtext==null) {
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi.name from hdss_individual hi  \n" +
+        if (dob != null && genderSearch == null && searchtext == null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi." + NAME + " from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
@@ -588,16 +722,14 @@ public class HdssRepository extends BaseRepository {
             cursor = readableDatabase.rawQuery(query, new String[]{dob});
         }
 
-        if (dob != null && genderSearch != null && searchtext==null) {
-            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi.name from hdss_individual hi  \n" +
+        if (dob != null && genderSearch != null && searchtext == null) {
+            query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender,hi." + NAME + " from hdss_individual hi  \n" +
                     "                left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id \n" +
                     "                left join hdss_compound_household hch on hch.household_id = hhi.household_id \n" +
                     "                left join hdss_compound hc on hc.compound_id = hch.compound_id\n" +
                     " WHERE  lower(hi.gender) = lower(?) and hi.dob=?\n";
             cursor = readableDatabase.rawQuery(query, new String[]{genderSearch, dob});
         }
-
-
 
 
         List<HdssIndividualHouseHoldCompound> values = new ArrayList<>();
@@ -615,7 +747,7 @@ public class HdssRepository extends BaseRepository {
 
                     String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
 
-                    String nameStr = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String nameStr = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
                     HdssIndividualHouseHoldCompound hdssIndividual = new HdssIndividualHouseHoldCompound(identifier, individualId, dobStr, gender, householdId, compoundId, nameStr);
 
@@ -628,11 +760,12 @@ public class HdssRepository extends BaseRepository {
         return values;
     }
 
-    public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual2(String searchtext, String genderSearch, String dob, String name) {
+
+    public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual(String searchtext, String genderSearch, String dob, String name) {
         Timber.tag("searching").i("searchtext %s genderSearch %s dob %s", searchtext, genderSearch, dob);
         SQLiteDatabase readableDatabase = getReadableDatabase();
 
-        String query = "SELECT hi.identifier, hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi.name " +
+        String query = "SELECT hi.identifier, hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi." + NAME + " " +
                 "FROM hdss_individual hi " +
                 "LEFT JOIN hdss_household_individual hhi ON hi.individual_id = hhi.individual_id " +
                 "LEFT JOIN hdss_compound_household hch ON hch.household_id = hhi.household_id " +
@@ -667,7 +800,7 @@ public class HdssRepository extends BaseRepository {
 
         // Handle name if not null
         if (name != null && !name.isEmpty()) {
-            whereClauses.add("LOWER(hi.name) LIKE LOWER(?)");
+            whereClauses.add("LOWER(hi." + NAME + ") LIKE LOWER(?)");
             args.add("%" + name + "%");
         }
 
@@ -693,7 +826,7 @@ public class HdssRepository extends BaseRepository {
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow("gender"));
                     String householdId = cursor.getString(cursor.getColumnIndexOrThrow("household_id"));
                     String compoundId = cursor.getString(cursor.getColumnIndexOrThrow("compound_id"));
-                    String nameStr = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String nameStr = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
                     // Create the object
                     HdssIndividualHouseHoldCompound hdssIndividual = new HdssIndividualHouseHoldCompound(identifier, individualId, dobStr, gender, householdId, compoundId, nameStr);
@@ -716,8 +849,11 @@ public class HdssRepository extends BaseRepository {
             contentValues.put(INDIVIDUAL_ID, individual.getIndividualId());
             contentValues.put(DOB, individual.getDob());
             contentValues.put(GENDER, individual.getGender());
-            contentValues.put("name",individual.getName());
+            contentValues.put(NAME, individual.getName());
             contentValues.put(SERVER_VERSION, individual.getServerVersion());
+            if (individual.getFloatingLocationName() != null) {
+                contentValues.put(FLOATING_LOCATION_NAME, individual.getFloatingLocationName());
+            }
             writableDatabase.replace(HDSS_INDIVIDUAL, null, contentValues);
         });
     }
@@ -736,7 +872,9 @@ public class HdssRepository extends BaseRepository {
 
                 // Build the SQL query for batch insert
                 StringBuilder sql = new StringBuilder("REPLACE INTO " + HDSS_INDIVIDUAL + " ("
-                        + IDENTIFIER + ", " + INDIVIDUAL_ID + ", " + DOB + ", " + GENDER + ", "+ "name" + ", " + SERVER_VERSION + ") VALUES ");
+                        + IDENTIFIER + ", " + INDIVIDUAL_ID + ", " + DOB + ", " + GENDER + ", " + NAME + ", "
+                        + FLOATING_LOCATION_ID + ", " + FLOATING_LOCATION_NAME + ", " + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
+                        + ", " + SERVER_VERSION + ") VALUES ");
 
                 // Add values for each individual in the batch
                 for (int j = 0; j < batch.size(); j++) {
@@ -750,9 +888,28 @@ public class HdssRepository extends BaseRepository {
                             .append(", ")
                             .append("'").append(individual.getGender()).append("'")
                             .append(", ")
-                            .append("'").append(individual.getName()).append("'")
-                            .append(", ")
-                            .append(individual.getServerVersion()).append(")");
+                            .append("'").append(individual.getName()).append("'");
+
+                    if (individual.getFloatingLocationName() != null) {
+                        sql.append(", ")
+                                .append("'").append(individual.getFloatingLocationId()).append("'")
+                                .append(", ")
+                                .append("'").append(individual.getFloatingLocationName()).append("'")
+                                .append(", ")
+                                .append("'").append(individual.getFloatingLocationGeographicLevel()).append("'")
+                                .append(", ");
+                    } else {
+                        sql.append(", ")
+                                .append("NULL")
+                                .append(", ")
+                                .append("NULL")
+                                .append(", ")
+                                .append("NULL")
+                                .append(", ");
+                    }
+
+
+                    sql.append(individual.getServerVersion()).append(")");
 
                     if (j < batch.size() - 1) {
                         sql.append(", "); // Separate values with commas, except for the last one
@@ -783,9 +940,9 @@ public class HdssRepository extends BaseRepository {
             contentValues.put(DOB, individual.getDob());
             contentValues.put(GENDER, individual.getGender());
             contentValues.put(COMPOUND_ID, individual.getCompoundId());
-            contentValues.put(HOUSEHOLD_ID,individual.getHouseholdId());
-            contentValues.put("name",individual.getName());
-            contentValues.put(SERVER_VERSION,0);
+            contentValues.put(HOUSEHOLD_ID, individual.getHouseholdId());
+            contentValues.put(NAME, individual.getName());
+            contentValues.put(SERVER_VERSION, 0);
             writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
         });
     }
@@ -799,14 +956,14 @@ public class HdssRepository extends BaseRepository {
             contentValues.put(DOB, individual.getDob());
             contentValues.put(GENDER, individual.getGender());
             contentValues.put(COMPOUND_ID, individual.getCompoundId());
-            contentValues.put(HOUSEHOLD_ID,individual.getHouseholdId());
-            contentValues.put("name",individual.getName());
-            contentValues.put(SERVER_VERSION,0);
+            contentValues.put(HOUSEHOLD_ID, individual.getHouseholdId());
+            contentValues.put(NAME, individual.getName());
+            contentValues.put(SERVER_VERSION, 0);
             writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
         });
     }
 
-    public  void deleteSearchResultsData() {
+    public void deleteSearchResultsData() {
         SQLiteDatabase writableDatabase = getWritableDatabase();
         writableDatabase.execSQL("DELETE FROM " + HDSS_SEARCH_RESULTS);
 
@@ -814,7 +971,7 @@ public class HdssRepository extends BaseRepository {
 
     public List<HdssSearchBoxFactory.SearchResponse> getSearchResultsInBatches(int limit, int offset) {
 
-        String query = "SELECT * from "+HDSS_SEARCH_RESULTS+ " order by "+INDIVIDUAL_ID+" LIMIT ? OFFSET ?";
+        String query = "SELECT * from " + HDSS_SEARCH_RESULTS + " order by " + INDIVIDUAL_ID + " LIMIT ? OFFSET ?";
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(limit), String.valueOf(offset)});
@@ -833,10 +990,10 @@ public class HdssRepository extends BaseRepository {
 
                     String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
 
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
                     HdssSearchBoxFactory.SearchResponse hdssIndividual =
-                            new HdssSearchBoxFactory.SearchResponse(identifier, individualId,compoundId,householdId, dob, gender,name);
+                            new HdssSearchBoxFactory.SearchResponse(identifier, individualId, compoundId, householdId, dob, gender, name);
 
                     values.add(hdssIndividual);
                 } while (cursor.moveToNext());
@@ -846,8 +1003,6 @@ public class HdssRepository extends BaseRepository {
         return values;
 
     }
-
-
 
 
     public List<String> getCompounds() {
@@ -916,7 +1071,7 @@ public class HdssRepository extends BaseRepository {
     public List<HdssIndividual> getIndividualsByHouseholdId(String householdId) {
 
         String query = "SELECT " + " i." + IDENTIFIER + "," +
-                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i.name , i.server_version From " + HDSS_HOUSEHOLD_INDIVIDUAL + " hc \n" +
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + NAME + " , i.server_version From " + HDSS_HOUSEHOLD_INDIVIDUAL + " hc \n" +
                 "left join " + HDSS_INDIVIDUAL + " i on i." + INDIVIDUAL_ID + " = hc." + INDIVIDUAL_ID + "\n" +
                 "where hc." + HOUSEHOLD_ID + " = ?";
 
@@ -931,11 +1086,11 @@ public class HdssRepository extends BaseRepository {
 
                     String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
                     long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender,name, serverVersion);
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, name, serverVersion);
 
                     values.add(hdssIndividual);
                 } while (cursor.moveToNext());
@@ -949,7 +1104,7 @@ public class HdssRepository extends BaseRepository {
     public List<HdssIndividual> getIndividuals() {
 
         String query = "SELECT " + " i." + IDENTIFIER + "," +
-                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER+ ", i.name" + ", i.server_version"
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + NAME + ", i.server_version"
                 + " From " + HDSS_INDIVIDUAL + " i";
 
         SQLiteDatabase db = getReadableDatabase();
@@ -964,11 +1119,53 @@ public class HdssRepository extends BaseRepository {
 
                     String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
                     long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender,name, serverVersion);
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, name, serverVersion);
+
+
+                    values.add(hdssIndividual);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+
+    }
+
+    public List<HdssIndividual> getIndividualsForOperationalArea(String operationalAreaName) {
+
+        String query = "SELECT " + " i." + IDENTIFIER + "," +
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + NAME + ", i.server_version"
+                + ""
+                + " From " + HDSS_INDIVIDUAL + " i WHERE i." + FLOATING_LOCATION_NAME + " = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{operationalAreaName});
+        List<HdssIndividual> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String identifier = cursor.getString(cursor.getColumnIndexOrThrow(IDENTIFIER));
+
+                    String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
+
+                    String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+//
+//                    String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+//
+//                    String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+//
+//                    String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
+                    long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
+
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, name, serverVersion
+                    );
 
 
                     values.add(hdssIndividual);
@@ -1001,7 +1198,9 @@ public class HdssRepository extends BaseRepository {
 
     public List<HdssIndividualHouseHoldCompound> getIndividualHouseholdCompound() {
 
-        String query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender from hdss_individual hi  " +
+        String query = "SELECT hi.identifier ,hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, "
+                + "hi." + FLOATING_LOCATION_ID + ", hi." + FLOATING_LOCATION_NAME + ", hi." + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
+                + " from hdss_individual hi  " +
                 "left join hdss_household_individual hhi on hi.individual_id = hhi.individual_id " +
                 "left join hdss_compound_household hch on hch.household_id = hhi.household_id " +
                 "left join hdss_compound hc on hc.compound_id = hch.compound_id";
@@ -1018,14 +1217,19 @@ public class HdssRepository extends BaseRepository {
 
                     String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
-
                     String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
-
                     String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
-                    String name  = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    int serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                    HdssIndividualHouseHoldCompound hdssIndividual = new HdssIndividualHouseHoldCompound(identifier, individualId, dob, gender, householdId, compoundId,name);
+                    String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+                    String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+                    String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
+                    HdssIndividualHouseHoldCompound hdssIndividual =
+                            new HdssIndividualHouseHoldCompound(identifier, individualId, dob, gender, householdId, compoundId, null, serverVersion, name,
+                                    floatingLocationId, floatingLocationName, floatingLocationGeographicLevel);
 
 
                     values.add(hdssIndividual);
@@ -1065,10 +1269,11 @@ public class HdssRepository extends BaseRepository {
 
     }
 
-    public Set<Task> getTasksByStructure(String structureId, String planIdentifier) {
+    public Set<HdssTask> getTasksByStructure(String structureId, String planIdentifier) {
 
-        String query = "SELECT * from task t " +
+        String query = "SELECT t.*, hc.*, hhi.household_id  from task t " +
                 " left join hdss_individual hc on hc.identifier = t.for" +
+                " inner join hdss_household_individual hhi on hhi.individual_id = hc.individual_id" +
                 " where t.for in (\n" +
                 " SELECT i.identifier\n" +
                 "--,hi.*, hs.*\n" +
@@ -1081,10 +1286,14 @@ public class HdssRepository extends BaseRepository {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, new String[]{structureId, planIdentifier});
 
-        Set<Task> tasks = new HashSet<>();
+        Set<HdssTask> tasks = new HashSet<>();
         while (cursor.moveToNext()) {
-            Task task = readTaskCursor(cursor);
+            HdssTask task = readHdssTaskCursor(cursor);
             task.setStructureId(structureId);
+            String household = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+            task.setHouseholdId(household);
+            String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
+            task.setIndividualId(individualId);
             tasks.add(task);
         }
 
@@ -1092,7 +1301,248 @@ public class HdssRepository extends BaseRepository {
     }
 
 
-    public List<String> getHouseholdIdByStructureId(String structureId) {
+    public List<String> getTasksForCompoundLinkedToHouseholdId(String compoundId, String planIdentifier, String existingIndividual) {
+        String query = "SELECT DISTINCT t._id, t.business_status , t.code, t.for from hdss_compound_household hch\n" +
+                "left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id\n" +
+                "left join hdss_household_structure hhs on hhs.household_id = hch2.household_id\n" +
+                "left join hdss_household_individual  hhi on hhi.household_id  = hhs.household_id \n" +
+                "left join hdss_individual hi on hi.individual_id = hhi.individual_id\n" +
+                "left join task t on t.for = hhs.structure_id or hi.identifier = t.for\n" +
+                "WHERE hch.compound_id =  ? and t.plan_id = ? and hhi.individual_id <> ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{compoundId, planIdentifier, existingIndividual});
+        List<String> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    values.add(taskId);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public List<String> getStructureTasksForCompoundLinkedToHouseholdId(String compoundId, String planIdentifier) {
+        String query = "SELECT DISTINCT t._id, t.business_status , t.code, t.for from hdss_compound_household hch \n" +
+                "                left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id \n" +
+                "                left join hdss_household_structure hhs on hhs.household_id = hch2.household_id \n" +
+                "                left join hdss_household_individual  hhi on hhi.household_id  = hhs.household_id  \n" +
+                "                left join hdss_individual hi on hi.individual_id = hhi.individual_id \n" +
+                "                left join task t on t.for = hhs.structure_id\n" +
+                "                WHERE hch.compound_id =  ? and t.plan_id = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{compoundId, planIdentifier});
+        List<String> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    values.add(taskId);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public List<String> getIndividualTasksForCompoundExcludingHousehold(String compoundId, String household, String planIdentifier) {
+        String query = "SELECT DISTINCT t._id, t.business_status , t.code, t.for, hch2.compound_id,hhi.household_id , hhs.structure_id from hdss_compound_household hch \n" +
+                "                left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id \n" +
+                "                left join hdss_household_structure hhs on hhs.household_id = hch2.household_id \n" +
+                "                left join hdss_household_individual  hhi on hhi.household_id  = hhs.household_id  \n" +
+                "                left join hdss_individual hi on hi.individual_id = hhi.individual_id \n" +
+                "                left join task t on hi.identifier = t.for \n" +
+                "                WHERE hch.compound_id = ? and hhi.household_id <> ? and t.plan_id = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{compoundId, household,planIdentifier});
+        List<String> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    values.add(taskId);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public List<StructureTaskForCompound> getStructuresAndTasksForCompoundByHouseholdId(String householdId, String planIdentifier) {
+        String query = "SELECT DISTINCT hhs.structure_id" +
+                ", t._id" +
+                ", t.business_status" +
+                ", t.code" +
+                ", t.status" +
+                ", hch.household_id" +
+                ", hch.compound_id " +
+                "FROM hdss_compound_household hch\n" +
+                "left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id\n" +
+                "LEFT join hdss_household_structure hhs on hch2.household_id = hhs.household_id\n" +
+                "left join task t on t.for = hhs.structure_id\n" +
+                "WHERE hch.household_id = ? and (t.plan_id = ?)";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{householdId, planIdentifier});
+        List<StructureTaskForCompound> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    String structureId = cursor.getString(cursor.getColumnIndexOrThrow("structure_id"));
+                    String businessStatus = cursor.getString(cursor.getColumnIndexOrThrow("business_status"));
+                    String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                    String householdIdStr = cursor.getString(cursor.getColumnIndexOrThrow("household_id"));
+                    String compoundId = cursor.getString(cursor.getColumnIndexOrThrow("compound_id"));
+
+                    StructureTaskForCompound task = new StructureTaskForCompound();
+                    task.setCompoundId(compoundId);
+                    task.setHouseholdId(householdIdStr);
+                    task.setCode(code);
+                    task.setTaskId(taskId);
+                    task.setStatus(status);
+                    task.setStructureId(structureId);
+                    task.setBusinessStatus(businessStatus);
+
+                    values.add(task);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public List<StructureTaskForCompound> getStructuresAndTasksForCompound(String compundId, String planIdentifier) {
+        String query = "SELECT DISTINCT hhs.structure_id" +
+                ", t._id" +
+                ", t.business_status" +
+                ", t.code" +
+                ", t.status" +
+                ", hch.household_id" +
+                ", hch.compound_id " +
+                "FROM hdss_compound_household hch \n" +
+                "LEFT join hdss_household_structure hhs on hch.household_id = hhs.household_id\n" +
+                "left join task t on t.for = hhs.structure_id\n" +
+                "WHERE hch.compound_id = ? and (t.plan_id = ?)";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{compundId, planIdentifier});
+        List<StructureTaskForCompound> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    String structureId = cursor.getString(cursor.getColumnIndexOrThrow("structure_id"));
+                    String businessStatus = cursor.getString(cursor.getColumnIndexOrThrow("business_status"));
+                    String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                    String householdIdStr = cursor.getString(cursor.getColumnIndexOrThrow("household_id"));
+                    String compoundId = cursor.getString(cursor.getColumnIndexOrThrow("compound_id"));
+
+                    StructureTaskForCompound task = new StructureTaskForCompound();
+                    task.setCompoundId(compoundId);
+                    task.setHouseholdId(householdIdStr);
+                    task.setCode(code);
+                    task.setTaskId(taskId);
+                    task.setStatus(status);
+                    task.setStructureId(structureId);
+                    task.setBusinessStatus(businessStatus);
+
+                    values.add(task);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public List<IndividualsAndTasksForCompound> getIndividualsAndTasksForCompoundByHouseholdId(String householdId, String planIdentifier) {
+        String query = "SELECT DISTINCT hi.identifier, hi.individual_id, hhi.household_id,t._id, t.business_status,t.code, t.status, hch.compound_id  FROM hdss_compound_household hch\n" +
+                "left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id\n" +
+                "left join hdss_household_individual hhi on hhi.household_id = hch2.household_id \n" +
+                "left join hdss_individual hi on hi.individual_id = hhi.individual_id\n" +
+                "left join task t on t.for = hi.identifier\n" +
+                "WHERE hch.household_id = ?  and (t.plan_id = ? or plan_id is null);";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{householdId, planIdentifier});
+        List<IndividualsAndTasksForCompound> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String taskId = cursor.getString(cursor.getColumnIndexOrThrow(_ID));
+                    String individualIdentifier = cursor.getString(cursor.getColumnIndexOrThrow("identifier"));
+                    String individualId = cursor.getString(cursor.getColumnIndexOrThrow("individual_id"));
+                    String businessStatus = cursor.getString(cursor.getColumnIndexOrThrow("business_status"));
+                    String code = cursor.getString(cursor.getColumnIndexOrThrow("code"));
+                    String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                    String householdIdStr = cursor.getString(cursor.getColumnIndexOrThrow("household_id"));
+                    String compoundId = cursor.getString(cursor.getColumnIndexOrThrow("compound_id"));
+
+                    IndividualsAndTasksForCompound task = new IndividualsAndTasksForCompound();
+                    task.setIndividualIdentifier(individualIdentifier);
+                    task.setCompoundId(compoundId);
+                    task.setHouseholdId(householdIdStr);
+                    task.setCode(code);
+                    task.setTaskId(taskId);
+                    task.setStatus(status);
+                    task.setIndividualId(individualId);
+                    task.setBusinessStatus(businessStatus);
+
+                    values.add(task);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public String getHouseholdIdByStructureId(String structureId) {
+        String query = "SELECT hs.household_id from hdss_household_structure hs\n" +
+                "        WHERE hs.structure_id = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{structureId});
+        String values = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                values = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+                cursor.close();
+            }
+
+        }
+        return values;
+    }
+
+    public HdssCompoundHousehold getHouseholdIdCompoundIdByStructureId(String structureId) {
+        String query =  "SELECT hs.household_id, hch.compound_id, hs.server_version from hdss_household_structure hs" +
+                        " left join hdss_compound_household hch on hch.household_id = hs.household_id\n" +
+                        " WHERE hs.structure_id = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{structureId});
+        HdssCompoundHousehold hdssCompoundHouseholds = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                hdssCompoundHouseholds = HdssCompoundHousehold
+                        .builder()
+                        .compoundId(cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID)))
+                        .householdId(cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID)))
+                        .serverVersion(cursor.getLong(cursor.getColumnIndexOrThrow(SERVER_VERSION)))
+                        .build();
+                cursor.close();
+            }
+        }
+        return hdssCompoundHouseholds;
+    }
+
+    public List<String> getHouseholdIdsByStructureId(String structureId) {
         String query = "SELECT hs.household_id from hdss_household_structure hs\n" +
                 "        WHERE hs.structure_id = ?";
 
@@ -1101,12 +1551,27 @@ public class HdssRepository extends BaseRepository {
         List<String> values = new ArrayList<>();
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                do {
-                    String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
-                    values.add(householdId);
-                } while (cursor.moveToNext());
+                String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+                values.add(householdId);
             }
             cursor.close();
+        }
+
+        return values;
+    }
+    public String getStructureIdByHouseholdId(String householdId) {
+        String query = "SELECT hs.structure_id from hdss_household_structure hs\n" +
+                "        WHERE hs.household_id = ?";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{householdId});
+        String values = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                values = cursor.getString(cursor.getColumnIndexOrThrow(STRUCTURE_ID));
+                cursor.close();
+            }
+
         }
         return values;
     }
@@ -1138,11 +1603,82 @@ public class HdssRepository extends BaseRepository {
         return values;
     }
 
+    public List<HdssCompoundHousehold> getCompoundAndHouseholdListByStructureId(String structureId) {
+        String query = "    SELECT hc.compound_id,hch.household_id, hhs.structure_id, hc.server_version from hdss_compound hc " +
+            "    left join hdss_compound_household hch on hch.compound_id = hc.compound_id " +
+            "    left join hdss_household_structure hhs on hhs.household_id = hch.household_id " +
+            "    where structure_id = ? ";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{structureId});
+        List<HdssCompoundHousehold> values = new ArrayList<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+
+                    String compound = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
+
+                    long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
+
+                    HdssCompoundHousehold hdssCompoundHousehold = new HdssCompoundHousehold(compound, householdId, serverVersion);
+                    values.add(hdssCompoundHousehold);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public Map<String, Boolean> getIsAHouseholdByStructureList(List<String> structureIds) {
+
+
+
+        StringBuilder inClause = new StringBuilder();
+        for (int i = 0; i < structureIds.size(); i++) {
+            inClause.append("?");
+            if (i < structureIds.size() - 1) {
+                inClause.append(", ");
+            }
+        }
+        String query = " SELECT hhs.structure_id from hdss_household_structure hhs where hhs.structure_id in (" + inClause + ")";
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        List<String> parameters = new ArrayList<>();
+        parameters.addAll(structureIds);
+
+
+        Cursor cursor = db.rawQuery(query, parameters.toArray(new String[0]));
+        Set<String> values = new HashSet<>();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String structureId = cursor.getString(cursor.getColumnIndexOrThrow(STRUCTURE_ID));
+                    values.add(structureId);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        Map<String, Boolean> map = new HashMap<>();
+        for (String structure:structureIds) {
+            if (values.contains(structure)){
+                map.put(structure,Boolean.TRUE);
+            } else {
+                map.put(structure,Boolean.FALSE);
+            }
+        }
+
+        return map;
+    }
+
 
     public Map<String, HdssIndividual> getIndividualsByStructureId(String structureId) {
 
         String query = "SELECT " + " i." + IDENTIFIER + "," +
-                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ",i.name, i." + SERVER_VERSION
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ",i." + NAME + ", i." + SERVER_VERSION + ","
+                + "i." + FLOATING_LOCATION_ID + ", i." + FLOATING_LOCATION_NAME + ", i." + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
                 + " From " + HDSS_INDIVIDUAL + " i " +
                 " inner join hdss_household_individual hi on hi.individual_id = i.individual_id\n" +
                 " inner join hdss_household_structure hs on hs.household_id = hi.household_id\n" +
@@ -1158,10 +1694,15 @@ public class HdssRepository extends BaseRepository {
                     String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
                     String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
                     long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender,name, serverVersion);
+                    String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+                    String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+                    String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, name, serverVersion,
+                            floatingLocationId, floatingLocationName, floatingLocationGeographicLevel);
                     values.put(identifier, hdssIndividual);
                 } while (cursor.moveToNext());
             }
@@ -1171,16 +1712,17 @@ public class HdssRepository extends BaseRepository {
     }
 
 
-    public  HdssIndividual getIndividualsByHdssId(String id) {
+    public HdssIndividual getIndividualsByHdssId(String id) {
 
         String query = "SELECT " + " i." + IDENTIFIER + "," +
-                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + SERVER_VERSION
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + SERVER_VERSION +  ", i." + NAME + " ,"
+                + "i." + FLOATING_LOCATION_ID + ", i." + FLOATING_LOCATION_NAME + ", i." + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
                 + " From " + HDSS_INDIVIDUAL + " i " +
                 " WHERE i.identifier = ? LIMIT 1";
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, new String[]{id});
-       HdssIndividual values = null;
+        HdssIndividual values = null;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -1188,10 +1730,52 @@ public class HdssRepository extends BaseRepository {
                     String individualId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
                     String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
                     String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
                     long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
-                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender,name, serverVersion);
+                    String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+                    String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+                    String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, individualId, dob, gender, name, serverVersion,
+                            floatingLocationId, floatingLocationName, floatingLocationGeographicLevel);
+                    cursor.close();
+                    return hdssIndividual;
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return values;
+    }
+
+    public HdssIndividual getIndividualByIndividualId(String individualId) {
+
+        String query = "SELECT " + " i." + IDENTIFIER + "," +
+                "i." + INDIVIDUAL_ID + ", i." + DOB + ", i." + GENDER + ", i." + SERVER_VERSION + ", i." + NAME + " ,"
+                + "i." + FLOATING_LOCATION_ID + ", i." + FLOATING_LOCATION_NAME + ", i." + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
+                + " From " + HDSS_INDIVIDUAL + " i " +
+                " WHERE i." + INDIVIDUAL_ID + " = ? LIMIT 1";
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{individualId});
+        HdssIndividual values = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    String identifier = cursor.getString(cursor.getColumnIndexOrThrow(IDENTIFIER));
+                    String indId = cursor.getString(cursor.getColumnIndexOrThrow(INDIVIDUAL_ID));
+                    String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
+                    String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+                    long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
+
+
+                    String floatingLocationId = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_ID));
+                    String floatingLocationName = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_NAME));
+                    String floatingLocationGeographicLevel = cursor.getString(cursor.getColumnIndexOrThrow(FLOATING_LOCATION_GEOGRAPHIC_LEVEL));
+
+                    HdssIndividual hdssIndividual = new HdssIndividual(identifier, indId, dob, gender, name, serverVersion
+                            , floatingLocationId, floatingLocationName, floatingLocationGeographicLevel);
                     cursor.close();
                     return hdssIndividual;
                 } while (cursor.moveToNext());
@@ -1203,6 +1787,43 @@ public class HdssRepository extends BaseRepository {
 
     public Task readTaskCursor(Cursor cursor) {
         Task task = new Task();
+        task.setIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.ID)));
+        task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.PLAN_ID)));
+        task.setGroupIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.GROUP_ID)));
+        if (cursor.getString(cursor.getColumnIndex(TaskRepository.STATUS)) != null) {
+            task.setStatus(Task.TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(TaskRepository.STATUS))));
+        }
+        task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(TaskRepository.BUSINESS_STATUS)));
+        task.setPriority(Task.TaskPriority.valueOf(cursor.getString(cursor.getColumnIndex(TaskRepository.PRIORITY))));
+        task.setCode(cursor.getString(cursor.getColumnIndex(TaskRepository.CODE)));
+        task.setDescription(cursor.getString(cursor.getColumnIndex(TaskRepository.DESCRIPTION)));
+        task.setFocus(cursor.getString(cursor.getColumnIndex(TaskRepository.FOCUS)));
+        task.setForEntity(cursor.getString(cursor.getColumnIndex(TaskRepository.FOR)));
+        Period period = new Period();
+        period.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.START))));
+        period.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.END))));
+        task.setExecutionPeriod(period);
+        task.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.AUTHORED_ON))));
+        task.setLastModified(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.LAST_MODIFIED))));
+        task.setOwner(cursor.getString(cursor.getColumnIndex(TaskRepository.OWNER)));
+        task.setSyncStatus(cursor.getString(cursor.getColumnIndex(TaskRepository.SYNC_STATUS)));
+        task.setServerVersion(cursor.getLong(cursor.getColumnIndex(TaskRepository.SERVER_VERSION)));
+
+        task.setReasonReference(cursor.getString(cursor.getColumnIndex(TaskRepository.REASON_REFERENCE)));
+        task.setLocation(cursor.getString(cursor.getColumnIndex(TaskRepository.LOCATION)));
+        task.setRequester(cursor.getString(cursor.getColumnIndex(TaskRepository.REQUESTER)));
+        Period restrictionPeriod = new Period();
+        restrictionPeriod.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.RESTRICTION_START))));
+        restrictionPeriod.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(TaskRepository.RESTRICTION_END))));
+        Task.Restriction restriction = new Task.Restriction(cursor.getInt(cursor.getColumnIndex(TaskRepository.RESTRICTION_REPEAT)), restrictionPeriod);
+        if (restriction.getRepetitions() != 0 || restrictionPeriod.getStart() != null && restrictionPeriod.getEnd() != null) {
+            task.setRestriction(restriction);
+        }
+        return task;
+    }
+
+    public HdssTask readHdssTaskCursor(Cursor cursor) {
+        HdssTask task = new HdssTask();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.ID)));
         task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.PLAN_ID)));
         task.setGroupIdentifier(cursor.getString(cursor.getColumnIndex(TaskRepository.GROUP_ID)));
