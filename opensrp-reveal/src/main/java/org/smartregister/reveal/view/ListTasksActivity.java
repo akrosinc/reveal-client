@@ -1133,7 +1133,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private BoundaryLayer createBoundaryLayerFromFeatureCollection(FeatureCollection operationalArea) {
         return new BoundaryLayer.Builder(operationalArea)
-//                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
+                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
                 .setLabelColorInt(Color.WHITE)
                 .setBoundaryColor(Color.YELLOW)
                 .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width_thick))

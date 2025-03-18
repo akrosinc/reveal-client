@@ -31,12 +31,7 @@
 
   </LinearLayout>
 
-  <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recyclerView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="16dp"
-    android:layout_below="@id/toolbar" />
+
   <com.google.android.material.appbar.MaterialToolbar
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
@@ -71,4 +66,22 @@
     </RelativeLayout>
 
   </com.google.android.material.appbar.MaterialToolbar>
+  <android.widget.RelativeLayout
+    android:id="@+id/searchLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/toolbar"
+    android:layout_marginTop="8dp">
+
+    <!-- EditText for search input -->
+    <include layout="@layout/recyclerview_search_filter" />
+
+
+  </android.widget.RelativeLayout>
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="16dp"
+    android:layout_below="@id/searchLayout" />
 </android.widget.RelativeLayout>

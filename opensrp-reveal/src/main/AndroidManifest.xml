@@ -82,6 +82,13 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+          android:name=".view.OutstandingIndexCaseHouseholdActivity"
+          android:exported="false"
+          android:launchMode="singleTask"
+          android:screenOrientation="portrait"
+          android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".view.CaptureIndexCaseActivity"
             android:exported="false"
@@ -204,7 +211,10 @@
         <service
             android:name="org.smartregister.sync.intent.HdssSyncIntentService"
             android:exported="false" />
+
         <!-- from base -->
+
+
 
         <service
             android:name="org.smartregister.account.AccountService"

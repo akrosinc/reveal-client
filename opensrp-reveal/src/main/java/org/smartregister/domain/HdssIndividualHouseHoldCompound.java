@@ -22,6 +22,8 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
     private String floatingLocationName;
     private String floatingLocationGeographicLevel;
 
+    private String floatingHouseholdLocationName;
+
     public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name) {
         this.identifier = identifier;
         this.individualId = individualId;
@@ -32,7 +34,7 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
         this.name = name;
     }
 
-    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String structureId, int serverVersion, String name, String floatingLocationId, String floatingLocationName, String floatingLocationGeographicLevel) {
+    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String structureId, int serverVersion, String name, String floatingLocationId, String floatingLocationName, String floatingLocationGeographicLevel, String floatingHouseholdLocationName) {
         this.identifier = identifier;
         this.individualId = individualId;
         this.dob = dob;
@@ -49,6 +51,8 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
         this.floatingLocationId = floatingLocationId;
         this.floatingLocationName = floatingLocationName;
         this.floatingLocationGeographicLevel = floatingLocationGeographicLevel;
+
+        this.floatingHouseholdLocationName = floatingHouseholdLocationName;
     }
 
 //    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name) {

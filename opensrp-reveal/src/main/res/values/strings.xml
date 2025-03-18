@@ -254,6 +254,8 @@
     <string name="last_edited">Edited %1s</string>
     <string name="device_to_device_sync">P2P Sync</string>
     <string name="index_cases">Index Cases</string>
+    <string name="floating_individuals">Floating Individuals</string>
+    <string name="household_index_cases">Household Index Cases</string>
     <string name="structures_surveyed">Structure: SURVEYED</string>
     <string name="structures_found">Structure: FOUND</string>
     <string name="survey_coverage">Survey Coverage</string>

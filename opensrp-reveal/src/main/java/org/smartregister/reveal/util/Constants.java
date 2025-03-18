@@ -672,6 +672,7 @@ public interface Constants {
 
         public static String GDRS_INDEX_CASE = "json.form/gdrs_index_case.json";
 
+        public static String GDRS_INDEX_CASE_FLOATING_HOUSEHOLD = "json.form/gdrs_index_case_floating_household.json";
         public static String GDRS_INDEX_CASE_FLOATING = "json.form/gdrs_index_case_floating_individual.json";
         public static String GDRS_SECONDARY_INDEX_CASE = "gdrs_secondary_index_case.json";
 

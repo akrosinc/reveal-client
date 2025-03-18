@@ -469,6 +469,14 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 MaterialEditText textView = (MaterialEditText) view;
                 textView.setText(item.getField6());
             }
+            if (view.getTag(R.id.key).equals("household")) {
+                MaterialEditText textView = (MaterialEditText) view;
+                textView.setText(item.getField2());
+            }
+            if (view.getTag(R.id.key).equals("compound")) {
+                MaterialEditText textView = (MaterialEditText) view;
+                textView.setText(item.getField1());
+            }
 
         }
         resultTextView.setText(item.getResult());
@@ -481,6 +489,10 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "individual", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "name", item.getField6(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+
+        formFragment.writeValue(stepName, "household", item.getField2(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        formFragment.writeValue(stepName, "compound", item.getField1(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+
 
         if (searchItems != null) {
             searchItems.clear();

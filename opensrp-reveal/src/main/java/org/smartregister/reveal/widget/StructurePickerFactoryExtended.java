@@ -89,752 +89,964 @@ import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
 import io.ona.kujaku.layers.BoundaryLayer;
 import timber.log.Timber;
 
+public class StructurePickerFactoryExtended
+    implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
 
-public class StructurePickerFactoryExtended implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
+  public static final String STRUCTURE_PICKER_FACTORY_EXTENDED = "structure_picker_extended";
 
-    public static final String STRUCTURE_PICKER_FACTORY_EXTENDED = "structure_picker_extended";
+  public static final String ZOOM_LEVEL = "zoom_level";
 
-    public static final String ZOOM_LEVEL = "zoom_level";
+  private static final String MAX_ZOOM_LEVEL = "v_zoom_max";
 
-    private static final String MAX_ZOOM_LEVEL = "v_zoom_max";
+  public static final String OTHER = "other";
 
-    public static final String OTHER = "other";
+  private RevealMapView mapView;
 
-    private RevealMapView mapView;
+  private JsonApi jsonApi;
 
-    private JsonApi jsonApi;
+  private static com.mapbox.geojson.Feature operationalArea = null;
 
-    private static com.mapbox.geojson.Feature operationalArea = null;
+  private ImageButton myLocationButton;
 
-    private ImageButton myLocationButton;
+  private RevealMapHelper mapHelper = new RevealMapHelper();
 
-    private RevealMapHelper mapHelper = new RevealMapHelper();
+  private boolean autoSizeGeoWidget = true;
 
-    private boolean autoSizeGeoWidget = true;
+  private GeoFencingValidator geoFencingValidator;
 
-    private GeoFencingValidator geoFencingValidator;
+  private GeoJsonSource geoJsonSource;
+  private GeoJsonSource geoJsonSourceLine;
+  private LabelLayer householdLabelLayer;
+  private String key;
 
-    private GeoJsonSource geoJsonSource;
-    private GeoJsonSource geoJsonSourceLine;
-    private LabelLayer householdLabelLayer;
-    private String key;
+  private String step;
 
-    private String step;
+  private String structureId;
 
-    private String structureId;
+  Dialog noHouseholdDialog;
+  Dialog manyHouseholdDialog;
 
-    Dialog noHouseholdDialog;
-    Dialog manyHouseholdDialog;
+  private String compound;
 
-    private String compound;
+  private String household;
 
-    private String household;
+  private HdssRepository hdssRepository;
 
-    private HdssRepository hdssRepository;
+  public StructurePickerFactoryExtended() {}
 
-    public StructurePickerFactoryExtended() {
-    }
+  public StructurePickerFactoryExtended(boolean autoSizeGeoWidget) {
+    this.autoSizeGeoWidget = autoSizeGeoWidget;
+  }
 
-    public StructurePickerFactoryExtended(boolean autoSizeGeoWidget) {
-        this.autoSizeGeoWidget = autoSizeGeoWidget;
-    }
+  private @NonNull Dialog setupNoHouseholdDialog(Context context, View anchorView) {
+    Dialog dialog = new Dialog(context);
+    dialog.setContentView(R.layout.index_case_missing_capture);
 
-    private  @NonNull Dialog setupNoHouseholdDialog(Context context, View anchorView) {
-        Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.index_case_missing_capture);
+    Button closebutton = dialog.findViewById(R.id.saveButton);
 
-        Button closebutton = dialog.findViewById(R.id.saveButton);
+    EditText compoundText = dialog.findViewById(R.id.compoundText);
+    EditText householdText = dialog.findViewById(R.id.householdText);
 
-        EditText compoundText = dialog.findViewById(R.id.compoundText);
-        EditText householdText = dialog.findViewById(R.id.householdText);
+    TextView error = dialog.findViewById(R.id.error);
+    View errorLayout = dialog.findViewById(R.id.errorLayout);
 
-        TextView error = dialog.findViewById(R.id.error);
-        View errorLayout = dialog.findViewById(R.id.errorLayout);
+    closebutton.setText("Save");
+    closebutton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
 
-        closebutton.setText("Save");
-        closebutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())
-                    && (householdText.getText() == null || householdText.getText().toString().isEmpty())){
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_compound_and_household);
-                } else if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())) {
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_compound);
-                } else if ((householdText.getText() == null || householdText.getText().toString().isEmpty())) {
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_household);
-                } else {
-                    household = householdText.getText().toString();
-                    compound = compoundText.getText().toString();
-                    mapView.setTag(R.string.capture_household,household);
-                    mapView.setTag(R.string.capture_compound,compound);
-                    dialog.dismiss();
-                }
+            if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())
+                && (householdText.getText() == null
+                    || householdText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_compound_and_household);
+            } else if ((compoundText.getText() == null
+                || compoundText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_compound);
+            } else if ((householdText.getText() == null
+                || householdText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_household);
+            } else {
+              household = householdText.getText().toString();
+              compound = compoundText.getText().toString();
+              mapView.setTag(R.string.capture_household, household);
+              mapView.setTag(R.string.capture_compound, compound);
+              dialog.dismiss();
             }
+          }
         });
 
-        ImageButton closeButton = dialog.findViewById(R.id.close_button);
+    ImageButton closeButton = dialog.findViewById(R.id.close_button);
 
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                household = null;
-                compound = null;
-                dialog.dismiss();
-            }
+    closeButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            household = null;
+            compound = null;
+            dialog.dismiss();
+          }
         });
 
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-            params.gravity = Gravity.TOP | Gravity.START; // Align to top left
-            dialog.getWindow().setAttributes(params);
-        }
-        return dialog;
+    if (dialog.getWindow() != null) {
+      dialog
+          .getWindow()
+          .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+      params.gravity = Gravity.TOP | Gravity.START; // Align to top left
+      dialog.getWindow().setAttributes(params);
     }
-    private  @NonNull Dialog setupManyHouseholdDialog(Context context, View anchorView) {
-        Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.index_case_missing_capture);
+    return dialog;
+  }
 
-        Button closebutton = dialog.findViewById(R.id.saveButton);
+  private @NonNull Dialog setupManyHouseholdDialog(Context context, View anchorView) {
+    Dialog dialog = new Dialog(context);
+    dialog.setContentView(R.layout.index_case_missing_capture);
 
-        EditText compoundText = dialog.findViewById(R.id.compoundText);
-        EditText householdText = dialog.findViewById(R.id.householdText);
+    Button closebutton = dialog.findViewById(R.id.saveButton);
 
-        TextView error = dialog.findViewById(R.id.error);
-        View errorLayout = dialog.findViewById(R.id.errorLayout);
+    EditText compoundText = dialog.findViewById(R.id.compoundText);
+    EditText householdText = dialog.findViewById(R.id.householdText);
 
-        closebutton.setText("Save");
-        closebutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    TextView error = dialog.findViewById(R.id.error);
+    View errorLayout = dialog.findViewById(R.id.errorLayout);
 
-                if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())
-                        && (householdText.getText() == null || householdText.getText().toString().isEmpty())){
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_compound_and_household);
-                } else if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())) {
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_compound);
-                } else if ((householdText.getText() == null || householdText.getText().toString().isEmpty())) {
-                    errorLayout.setVisibility(View.VISIBLE);
-                    error.setText(R.string.must_capture_household);
-                } else {
-                    household = householdText.getText().toString();
-                    compound = compoundText.getText().toString();
-                    mapView.setTag(R.string.capture_household,household);
-                    mapView.setTag(R.string.capture_compound,compound);
-                    dialog.dismiss();
-                }
+    closebutton.setText("Save");
+    closebutton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+
+            if ((compoundText.getText() == null || compoundText.getText().toString().isEmpty())
+                && (householdText.getText() == null
+                    || householdText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_compound_and_household);
+            } else if ((compoundText.getText() == null
+                || compoundText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_compound);
+            } else if ((householdText.getText() == null
+                || householdText.getText().toString().isEmpty())) {
+              errorLayout.setVisibility(View.VISIBLE);
+              error.setText(R.string.must_capture_household);
+            } else {
+              household = householdText.getText().toString();
+              compound = compoundText.getText().toString();
+              mapView.setTag(R.string.capture_household, household);
+              mapView.setTag(R.string.capture_compound, compound);
+              dialog.dismiss();
             }
+          }
         });
 
-        ImageButton closeButton = dialog.findViewById(R.id.close_button);
+    ImageButton closeButton = dialog.findViewById(R.id.close_button);
 
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                household = null;
-                compound = null;
-                dialog.dismiss();
-            }
+    closeButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            household = null;
+            compound = null;
+            dialog.dismiss();
+          }
         });
 
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-            params.gravity = Gravity.TOP | Gravity.START; // Align to top left
-            dialog.getWindow().setAttributes(params);
-        }
-        return dialog;
+    if (dialog.getWindow() != null) {
+      dialog
+          .getWindow()
+          .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+      params.gravity = Gravity.TOP | Gravity.START; // Align to top left
+      dialog.getWindow().setAttributes(params);
     }
+    return dialog;
+  }
 
-    public static ValidationStatus validate(JsonFormFragmentView formFragmentView, RevealMapView mapView, JsonFormFragmentPresenter presenter) {
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: is this being called?");
-        writeValues(mapView, formFragmentView);
+  public static ValidationStatus validate(
+      JsonFormFragmentView formFragmentView,
+      RevealMapView mapView,
+      JsonFormFragmentPresenter presenter) {
+    writeValues(mapView, formFragmentView);
 
-        if (mapView.getCameraPosition() != null) {
-            if (!Utils.isEmptyCollection(mapView.getValidators())) {
-                for (METValidator validator : mapView.getValidators()) {
-                    if (validator instanceof MinZoomValidator) {
-                        Double zoom = mapView.getMapboxMapZoom();
-                        if (zoom != null && !validator.isValid(String.valueOf(zoom), false)) {
-                            Toast.makeText(formFragmentView.getContext(), validator.getErrorMessage(), Toast.LENGTH_LONG).show();
-                            return new ValidationStatus(false, validator.getErrorMessage(), formFragmentView, mapView);
+    if (mapView.getCameraPosition() != null) {
+      if (!Utils.isEmptyCollection(mapView.getValidators())) {
+        for (METValidator validator : mapView.getValidators()) {
+          if (validator instanceof MinZoomValidator) {
+            Double zoom = mapView.getMapboxMapZoom();
+            if (zoom != null && !validator.isValid(String.valueOf(zoom), false)) {
+              Toast.makeText(
+                      formFragmentView.getContext(), validator.getErrorMessage(), Toast.LENGTH_LONG)
+                  .show();
+              return new ValidationStatus(
+                  false, validator.getErrorMessage(), formFragmentView, mapView);
+            }
+          } else if ((validator instanceof GeoFencingValidator)
+              && !validator.isValid("", true)
+              && isGeoFencedEnabled()) {
+            // perform within op area validation
+            GeoFencingValidator geoFencingValidator = (GeoFencingValidator) validator;
+
+            int title = R.string.register_outside_boundary_title;
+            int message = R.string.register_outside_boundary_warning;
+            int positiveLabel = R.string.register;
+            int negativeLabel = R.string.cancel;
+            Object[] formatAgs = new String[] {};
+
+            if (geoFencingValidator.getErrorId() != 0) {
+              message = geoFencingValidator.getErrorId();
+              formatAgs = geoFencingValidator.getErrorMessageArgs();
+              if (R.string.other_operational_area_not_defined == geoFencingValidator.getErrorId()
+                  || geoFencingValidator.isOperationalAreaOther()) {
+                positiveLabel = R.string.ok;
+                negativeLabel = 0;
+              } else {
+                positiveLabel = R.string.add_point;
+                negativeLabel = R.string.undo;
+              }
+            }
+
+            int finalMessage = message;
+            AlertDialogUtils.displayNotificationWithCallback(
+                formFragmentView.getContext(),
+                title,
+                finalMessage,
+                positiveLabel,
+                negativeLabel,
+                new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                      case BUTTON_POSITIVE:
+                        if (R.string.other_operational_area_not_defined == finalMessage
+                            || geoFencingValidator.isOperationalAreaOther()) {
+                          break;
+                        } else if (R.string.point_within_known_operational_area == finalMessage
+                            || R.string.point_not_within_known_operational_area == finalMessage) {
+                          writeValues(
+                              mapView,
+                              formFragmentView,
+                              geoFencingValidator.getSelectedOperationalArea());
+                          Context context = formFragmentView.getContext();
+                          Toast.makeText(
+                                  context,
+                                  context.getString(
+                                      R.string.add_structure_form_redirecting,
+                                      geoFencingValidator.getSelectedOperationalArea()),
+                                  Toast.LENGTH_LONG)
+                              .show();
                         }
-                    } else if ((validator instanceof GeoFencingValidator)
-                            && !validator.isValid("", true)
-                            && isGeoFencedEnabled()) {
-                        // perform within op area validation
-                        GeoFencingValidator geoFencingValidator = (GeoFencingValidator) validator;
-
-                        int title = R.string.register_outside_boundary_title;
-                        int message = R.string.register_outside_boundary_warning;
-                        int positiveLabel = R.string.register;
-                        int negativeLabel = R.string.cancel;
-                        Object[] formatAgs = new String[]{};
-
-                        if (geoFencingValidator.getErrorId() != 0) {
-                            message = geoFencingValidator.getErrorId();
-                            formatAgs = geoFencingValidator.getErrorMessageArgs();
-                            if (R.string.other_operational_area_not_defined == geoFencingValidator.getErrorId() || geoFencingValidator.isOperationalAreaOther()) {
-                                positiveLabel = R.string.ok;
-                                negativeLabel = 0;
-                            } else {
-                                positiveLabel = R.string.add_point;
-                                negativeLabel = R.string.undo;
-                            }
-                        }
-
-                        int finalMessage = message;
-                        AlertDialogUtils.displayNotificationWithCallback(formFragmentView.getContext(), title, finalMessage, positiveLabel, negativeLabel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which) {
-                                    case BUTTON_POSITIVE:
-                                        if (R.string.other_operational_area_not_defined == finalMessage || geoFencingValidator.isOperationalAreaOther()) {
-                                            break;
-                                        } else if (R.string.point_within_known_operational_area == finalMessage || R.string.point_not_within_known_operational_area == finalMessage) {
-                                            writeValues(mapView, formFragmentView, geoFencingValidator.getSelectedOperationalArea());
-                                            Context context = formFragmentView.getContext();
-                                            Toast.makeText(context, context.getString(R.string.add_structure_form_redirecting, geoFencingValidator.getSelectedOperationalArea()), Toast.LENGTH_LONG).show();
-                                        }
-                                        geoFencingValidator.setDisabled(true);
-                                        presenter.validateAndWriteValues();
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        }, formatAgs);
-
-                        return new ValidationStatus(false, validator.getErrorMessage(), formFragmentView, mapView);
-
+                        geoFencingValidator.setDisabled(true);
+                        presenter.validateAndWriteValues();
+                        break;
+                      default:
+                        break;
                     }
-                }
-            }
+                  }
+                },
+                formatAgs);
+
+            return new ValidationStatus(
+                false, validator.getErrorMessage(), formFragmentView, mapView);
+          }
         }
-
-        return new ValidationStatus(true, null, null, null);
+      }
     }
 
-    private static void writeValues(RevealMapView mapView, JsonFormFragmentView formFragmentView) {
-//        Timber.d("writeValues: %s ", mapView.getCameraPosition().target);
-        ImageButton myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
-        String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
-        String key = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.key));
-        String openMrsEntityParent = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
-        String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
-        String openMrsEntityId = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
-        String structureId = String.valueOf(mapView.getTag(R.id.structure_id));
+    return new ValidationStatus(true, null, null, null);
+  }
 
-        Object compoundTag = mapView.getTag(R.string.capture_compound);
-        Object householdTag = mapView.getTag(R.string.capture_household);
+  private static void writeValues(RevealMapView mapView, JsonFormFragmentView formFragmentView) {
+    //        Timber.d("writeValues: %s ", mapView.getCameraPosition().target);
+    ImageButton myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+    String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
+    String key = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.key));
+    String openMrsEntityParent =
+        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
+    String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
+    String openMrsEntityId =
+        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
+    String structureId = String.valueOf(mapView.getTag(R.id.structure_id));
 
-        if (mapView != null && mapView.getCameraPosition() != null) {
-            writeValues(formFragmentView, stepName, structureId, key,
-                    openMrsEntityParent, openMrsEntity, openMrsEntityId,
-                    mapView.getMapboxMapZoom(),
-                    new RevealMapHelper().isMyLocationComponentActive(formFragmentView.getContext(), myLocationButton));
+    Object compoundTag = mapView.getTag(R.string.capture_compound);
+    Object householdTag = mapView.getTag(R.string.capture_household);
 
-            if (compoundTag!=null){
-                formFragmentView.writeValue(stepName, "captured_compound", String.valueOf(compoundTag), openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            }
+    if (mapView != null && mapView.getCameraPosition() != null) {
+      writeValues(
+          formFragmentView,
+          stepName,
+          structureId,
+          key,
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId,
+          mapView.getMapboxMapZoom(),
+          new RevealMapHelper()
+              .isMyLocationComponentActive(formFragmentView.getContext(), myLocationButton));
 
-            if (householdTag!=null){
-                formFragmentView.writeValue(stepName, "captured_household", String.valueOf(householdTag), openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            }
+      if (compoundTag != null) {
+        formFragmentView.writeValue(
+            stepName,
+            "captured_compound",
+            String.valueOf(compoundTag),
+            openMrsEntityParent,
+            openMrsEntity,
+            openMrsEntityId,
+            false);
+      }
+
+      if (householdTag != null) {
+        formFragmentView.writeValue(
+            stepName,
+            "captured_household",
+            String.valueOf(householdTag),
+            openMrsEntityParent,
+            openMrsEntity,
+            openMrsEntityId,
+            false);
+      }
+    }
+  }
+
+  @Override
+  public List<View> getViewsFromJson(
+      String stepName,
+      Context context,
+      JsonFormFragment formFragment,
+      JSONObject jsonObject,
+      CommonListener listener)
+      throws Exception {
+    return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
+  }
+
+  @NonNull
+  @Override
+  public Set<String> getCustomTranslatableWidgetFields() {
+    return null;
+  }
+
+  private LabelLayer createHouseholdLabelLayer(FeatureCollection structures) {
+    return new LabelLayer.Builder(structures)
+        .setLabelProperty("isAHousehold")
+        .setLabelColorInt(Color.BLACK)
+        .build();
+  }
+
+  @Override
+  public List<View> getViewsFromJson(
+      String stepName,
+      Context context,
+      JsonFormFragment formFragment,
+      JSONObject jsonObject,
+      CommonListener listener,
+      boolean popup)
+      throws Exception {
+    jsonApi = ((JsonApi) context);
+    jsonApi.registerLifecycleListener(this);
+    String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
+    String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
+    String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
+    String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
+    key = jsonObject.optString(JsonFormConstants.KEY);
+    step = stepName;
+
+    hdssRepository = RevealApplication.getInstance().getHdssRepository();
+
+    String value = jsonObject.optString(JsonFormConstants.VALUE);
+
+    List<View> views = new ArrayList<>(1);
+
+    final int canvasId = ViewUtil.generateViewId();
+
+    LinearLayout linearLayout =
+        (LinearLayout) LayoutInflater.from(context).inflate(R.layout.structure_picker, null);
+
+    mapView = linearLayout.findViewById(R.id.geoWidgetMapView);
+
+    if (mapView.getParent() != null) {
+      ((ViewGroup) mapView.getParent()).removeView(mapView);
+    }
+
+    String operationalArea = null;
+    String featureCollection = null;
+    boolean locationComponentActive = false;
+    com.mapbox.geojson.Feature selectedFeature = null;
+
+    try {
+      com.mapbox.geojson.Feature operationalArea1 =
+          RevealApplication.getInstance().getOperationalArea();
+      operationalArea = operationalArea1.toJson();
+      FeatureCollection featureCollection1 = RevealApplication.getInstance().getFeatureCollection();
+
+      if (featureCollection1.features() != null && !featureCollection1.features().isEmpty()) {
+
+        for (com.mapbox.geojson.Feature feature : featureCollection1.features()) {
+          String id = feature.id();
+          if (id != null && StringUtils.isNotBlank(value) && id.equals(value)) {
+            selectedFeature = feature;
+          }
         }
+      }
+      featureCollection = featureCollection1.toJson();
+      locationComponentActive =
+          new JSONObject(formFragment.getCurrentJsonState()).optBoolean(LOCATION_COMPONENT_ACTIVE);
+
+    } catch (JSONException e) {
+      Timber.tag("Reveal Exception").w(e, "error extracting geojson form jsonform");
+    } catch (Exception e) {
+      Timber.tag("RevealMap").i("StructurePickerFactoryExtended: this is causing the failure");
     }
+    mapView.setId(canvasId);
+    mapView.onCreate(null);
+    mapView.setDisableMyLocationOnMapMove(true);
+    mapView.getMapboxLocationComponentWrapper().setOnLocationComponentInitializedCallback(this);
 
-    @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener) throws Exception {
-        return getViewsFromJson(stepName, context, formFragment, jsonObject, listener, false);
-    }
+    myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+    com.mapbox.geojson.Feature operationalAreaFeature =
+        com.mapbox.geojson.Feature.fromJson(operationalArea);
+    this.operationalArea = operationalAreaFeature;
 
-    @NonNull
-    @Override
-    public Set<String> getCustomTranslatableWidgetFields() {
-        return null;
-    }
-    private LabelLayer createHouseholdLabelLayer(FeatureCollection structures) {
-        return new LabelLayer.Builder(structures)
-                .setLabelProperty("isAHousehold")
-                .setLabelColorInt(Color.BLACK)
-                .build();
-    }
-    @Override
-    public List<View> getViewsFromJson(String stepName, Context context, JsonFormFragment formFragment, JSONObject jsonObject, CommonListener listener, boolean popup) throws Exception {
-        jsonApi = ((JsonApi) context);
-        jsonApi.registerLifecycleListener(this);
-        String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
-        String openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY);
-        String openMrsEntityId = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_ID);
-        String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
-        key = jsonObject.optString(JsonFormConstants.KEY);
-        step = stepName;
+    createBoundaryLayer(operationalAreaFeature, context);
+    String finalFeatureCollection = featureCollection;
 
-        hdssRepository = RevealApplication.getInstance().getHdssRepository();
+    boolean finalLocationComponentActive = locationComponentActive;
+    com.mapbox.geojson.Feature finalSelectedFeature = selectedFeature;
+    mapView.getMapAsync(
+        new OnMapReadyCallback() {
+          @Override
+          public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
-        String value = jsonObject.optString(JsonFormConstants.VALUE);
+            String satelliteStyle = getSatelliteStyle(context);
+            Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
 
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: value %s", value);
-
-        List<View> views = new ArrayList<>(1);
-
-        final int canvasId = ViewUtil.generateViewId();
-
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(context)
-                .inflate(R.layout.structure_picker, null);
-
-        mapView = linearLayout.findViewById(R.id.geoWidgetMapView);
-
-        if (mapView.getParent() != null) {
-            ((ViewGroup) mapView.getParent()).removeView(mapView);
-        }
-
-
-        String operationalArea = null;
-        String featureCollection = null;
-        boolean locationComponentActive = false;
-        com.mapbox.geojson.Feature selectedFeature = null;
-
-        try {
-            com.mapbox.geojson.Feature operationalArea1 = RevealApplication.getInstance().getOperationalArea();
-            Timber.tag("RevealMap").i("StructurePickerFactoryExtended: operationalArea1 %s", operationalArea1);
-            operationalArea = operationalArea1.toJson();
-            Timber.tag("RevealMap").i("StructurePickerFactoryExtended: operationalArea %s", operationalArea);
-            FeatureCollection featureCollection1 = RevealApplication.getInstance().getFeatureCollection();
-
-            if (featureCollection1.features() != null && !featureCollection1.features().isEmpty()) {
-
-                for (com.mapbox.geojson.Feature feature : featureCollection1.features()) {
-                    String id = feature.id();
-                    Timber.tag("RevealMap").i("StructurePickerFactoryExtended: feature id %s", id);
-                    if (id != null && StringUtils.isNotBlank(value) && id.equals(value)) {
-                        selectedFeature = feature;
-                    }
-                }
-            }
-            featureCollection = featureCollection1.toJson();
-            locationComponentActive = new JSONObject(formFragment.getCurrentJsonState()).optBoolean(LOCATION_COMPONENT_ACTIVE);
-
-        } catch (JSONException e) {
-            Timber.tag("Reveal Exception").w(e, "error extracting geojson form jsonform");
-        } catch (Exception e) {
-            Timber.tag("RevealMap").i("StructurePickerFactoryExtended: this is causing the failure");
-        }
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 1");
-        mapView.setId(canvasId);
-        mapView.onCreate(null);
-        mapView.setDisableMyLocationOnMapMove(true);
-        mapView.getMapboxLocationComponentWrapper().setOnLocationComponentInitializedCallback(this);
-
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 1.1");
-        myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 1.1.1");
-        com.mapbox.geojson.Feature operationalAreaFeature = com.mapbox.geojson.Feature.fromJson(operationalArea);
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 1.2");
-        this.operationalArea = operationalAreaFeature;
-
-        createBoundaryLayer(operationalAreaFeature, context);
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 2");
-        String finalFeatureCollection = featureCollection;
-
-
-        boolean finalLocationComponentActive = locationComponentActive;
-        com.mapbox.geojson.Feature finalSelectedFeature = selectedFeature;
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-
-                String satelliteStyle = getSatelliteStyle(context);
-                Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
-
-                mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        geoJsonSource = style.getSourceAs(context.getString(R.string.reveal_datasource_name));
-                        geoJsonSourceLine = style.getSourceAs(context.getString(R.string.selected_datasource_name));
-                        if (geoJsonSourceLine == null) {
-                            Timber.tag("RevealMap").i("geoJsonSourceLine is null");
-                        } else {
-                            if (finalSelectedFeature != null) {
-                                FeatureCollection selectedFeatureCollection = FeatureCollection.fromFeature(finalSelectedFeature);
-                                geoJsonSourceLine.setGeoJson(selectedFeatureCollection);
-                            }
-                        }
-                        if (geoJsonSource != null) {
-                            Timber.tag("RevealMap").i("geoJsonSource is not null");
-                        }
-
-                        if (geoJsonSource != null && StringUtils.isNotBlank(finalFeatureCollection)) {
-                            geoJsonSource.setGeoJson(FeatureCollection.fromJson(finalFeatureCollection));
-
-                            if (householdLabelLayer!=null){
-                                householdLabelLayer.removeLayerOnMap(mapView.getMapboxMap());
-                            }
-
-                            householdLabelLayer = createHouseholdLabelLayer(FeatureCollection.fromJson(finalFeatureCollection));
-                            mapView.addLayer(householdLabelLayer);
-                        }
-
-                        String baseMapFeatureString = AssetHandler.readFileFromAssetsFolder(context.getString(R.string.base_map_feature_json), context);
-
-                        if (BuildConfig.DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK) {
-                            RevealMapHelper.addOutOfBoundaryMask(style, operationalAreaFeature,
-                                    com.mapbox.geojson.Feature.fromJson(baseMapFeatureString), context);
-                        }
-
-                        RevealMapHelper.addCustomLayers(style, context);
-
-                        mapView.setMapboxMap(mapboxMap);
-
-                        RevealMapHelper.addBaseLayers(mapView, style, context);
-                    }
-                });
-
-                mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
-
-                mapView.setMapboxMap(mapboxMap);
-                float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure()) / getPixelsPerDPI(context.getResources());
-                mapView.setLocationBufferRadius(bufferRadius);
-
-
-                if (finalSelectedFeature != null || (operationalAreaFeature != null && !finalLocationComponentActive)) {
-                    CameraPosition cameraPosition;
-                    if (finalSelectedFeature != null) {
-                        cameraPosition = mapboxMap.getCameraForGeometry(finalSelectedFeature.geometry());
-                        mapboxMap.setCameraPosition(new CameraPosition.Builder().target(cameraPosition.target).zoom(19.1).build());
-
+            mapboxMap.setStyle(
+                builder,
+                new Style.OnStyleLoaded() {
+                  @Override
+                  public void onStyleLoaded(@NonNull Style style) {
+                    geoJsonSource =
+                        style.getSourceAs(context.getString(R.string.reveal_datasource_name));
+                    geoJsonSourceLine =
+                        style.getSourceAs(context.getString(R.string.selected_datasource_name));
+                    if (geoJsonSourceLine == null) {
+                      Timber.tag("RevealMap").i("geoJsonSourceLine is null");
                     } else {
-                        cameraPosition = mapboxMap.getCameraForGeometry(operationalAreaFeature.geometry());
-                        mapboxMap.setCameraPosition(cameraPosition);
+                      if (finalSelectedFeature != null) {
+                        FeatureCollection selectedFeatureCollection =
+                            FeatureCollection.fromFeature(finalSelectedFeature);
+                        geoJsonSourceLine.setGeoJson(selectedFeatureCollection);
+                      }
                     }
-                } else {
-                    mapView.focusOnUserLocation(true, bufferRadius, RenderMode.COMPASS);
-                }
-
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                    @Override
-                    public boolean onMapClick(@NonNull LatLng point) {
-                        Timber.tag("RevealMap").i("clicked on point %s", String.valueOf(point.getLatitude()));
-                        final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
-                        List<com.mapbox.geojson.Feature> features = mapboxMap.queryRenderedFeatures(pixel,
-                                context.getString(R.string.reveal_layer_polygons), context.getString(R.string.reveal_layer_points));
-                        if (features.isEmpty()) {//try to increase the click area
-                            RectF clickArea = new RectF(pixel.x - CLICK_SELECT_RADIUS,
-                                    pixel.y + CLICK_SELECT_RADIUS, pixel.x + CLICK_SELECT_RADIUS,
-                                    pixel.y - CLICK_SELECT_RADIUS);
-                            features = mapboxMap.queryRenderedFeatures(clickArea,
-                                    context.getString(R.string.reveal_layer_polygons), context.getString(R.string.reveal_layer_points));
-                            Timber.d("Selected structure after increasing click area: " + features.size());
-                            if (features.size() == 1) {
-
-                                onFeatureSelected(features.get(0), formFragment, stepName, openMrsEntityParent, openMrsEntity, openMrsEntityId, key);
-                            } else {
-                                Timber.d("Not Selected structure after increasing click area: " + features.size());
-                            }
-                        } else {
-                            onFeatureSelected(features.get(0), formFragment, stepName, openMrsEntityParent, openMrsEntity, openMrsEntityId, key);
-                            if (features.size() > 1) {
-                                Timber.w("Selected more than 1 structure: " + features.size());
-                            }
-                        }
-                        return false;
+                    if (geoJsonSource != null) {
+                      Timber.tag("RevealMap").i("geoJsonSource is not null");
                     }
+
+                    if (geoJsonSource != null && StringUtils.isNotBlank(finalFeatureCollection)) {
+                      geoJsonSource.setGeoJson(FeatureCollection.fromJson(finalFeatureCollection));
+
+                      if (householdLabelLayer != null) {
+                        householdLabelLayer.removeLayerOnMap(mapView.getMapboxMap());
+                      }
+
+                      householdLabelLayer =
+                          createHouseholdLabelLayer(
+                              FeatureCollection.fromJson(finalFeatureCollection));
+                      mapView.addLayer(householdLabelLayer);
+                    }
+
+                    String baseMapFeatureString =
+                        AssetHandler.readFileFromAssetsFolder(
+                            context.getString(R.string.base_map_feature_json), context);
+
+                    if (BuildConfig.DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK) {
+                      RevealMapHelper.addOutOfBoundaryMask(
+                          style,
+                          operationalAreaFeature,
+                          com.mapbox.geojson.Feature.fromJson(baseMapFeatureString),
+                          context);
+                    }
+
+                    RevealMapHelper.addCustomLayers(style, context);
+
+                    mapView.setMapboxMap(mapboxMap);
+
+                    RevealMapHelper.addBaseLayers(mapView, style, context);
+                  }
                 });
+
+            mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
+
+            mapView.setMapboxMap(mapboxMap);
+            float bufferRadius =
+                getLocationBuffer(isCurrentTargetLevelStructure())
+                    / getPixelsPerDPI(context.getResources());
+            mapView.setLocationBufferRadius(bufferRadius);
+
+            if (finalSelectedFeature != null
+                || (operationalAreaFeature != null && !finalLocationComponentActive)) {
+              CameraPosition cameraPosition;
+              if (finalSelectedFeature != null) {
+                cameraPosition = mapboxMap.getCameraForGeometry(finalSelectedFeature.geometry());
+                mapboxMap.setCameraPosition(
+                    new CameraPosition.Builder().target(cameraPosition.target).zoom(19.1).build());
+
+              } else {
+                cameraPosition = mapboxMap.getCameraForGeometry(operationalAreaFeature.geometry());
+                mapboxMap.setCameraPosition(cameraPosition);
+              }
+            } else {
+              mapView.focusOnUserLocation(true, bufferRadius, RenderMode.COMPASS);
             }
-        });
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 3");
-        JSONArray canvasIdsArray = new JSONArray();
-        canvasIdsArray.put(canvasId);
-        mapView.setTag(com.vijay.jsonwizard.R.id.canvas_ids, canvasIdsArray.toString());
-        mapView.setTag(com.vijay.jsonwizard.R.id.address, stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
-        mapView.setTag(com.vijay.jsonwizard.R.id.key, jsonObject.getString(JsonFormConstants.KEY));
-        mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent, openMrsEntityParent);
-        mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity, openMrsEntity);
-        mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity_id, openMrsEntityId);
-        mapView.setTag(com.vijay.jsonwizard.R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
-        mapView.setTag(com.vijay.jsonwizard.R.id.step_title, stepName);
-        mapView.setTag(com.vijay.jsonwizard.R.id.extraPopup, false);
 
-        if (relevance != null) {
-            mapView.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
-            ((JsonApi) context).addSkipLogicView(mapView);
-        }
+            mapboxMap.addOnMapClickListener(
+                new MapboxMap.OnMapClickListener() {
+                  @Override
+                  public boolean onMapClick(@NonNull LatLng point) {
+                    Timber.tag("RevealMap")
+                        .i("clicked on point %s", String.valueOf(point.getLatitude()));
+                    final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
+                    List<com.mapbox.geojson.Feature> features =
+                        mapboxMap.queryRenderedFeatures(
+                            pixel,
+                            context.getString(R.string.reveal_layer_polygons),
+                            context.getString(R.string.reveal_layer_points));
+                    if (features.isEmpty()) { // try to increase the click area
+                      RectF clickArea =
+                          new RectF(
+                              pixel.x - CLICK_SELECT_RADIUS,
+                              pixel.y + CLICK_SELECT_RADIUS,
+                              pixel.x + CLICK_SELECT_RADIUS,
+                              pixel.y - CLICK_SELECT_RADIUS);
+                      features =
+                          mapboxMap.queryRenderedFeatures(
+                              clickArea,
+                              context.getString(R.string.reveal_layer_polygons),
+                              context.getString(R.string.reveal_layer_points));
+                      Timber.d(
+                          "Selected structure after increasing click area: " + features.size());
+                      if (features.size() == 1) {
 
-        ((JsonApi) context).addFormDataView(mapView);
-
-        if (autoSizeGeoWidget) {
-            mapView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
-        } else {
-            DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-            int mapViewHeight = displayMetrics.heightPixels / 2;
-
-            mapView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mapViewHeight));
-        }
-
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 4");
-        addMaximumZoomLevel(jsonObject, mapView);
-        addGeoFencingValidator(context);
-        LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
-        RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> {
-            Location parentLocation = locationRepository.getLocationById(operationalAreaFeature.id());
-            String parentId = parentLocation != null ? parentLocation.getProperties().getParentId() : null;
-            String operationalLevel = operationalAreaFeature.getStringProperty("geographicLevel");
-            List<Location> allLocations = locationRepository.getAllLocations().stream()
-                    .filter(location -> (operationalLevel.equals(location.getProperties().getGeographicLevel()) || location.getProperties().getName().toLowerCase().contains(OTHER)))
-                    .collect(Collectors.toList());
-            for (Location location : allLocations) {
-                if (!location.getId().equals(operationalAreaFeature.id())) {
-                    com.mapbox.geojson.Feature feature = convertFromLocation(location);
-                    if (feature != null) {
-                        if (location.getProperties().getParentId() != null && location.getProperties().getParentId().equals(parentId) && location.getProperties().getName().toLowerCase().contains(OTHER)) {
-                            geoFencingValidator.setOtherOperationalArea(feature);
-                        }
-                        geoFencingValidator.getOperationalAreas().add(feature);
-
+                        onFeatureSelected(
+                            features.get(0),
+                            formFragment,
+                            stepName,
+                            openMrsEntityParent,
+                            openMrsEntity,
+                            openMrsEntityId,
+                            key);
+                      } else {
+                        Timber.d(
+                            "Not Selected structure after increasing click area: "
+                                + features.size());
+                      }
+                    } else {
+                      onFeatureSelected(
+                          features.get(0),
+                          formFragment,
+                          stepName,
+                          openMrsEntityParent,
+                          openMrsEntity,
+                          openMrsEntityId,
+                          key);
+                      if (features.size() > 1) {
+                        Timber.w("Selected more than 1 structure: " + features.size());
+                      }
                     }
+                    return false;
+                  }
+                });
+          }
+        });
+    JSONArray canvasIdsArray = new JSONArray();
+    canvasIdsArray.put(canvasId);
+    mapView.setTag(com.vijay.jsonwizard.R.id.canvas_ids, canvasIdsArray.toString());
+    mapView.setTag(
+        com.vijay.jsonwizard.R.id.address,
+        stepName + ":" + jsonObject.getString(JsonFormConstants.KEY));
+    mapView.setTag(com.vijay.jsonwizard.R.id.key, jsonObject.getString(JsonFormConstants.KEY));
+    mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent, openMrsEntityParent);
+    mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity, openMrsEntity);
+    mapView.setTag(com.vijay.jsonwizard.R.id.openmrs_entity_id, openMrsEntityId);
+    mapView.setTag(com.vijay.jsonwizard.R.id.type, jsonObject.getString(JsonFormConstants.TYPE));
+    mapView.setTag(com.vijay.jsonwizard.R.id.step_title, stepName);
+    mapView.setTag(com.vijay.jsonwizard.R.id.extraPopup, false);
+
+    if (relevance != null) {
+      mapView.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
+      ((JsonApi) context).addSkipLogicView(mapView);
+    }
+
+    ((JsonApi) context).addFormDataView(mapView);
+
+    if (autoSizeGeoWidget) {
+      mapView.setLayoutParams(
+          new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1));
+    } else {
+      DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+      int mapViewHeight = displayMetrics.heightPixels / 2;
+
+      mapView.setLayoutParams(
+          new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mapViewHeight));
+    }
+
+    addMaximumZoomLevel(jsonObject, mapView);
+    addGeoFencingValidator(context);
+    LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
+    RevealApplication.getInstance()
+        .getAppExecutors()
+        .diskIO()
+        .execute(
+            () -> {
+              Location parentLocation =
+                  locationRepository.getLocationById(operationalAreaFeature.id());
+              String parentId =
+                  parentLocation != null ? parentLocation.getProperties().getParentId() : null;
+              String operationalLevel = operationalAreaFeature.getStringProperty("geographicLevel");
+              List<Location> allLocations =
+                  locationRepository.getAllLocations().stream()
+                      .filter(
+                          location ->
+                              (operationalLevel.equals(
+                                      location.getProperties().getGeographicLevel())
+                                  || location
+                                      .getProperties()
+                                      .getName()
+                                      .toLowerCase()
+                                      .contains(OTHER)))
+                      .collect(Collectors.toList());
+              for (Location location : allLocations) {
+                if (!location.getId().equals(operationalAreaFeature.id())) {
+                  com.mapbox.geojson.Feature feature = convertFromLocation(location);
+                  if (feature != null) {
+                    if (location.getProperties().getParentId() != null
+                        && location.getProperties().getParentId().equals(parentId)
+                        && location.getProperties().getName().toLowerCase().contains(OTHER)) {
+                      geoFencingValidator.setOtherOperationalArea(feature);
+                    }
+                    geoFencingValidator.getOperationalAreas().add(feature);
+                  }
                 }
-            }
-            RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
-                for (com.mapbox.geojson.Feature feature : geoFencingValidator.getOperationalAreas()) {
-                    createBoundaryLayer(feature, context);
-                }
+              }
+              RevealApplication.getInstance()
+                  .getAppExecutors()
+                  .mainThread()
+                  .execute(
+                      () -> {
+                        for (com.mapbox.geojson.Feature feature :
+                            geoFencingValidator.getOperationalAreas()) {
+                          createBoundaryLayer(feature, context);
+                        }
+                      });
             });
+
+    views.add(mapView);
+    mapView.onStart();
+    mapView.showCurrentLocationBtn(true);
+    mapView.enableAddPoint(false);
+    disableParentScroll((Activity) context, mapView);
+
+    return views;
+  }
+
+  private void onFeatureSelected(
+      com.mapbox.geojson.Feature feature,
+      JsonFormFragment formFragment,
+      String stepName,
+      String openMrsEntityParent,
+      String openMrsEntity,
+      String openMrsEntityId,
+      String key) {
+    FeatureCollection featureCollection = FeatureCollection.fromFeature(feature);
+
+    geoJsonSourceLine.setGeoJson(featureCollection);
+    Timber.tag("RevealMap").i("Structure ID %s", feature.id() == null ? "nada" : feature.id());
+    if (feature.properties() != null && !feature.properties().has("id") && feature.id() != null) {
+      feature.properties().addProperty("id", feature.id());
+
+      mapView.setTag(R.id.structure_id, feature.id());
+    }
+    if (feature.properties() != null
+        && !feature.properties().has("isAHousehold")
+        && !feature.properties().has("taskIdentifier")) {
+
+      Timber.tag("RevealMap").i("feature.properties() %s", feature.properties());
+      if (noHouseholdDialog == null) {
+        noHouseholdDialog = setupNoHouseholdDialog(mapView.getContext(), null);
+      }
+      noHouseholdDialog.show();
+    }
+
+    try {
+      writeValues2(
+          formFragment,
+          stepName,
+          feature.id(),
+          key,
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId);
+    } catch (Exception e) {
+      Timber.tag("RevealMap").e(e, "error");
+    }
+  }
+
+  private com.mapbox.geojson.Feature convertFromLocation(PhysicalLocation location) {
+    try {
+      return com.mapbox.geojson.Feature.fromJson(gson.toJson(location));
+    } catch (Exception e) {
+      Timber.tag("Reveal Exception")
+          .w(
+              e,
+              "Error converting Feature %s %s ",
+              location.getGeometry().getType(),
+              location.getId());
+    }
+    return null;
+  }
+
+  private void createBoundaryLayer(com.mapbox.geojson.Feature operationalArea, Context context) {
+    if (operationalArea != null) {
+
+      BoundaryLayer.Builder boundaryBuilder =
+          new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+              .setLabelProperty(Map.NAME_PROPERTY)
+              .setLabelTextSize(
+                  context.getResources().getDimension(R.dimen.operational_area_boundary_text_size))
+              .setLabelColorInt(Color.WHITE)
+              .setBoundaryColor(Color.WHITE)
+              .setBoundaryWidth(
+                  context.getResources().getDimension(R.dimen.operational_area_boundary_width));
+      mapView.addLayer(boundaryBuilder.build());
+    }
+  }
+
+  private void disableParentScroll(Activity context, View mapView) {
+    ViewGroup mainScroll = context.findViewById(R.id.scroll_view);
+    mapView.setOnTouchListener(
+        new View.OnTouchListener() {
+          @Override
+          public boolean onTouch(View v, MotionEvent event) {
+            mainScroll.requestDisallowInterceptTouchEvent(true);
+            return false;
+          }
         });
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 5");
+  }
 
-        views.add(mapView);
-        mapView.onStart();
-        mapView.showCurrentLocationBtn(true);
-        mapView.enableAddPoint(false);
-        disableParentScroll((Activity) context, mapView);
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: made it here 6");
+  private static void writeValues(
+      JsonFormFragmentView formFragmentView,
+      String stepName,
+      com.mapbox.geojson.Feature markerPosition,
+      String key,
+      String openMrsEntityParent,
+      String openMrsEntity,
+      String openMrsEntityId) {
 
-        return views;
+    if (markerPosition == null) return;
+    if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
+      formFragmentView.writeValue(
+          stepName,
+          key,
+          markerPosition.toJson(),
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId,
+          false);
+    } else {
+      Timber.w("cannot write values JsonApi is null");
     }
+  }
 
-    private void onFeatureSelected(com.mapbox.geojson.Feature feature, JsonFormFragment formFragment, String stepName,
-                                   String openMrsEntityParent,
-                                   String openMrsEntity,
-                                   String openMrsEntityId, String key) {
-        FeatureCollection featureCollection = FeatureCollection.fromFeature(feature);
+  private void writeValues2(
+      JsonFormFragmentView formFragmentView,
+      String stepName,
+      String structureId,
+      String key,
+      String openMrsEntityParent,
+      String openMrsEntity,
+      String openMrsEntityId) {
 
-        geoJsonSourceLine.setGeoJson(featureCollection);
-        Timber.tag("RevealMap").i("Structure ID %s", feature.id() == null ? "nada" : feature.id());
-        if (feature.properties() != null && !feature.properties().has("id") && feature.id() != null) {
-            feature.properties().addProperty("id", feature.id());
+    if (structureId == null) return;
+    if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
+      Timber.tag("RevealMap")
+          .i(
+              "StructurePickerFactoryExtended: writeValues2 Structure ID %s",
+              structureId == null ? "nada" : structureId);
 
-            mapView.setTag(R.id.structure_id, feature.id());
-        }
-        if (feature.properties() != null && !feature.properties().has("isAHousehold")){
-            if (noHouseholdDialog == null) {
-                noHouseholdDialog = setupNoHouseholdDialog(mapView.getContext(), null);
-            }
-            noHouseholdDialog.show();
-        }
-
-//        List<String> householdIdsByStructureId = hdssRepository.getHouseholdIdsByStructureId(feature.id());
-//
-//        if (!householdIdsByStructureId.isEmpty() && householdIdsByStructureId.size()>1){
-//            if (manyHouseholdDialog == null){
-//                manyHouseholdDialog = setupManyHouseholdDialog(mapView.getContext(), null);
-//            }
-//        }
-
-        try {
-            writeValues2(formFragment, stepName, feature.id(),
-                    key, openMrsEntityParent, openMrsEntity, openMrsEntityId);
-        } catch (Exception e) {
-            Timber.tag("RevealMap").e(e, "error");
-        }
-
+      formFragmentView.writeValue(
+          stepName, key, structureId, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+      if (household != null && compound != null) {
+        formFragmentView.writeValue(
+            stepName,
+            "captured_household",
+            household,
+            openMrsEntityParent,
+            openMrsEntity,
+            openMrsEntityId,
+            false);
+        formFragmentView.writeValue(
+            stepName,
+            "captured_compound",
+            compound,
+            openMrsEntityParent,
+            openMrsEntity,
+            openMrsEntityId,
+            false);
+      }
+    } else {
+      Timber.w("cannot write values JsonApi is null");
     }
+  }
 
-    private com.mapbox.geojson.Feature convertFromLocation(PhysicalLocation location) {
-        try {
-            return com.mapbox.geojson.Feature.fromJson(gson.toJson(location));
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e, "Error converting Feature %s %s ", location.getGeometry().getType(), location.getId());
-        }
-        return null;
+  private static void writeValues(
+      JsonFormFragmentView formFragmentView,
+      String stepName,
+      String structureId,
+      String key,
+      String openMrsEntityParent,
+      String openMrsEntity,
+      String openMrsEntityId,
+      double zoomLevel,
+      boolean finalLocationComponentActive) {
+
+    Timber.tag("RevealMap")
+        .i(
+            "StructurePickerFactoryExtended: from validator  Structure ID %s",
+            structureId == null ? "nada" : structureId);
+
+    if (structureId == null) return;
+
+    if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
+      formFragmentView.writeValue(
+          stepName, key, structureId, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
+      formFragmentView.writeValue(
+          stepName,
+          ZOOM_LEVEL,
+          zoomLevel + "",
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId,
+          false);
+      formFragmentView.writeValue(
+          stepName,
+          LOCATION_COMPONENT_ACTIVE,
+          finalLocationComponentActive + "",
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId,
+          false);
+    } else {
+      Timber.w("cannot write values JsonApi is null");
     }
+  }
 
-    private void createBoundaryLayer(com.mapbox.geojson.Feature operationalArea, Context context) {
-        if (operationalArea != null) {
-
-            BoundaryLayer.Builder boundaryBuilder = new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                    .setLabelProperty(Map.NAME_PROPERTY)
-                    .setLabelTextSize(context.getResources().getDimension(R.dimen.operational_area_boundary_text_size))
-                    .setLabelColorInt(Color.WHITE)
-                    .setBoundaryColor(Color.WHITE)
-                    .setBoundaryWidth(context.getResources().getDimension(R.dimen.operational_area_boundary_width));
-            mapView.addLayer(boundaryBuilder.build());
-        }
+  private static void writeValues(
+      RevealMapView mapView, JsonFormFragmentView formFragmentView, String otherOperationalArea) {
+    String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
+    String openMrsEntityParent =
+        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
+    String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
+    String openMrsEntityId =
+        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
+    if (StringUtils.isNotBlank(otherOperationalArea)) {
+      formFragmentView.writeValue(
+          stepName,
+          VALID_OPERATIONAL_AREA,
+          otherOperationalArea,
+          openMrsEntityParent,
+          openMrsEntity,
+          openMrsEntityId,
+          false);
     }
+  }
 
-    private void disableParentScroll(Activity context, View mapView) {
-        ViewGroup mainScroll = context.findViewById(R.id.scroll_view);
-        mapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                mainScroll.requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
+  private static Feature getCenterPointFeature(CameraPosition cameraPosition) {
+    LatLng latLng = cameraPosition.target;
+    Feature feature = new Feature();
+    feature.setGeometry(new Point(latLng.getLatitude(), latLng.getLongitude()));
+    return feature;
+  }
 
+  private void addMaximumZoomLevel(JSONObject jsonObject, RevealMapView mapView) {
+
+    JSONObject minValidation = jsonObject.optJSONObject(MAX_ZOOM_LEVEL);
+    if (minValidation != null) {
+      try {
+        mapView.addValidator(
+            new MinZoomValidator(
+                minValidation.getString(JsonFormConstants.ERR),
+                minValidation.getDouble(JsonFormConstants.VALUE)));
+      } catch (JSONException e) {
+        Timber.tag("Reveal Exception").w("Error extracting max zoom level from" + minValidation);
+      }
     }
+  }
 
-    private static void writeValues(JsonFormFragmentView formFragmentView, String stepName, com.mapbox.geojson.Feature markerPosition, String key,
-                                    String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) {
+  private void addGeoFencingValidator(Context context) {
+    geoFencingValidator =
+        new GeoFencingValidator(
+            context.getString(R.string.register_outside_boundary_warning),
+            mapView,
+            operationalArea);
+    mapView.addValidator(geoFencingValidator);
+  }
 
-
-        if (markerPosition == null)
-            return;
-        if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
-            formFragmentView.writeValue(stepName, key, markerPosition.toJson(), openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-        } else {
-            Timber.w("cannot write values JsonApi is null");
-        }
-
+  @Override
+  public void onLocationComponentInitialized() {
+    if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
+      LocationComponent locationComponent =
+          mapView.getMapboxLocationComponentWrapper().getLocationComponent();
+      locationComponent.applyStyle(mapView.getContext(), R.style.LocationComponentStyling);
     }
+  }
 
-    private  void writeValues2(JsonFormFragmentView formFragmentView, String stepName, String structureId, String key,
-                                     String openMrsEntityParent, String openMrsEntity, String openMrsEntityId) {
-
-        if (structureId == null)
-            return;
-        if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
-            Timber.tag("RevealMap").i("StructurePickerFactoryExtended: writeValues2 Structure ID %s", structureId == null ? "nada" : structureId);
-
-            formFragmentView.writeValue(stepName, key, structureId, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            if (household!=null && compound!=null){
-                formFragmentView.writeValue(stepName, "captured_household", household, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-                formFragmentView.writeValue(stepName, "captured_compound", compound, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            }
-        } else {
-            Timber.w("cannot write values JsonApi is null");
-        }
+  @Override
+  public void onCreate(Bundle bundle) {
+    if (mapView != null) {
+      mapView.onCreate(bundle);
     }
+  }
 
-    private static void writeValues(JsonFormFragmentView formFragmentView, String stepName, String structureId, String key,
-                                    String openMrsEntityParent, String openMrsEntity, String openMrsEntityId, double zoomLevel, boolean finalLocationComponentActive) {
-
-        Timber.tag("RevealMap").i("StructurePickerFactoryExtended: from validator  Structure ID %s", structureId == null ? "nada" : structureId);
-
-        if (structureId == null)
-            return;
-
-        if (((JsonFormFragment) formFragmentView).getJsonApi() != null) {
-            formFragmentView.writeValue(stepName, key, structureId, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            formFragmentView.writeValue(stepName, ZOOM_LEVEL, zoomLevel + "", openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-            formFragmentView.writeValue(stepName, LOCATION_COMPONENT_ACTIVE, finalLocationComponentActive + "", openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-        } else {
-            Timber.w("cannot write values JsonApi is null");
-        }
-
-
+  @Override
+  public void onStart() {
+    if (mapView != null) {
+      mapView.onStart();
     }
+  }
 
-    private static void writeValues(RevealMapView mapView, JsonFormFragmentView formFragmentView, String otherOperationalArea) {
-        String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
-        String openMrsEntityParent = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
-        String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
-        String openMrsEntityId = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
-        if (StringUtils.isNotBlank(otherOperationalArea)) {
-            formFragmentView.writeValue(stepName, VALID_OPERATIONAL_AREA, otherOperationalArea, openMrsEntityParent, openMrsEntity, openMrsEntityId, false);
-        }
-    }
+  @Override
+  public void onResume() {
+    if (mapView != null) mapView.onResume();
+  }
 
+  @Override
+  public void onPause() {
+    if (myLocationButton != null && jsonApi instanceof Context)
+      RevealApplication.getInstance()
+          .setMyLocationComponentEnabled(
+              mapHelper.isMyLocationComponentActive((Context) jsonApi, myLocationButton));
+    if (mapView != null) mapView.onPause();
+  }
 
-    private static Feature getCenterPointFeature(CameraPosition cameraPosition) {
-        LatLng latLng = cameraPosition.target;
-        Feature feature = new Feature();
-        feature.setGeometry(new Point(latLng.getLatitude(), latLng.getLongitude()));
-        return feature;
-    }
+  @Override
+  public void onStop() {
+    if (mapView != null) mapView.onStop();
+  }
 
-    private void addMaximumZoomLevel(JSONObject jsonObject, RevealMapView mapView) {
+  @Override
+  public void onSaveInstanceState(Bundle bundle) {
+    if (mapView != null) mapView.onSaveInstanceState(bundle);
+  }
 
-        JSONObject minValidation = jsonObject.optJSONObject(MAX_ZOOM_LEVEL);
-        if (minValidation != null) {
-            try {
-                mapView.addValidator(new MinZoomValidator(minValidation.getString(JsonFormConstants.ERR),
-                        minValidation.getDouble(JsonFormConstants.VALUE)));
-            } catch (JSONException e) {
-                Timber.tag("Reveal Exception").w("Error extracting max zoom level from" + minValidation);
-            }
-        }
-    }
+  @Override
+  public void onLowMemory() {
+    if (mapView != null) mapView.onLowMemory();
+  }
 
-    private void addGeoFencingValidator(Context context) {
-        geoFencingValidator = new GeoFencingValidator(context.getString(R.string.register_outside_boundary_warning), mapView, operationalArea);
-        mapView.addValidator(geoFencingValidator);
-    }
-
-
-    @Override
-    public void onLocationComponentInitialized() {
-        if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
-            LocationComponent locationComponent = mapView.getMapboxLocationComponentWrapper()
-                    .getLocationComponent();
-            locationComponent.applyStyle(mapView.getContext(), R.style.LocationComponentStyling);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        if (mapView != null) {
-            mapView.onCreate(bundle);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        if (mapView != null) {
-            mapView.onStart();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        if (mapView != null)
-            mapView.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        if (myLocationButton != null && jsonApi instanceof Context)
-            RevealApplication.getInstance().setMyLocationComponentEnabled(mapHelper.isMyLocationComponentActive((Context) jsonApi, myLocationButton));
-        if (mapView != null)
-            mapView.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        if (mapView != null)
-            mapView.onStop();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle bundle) {
-        if (mapView != null)
-            mapView.onSaveInstanceState(bundle);
-    }
-
-    @Override
-    public void onLowMemory() {
-        if (mapView != null)
-            mapView.onLowMemory();
-    }
-
-    @Override
-    public void onDestroy() {
-        jsonApi.unregisterLifecycleListener(this);
-    }
+  @Override
+  public void onDestroy() {
+    jsonApi.unregisterLifecycleListener(this);
+  }
 }

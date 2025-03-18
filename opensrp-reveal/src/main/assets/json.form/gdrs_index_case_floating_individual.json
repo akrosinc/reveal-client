@@ -75,6 +75,103 @@
         "text_size": "8sp"
       },
       {
+        "key": "correct_household_compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you know the correct Household ID and correct Compound ID?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "household_compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "reveal_multi_select_list",
+        "dialogTitle": "Select the correct Household and Compound ID",
+        "buttonText": "+ Select the correct Household and Compound ID",
+        "searchHint": "Type household or compound ID",
+        "maxSelectable": "1",
+        "source": "true",
+        "repositoryClass":"org.smartregister.reveal.model.HdssCompoundHouseholdRepository",
+        "v_required": {
+          "value": true,
+          "err": "Please select the correct Household and Compound ID"
+        },
+        "relevance": {
+          "step1:correct_household_compound": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "same_operational_area",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is the household in current operational area?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:correct_household_compound": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "operational",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hierarchy_http_data_retriever",
+        "repositoryClass":"org.smartregister.reveal.hierarchydatareceiver.LocationChildrenDataFetcher",
+        "level1": "Continent",
+        "level2": "Country",
+        "level3": "Region",
+        "level4": "Zone",
+        "level5": "Cluster",
+        "targetSelection": "level5",
+        "v_required": {
+          "value": "true",
+          "err": "This field is required."
+        },
+        "relevance": {
+          "step1:same_operational_area": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
         "key": "geo_structure",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -83,6 +180,12 @@
         "v_zoom_max": {
           "value": "16.5",
           "err": "Please zoom in to add a point"
+        },
+        "relevance": {
+          "step1:same_operational_area": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
@@ -93,14 +196,14 @@
         "type": "hidden"
       },
       {
-        "key": "household",
+        "key": "captured_household",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "hidden"
       },
       {
-        "key": "compound",
+        "key": "captured_compound",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",

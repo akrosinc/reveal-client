@@ -96,7 +96,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
         task.setLastModified(new DateTime());
         gdrsActivity.getTaskRepository().addOrUpdate(task);
       } else if (INDEX_CASE.equals(task.getCode())) {
-        Timber.tag("RevealMap").i("FormSaved 2");
+        Timber.tag("RevealMap").i("Is index case");
         String businessStatusIndexCase;
         boolean allIndexCaseComplete = false;
         boolean allRCDComplete = false;
@@ -120,7 +120,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
             businessStatusIndexCase = INDEX_CASE_COMPLETE;
           }
         }
-
+        Timber.tag("RevealMap").i("setBusinessStatus %s",businessStatusIndexCase);
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
@@ -158,7 +158,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
         gdrsActivity.getTaskRepository().addOrUpdate(task);
       }
     }
-//    populateActionList();
+    gdrsActivity.populateActionList("Saving task");
   }
 
   @Override

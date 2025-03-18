@@ -8,6 +8,7 @@
     <color name="primary">#D400E2</color>
     <color name="primaryDark">#B000AF</color>
     <color name="accent">#3797ca</color>
+    <color name="accentLighter">#69A6D1</color>
     <color name="primaryAccent">#3797ca</color>
     <color name="primaryBackground">#a6d1e7</color>
 

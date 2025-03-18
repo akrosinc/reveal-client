@@ -21,13 +21,14 @@ import com.mapbox.geojson.FeatureCollection;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,17 +47,23 @@ import org.smartregister.reveal.util.PreferencesUtil;
 class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder> {
 
   private final GDRSActivity gdrsActivity;
-  @Setter private List<Action> actions;
-
+  @Setter @Getter private List<Action> actions;
+  @Setter @Getter private List<Action> fullactions;
   private final String thisCompoundId;
 
   private final GDRSPresenter gdrsPresenter;
 
   private final String locationUUID;
 
-  ActionAdapter(GDRSActivity gdrsActivity, List<Action> actions, GDRSPresenter gdrsPresenter, String thisCompoundId, String locationUUID) {
+  ActionAdapter(
+      GDRSActivity gdrsActivity,
+      List<Action> actions,
+      GDRSPresenter gdrsPresenter,
+      String thisCompoundId,
+      String locationUUID) {
     this.gdrsActivity = gdrsActivity;
     this.actions = actions;
+    this.fullactions = actions;
     this.gdrsPresenter = gdrsPresenter;
     this.thisCompoundId = thisCompoundId;
     this.locationUUID = locationUUID;
@@ -112,17 +119,21 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
         || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
       if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
         formJSON =
-            gdrsActivity.getFormUtils().getFormJSON(
-                gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
+            gdrsActivity
+                .getFormUtils()
+                .getFormJSON(
+                    gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
       } else {
         formJSON =
-            gdrsActivity.getFormUtils().getFormJSON(
-                gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
+            gdrsActivity
+                .getFormUtils()
+                .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
       }
     } else {
       formJSON =
-          gdrsActivity.getFormUtils().getFormJSON(
-              gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
+          gdrsActivity
+              .getFormUtils()
+              .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
     }
 
     populateGeneralTaskDetails(formJSON);
@@ -140,17 +151,27 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
   private JSONObject populateRCDTaskDetails(Action action, BaseTaskDetails details) {
     JSONObject formJSON;
     formJSON =
-        gdrsActivity.getFormUtils().getFormJSON(
-            gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
+        gdrsActivity
+            .getFormUtils()
+            .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
     try {
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.INDIVIDUAL, action.getIndividualId(), JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.DOB, action.getDob(), JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.GENDER, action.getGender(), JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.NAME, action.getName(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(
+              formJSON, GDRSActivity.INDIVIDUAL, action.getIndividualId(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(formJSON, GDRSActivity.DOB, action.getDob(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(
+              formJSON, GDRSActivity.GENDER, action.getGender(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(formJSON, GDRSActivity.NAME, action.getName(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .setDefaultValue(formJSON, GDRSActivity.DATE, LocalDate.now().toString("dd-MM-yyyy"));
     } catch (JSONException e) {
       throw new RuntimeException(e);
     }
@@ -162,29 +183,41 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
     JSONObject formJSON;
     if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
       formJSON =
-          gdrsActivity.getFormUtils().getFormJSON(
-              gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
+          gdrsActivity
+              .getFormUtils()
+              .getFormJSON(
+                  gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
     } else {
       formJSON =
-          gdrsActivity.getFormUtils().getFormJSON(
-              gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
+          gdrsActivity
+              .getFormUtils()
+              .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
     }
 
     try {
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.INDIVIDUAL, action.getIndividualId(), JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON,
-          GDRSActivity.HOUSEHOLD,
-          action.getTask().getHouseholdId(),
-          JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.COMPOUND, thisCompoundId, JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.STRUCTURE, locationUUID, JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateField(
-          formJSON, GDRSActivity.NAME, action.getName(), JsonFormConstants.VALUE);
-      gdrsActivity.getFormUtils().populateFieldWithOperationalAreas(formJSON, GDRSActivity.OPERATIONAL);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(
+              formJSON, GDRSActivity.INDIVIDUAL, action.getIndividualId(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(
+              formJSON,
+              GDRSActivity.HOUSEHOLD,
+              action.getTask().getHouseholdId(),
+              JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(formJSON, GDRSActivity.COMPOUND, thisCompoundId, JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(formJSON, GDRSActivity.STRUCTURE, locationUUID, JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateField(formJSON, GDRSActivity.NAME, action.getName(), JsonFormConstants.VALUE);
+      gdrsActivity
+          .getFormUtils()
+          .populateFieldWithOperationalAreas(formJSON, GDRSActivity.OPERATIONAL);
     } catch (JSONException e) {
       throw new RuntimeException(e);
     }
@@ -215,18 +248,16 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
 
       Map<String, Set<Task>> map = new HashMap<>();
 
-      Set<Task> tasksForMap = new HashSet<>();
       for (Location structure : structures) {
-        Set<Task> tasksByEntity = gdrsActivity.getTaskRepository().getTasksByEntity(structure.getId());
-        //                                    tasksForMap.addAll(tasksByEntity);
+        Set<Task> tasksByEntity =
+            gdrsActivity.getTaskRepository().getTasksByEntity(structure.getId());
         map.put(structure.getId(), tasksByEntity);
       }
-
-      //                                Set<Task> set = Set.of(task);
-
       Map<String, Boolean> isAHouseholdByStructureList =
-          gdrsActivity.getHdssRepository().getIsAHouseholdByStructureList(
-              structures.stream().map(PhysicalLocation::getId).collect(Collectors.toList()));
+          gdrsActivity
+              .getHdssRepository()
+              .getIsAHouseholdByStructureList(
+                  structures.stream().map(PhysicalLocation::getId).collect(Collectors.toList()));
 
       String features =
           GeoJsonUtils.getGeoJsonFromStructuresAndTasksForGdrs(
@@ -241,10 +272,15 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
       Toast.makeText(gdrsActivity, "Cannot open geo widget to capture structure", Toast.LENGTH_LONG)
           .show();
     }
-    gdrsActivity.getFormUtils().setDefaultValue(
-        formJSON,
-        Constants.JsonForm.HEALTH_WORKER_SUPERVISOR,
-        RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
+    gdrsActivity
+        .getFormUtils()
+        .setDefaultValue(
+            formJSON,
+            Constants.JsonForm.HEALTH_WORKER_SUPERVISOR,
+            RevealApplication.getInstance()
+                .getContext()
+                .allSharedPreferences()
+                .fetchRegisteredANM());
   }
 
   private void openNotVisitedTask(Task task) {
@@ -265,20 +301,15 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
         ((GradientDrawable) background)
             .setColor(gdrsActivity.getResources().getColor(R.color.pnc_circle_green, null));
       }
-      //
-      // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green,
-      // null));
       holder.actionButton.setText(R.string.edit_racd);
     } else {
       if (background instanceof GradientDrawable) {
         ((GradientDrawable) background)
             .setColor(gdrsActivity.getResources().getColor(R.color.not_visited_yellow, null));
       }
-      //
-      // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.not_visited_yellow,
-      // null));
       holder.actionButton.setText(R.string.action_racd);
     }
+    holder.actionButton.setTextColor(gdrsActivity.getResources().getColor(R.color.black, null));
   }
 
   private void handleIndexCaseOnAdapter(ActionViewHolder holder, Task task, Drawable background) {
@@ -288,9 +319,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
           ((GradientDrawable) background)
               .setColor(gdrsActivity.getResources().getColor(R.color.purple, null));
         }
-        //
-        // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.purple,
-        // null));
+
         holder.actionButton.setTextColor(gdrsActivity.getResources().getColor(R.color.cyan, null));
         holder.actionButton.setText(R.string.edit_index_case);
       } else {
@@ -298,8 +327,6 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
           ((GradientDrawable) background)
               .setColor(gdrsActivity.getResources().getColor(R.color.cyan, null));
         }
-        //
-        // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.cyan, null));
         holder.actionButton.setText(R.string.confirm_index_case);
       }
     } else {
@@ -308,9 +335,6 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
           ((GradientDrawable) background)
               .setColor(gdrsActivity.getResources().getColor(R.color.pnc_circle_green, null));
         }
-        //
-        // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.pnc_circle_green,
-        // null));
         holder.actionButton.setTextColor(
             gdrsActivity.getResources().getColor(R.color.purple, null));
         holder.actionButton.setText(R.string.edit_secondary);
@@ -319,9 +343,6 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
           ((GradientDrawable) background)
               .setColor(gdrsActivity.getResources().getColor(R.color.not_visited_yellow, null));
         }
-        //
-        // holder.actionButton.setBackgroundColor(getResources().getColor(R.color.orange,
-        // null));
         holder.actionButton.setTextColor(gdrsActivity.getResources().getColor(R.color.cyan, null));
         holder.actionButton.setText(R.string.confirm_secondary);
       }

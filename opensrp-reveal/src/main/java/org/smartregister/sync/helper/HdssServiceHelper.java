@@ -78,6 +78,7 @@ public class HdssServiceHelper extends BaseHelper {
         syncProgress.setTotalRecords(totalRecords);
 
         HdssRepository.createCompoundTable(hdssRepository.getWritableDatabase());
+        HdssRepository.createHouseholdTable(hdssRepository.getWritableDatabase());
         HdssRepository.createCompoundHouseholdTable(hdssRepository.getWritableDatabase());
         HdssRepository.createHouseholdStructureTable(hdssRepository.getWritableDatabase());
         HdssRepository.createHouseholdIndividualTable(hdssRepository.getWritableDatabase());
@@ -129,11 +130,14 @@ public class HdssServiceHelper extends BaseHelper {
                     totalCount = hdssCompounds.getTotalRecords();
                     serverVersion = hdssCompounds.getServerVersion();
                     hdssRepository.addOrUpdateCompoundsBatched(hdssCompounds.getAllCompounds());
+                    hdssRepository.addOrUpdateHousehold(hdssCompounds.getAllHouseholds());
                     hdssRepository.addOrUpdateCompoundHouseholdsBatched(hdssCompounds.getCompoundHouseHolds());
                     hdssRepository.addOrUpdateHouseholdStructureBatched(hdssCompounds.getAllHouseholdStructure());
                     hdssRepository.addOrUpdateHouseholdIndividualBatched(hdssCompounds.getAllHouseholdIndividual());
                     hdssRepository.addOrUpdateIndividualBatched(hdssCompounds.getAllIndividuals());
                     hdssRepository.deleteFromHouseholdIndividualByIndividualIds(hdssCompounds.getAllHouseholdIndividualToDelete());
+                    hdssRepository.deleteFromCompoundHouseholdByHouseholdIds(hdssCompounds.getAllCompoundHouseholdToDelete());
+                    hdssRepository.deleteFromHouseholdStructureByHouseholdIds(hdssCompounds.getAllCompoundHouseholdToDelete());
 
                     PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
 

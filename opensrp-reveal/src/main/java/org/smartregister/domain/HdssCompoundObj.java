@@ -1,8 +1,6 @@
 package org.smartregister.domain;
 
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,7 +21,11 @@ public class HdssCompoundObj implements Serializable {
 
     List<HdssIndividual> allIndividuals;
 
+    List<HdssHousehold> allHouseholds;
+
     List<String> allHouseholdIndividualToDelete;
+
+    List<String> allCompoundHouseholdToDelete;
 
     boolean empty;
 

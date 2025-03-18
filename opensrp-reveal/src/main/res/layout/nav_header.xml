@@ -288,12 +288,25 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/drawer_margin"
         android:layout_marginTop="@dimen/drawer_margin_vertical"
-        android:text="@string/index_cases"
+        android:text="@string/floating_individuals"
         android:textColor="@color/button_blue"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_navMenu_offline_maps" />
+
+    <TextView
+      android:id="@+id/btn_hdss_household_index_cases"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/drawer_margin"
+      android:layout_marginTop="@dimen/drawer_margin_vertical"
+      android:text="@string/household_index_cases"
+      android:textColor="@color/button_blue"
+      android:textSize="18sp"
+      android:visibility="gone"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/btn_hdss_index_cases" />
 
     <TextView
         android:id="@+id/btn_link_dashboard"
@@ -306,7 +319,7 @@
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_hdss_index_cases" />
+        app:layout_constraintTop_toBottomOf="@id/btn_hdss_household_index_cases" />
 
     <View
         android:id="@+id/header_separator"
