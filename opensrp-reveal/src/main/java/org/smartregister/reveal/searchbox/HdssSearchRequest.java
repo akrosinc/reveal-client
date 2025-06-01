@@ -2,7 +2,9 @@ package org.smartregister.reveal.searchbox;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @Getter @Setter
 public class HdssSearchRequest extends SearchRequest{
     private String searchString;
@@ -14,4 +16,15 @@ public class HdssSearchRequest extends SearchRequest{
     private String dob;
 
     private boolean searchOnline;
+
+    private String cluster;
+
+    private String startAge;
+
+    private String endAge;
+
+    private boolean useAgeRange;
+
+    private boolean useExactDate;
+
 }

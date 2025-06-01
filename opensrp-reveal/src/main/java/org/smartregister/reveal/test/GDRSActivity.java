@@ -29,8 +29,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +55,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.IntStream;
 import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +65,7 @@ import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.HdssCompound;
 import org.smartregister.domain.HdssCompoundHousehold;
+import org.smartregister.domain.HdssHousehold;
 import org.smartregister.domain.HdssHouseholdIndividual;
 import org.smartregister.domain.HdssHouseholdStructure;
 import org.smartregister.domain.HdssIndividual;
@@ -70,6 +80,7 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.BaseTaskDetails;
+import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
@@ -98,30 +109,33 @@ public class GDRSActivity extends AppCompatActivity {
   public static final String STRUCTURE = "structure";
   public static final String HOUSEHOLD = "household";
   public static final String GENDER = "gender";
+  public static final String GENDER_CAPTURE = "gender_capture";
 
   public static final String NAME = "name";
+  public static final String DATE = "date";
   public static final String OPERATIONAL = "operational";
   public static final String ADD_MEMBER = "add_member";
 
   private RecyclerView recyclerView;
-  @Getter @Setter
-  private ActionAdapter actionAdapter;
+  @Getter @Setter private ActionAdapter actionAdapter;
   private List<Action> actionList;
-  @Getter
-  private RevealJsonFormUtils formUtils;
+  @Getter private RevealJsonFormUtils formUtils;
   @Getter private HdssRepository hdssRepository;
   private String taskIdentifier;
   private String locationUUID;
   private String taskCode;
   private Set<String> houseHoldIds = new HashSet<>();
   private String thisCompoundId;
-  private GDRSPresenter presenter;
+  @Getter private GDRSPresenter presenter;
   private int position;
   @Getter private TaskRepository taskRepository;
-  private TaskUtils taskUtils;
+  @Getter private TaskUtils taskUtils;
   private LocationRepository locationRepository;
+  @Getter protected AppExecutors appExecutors;
 
-  //    private LinearLayout progressBar;
+  private LinearLayout progressBar;
+
+  private MenuItem addMemberItem;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -129,24 +143,29 @@ public class GDRSActivity extends AppCompatActivity {
     init();
 
     taskUtils = TaskUtils.getInstance();
-
+    appExecutors = RevealApplication.getInstance().getAppExecutors();
     getHouseHoldData();
     // Set up toolbar
     setToolBar();
     recyclerView = findViewById(R.id.recyclerView);
-    //        progressBar = findViewById(R.id.progressBar);
+    progressBar = findViewById(R.id.progressBar);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+    setupSearchfield();
+    setupClearButton();
     DividerItemDecoration dividerItemDecoration =
         new DividerItemDecoration(
             recyclerView.getContext(),
             ((LinearLayoutManager) recyclerView.getLayoutManager()).getOrientation());
     recyclerView.addItemDecoration(dividerItemDecoration);
 
-    presenter = new GDRSPresenter(this, thisCompoundId,locationUUID, taskIdentifier);
-    populateActionList();
-    recyclerView.setAdapter(actionAdapter);
+    presenter = new GDRSPresenter(this, thisCompoundId, locationUUID, taskIdentifier);
+
+  }
+
+  public void populateList(String loadMessage) {
+    populateActionList(loadMessage);
   }
 
   public JSONObject createFeatureCollection() throws JSONException {
@@ -179,17 +198,70 @@ public class GDRSActivity extends AppCompatActivity {
               .collect(Collectors.toSet());
     }
   }
+  private void setupClearButton(){
+    Button clearButton = findViewById(R.id.clearSearchButton);
+    EditText editText = findViewById(R.id.searchField);
+    clearButton.setOnClickListener(v -> {
+      editText.setText("");
+      filterList("");
+    });
+  }
+  private void setupSearchfield(){
+    EditText editText = findViewById(R.id.searchField);
 
+    editText.addTextChangedListener(new TextWatcher() {
+      @Override
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+      }
+
+      @Override
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+      }
+
+      @Override
+      public void afterTextChanged(Editable s) {
+        Timber.tag("Reveal").i("text changes %s",s.toString());
+        filterList(s.toString());
+        Button clearButton = findViewById(R.id.clearSearchButton);
+        clearButton.setEnabled(!s.toString().isEmpty());
+      }
+    });
+  }
+  public void filterList(String query) {
+    if (!query.isEmpty()) {
+      List<Action> filtered = new ArrayList<>();
+      for (Action action : actionAdapter.getFullactions()) {
+        // You can filter based on any fields of the Action object
+        if (action.getName().toLowerCase().contains(query.toLowerCase())) {
+          filtered.add(action);
+        }
+        if (action.getIndividualId().toLowerCase().contains(query.toLowerCase())){
+          filtered.add(action);
+        }
+        if (action.getHouseholdId().toLowerCase().contains(query.toLowerCase())){
+          filtered.add(action);
+        }
+        Timber.tag("Reveal").i("results %s",filtered);
+      }
+      actionList = filtered;
+    } else {
+      actionList = actionAdapter.getFullactions();
+    }
+    actionAdapter.setActions(actionList);
+    actionAdapter.notifyDataSetChanged();  // Notify the adapter that the data has changed
+  }
   private void setToolBar() {
     Toolbar toolbar = findViewById(R.id.toolbar);
     TextView viewLeft = toolbar.findViewById(R.id.textViewLeft);
     viewLeft.setText(taskCode);
     TextView viewCenter = toolbar.findViewById(R.id.textViewCenter);
 
-    viewCenter.setText(String.join(" / ", houseHoldIds));
-    //        String title = houseHoldId != null ? houseHoldId.concat("-") : "";
-    //        title = title.concat(taskCode);
-    //        toolbar.setTitle(title);
+    viewCenter.setText("Compound: ".concat(thisCompoundId));
+
+    TextView textViewBottom = findViewById(R.id.textViewBottom);
+    textViewBottom.setText(String.join(" / ", houseHoldIds));
     setSupportActionBar(toolbar);
   }
 
@@ -207,8 +279,6 @@ public class GDRSActivity extends AppCompatActivity {
     taskCode = intent.getStringExtra(Constants.Properties.TASK_CODE);
   }
 
-
-
   public void copyToClipboard(String text) {
     ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
     ClipData clip = ClipData.newPlainText("Copied Text", text);
@@ -218,6 +288,11 @@ public class GDRSActivity extends AppCompatActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.gdrs_menu, menu);
+
+    this.addMemberItem = menu.findItem(R.id.action_add_member);
+
+    populateList("Loading Tasks...");
+
     return true;
   }
 
@@ -254,8 +329,6 @@ public class GDRSActivity extends AppCompatActivity {
     }
   }
 
-
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -265,6 +338,10 @@ public class GDRSActivity extends AppCompatActivity {
         && resultCode == RESULT_OK
         && data != null
         && data.hasExtra(JSON_FORM_PARAM_JSON)) {
+      TextView textView = progressBar.findViewById(R.id.loadingText);
+      textView.setText("Saving Task...");
+      Timber.tag("RevealMap").i("Show progress");
+      progressBar.setVisibility(View.VISIBLE);
       Timber.tag("RevealMap").i("GDRSActivity: here 2");
       String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
       Timber.tag("RevealMap").d(json);
@@ -272,7 +349,7 @@ public class GDRSActivity extends AppCompatActivity {
         JSONObject jsonForm = new JSONObject(json);
         String encounter = jsonForm.optString(ENCOUNTER_TYPE);
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
-        Timber.tag("RevealMap").i("GDRSActivity: here 3");
+        Timber.tag("RevealMap").i("GDRSActivity: encounter %s", encounter);
         if (encounter.equals(ADD_MEMBER)
             && PreferencesUtil.getInstance()
                 .getInterventionTypeForPlan(planId)
@@ -290,76 +367,124 @@ public class GDRSActivity extends AppCompatActivity {
         Timber.tag("RevealMap").e(e, "GDRSActivity: ee 9");
       }
       presenter.saveJsonForm(json);
-      populateActionList();
     }
+
   }
-  public void populateActionList() {
-    // Create an ExecutorService for background tasks
-    //        ExecutorService executor = Executors.newSingleThreadExecutor();
-    List<Action> actionList = new ArrayList<>();
-    //        actionAdapter = new ActionAdapter(actionList, presenter);
 
-    //        executor.execute(() -> {
-    // This code runs in the background
+  public void showMessage(String loadMessage){
+    TextView textView = progressBar.findViewById(R.id.loadingText);
+    textView.setText(loadMessage);
+    progressBar.setVisibility(View.VISIBLE);
+  }
 
-    Set<HdssTask> tasksByStructure =
-        hdssRepository.getTasksByStructure(
-            locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
-    Map<String, HdssIndividual> individualsByStructureId =
-        hdssRepository.getIndividualsByStructureId(locationUUID);
+  public void populateActionList(String loadMessage) {
 
-    Timber.tag("RevealMap").i("got tasks");
+    TextView textView = progressBar.findViewById(R.id.loadingText);
+    textView.setText(loadMessage);
+    Timber.tag("RevealMap").i("Show progress");
+    progressBar.setVisibility(View.VISIBLE);
+    Runnable runnable =
+        new Runnable() {
+          @Override
+          public void run() {
 
-    Set<HdssTask> sorted =
-        tasksByStructure.stream()
-            .sorted(Comparator.comparing(HdssTask::getHouseholdId))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            List<Action> actionList = new ArrayList<>();
 
-    for (HdssTask task : sorted) {
-      Timber.tag("RevealMap").i("got individual task %s", task.getIdentifier());
-      if (individualsByStructureId.containsKey(task.getForEntity())) {
-        HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
-        if (hdssIndividual != null) {
-          actionList.add(
-              new Action(
-                  hdssIndividual.getIndividualId(),
-                  hdssIndividual.getGender(),
-                  hdssIndividual.getDob(),
-                  task.getAuthoredOn().toString("yyyy-MM-dd"),
-                  task,
-                  hdssIndividual.getName(),
-                  task.getHouseholdId()));
-        }
-      }
-    }
+            Set<HdssTask> tasksByStructure =
+                hdssRepository.getTasksByStructure(
+                    locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
+            Map<String, HdssIndividual> individualsByStructureId =
+                hdssRepository.getIndividualsByStructureId(locationUUID);
 
-    // Update UI on the main thread
-    //            runOnUiThread(() -> {
-    //                progressBar.setVisibility(View.GONE);
-    if (actionAdapter != null) {
-      actionAdapter.setActions(actionList);
-      actionAdapter.notifyDataSetChanged();
-    } else {
-      actionAdapter =
-          new ActionAdapter(
-              this,
-              actionList,
-              this.presenter,
-              thisCompoundId,
-              locationUUID);
-    }
-    //            });
-    //        });
+            Timber.tag("RevealMap").i("got tasks");
+
+            Set<HdssTask> sorted =
+                tasksByStructure.stream()
+                    .sorted(Comparator.comparing(HdssTask::getIndividualId))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            Optional<HdssTask> any =
+                sorted.stream()
+                    .peek(
+                        t -> {
+                          Timber.tag("RevealMap").i("business state %s", t.getBusinessStatus());
+                        })
+                    .filter(
+                        t ->
+                            INDEX_CASE_MEMBER.equals(t.getCode())
+                                && Objects.equals(NOT_VISITED, t.getBusinessStatus()))
+                    .findAny();
+
+            for (HdssTask task : sorted) {
+              Timber.tag("RevealMap")
+                  .i("got individual task %s code %s individual %s", task.getIdentifier(), task.getCode(), task.getIndividualId());
+              if (individualsByStructureId.containsKey(task.getForEntity())) {
+                HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
+                if (hdssIndividual != null) {
+                  actionList.add(
+                      new Action(
+                          hdssIndividual.getIndividualId(),
+                          hdssIndividual.getGender(),
+                          hdssIndividual.getDob(),
+                          task.getAuthoredOn().toString("yyyy-MM-dd"),
+                          task,
+                          hdssIndividual.getName(),
+                          task.getHouseholdId()));
+                }
+              }
+            }
+
+            appExecutors
+                .mainThread()
+                .execute(
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        Timber.tag("RevealMap").i("Hide progress");
+                        if (actionAdapter != null) {
+                          actionAdapter.setActions(actionList);
+                          actionAdapter.setFullactions(actionList);
+                          actionAdapter.notifyDataSetChanged();
+                        } else {
+                          actionAdapter =
+                              new ActionAdapter(
+                                  getThis(),
+                                  actionList,
+                                  getThis().presenter,
+                                  thisCompoundId,
+                                  locationUUID,
+                                  taskIdentifier);
+                          recyclerView.setAdapter(actionAdapter);
+                        }
+                        if (any.isPresent()) {
+                          Timber.tag("RevealMap").i("any.isPresent()");
+
+                          addMemberItem.setVisible(false);
+                        } else {
+                          Timber.tag("RevealMap").i("any is NOT Present()");
+                          addMemberItem.setVisible(true);
+                        }
+                      }
+                    });
+          }
+        };
+
+    appExecutors.diskIO().execute(runnable);
+  }
+
+  public GDRSActivity getThis() {
+    return this;
   }
 
   private void handleAddMemberTask(JSONObject jsonForm) {
     UUID uuid = UUID.randomUUID();
     JSONArray fields = JsonFormUtils.fields(jsonForm);
-    JSONObject individualIdObj = JsonFormUtils.getFieldJSONObject(fields, "individual_id");
+    JSONObject individualIdObj = JsonFormUtils.getFieldJSONObject(fields, "individual_capture");
     JSONObject householdIdObj = JsonFormUtils.getFieldJSONObject(fields, HOUSEHOLD_ID);
-    JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, GENDER);
-    JSONObject dobObj = JsonFormUtils.getFieldJSONObject(fields, "date_of_birth");
-    JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name");
+    JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, GENDER_CAPTURE);
+    JSONObject dobObj = JsonFormUtils.getFieldJSONObject(fields, "date_of_birth_capture");
+    JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name_capture");
 
     String individualId = null;
     if (individualIdObj != null) {
@@ -401,7 +526,8 @@ public class GDRSActivity extends AppCompatActivity {
             hdssMaxServerVersion,
             null,
             null,
-            null);
+            null,
+            PreferencesUtil.getInstance().getCurrentOperationalArea());
     hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
 
     taskUtils.generateTask(
@@ -452,8 +578,9 @@ public class GDRSActivity extends AppCompatActivity {
     JSONObject capturedCompound = JsonFormUtils.getFieldJSONObject(fields, "captured_compound");
     JSONObject capturedHousehold = JsonFormUtils.getFieldJSONObject(fields, "captured_household");
 
-    String individualIdValue = null;
+    JSONObject correctStructure = JsonFormUtils.getFieldJSONObject(fields, "correct_structure");
 
+    String individualIdValue = null;
     if (individualObj != null) {
       try {
         individualIdValue = individualObj.getString("value");
@@ -463,29 +590,46 @@ public class GDRSActivity extends AppCompatActivity {
 
       if (individualIdValue != null) {
         Timber.tag("RevealMap").i("GDRSActivity: here 5 %s", correctHouseholdCompoundObj);
+        String correctStructureValue = null;
+        if (correctStructure != null) {
+          try {
+            correctStructureValue = correctStructure.getString("value");
+          } catch (Exception e) {
+            Timber.tag("RevealMap").i("GDRSActivity: Err 1");
+          }
+          if (correctStructureValue != null) {
+            Timber.tag("RevealMap").i("correctStructureValue: %s", correctStructureValue);
 
-        if (correctHouseholdCompoundObj != null) {
-          handleHouseholdIdSelection(
-              correctHouseholdCompoundObj,
-              planId,
-              individualIdValue,
-              currentHouseholdIdOfIndexCase,
-              individualObj,
-              individualIdValue);
-        }
+            if ("no".equals(correctStructureValue)) {
+              if (correctHouseholdCompoundObj != null) {
+                handleHouseholdIdSelection(
+                    correctHouseholdCompoundObj,
+                    planId,
+                    individualIdValue,
+                    currentHouseholdIdOfIndexCase,
+                    individualObj,
+                    individualIdValue);
+              }
 
-        if (geoStructure != null) {
-          handleStructureSelection(
-              geoStructure,
-              individualIdValue,
-              planId,
-              currentHouseholdIdOfIndexCase,
-              capturedHousehold,
-              capturedCompound);
-        }
+              if (geoStructure != null) {
+                handleStructureSelection(
+                    geoStructure,
+                    individualIdValue,
+                    planId,
+                    currentHouseholdIdOfIndexCase,
+                    capturedHousehold,
+                    capturedCompound);
+              }
 
-        if (operational != null) {
-          handleOperationalAreaSelection(operational, planId, individualIdValue);
+              if (operational != null) {
+                handleOperationalAreaSelection(operational, planId, individualIdValue);
+              }
+            } else {
+              Timber.tag("RevealMap").i("handleIsCorrectStructureScenario");
+
+              handleIsCorrectStructureScenario(planId,currentHouseholdIdOfIndexCase);
+            }
+          }
         }
       }
     }
@@ -527,6 +671,73 @@ public class GDRSActivity extends AppCompatActivity {
     if (operationalValue != null) {
 
       handleIndexCaseMoveToFloatingOperationalArea(planId, individualIdValue, operationalValue);
+    }
+  }
+
+  private void handleIsCorrectStructureScenario(String planId,  JSONObject currentHouseholdIdOfIndexCase) {
+    String correctHousehold = null;
+    if (currentHouseholdIdOfIndexCase != null){
+      try {
+        correctHousehold = currentHouseholdIdOfIndexCase.getString("value");
+      } catch (Exception e) {
+        Timber.tag("RevealMap").i("GDRSActivity: Err 4");
+      }
+    }
+
+    List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
+        hdssRepository.getStructuresAndTasksForCompoundByHouseholdId(
+            correctHousehold, planId);
+
+    List<StructureTaskForCompound> potentialStructuresForTaskGeneration = new ArrayList<>();
+    for (StructureTaskForCompound structure : structuresAndTasksForCompoundByHouseholdId) {
+
+      if (structure.getBusinessStatus() == null){
+        potentialStructuresForTaskGeneration.add(structure);
+      }
+    }
+    for (StructureTaskForCompound taskForCompound : potentialStructuresForTaskGeneration) {
+      if (taskForCompound.getBusinessStatus() != null) {
+        if (taskForCompound.getStructureId().equals(this.locationUUID)
+            && taskForCompound.getCode().equals(RCD)) {
+          taskRepository.cancelTaskByIdentifier(taskForCompound.getTaskId());
+        }
+      } else {
+        if (!taskForCompound.getStructureId().equals(this.locationUUID)) {
+          taskUtils.generateTask(
+              this,
+              taskForCompound.getStructureId(),
+              taskForCompound.getStructureId(),
+              NOT_VISITED,
+              RCD,
+              R.string.rcd);
+        }
+      }
+    }
+    List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
+        hdssRepository.getIndividualsAndTasksForCompoundByHouseholdId(
+            correctHousehold, planId);
+
+    String groupNameForSelectedStructure =
+        locationRepository.getLocationsParentName(this.locationUUID);
+
+    if (groupNameForSelectedStructure == null) {
+      groupNameForSelectedStructure =
+          PreferencesUtil.getInstance().getCurrentOperationalArea();
+    }
+
+    for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
+        individualsAndTasksForCompoundByHouseholdId) {
+      if (individualsAndTasksForCompound.getBusinessStatus() == null) {
+
+        taskUtils.generateTaskWithGroupName(
+            this,
+            individualsAndTasksForCompound.getIndividualIdentifier(),
+            this.locationUUID,
+            NOT_VISITED,
+            RCD_MEMBER,
+            R.string.rcd,
+            groupNameForSelectedStructure);
+      }
     }
   }
 
@@ -639,11 +850,12 @@ public class GDRSActivity extends AppCompatActivity {
               hdssRepository.getIndividualsAndTasksForCompoundByHouseholdId(
                   correctHousehold, planId);
 
-          String groupNameForSelectedStructure = locationRepository.getLocationsParentName(
-              structureIdByHouseholdId);
+          String groupNameForSelectedStructure =
+              locationRepository.getLocationsParentName(structureIdByHouseholdId);
 
-          if (groupNameForSelectedStructure==null){
-            groupNameForSelectedStructure = PreferencesUtil.getInstance().getCurrentOperationalArea();
+          if (groupNameForSelectedStructure == null) {
+            groupNameForSelectedStructure =
+                PreferencesUtil.getInstance().getCurrentOperationalArea();
           }
 
           for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
@@ -669,79 +881,84 @@ public class GDRSActivity extends AppCompatActivity {
                   householdIdValue, correctHousehold, individualIdValue);
             }
           }
+          try {
+            HdssIndividual individualsByIndividualId =
+                hdssRepository.getIndividualByIndividualId(individualIdValue);
+            if (!hasExistingIndexCase) {
+              taskUtils.generateTaskWithGroupName(
+                  this,
+                  structureIdByHouseholdId,
+                  structureIdByHouseholdId,
+                  INDEX_CASE_NOT_VISITED,
+                  INDEX_CASE,
+                  R.string.index_case,
+                  groupNameForSelectedStructure);
 
-          if (!hasExistingIndexCase) {
-            taskUtils.generateTaskWithGroupName(
-                this,
-                structureIdByHouseholdId,
-                structureIdByHouseholdId,
-                INDEX_CASE_NOT_VISITED,
-                INDEX_CASE,
-                R.string.index_case,
-                groupNameForSelectedStructure);
-            taskUtils.generateTaskWithGroupName(
-                this,
-                individualIdValue,
-                structureIdByHouseholdId,
-                NOT_VISITED,
-                INDEX_CASE_MEMBER,
-                R.string.index_case,
-                groupNameForSelectedStructure);
-          } else {
-            taskUtils.generateTaskWithGroupName(
-                this,
-                structureIdByHouseholdId,
-                structureIdByHouseholdId,
-                SECONDARY_INDEX_CASE_NOT_VISITED,
-                SECONDARY_INDEX_CASE,
-                R.string.index_case,
-                groupNameForSelectedStructure);
-            taskUtils.generateTaskWithGroupName(
-                this,
-                individualIdValue,
-                structureIdByHouseholdId,
-                NOT_VISITED,
-                SECONDARY_INDEX_CASE_MEMBER,
-                R.string.index_case,
-                groupNameForSelectedStructure);
+              taskUtils.generateTaskWithGroupName(
+                  this,
+                  individualsByIndividualId.getIdentifier(),
+                  structureIdByHouseholdId,
+                  NOT_VISITED,
+                  INDEX_CASE_MEMBER,
+                  R.string.index_case,
+                  groupNameForSelectedStructure);
+
+            } else {
+              taskUtils.generateTaskWithGroupName(
+                  this,
+                  structureIdByHouseholdId,
+                  structureIdByHouseholdId,
+                  SECONDARY_INDEX_CASE_NOT_VISITED,
+                  SECONDARY_INDEX_CASE,
+                  R.string.index_case,
+                  groupNameForSelectedStructure);
+              taskUtils.generateTaskWithGroupName(
+                  this,
+                  individualsByIndividualId.getIndividualId(),
+                  structureIdByHouseholdId,
+                  NOT_VISITED,
+                  SECONDARY_INDEX_CASE_MEMBER,
+                  R.string.index_case,
+                  groupNameForSelectedStructure);
+            }
+          } catch (Exception e) {
+            Timber.tag("RevealMap").e(e, "the error");
           }
         }
       }
     } catch (JsonSyntaxException js) {
       Timber.tag("RevealMap").e(" err %s", js.getMessage());
     } catch (Exception e) {
-      Timber.tag("RevealMap").e(e," err %s", e.getMessage());
+      Timber.tag("RevealMap").e(e, " err %s", e.getMessage());
     }
   }
 
   private void handleIndexCaseMoveToFloatingOperationalArea(
       String planId, String individualIdValue, String operationalValue) {
     List<String> tasksForCompoundLinkedToHouseholdId =
-        hdssRepository.getTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId, "");
+        hdssRepository.getTasksForCompoundLinkedToHouseholdId(
+            thisCompoundId, planId, individualIdValue);
     for (String id : tasksForCompoundLinkedToHouseholdId) {
       taskRepository.cancelTaskByIdentifier(id);
       Timber.tag("GDRSActivity").d("Operational cancel tasks %s", id);
     }
 
+    String householdIdByIndividualId =
+        hdssRepository.getHouseholdIdByIndividualId(individualIdValue);
+
     long hdssMaxServerVersion = hdssRepository.getMaxServerVersion();
 
-    hdssMaxServerVersion++;
+    HdssHousehold hdssHousehold =
+        hdssRepository.getHdssHouseholdIdByHouseholdId(householdIdByIndividualId);
 
-    HdssIndividual individualsByIndividualId =
-        hdssRepository.getIndividualByIndividualId(individualIdValue);
-    Timber.tag("GDRSActivity")
-        .i(
-            "GDRSActivity: individual id %s %s",
-            individualsByIndividualId.getIdentifier(), individualsByIndividualId.getIndividualId());
+    hdssRepository.removeHouseholdFromCompound(householdIdByIndividualId);
+    hdssRepository.removeHouseholdFromStructure(householdIdByIndividualId);
 
-    individualsByIndividualId.setServerVersion(hdssMaxServerVersion);
-    individualsByIndividualId.setFloatingLocationName(operationalValue);
-    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 2");
-    hdssRepository.deleteIndividualFromHousehold(individualIdValue);
-
-    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 3");
-    hdssRepository.addOrUpdateIndividual(List.of(individualsByIndividualId));
-    Timber.tag("RevealMap").i("GDRSActivity: operationalValue 4");
+    if (hdssHousehold != null) {
+      hdssHousehold.setFloatingHouseholdLocationName(operationalValue);
+      hdssHousehold.setServerVersion(hdssMaxServerVersion);
+      hdssRepository.addOrUpdateHousehold(List.of(hdssHousehold));
+    }
   }
 
   private void handleIndexCaseToNewStructureWithoutHousehold(
@@ -994,8 +1211,6 @@ public class GDRSActivity extends AppCompatActivity {
     private String confirmedId;
   }
 
-
-
   public static @NonNull HdssLocation getHdssLocation(String locationUUID) {
     HdssLocation location = new HdssLocation();
     LocationProperty locationProperty = new LocationProperty();
@@ -1018,8 +1233,4 @@ public class GDRSActivity extends AppCompatActivity {
     details.setTaskEntity(task.getForEntity());
     return details;
   }
-
-
 }
-
-

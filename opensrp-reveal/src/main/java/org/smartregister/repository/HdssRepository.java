@@ -43,6 +43,7 @@ public class HdssRepository extends BaseRepository {
   public static final String INDIVIDUAL_ID = "individual_id";
   public static final String DOB = "dob";
   public static final String GENDER = "gender";
+  public static final String CLUSTER = "cluster";
 
   public static String HDSS_COMPOUND = "hdss_compound";
 
@@ -159,6 +160,7 @@ public class HdssRepository extends BaseRepository {
   private static final String CREATE_HDSS_HOUSEHOLD_INDIVIDUAL_INDEX =
       "CREATE INDEX IF NOT EXISTS hdss_household_individual_individual_id_idx ON hdss_household_individual (individual_id);";
 
+
   private static final String CREATE_HDSS_INDIVIDUAL =
       "CREATE TABLE IF NOT EXISTS "
           + HDSS_INDIVIDUAL
@@ -188,6 +190,9 @@ public class HdssRepository extends BaseRepository {
           + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
           + "  TEXT , "
           + "  "
+          + CLUSTER
+          + "  TEXT , "
+          + "  "
           + SERVER_VERSION
           + " INTEGER NOT NULL, "
           + " PRIMARY KEY( "
@@ -199,6 +204,8 @@ public class HdssRepository extends BaseRepository {
       "CREATE INDEX IF NOT EXISTS  hdss_individual_identifier_idx ON hdss_individual ( "
           + " identifier "
           + ");";
+
+  public static final String DROP_HDSS_SEARCH_RESULTS = "DROP TABLE IF EXISTS "+HDSS_SEARCH_RESULTS+";";
 
   private static final String CREATE_HDSS_SEARCH_RESULTS =
       "CREATE TABLE IF NOT EXISTS "
@@ -212,10 +219,10 @@ public class HdssRepository extends BaseRepository {
           + "  TEXT NOT NULL, "
           + " "
           + COMPOUND_ID
-          + " TEXT NOT NULL, "
+          + " TEXT, "
           + " "
           + HOUSEHOLD_ID
-          + "  TEXT NOT NULL, "
+          + "  TEXT, "
           + "  "
           + DOB
           + "  TEXT NOT NULL, "
@@ -225,6 +232,9 @@ public class HdssRepository extends BaseRepository {
           + "  "
           + GENDER
           + "  TEXT NOT NULL, "
+          + "  "
+          + CLUSTER
+          + "  TEXT, "
           + "  "
           + SERVER_VERSION
           + " INTEGER NOT NULL, "
@@ -274,6 +284,7 @@ public class HdssRepository extends BaseRepository {
   }
 
   public static void createSearchResultsTable(SQLiteDatabase database) {
+    database.execSQL(DROP_HDSS_SEARCH_RESULTS);
     database.execSQL(CREATE_HDSS_SEARCH_RESULTS);
   }
 
@@ -844,6 +855,9 @@ public class HdssRepository extends BaseRepository {
             + "hi."
             + NAME
             + ",\n"
+            + "hi."
+            + CLUSTER
+            + ",\n"
             + "hi.server_version,\n"
             + "hhi.household_id,\n"
             + "hhs.structure_id,\n"
@@ -901,6 +915,8 @@ public class HdssRepository extends BaseRepository {
 
             String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
 
+            String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
+
             String structureId = cursor.getString(cursor.getColumnIndexOrThrow(STRUCTURE_ID));
 
             String floatingLocationId =
@@ -931,7 +947,8 @@ public class HdssRepository extends BaseRepository {
                     floatingLocationId,
                     floatingLocationName,
                     floatingLocationGeographicLevel,
-                    floatingHouseholdLocationName);
+                    floatingHouseholdLocationName,
+                    cluster);
 
             Timber.tag("reveal_individual").i("i %s",hdssIndividual);
             values.add(hdssIndividual);
@@ -1071,9 +1088,11 @@ public class HdssRepository extends BaseRepository {
 
           String nameStr = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
+
           HdssIndividualHouseHoldCompound hdssIndividual =
               new HdssIndividualHouseHoldCompound(
-                  identifier, individualId, dobStr, gender, householdId, compoundId, nameStr);
+                  identifier, individualId, dobStr, gender, householdId, compoundId, nameStr,cluster);
 
           values.add(hdssIndividual);
         } while (cursor.moveToNext());
@@ -1084,18 +1103,20 @@ public class HdssRepository extends BaseRepository {
   }
 
   public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual(
-      String searchtext, String genderSearch, String dob, String name) {
+      String searchtext, String genderSearch, String dob, String name, String cluster, String startAge, String endAge,boolean useAgeRange, boolean useExactDate) {
     Timber.tag("searching")
-        .i("searchtext %s genderSearch %s dob %s", searchtext, genderSearch, dob);
+        .i("searchtext %s genderSearch %s dob %s startAge %s endAge %s", searchtext, genderSearch, dob,startAge,endAge);
     SQLiteDatabase readableDatabase = getReadableDatabase();
 
     String query =
         "SELECT hi.identifier, hi.individual_id, hhi.household_id, hc.compound_id, hi.dob, hi.gender, hi."
             + NAME
+            + ",hi." + CLUSTER
             + " "
             + "FROM hdss_individual hi "
             + "LEFT JOIN hdss_household_individual hhi ON hi.individual_id = hhi.individual_id "
             + "LEFT JOIN hdss_compound_household hch ON hch.household_id = hhi.household_id "
+            + "left join hdss_household_structure hhs on hhs.household_id = hhi.household_id "
             + "LEFT JOIN hdss_compound hc ON hc.compound_id = hch.compound_id ";
 
     // List to hold WHERE conditions dynamically
@@ -1108,7 +1129,7 @@ public class HdssRepository extends BaseRepository {
     if (searchtext != null && !searchtext.isEmpty()) {
       whereClauses.add(
           "(hi.individual_id LIKE ? OR hhi.household_id LIKE ? OR hc.compound_id LIKE ?)");
-      String searchPattern = "%" + searchtext + "%";
+      String searchPattern = "%" + searchtext.trim() + "%";
       args.add(searchPattern);
       args.add(searchPattern);
       args.add(searchPattern);
@@ -1120,17 +1141,62 @@ public class HdssRepository extends BaseRepository {
       args.add(genderSearch);
     }
 
-    // Handle dob if not null
-    if (dob != null && !dob.isEmpty()) {
-      whereClauses.add("hi.dob = ?");
-      args.add(dob);
+    if (useExactDate) {
+      // Handle dob if not null
+      if (dob != null && !dob.isEmpty()) {
+        whereClauses.add("hi.dob = ?");
+        args.add(dob);
+      }
+    }
+    if (useAgeRange){
+      if (startAge!=null && endAge!= null){
+
+        String start = "'-"+startAge.trim()+" years'";
+        String end = "'-"+endAge.trim()+" years'";
+        Timber.tag("hdsssearch").i("HdssRepository startAge %s endAge %s",start,end);
+        whereClauses.add("hi.dob BETWEEN DATE('now', "+end+") AND DATE('now', "+start+")");
+
+      }
     }
 
-    // Handle name if not null
+
     if (name != null && !name.isEmpty()) {
-      whereClauses.add("LOWER(hi." + NAME + ") LIKE LOWER(?)");
-      args.add("%" + name + "%");
+      StringBuilder orString = new StringBuilder();
+      orString
+          .append("(LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", " ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "  ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "   ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "    ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "     ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "      ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) OR ");
+      args.add("%" + name.trim().replaceAll("\\s+", "       ") + "%");
+      orString
+          .append("LOWER(hi." + NAME + ") LIKE LOWER(?) ) ");
+      args.add("%" + name.trim().replaceAll("\\s+", "        ") + "%");
+
+      whereClauses.add(orString.toString());
     }
+
+
+    if (cluster != null && !cluster.isEmpty()) {
+      whereClauses.add("LOWER(hi." + CLUSTER + ") LIKE LOWER(?)");
+      args.add(cluster + "%");
+    }
+
+    whereClauses.add("hhs.structure_id IS NOT NULL");
 
     // If there are conditions, join them with AND
     if (!whereClauses.isEmpty()) {
@@ -1142,7 +1208,8 @@ public class HdssRepository extends BaseRepository {
 
     // Execute the query
     Cursor cursor = readableDatabase.rawQuery(query, selectionArgs);
-
+    Timber.tag("searching")
+        .i("query %s %s", query,selectionArgs);
     // Process the results
     List<HdssIndividualHouseHoldCompound> values = new ArrayList<>();
     if (cursor != null) {
@@ -1155,11 +1222,11 @@ public class HdssRepository extends BaseRepository {
           String householdId = cursor.getString(cursor.getColumnIndexOrThrow("household_id"));
           String compoundId = cursor.getString(cursor.getColumnIndexOrThrow("compound_id"));
           String nameStr = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
-
+          String clusterStr = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
           // Create the object
           HdssIndividualHouseHoldCompound hdssIndividual =
               new HdssIndividualHouseHoldCompound(
-                  identifier, individualId, dobStr, gender, householdId, compoundId, nameStr);
+                  identifier, individualId, dobStr, gender, householdId, compoundId, nameStr, clusterStr);
 
           // Add to the list
           values.add(hdssIndividual);
@@ -1207,6 +1274,7 @@ public class HdssRepository extends BaseRepository {
     }
 
   public void addOrUpdateIndividualBatched(List<HdssIndividual> householdIndividuals) {
+    Timber.tag("TotalCount").e("writing to db no of individs %s",householdIndividuals.size());
     SQLiteDatabase writableDatabase = getWritableDatabase();
 
     // Start a transaction to ensure atomicity and improve performance
@@ -1234,6 +1302,8 @@ public class HdssRepository extends BaseRepository {
                     + ", "
                     + NAME
                     + ", "
+                    + CLUSTER
+                    + ", "
                     + FLOATING_LOCATION_ID
                     + ", "
                     + FLOATING_LOCATION_NAME
@@ -1252,20 +1322,31 @@ public class HdssRepository extends BaseRepository {
               .append("'")
               .append(", ")
               .append("'")
-              .append(individual.getIndividualId())
+              .append(individual.getIndividualId().replace("'",""))
               .append("'")
               .append(", ")
               .append("'")
-              .append(individual.getDob())
+              .append(individual.getDob().replace("'",""))
               .append("'")
               .append(", ")
               .append("'")
-              .append(individual.getGender())
+              .append(individual.getGender().replace("'",""))
               .append("'")
               .append(", ")
               .append("'")
-              .append(individual.getName())
+              .append(individual.getName().replace("'",""))
               .append("'");
+
+
+          if (individual.getCluster() != null) {
+            sql.append(", ")
+                .append("'")
+                .append(individual.getCluster().replace("'",""))
+                .append("'");
+          } else {
+            sql.append(", ")
+                .append("NULL");
+          }
 
           if (individual.getFloatingLocationName() != null) {
             sql.append(", ")
@@ -1274,7 +1355,7 @@ public class HdssRepository extends BaseRepository {
                 .append("'")
                 .append(", ")
                 .append("'")
-                .append(individual.getFloatingLocationName())
+                .append(individual.getFloatingLocationName().replace("'",""))
                 .append("'")
                 .append(", ")
                 .append("'")
@@ -1306,7 +1387,8 @@ public class HdssRepository extends BaseRepository {
       writableDatabase.setTransactionSuccessful();
     } catch (Exception e) {
       // Handle any exceptions
-      e.printStackTrace();
+      Timber.tag("TotalCount").e("db exception %s",e.getMessage());
+
     } finally {
       // End the transaction, whether successful or not
       writableDatabase.endTransaction();
@@ -1326,7 +1408,11 @@ public class HdssRepository extends BaseRepository {
           contentValues.put(COMPOUND_ID, individual.getCompoundId());
           contentValues.put(HOUSEHOLD_ID, individual.getHouseholdId());
           contentValues.put(NAME, individual.getName());
+          contentValues.put(CLUSTER,individual.getCluster());
           contentValues.put(SERVER_VERSION, 0);
+
+          Timber.tag("searching").e("retrieved contentValues %s",contentValues);
+
           writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
         });
   }
@@ -1344,6 +1430,7 @@ public class HdssRepository extends BaseRepository {
           contentValues.put(COMPOUND_ID, individual.getCompoundId());
           contentValues.put(HOUSEHOLD_ID, individual.getHouseholdId());
           contentValues.put(NAME, individual.getName());
+          contentValues.put(CLUSTER,individual.getCluster());
           contentValues.put(SERVER_VERSION, 0);
           writableDatabase.replace(HDSS_SEARCH_RESULTS, null, contentValues);
         });
@@ -1380,9 +1467,11 @@ public class HdssRepository extends BaseRepository {
 
           String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
 
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
+
           HdssSearchBoxFactory.SearchResponse hdssIndividual =
               new HdssSearchBoxFactory.SearchResponse(
-                  identifier, individualId, compoundId, householdId, dob, gender, name);
+                  identifier, individualId, compoundId, householdId, dob, gender, name,cluster);
 
           values.add(hdssIndividual);
         } while (cursor.moveToNext());
@@ -1682,6 +1771,8 @@ public class HdssRepository extends BaseRepository {
             + FLOATING_LOCATION_NAME
             + ", hi."
             + FLOATING_LOCATION_GEOGRAPHIC_LEVEL
+            + ", hi."
+            + CLUSTER
             + ", hh."
             + FLOATING_HOUSEHOLD_LOCATION_NAME
             + " from hdss_individual hi  "
@@ -1705,6 +1796,7 @@ public class HdssRepository extends BaseRepository {
           String householdId = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
           String compoundId = cursor.getString(cursor.getColumnIndexOrThrow(COMPOUND_ID));
           String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
 
           int serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
@@ -1731,7 +1823,8 @@ public class HdssRepository extends BaseRepository {
                   floatingLocationId,
                   floatingLocationName,
                   floatingLocationGeographicLevel,
-                  floatingHouseholdLocationName);
+                  floatingHouseholdLocationName,
+                  cluster);
 
           values.add(hdssIndividual);
         } while (cursor.moveToNext());
@@ -1741,13 +1834,13 @@ public class HdssRepository extends BaseRepository {
     return values;
   }
 
-  public List<HdssCompoundHousehold> getHouseholdCompound() {
+  public Set<HdssCompoundHousehold> getHouseholdCompound() {
 
     String query = "SELECT compound_id, household_id, server_version  from hdss_compound_household";
 
     SQLiteDatabase db = getReadableDatabase();
     Cursor cursor = db.rawQuery(query, null);
-    List<HdssCompoundHousehold> values = new ArrayList<>();
+    Set<HdssCompoundHousehold> values = new HashSet<>();
     if (cursor != null) {
       if (cursor.moveToFirst()) {
         do {
@@ -1893,7 +1986,7 @@ public class HdssRepository extends BaseRepository {
             + "FROM hdss_compound_household hch\n"
             + "left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id\n"
             + "LEFT join hdss_household_structure hhs on hch2.household_id = hhs.household_id\n"
-            + "left join task t on t.for = hhs.structure_id\n"
+            + "left join task t on t.for = hhs.structure_id AND t.status!='CANCELLED'\n"
             + "WHERE hch.household_id = ? and (t.plan_id = ?)";
 
     SQLiteDatabase db = getReadableDatabase();
@@ -1980,7 +2073,7 @@ public class HdssRepository extends BaseRepository {
             + "left join hdss_compound_household hch2 on hch2.compound_id = hch.compound_id\n"
             + "left join hdss_household_individual hhi on hhi.household_id = hch2.household_id \n"
             + "left join hdss_individual hi on hi.individual_id = hhi.individual_id\n"
-            + "left join task t on t.for = hi.identifier\n"
+            + "left join task t on t.for = hi.identifier AND t.status != 'CANCELLED'\n"
             + "WHERE hch.household_id = ?  and (t.plan_id = ? or plan_id is null);";
 
     SQLiteDatabase db = getReadableDatabase();
@@ -2252,6 +2345,8 @@ public class HdssRepository extends BaseRepository {
             + GENDER
             + ",i."
             + NAME
+            + ",i."
+            + CLUSTER
             + ", i."
             + SERVER_VERSION
             + ","
@@ -2279,6 +2374,7 @@ public class HdssRepository extends BaseRepository {
           String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
           String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
           String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
           long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
           String floatingLocationId =
@@ -2298,7 +2394,8 @@ public class HdssRepository extends BaseRepository {
                   serverVersion,
                   floatingLocationId,
                   floatingLocationName,
-                  floatingLocationGeographicLevel);
+                  floatingLocationGeographicLevel,
+                  cluster);
           values.put(identifier, hdssIndividual);
         } while (cursor.moveToNext());
       }
@@ -2324,6 +2421,8 @@ public class HdssRepository extends BaseRepository {
             + SERVER_VERSION
             + ", i."
             + NAME
+            + ", i."
+            + CLUSTER
             + " ,"
             + "i."
             + FLOATING_LOCATION_ID
@@ -2347,6 +2446,7 @@ public class HdssRepository extends BaseRepository {
           String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
           String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
           String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
           long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
           String floatingLocationId =
@@ -2366,7 +2466,8 @@ public class HdssRepository extends BaseRepository {
                   serverVersion,
                   floatingLocationId,
                   floatingLocationName,
-                  floatingLocationGeographicLevel);
+                  floatingLocationGeographicLevel,
+                  cluster);
           cursor.close();
           return hdssIndividual;
         } while (cursor.moveToNext());
@@ -2393,6 +2494,8 @@ public class HdssRepository extends BaseRepository {
             + SERVER_VERSION
             + ", i."
             + NAME
+            + ", i."
+            + CLUSTER
             + " ,"
             + "i."
             + FLOATING_LOCATION_ID
@@ -2418,6 +2521,7 @@ public class HdssRepository extends BaseRepository {
           String dob = cursor.getString(cursor.getColumnIndexOrThrow(DOB));
           String gender = cursor.getString(cursor.getColumnIndexOrThrow(GENDER));
           String name = cursor.getString(cursor.getColumnIndexOrThrow(NAME));
+          String cluster = cursor.getString(cursor.getColumnIndexOrThrow(CLUSTER));
           long serverVersion = cursor.getInt(cursor.getColumnIndexOrThrow(SERVER_VERSION));
 
           String floatingLocationId =
@@ -2437,7 +2541,8 @@ public class HdssRepository extends BaseRepository {
                   serverVersion,
                   floatingLocationId,
                   floatingLocationName,
-                  floatingLocationGeographicLevel);
+                  floatingLocationGeographicLevel,
+                  cluster);
           cursor.close();
           return hdssIndividual;
         } while (cursor.moveToNext());

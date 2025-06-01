@@ -3,6 +3,7 @@ package org.smartregister.reveal.searchbox;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Handler;
 import android.text.Editable;
@@ -18,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +40,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
-import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -70,6 +71,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     public static final String SEARCH_ONLINE = "search_online";
     public static final String DOB = "dob";
     public static final String NAME = "name";
+    public static final String CLUSTER = "cluster";
+    public static final String START_AGE = "start_age";
+    public static final String END_AGE = "end_age";
+    public static final String USE_AGE_RANGE = "use_age_range";
+    public static final String USE_EXACT_DATE = "use_exact_date";
     public static final String BATCH_NUMBER = "batchNumber";
     public static final String BATCH_SIZE = "batchSize";
     public static final String REVEAL_SEARCH_BOX = "reveal_search_box";
@@ -77,7 +83,9 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
     private String searchText = null;
     private String nameText = null;
-
+    private String clusterText = null;
+    private String startAgeText = null;
+    private String endAgeText = null;
     private JsonFormFragment formFragment;
 
     private String stepName;
@@ -105,6 +113,21 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     LinearLayout linearLayout;
     Dialog dialog;
 
+    CheckBox radioAgeRange;
+    CheckBox radioDob;
+    EditText startAgeEditText;
+    EditText endAgeEditText;
+    Button clearDateButton;
+
+    boolean useAgeRange = false;
+    boolean useExactDate = false;
+
+    Button searchButton;
+
+    Button clearButton;
+
+    Toast currentToast;
+
     boolean searchOnlineChecked = false;
     private Runnable searchRunnable;
     private static final long SEARCH_DELAY = 800;
@@ -130,14 +153,19 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         NativeEditText resultTextView = addTextView();
         addSearchEditText(resultTextView);
         addSearchNameEditText(resultTextView);
+        addSearchClusterEditText();
 
-        addButton(context, jsonObject, resultTextView);
+        addSearchButton(context, jsonObject, resultTextView);
         addGenderSpinner(resultTextView);
         addClearButton(resultTextView);
         attachLogic(jsonObject, context, linearLayout);
         setTags(stepName, jsonObject, resultTextView, popup);
 
+        addAgeRangeFields();
+
         addDatePickerEditText(context, resultTextView);
+        addDobAndAgeRangeToggles();
+
         addDateClearButton();
         addSearchOnlineCheckBox(context, linearLayout);
 
@@ -146,25 +174,149 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         return views;
     }
 
+    private void addAgeRangeFields(){
+        startAgeEditText = linearLayout.findViewById(R.id.start_age);
+        startAgeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(searchRunnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                startAgeText = s.toString();
+            }
+        });
+        endAgeEditText  = linearLayout.findViewById(R.id.end_age);
+        endAgeEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(searchRunnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                endAgeText = s.toString();
+            }
+        });
+    }
+
+    private void addDobAndAgeRangeToggles(){
+        radioAgeRange = linearLayout.findViewById(R.id.radio_age_range);
+        radioDob = linearLayout.findViewById(R.id.radio_dob);
+
+        if (editTextDate != null) {
+            editTextDate.setText("");
+        }
+        if (startAgeEditText != null) {
+            startAgeEditText.setText("");
+        }
+        if (endAgeEditText != null) {
+            endAgeEditText.setText("");
+        }
+
+        useAgeRange = false;
+        useExactDate = false;
+
+        radioAgeRange.setOnCheckedChangeListener(null);
+        radioDob.setOnCheckedChangeListener(null);
+
+        radioAgeRange.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                if (editTextDate != null) {
+                    editTextDate.setText("");
+                }
+                radioDob.setChecked(false);
+                useAgeRange = true;
+                linearLayout.findViewById(R.id.age_range_container).setVisibility(View.VISIBLE);
+                linearLayout.findViewById(R.id.dob_container).setVisibility(View.GONE);
+            }  else if (!radioDob.isChecked()) {
+                if (startAgeEditText != null) {
+                    startAgeEditText.setText("");
+                }
+                if (endAgeEditText != null) {
+                    endAgeEditText.setText("");
+                }
+                // Only hide if neither is checked
+                linearLayout.findViewById(R.id.age_range_container).setVisibility(View.GONE);
+            }
+            useAgeRange = isChecked;
+        });
+
+        radioDob.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                if (startAgeEditText != null) {
+                    startAgeEditText.setText("");
+                }
+                if (endAgeEditText != null) {
+                    endAgeEditText.setText("");
+                }
+                radioAgeRange.setChecked(false);
+                useExactDate = true;
+                linearLayout.findViewById(R.id.age_range_container).setVisibility(View.GONE);
+                linearLayout.findViewById(R.id.dob_container).setVisibility(View.VISIBLE);
+            } else if (!radioAgeRange.isChecked()) {
+                // Only hide if neither is checked
+                if (editTextDate != null) {
+                    editTextDate.setText("");
+                }
+                linearLayout.findViewById(R.id.dob_container).setVisibility(View.GONE);
+            }
+            useExactDate = isChecked;
+        });
+
+    }
+
     private void addSearchOnlineCheckBox(Context context, LinearLayout linearLayout) {
         CheckBox checkBox = linearLayout.findViewById(R.id.myCheckbox);
         checkBox.setOnCheckedChangeListener((v, isChecked) -> searchOnlineChecked = isChecked);
     }
 
     private void addDateClearButton() {
-        Button clearButton = linearLayout.findViewById(R.id.buttonClear);
-        clearButton.setOnClickListener(v -> {
+        clearDateButton = linearLayout.findViewById(R.id.buttonClearDate);
+        clearDateButton.setOnClickListener(v -> {
             editTextDate.setText(null);
             localSearchDate = null;
         });
+        clearDateButton.setTextColor(Color.GRAY);
+        clearDateButton.setEnabled(false);
     }
 
     private void addDatePickerEditText(Context context, NativeEditText view) {
         editTextDate = linearLayout.findViewById(R.id.editTextDate);
         editTextDate.setOnClickListener(v -> showDatePickerDialog(context, view));
+        editTextDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateClearButtonState();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
+    private void updateClearButtonState() {
+        if (editTextDate != null && clearDateButton != null) {
 
+            String text = editTextDate.getText().toString().trim();
+            Timber.tag("hdsssearch").i("updateClearButtonState %s",text);
+            boolean hasText = !text.isEmpty();
+
+            clearDateButton.setEnabled(hasText);
+            clearDateButton.setTextColor(hasText ? Color.BLACK : Color.GRAY);
+        }
+    }
     private void showDatePickerDialog(Context context, NativeEditText resultTextView) {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -180,9 +332,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             localSearchDate = formattedDate;
 
             editTextDate.setText(formattedDate);
-            Timber.tag("hdsssearch").i("datePickerDialog");
+            updateClearButtonState();
 
-//            enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
 
         }, year, month, day);
 
@@ -220,15 +371,48 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         return textView;
     }
 
-    private void addButton(Context context, JSONObject jsonObject, NativeEditText resultTextView) {
-        Button button = linearLayout.findViewById(R.id.search_button);
-        button.setOnClickListener(v -> {
+    private void addSearchButton(Context context, JSONObject jsonObject, NativeEditText resultTextView) {
+        searchButton = linearLayout.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(v -> {
 
-            if (localSearchDate==null && ((searchText != null && !searchText.isEmpty() && searchText.length() < 3)
-                    || (nameText != null  && !nameText.isEmpty() && nameText.length() < 3)))  {
-                Toast.makeText(context, "must capture > 3 characters to search", Toast.LENGTH_LONG).show();
-            } else {
-                Timber.tag("hdsssearch").i("addButton");
+            boolean performSearch = true;
+
+            if (gender==null){
+                currentToast = Toast.makeText(context, "gender is mandatory in order to search", Toast.LENGTH_LONG);
+                currentToast.show();
+                performSearch = false;
+            }
+
+            if (useAgeRange){
+                Timber.tag("hdsssearch").i("startAge %s endAge %s",startAgeText,endAgeText);
+                if (startAgeText == null || startAgeText.trim().isEmpty() || endAgeText == null || endAgeText.trim().isEmpty()) {
+                    currentToast = Toast.makeText(context, "must capture start age AND end age in order to search", Toast.LENGTH_LONG);
+                    currentToast.show();
+                    performSearch = false;
+                }
+            }
+
+            if (useExactDate){
+                if (localSearchDate==null){
+                    currentToast = Toast.makeText(context, "must capture exact birthdate in order to search", Toast.LENGTH_LONG);
+                    currentToast.show();
+                    performSearch = false;
+                }
+            }
+
+            if (useAgeRange || useExactDate && localSearchDate!=null){
+                if ((searchText == null || searchText.trim().isEmpty())
+                    && (nameText == null || nameText.trim().isEmpty())
+                    && (clusterText==null || clusterText.trim().isEmpty())
+                    && gender!=null){
+                    currentToast = Toast.makeText(context, "searching with date or age range and gender must be with any other search criteria", Toast.LENGTH_LONG);
+                    currentToast.show();
+                    performSearch = false;
+                }
+            }
+
+            if (performSearch) {
+                searchButton.setEnabled(false);
                 enqueueSearchWork(getSearchRequest(), v.getContext(), resultTextView);
             }
         });
@@ -241,8 +425,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     }
 
     private void addClearButton(NativeEditText resultTextView) {
-        Button button = linearLayout.findViewById(R.id.clear_button);
-        button.setOnClickListener(v -> {
+        Button clearButton = linearLayout.findViewById(R.id.clear_button);
+        clearButton.setOnClickListener(v -> {
             resultTextView.setText(null);
 
             Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
@@ -261,7 +445,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 }
             }
 
-            formFragment.writeValue(stepName, "individual_ho", "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+            formFragment.writeValue(stepName, "individual", "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
             formFragment.writeValue(stepName, "date_of_birth", "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
             formFragment.writeValue(stepName, GENDER, "", getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
 
@@ -312,6 +496,25 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         });
     }
 
+    private void addSearchClusterEditText() {
+        EditText editText = linearLayout.findViewById(R.id.cluster_text);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handler.removeCallbacks(searchRunnable);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                clusterText = s.toString();
+            }
+        });
+    }
+
     @Override
     public void enqueueSearchWork(SearchRequest request, Context context, TextView resultTextView) {
         Timber.tag("hdsssearch").i("about to search");
@@ -329,7 +532,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             Data inputData = getSearchRequest(hdssSearchRequest);
             Timber.tag("hdsssearch").i("submit search");
             isLoading = true;
-            Toast.makeText(context, "Searching...", Toast.LENGTH_SHORT).show();
+            currentToast = Toast.makeText(context, "Searching...", Toast.LENGTH_SHORT);
+            currentToast.show();
             OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
             WorkManager.getInstance(context).enqueue(searchWorkRequest);
             observeWorkInfo(context, resultTextView, searchWorkRequest);
@@ -360,18 +564,30 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         } else if (workInfo.getState() == WorkInfo.State.FAILED) {
             handleFailure(workInfo, context);
         }
+        searchButton.setEnabled(true);
     }
 
-    private static void handleFailure(WorkInfo workInfo, Context context) {
+    private void handleFailure(WorkInfo workInfo, Context context) {
         Data outputData = workInfo.getOutputData();
-        if (outputData.getString("error") != null) {
-            Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG).show();
+        if (currentToast!=null){
+            currentToast.cancel();
+            currentToast = null;
         }
+        if (outputData.getString("error") != null) {
+            currentToast = Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG);
+            currentToast.show();
+        } else {
+            currentToast = Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG);
+            currentToast.show();
+        }
+        isLoading = false;
     }
 
     private void handleSucceeded(WorkInfo workInfo, Context context, TextView resultTextView) {
+        if (currentToast!=null){
+            currentToast.cancel();
+            currentToast = null;
+        }
         Data outputData = workInfo.getOutputData();
 
         String json = outputData.getString("result");
@@ -383,9 +599,12 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 searchItemAdapter.notifyDataSetChanged();
             }
         }
+        Timber.tag("hdsssearch").i("json %s",json);
         List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
         }.getType());
+        Timber.tag("hdsssearch").i("resultList %s",resultList);
         if (resultList != null && !resultList.isEmpty()) {
+            Timber.tag("hdsssearch").i("resultList size%s",resultList.size());
             searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
             if (dialog == null) {
                 dialog = setupDialog(context, resultTextView);
@@ -394,9 +613,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             dialog.show();
         } else {
-            Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG).show();
+            currentToast = Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG);
+            currentToast.show();
         }
         isLoading = false;
+
     }
 
     private static @NonNull Dialog setupDialog(Context context, View anchorView) {
@@ -432,15 +653,18 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     private void setupRecyclerView(Context context, TextView resultTextView, Dialog dialog) {
         recyclerView = dialog.findViewById(R.id.search_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (!isLoading && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == searchItems.size() - 1) {
+                if (!isLoading && layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() == searchItems.size() - 1
+                    && searchItems.size() >= batchSize) {
                     // Load next batch
                     batchNumber++;
-                    Toast.makeText(context, "checking for more results", Toast.LENGTH_SHORT).show();
+                    currentToast = Toast.makeText(context, "checking for more results", Toast.LENGTH_SHORT);
+                    currentToast.show();
                     loadItems(batchNumber, batchSize, context);
                 }
             }
@@ -451,6 +675,8 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     }
 
     private void handleItemOnClick(SearchItem item, TextView resultTextView, Dialog dialog) {
+        Timber.tag("hdsssearch").i("handleItemOnClick 1");
+
         Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
         for (View view : formDataViews) {
             if (view.getTag(R.id.key).equals("date_of_birth")) {
@@ -471,14 +697,35 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             }
             if (view.getTag(R.id.key).equals("household")) {
                 MaterialEditText textView = (MaterialEditText) view;
-                textView.setText(item.getField2());
+
+                if (item.getField2()!=null){
+                    textView.setText(item.getField2());
+                } else {
+                    textView.setText(R.string.not_available);
+                }
             }
             if (view.getTag(R.id.key).equals("compound")) {
                 MaterialEditText textView = (MaterialEditText) view;
-                textView.setText(item.getField1());
+
+                if (item.getField1()!=null){
+                    textView.setText(item.getField1());
+                } else {
+                    textView.setText(R.string.not_available);
+                }
+            }
+            Timber.tag("hdsssearch").i("handleItemOnClick 2");
+              if (view.getTag(R.id.key).equals("cluster")) {
+                  MaterialEditText textView = (MaterialEditText) view;
+                  if (item.getField7()!=null){
+                    textView.setText(item.getField7());
+                  } else {
+                    textView.setText(R.string.not_available);
+                  }
             }
 
+
         }
+        Timber.tag("hdsssearch").i("handleItemOnClick 3");
         resultTextView.setText(item.getResult());
 //        formFragment.writeValue(stepName, "individual_household_compound_search", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
 
@@ -489,10 +736,18 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "individual", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "name", item.getField6(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        Timber.tag("hdsssearch").i("handleItemOnClick 4");
+        if (item.getField2()!=null){
+            formFragment.writeValue(stepName, "household", item.getField2(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        }
+        if (item.getField1()!=null){
+            formFragment.writeValue(stepName, "compound", item.getField1(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        }
+        Timber.tag("hdsssearch").i("item %s ",item);
 
-        formFragment.writeValue(stepName, "household", item.getField2(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
-        formFragment.writeValue(stepName, "compound", item.getField1(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
-
+        if (item.getField7()!=null){
+          formFragment.writeValue(stepName, "cluster", item.getField7(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
+        }
 
         if (searchItems != null) {
             searchItems.clear();
@@ -500,7 +755,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 searchItemAdapter.notifyDataSetChanged();
             }
         }
-
+        Timber.tag("hdsssearch").i("handleItemOnClick done ");
         dialog.dismiss();
     }
 
@@ -522,6 +777,22 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         if (hdssSearchRequest.getNameString() != null) {
             builder.putString(NAME, hdssSearchRequest.getNameString());
         }
+
+        if (hdssSearchRequest.getCluster() != null) {
+            builder.putString(CLUSTER, hdssSearchRequest.getCluster());
+        }
+
+        if (hdssSearchRequest.getStartAge() != null) {
+            builder.putString(START_AGE, hdssSearchRequest.getStartAge());
+        }
+
+        if (hdssSearchRequest.getEndAge() != null) {
+            builder.putString(END_AGE, hdssSearchRequest.getEndAge());
+        }
+
+
+        builder.putBoolean(USE_AGE_RANGE, hdssSearchRequest.isUseAgeRange());
+        builder.putBoolean(USE_EXACT_DATE, hdssSearchRequest.isUseExactDate());
 
         builder.putInt(BATCH_NUMBER, batchNumber);
         builder.putInt(BATCH_SIZE, batchSize);
@@ -559,6 +830,10 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             searchItem.setLabel6("Name");
             searchItem.setField6(result.getName());
         }
+        if (result.getCluster() != null) {
+            searchItem.setLabel7("Cluster");
+            searchItem.setField7(result.getCluster());
+        }
         return searchItem;
     }
 
@@ -572,9 +847,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             searchItemAdapter.notifyDataSetChanged();
             isLoading = false;
             if (nextBatch.isEmpty()) {
-                Toast.makeText(context, "no more items", Toast.LENGTH_SHORT).show();
+                currentToast = Toast.makeText(context, "no more items", Toast.LENGTH_SHORT);
+                currentToast.show();
             } else {
-                Toast.makeText(context, "loaded new results", Toast.LENGTH_SHORT).show();
+                currentToast = Toast.makeText(context, "loaded new results", Toast.LENGTH_SHORT);
+                currentToast.show();
             }
         }, 2000);
     }
@@ -593,8 +870,12 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         request.setNameString(nameText);
         request.setSearchString(searchText);
         request.setDob(localSearchDate);
-
-
+        request.setStartAge(startAgeText);
+        request.setEndAge(endAgeText);
+        request.setCluster(clusterText);
+        request.setUseAgeRange(useAgeRange);
+        request.setUseExactDate(useExactDate);
+        Timber.tag("hdsssearch").i("getSearchRequest request %s",request);
         return request;
     }
 
@@ -610,5 +891,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         private String dob;
         private String gender;
         private String name;
+        private String cluster;
     }
 }

@@ -805,6 +805,22 @@ public class TaskRepository extends BaseRepository {
         addOrUpdate(task, true);
     }
 
+    public void cancelCompletedTaskByIdentifier(@NonNull String identifier) {
+        if (StringUtils.isBlank(identifier))
+            return;
+        Task task = getTaskByIdentifier(identifier);
+        if (task == null )
+            return;
+        task.setStatus(TaskStatus.CANCELLED);
+        // update task sync status to unsynced if it was already synced,
+        // ignore if task status is created so that it will be created on server
+        if (!BaseRepository.TYPE_Created.equals(task.getSyncStatus())) {
+            task.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        }
+        task.setLastModified(DateTime.now());
+        addOrUpdate(task, true);
+    }
+
 
     /**
      * Archive tasks for an entity

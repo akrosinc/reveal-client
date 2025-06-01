@@ -1,17 +1,26 @@
 package org.smartregister.reveal.test;
 
 import static org.smartregister.reveal.interactor.BaseInteractor.gson;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Utils.getOperationalAreaLocation;
 
+import android.app.Dialog;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -32,6 +41,7 @@ import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.domain.IndividualsAndTasksForCompound;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Task;
@@ -43,6 +53,7 @@ import org.smartregister.reveal.model.StructureDetails;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.GeoJsonUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
+import timber.log.Timber;
 
 class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder> {
 
@@ -55,18 +66,24 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
 
   private final String locationUUID;
 
+  Dialog resetTaskDialog;
+
+  private String taskIdentifier;
+
   ActionAdapter(
       GDRSActivity gdrsActivity,
       List<Action> actions,
       GDRSPresenter gdrsPresenter,
       String thisCompoundId,
-      String locationUUID) {
+      String locationUUID,
+      String taskIdentifier) {
     this.gdrsActivity = gdrsActivity;
     this.actions = actions;
     this.fullactions = actions;
     this.gdrsPresenter = gdrsPresenter;
     this.thisCompoundId = thisCompoundId;
     this.locationUUID = locationUUID;
+    this.taskIdentifier = taskIdentifier;
   }
 
   @Override
@@ -99,8 +116,242 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
     }
 
     holder.actionButton.setOnClickListener(v -> openTaskFromAdapterList(task, action));
+
+    if (!task.getBusinessStatus().equals(NOT_VISITED)) {
+      holder.actionButton.setOnLongClickListener(
+          v -> {
+//            if (resetTaskDialog == null) {
+              Timber.tag("RevealMap").i("task id %s code %s", task.getIdentifier(), task.getCode());
+              resetTaskDialog = setupResetTaskPanel(v, task, action);
+//            }
+            resetTaskDialog.show();
+            return true;
+          });
+    }
+
   }
 
+  private Dialog setupResetTaskPanel(View view, Task task, Action action) {
+    Dialog dialog = new Dialog(view.getContext());
+    dialog.setContentView(R.layout.reset_task_panel);
+
+    ImageButton closeButton = dialog.findViewById(R.id.close_button);
+
+    closeButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            dialog.dismiss();
+          }
+        });
+
+    Button resetTaskButton = dialog.findViewById(R.id.resetTaskButton);
+
+    resetTaskButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            dialog.dismiss();
+            gdrsActivity.showMessage("Resetting...");
+            gdrsActivity
+                .getAppExecutors()
+                .diskIO()
+                .execute(
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        resetTask(task, v, action);
+                        gdrsActivity
+                            .getAppExecutors()
+                            .mainThread()
+                            .execute(
+                                new Runnable() {
+                                  @Override
+                                  public void run() {
+
+                                    gdrsActivity.populateActionList("Resetting");
+                                  }
+                                });
+                      }
+                    });
+          }
+        });
+
+    if (dialog.getWindow() != null) {
+      dialog
+          .getWindow()
+          .setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+      params.gravity = Gravity.TOP | Gravity.START; // Align to top left
+      dialog.getWindow().setAttributes(params);
+    }
+
+    return dialog;
+  }
+
+  private void resetTask(Task task, View view, Action action) {
+
+    Timber.tag("RevealMap").i("task id %s code %s", task.getIdentifier(), task.getCode());
+
+    gdrsActivity.getTaskRepository().cancelCompletedTaskByIdentifier(task.getIdentifier());
+
+    int description;
+    if (task.getCode().equals(RCD_MEMBER)) {
+      description = R.string.rcd_member;
+    } else if (task.getCode().equals(INDEX_CASE_MEMBER)) {
+      description = R.string.index_case;
+    } else if (task.getCode().equals(SECONDARY_INDEX_CASE_MEMBER)) {
+      description = R.string.secondary_index_case;
+    } else {
+      description = R.string.index_case;
+    }
+
+
+
+
+    if (task.getCode().equals(INDEX_CASE_MEMBER)) {
+
+      List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
+          gdrsActivity
+              .getHdssRepository()
+              .getIndividualsAndTasksForCompoundByHouseholdId(
+                  action.getHouseholdId(), task.getPlanIdentifier());
+
+      Timber.tag("RevealMap")
+          .i("individual List count %s", individualsAndTasksForCompoundByHouseholdId.size());
+
+      for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
+          individualsAndTasksForCompoundByHouseholdId) {
+
+        Timber.tag("RevealMap")
+            .i(
+                "individual id %s ind %s",
+                individualsAndTasksForCompound.getTaskId(),
+                individualsAndTasksForCompound.getIndividualId());
+
+        if (individualsAndTasksForCompound.getTaskId() != null
+            && !individualsAndTasksForCompound.getTaskId().equals(task.getIdentifier())) {
+          Timber.tag("RevealMap")
+              .i(
+                  "individual id %s ind %s",
+                  individualsAndTasksForCompound.getTaskId(),
+                  individualsAndTasksForCompound.getIndividualId());
+          gdrsActivity
+              .getTaskRepository()
+              .cancelCompletedTaskByIdentifier(individualsAndTasksForCompound.getTaskId());
+        }
+      }
+    }
+    gdrsActivity
+        .getTaskUtils()
+        .generateTask(
+            view.getContext(),
+            task.getForEntity(),
+            task.getStructureId(),
+            NOT_VISITED,
+            task.getCode(),
+            description);
+    onFormSaved();
+  }
+  public void onFormSaved() {
+
+    Timber.tag("RevealMap").i("FormSaved 1 taskIdentifier %s",taskIdentifier);
+
+    Task task = gdrsActivity.getTaskRepository().getTaskByIdentifier(taskIdentifier);
+    Set<HdssTask> tasksByStructure =
+        gdrsActivity.getHdssRepository().getTasksByStructure(
+            locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
+
+    if (!task.getStatus().equals(Task.TaskStatus.CANCELLED)) {
+
+      if (RCD.equals(task.getCode())) {
+        String businessStatusIndexCase = Constants.BusinessStatus.NOT_VISITED;
+        boolean allRCDComplete = false;
+        boolean allRCDInComplete = false;
+
+        allRCDComplete =
+            tasksByStructure.stream()
+                .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+        allRCDInComplete =
+            tasksByStructure.stream()
+                .allMatch(innerTask -> NOT_VISITED.equals(innerTask.getBusinessStatus()));
+
+        if (allRCDComplete) {
+          businessStatusIndexCase = COMPLETE;
+        } else if (!allRCDInComplete) {
+          businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
+        } else {
+          businessStatusIndexCase = Constants.BusinessStatus.NOT_VISITED;
+        }
+        task.setBusinessStatus(businessStatusIndexCase);
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        task.setLastModified(new DateTime());
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
+      } else if (INDEX_CASE.equals(task.getCode())) {
+        Timber.tag("RevealMap").i("Is index case");
+        String businessStatusIndexCase;
+        boolean allIndexCaseComplete = false;
+        boolean allRCDComplete = false;
+
+        allIndexCaseComplete =
+            tasksByStructure.stream()
+                .filter(innerTask -> INDEX_CASE_MEMBER.equals(innerTask.getCode()))
+                .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+        allRCDComplete =
+            tasksByStructure.stream()
+                .filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
+                .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+        businessStatusIndexCase = Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
+
+        if (allIndexCaseComplete) {
+          if (allRCDComplete) {
+            businessStatusIndexCase = COMPLETE;
+          } else {
+            businessStatusIndexCase = INDEX_CASE_COMPLETE;
+          }
+        }
+        Timber.tag("RevealMap").i("setBusinessStatus %s",businessStatusIndexCase);
+        task.setBusinessStatus(businessStatusIndexCase);
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        task.setLastModified(new DateTime());
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
+        Timber.tag("RevealMap").i("FormSaved 3");
+      } else {
+        String businessStatusIndexCase;
+        boolean allIndexCaseComplete = false;
+        boolean allRCDComplete = false;
+        boolean allRCDInComplete = false;
+
+        allIndexCaseComplete =
+            tasksByStructure.stream()
+                .filter(innerTask -> SECONDARY_INDEX_CASE_MEMBER.equals(innerTask.getCode()))
+                .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+        allRCDComplete =
+            tasksByStructure.stream()
+                .filter(innerTask -> RCD_MEMBER.equals(innerTask.getCode()))
+                .allMatch(innerTask -> COMPLETE.equals(innerTask.getBusinessStatus()));
+
+        businessStatusIndexCase = Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
+
+        if (allIndexCaseComplete) {
+          if (allRCDComplete) {
+            businessStatusIndexCase = COMPLETE;
+          } else {
+            businessStatusIndexCase = SECONDARY_INDEX_CASE_COMPLETE;
+          }
+        }
+
+        task.setBusinessStatus(businessStatusIndexCase);
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        task.setLastModified(new DateTime());
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
+      }
+    }
+  }
   private void openTaskFromAdapterList(Task task, Action action) {
     if (!NOT_VISITED.equals(task.getBusinessStatus())) {
       openNotVisitedTask(task);
@@ -328,6 +579,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
               .setColor(gdrsActivity.getResources().getColor(R.color.cyan, null));
         }
         holder.actionButton.setText(R.string.confirm_index_case);
+        Timber.tag("RevealMap").i("Setting confirm_index_case label");
       }
     } else {
       if (COMPLETE.equals(task.getBusinessStatus())) {

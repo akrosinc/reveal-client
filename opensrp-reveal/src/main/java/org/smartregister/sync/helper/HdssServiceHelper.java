@@ -142,7 +142,14 @@ public class HdssServiceHelper extends BaseHelper {
                     PreferencesUtil.getInstance().setHdssMaxServerVersion(hdssCompounds.getServerVersion());
 
                     int countOfIndividuals = hdssRepository.getCountOfIndividuals();
-                    totalSumCount += countOfIndividuals;
+
+                    totalSumCount = countOfIndividuals;
+
+                    if (hdssCompounds.getAllIndividuals()!=null){
+                        Timber.tag("TotalCount").i("a hdssCompounds.getAllIndividuals() %s",hdssCompounds.getAllIndividuals().size());
+                    }
+                    Timber.tag("TotalCount").i("a countOfIndividuals %s",countOfIndividuals);
+                    Timber.tag("TotalCount").i("a totalCount %s",totalCount);
 
                     syncProgress.setPercentageSynced(Utils.calculatePercentage(totalCount, countOfIndividuals));
                     sendSyncProgressBroadcast(syncProgress, context);
@@ -151,6 +158,10 @@ public class HdssServiceHelper extends BaseHelper {
                     if (hdssCompounds.getTotalRecords() > 0) {
                         int countOfIndividuals = hdssRepository.getCountOfIndividuals();
                         totalCount = hdssCompounds.getTotalRecords();
+
+
+                        Timber.tag("TotalCount").i("b countOfIndividuals %s",countOfIndividuals);
+                        Timber.tag("TotalCount").i("b totalCount %s",totalCount);
 
                         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalCount, countOfIndividuals));
                         sendSyncProgressBroadcast(syncProgress, context);
@@ -161,11 +172,13 @@ public class HdssServiceHelper extends BaseHelper {
             } while (!isEmpty);
 
             addAttribute(hdssSyncTrace, COUNT, String.valueOf(totalSumCount));
-            Timber.tag("syncing").e("end of syncing batch");
+            Timber.tag("TotalCount").i("end of syncing batch");
             stopTrace(hdssSyncTrace);
 
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
+            Timber.tag("TotalCount").e("exception %s",e.getMessage());
+
         }
     }
 
@@ -188,15 +201,13 @@ public class HdssServiceHelper extends BaseHelper {
             throw new NoHttpResponseException(HDSS_PUSH_URL + " not returned data");
         }
 
-
-//        totalRecords = resp.getTotalRecords();
-
-
         return resp.payload();
     }
 
 
     private String fetchHdssEntities(String userId, Long serverVersion, int batchSize) throws Exception {
+
+        Timber.tag("TotalCount").i("requesting");
 
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
@@ -211,7 +222,7 @@ public class HdssServiceHelper extends BaseHelper {
         request.put(USERID, userId);
         request.put(AllConstants.SERVER_VERSION, serverVersion);
         request.put(BATCH_SIZE, batchSize);
-
+        Timber.tag("TotalCount").i("a request %s",request);
         resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, HDSS_SYNC_URL),
                 request.toString());
 

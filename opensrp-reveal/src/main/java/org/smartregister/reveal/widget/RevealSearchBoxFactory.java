@@ -199,6 +199,13 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
                 holder.label6.setText(item.getLabel6());
             }
 
+            if (item.getField7() == null || item.getLabel7() == null) {
+                holder.layout7.setVisibility(View.GONE);
+            } else {
+                holder.field7.setText(item.getField7());
+                holder.label7.setText(item.getLabel7());
+            }
+
             holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(item));
         }
 
@@ -228,6 +235,11 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
             TextView label6;
             TextView field6;
 
+
+            LinearLayout layout7;
+            TextView label7;
+            TextView field7;
+
             public SearchItemViewHolder(@NonNull View itemView) {
                 super(itemView);
                 label1 = itemView.findViewById(R.id.search_result_label1);
@@ -253,6 +265,10 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
                 label6 = itemView.findViewById(R.id.search_result_label6);
                 field6 = itemView.findViewById(R.id.search_result_field6);
                 layout6 = itemView.findViewById(R.id.search_result_layout6);
+
+                label7 = itemView.findViewById(R.id.search_result_label7);
+                field7 = itemView.findViewById(R.id.search_result_field7);
+                layout7 = itemView.findViewById(R.id.search_result_layout7);
 
             }
         }

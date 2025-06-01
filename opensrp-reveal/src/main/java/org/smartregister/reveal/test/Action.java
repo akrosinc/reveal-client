@@ -3,7 +3,7 @@ package org.smartregister.reveal.test;
 import lombok.Getter;
 
 @Getter
-public  class Action {
+public class Action {
 
   private final String individualId;
   private final String gender;
@@ -12,6 +12,7 @@ public  class Action {
   private final String createdDate;
   private final HdssTask task;
   private final String householdId;
+
 
   Action(
       String individualId,
@@ -28,5 +29,6 @@ public  class Action {
     this.createdDate = createdDate;
     this.name = name;
     this.householdId = householdId;
+
   }
 }

@@ -17,17 +17,81 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+          android:textSize="18dp"
             android:padding="5dp"
             android:text="Header" />
+
+        <android.widget.Button
+          android:id="@+id/clearAll"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Clear All Search Criteria"
+          android:visibility="gone"/>
     </android.widget.LinearLayout>
 
-    <android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
 
-        <!-- Date Selection Row -->
+
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:padding="8dp">
+        <CheckBox
+          android:id="@+id/radio_age_range"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Use Age Range" />
+
+        <CheckBox
+          android:id="@+id/radio_dob"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Use Exact Date" />
+    </LinearLayout>
+    <LinearLayout
+      android:id="@+id/age_range_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:padding="8dp"
+      android:layout_marginBottom="4dp"
+      android:visibility="gone">
+
+        <EditText
+          android:id="@+id/start_age"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:hint="Start Age"
+          android:inputType="number"
+          android:padding="8dp"
+          android:background="@drawable/search_box_text" />
+
+        <Space
+          android:layout_width="8dp"
+          android:layout_height="wrap_content" />
+
+        <EditText
+          android:id="@+id/end_age"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:hint="End Age"
+          android:inputType="number"
+          android:padding="8dp"
+          android:background="@drawable/search_box_text" />
+    </LinearLayout>
+    <LinearLayout
+      android:id="@+id/dob_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginBottom="2dp"
+      android:padding="8dp"
+      android:visibility="gone">
+
+    <!-- Date Selection Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,20 +108,20 @@
                 android:padding="8dp" />
 
             <Button
-                android:id="@+id/buttonClear"
+                android:id="@+id/buttonClearDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
 
-                android:text="Clear"
-                android:textColor="@android:color/white" />
+                android:text="Clear Date"
+                 />
         </LinearLayout>
 
         <!-- Clear Button -->
 
-    </android.widget.LinearLayout>
+    </LinearLayout>
 
     <android.widget.LinearLayout
         android:layout_width="match_parent"
@@ -70,7 +134,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".2"
-            android:padding="8dp"
+          android:textSize="12sp"
+          android:padding="8dp"
             android:text="Gender" />
 
         <android.widget.Spinner
@@ -98,7 +163,8 @@
             android:layout_height="wrap_content"
             android:layout_weight=".2"
             android:padding="8dp"
-            android:text="HDSS ID:" />
+          android:textSize="12sp"
+          android:text="HDSS ID:" />
 
         <android.widget.EditText
             android:id="@+id/search_text"
@@ -126,19 +192,49 @@
             android:layout_height="wrap_content"
             android:layout_weight=".2"
             android:padding="8dp"
-            android:text="Name Search" />
+          android:textSize="12sp"
+          android:text="Name Search" />
 
         <android.widget.EditText
             android:id="@+id/name_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".8"
+
             android:background="@drawable/search_box_text"
             android:hint="Type here..."
             android:padding="8dp" />
 
     </android.widget.LinearLayout>
 
+    <android.widget.LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingTop="8dp"
+      android:paddingLeft="8dp"
+      android:paddingRight="8dp"
+      android:paddingBottom="2dp">
+
+        <android.widget.TextView
+          android:id="@+id/cluster_label"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight=".2"
+          android:padding="8dp"
+          android:textSize="12sp"
+          android:text="Cluster Search" />
+
+        <android.widget.EditText
+          android:id="@+id/cluster_text"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight=".8"
+          android:background="@drawable/search_box_text"
+          android:hint="Type here..."
+          android:padding="8dp" />
+
+    </android.widget.LinearLayout>
     <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

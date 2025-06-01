@@ -96,20 +96,7 @@
         "edit_type": "name",
         "text_size": "8sp"
       },
-      {
-        "key": "rcd_barcode",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "barcode",
-        "barcode_type": "qrcode",
-        "hint": "Referral QR Code",
-        "scanButtonText": "Scan QR Code",
-        "v_required": {
-          "value": true,
-          "err": "Please scan barcode"
-        }
-      },
+
       {
         "key": "date",
         "type": "date_picker",
@@ -145,6 +132,7 @@
           "err": "Required field"
         }
       },
+
       {
         "key": "rdt",
         "openmrs_entity_parent": "",
@@ -174,69 +162,22 @@
         }
       },
       {
-        "key": "drug_given",
+        "key": "rcd_barcode",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "Drug given?",
-        "options": [
-          {
-            "key": "al",
-            "text": "Artemether lumefantrine (AL)"
-          },
-          {
-            "key": "asaq",
-            "text": "Artesunate amodiaquine (ASAQ)"
-          },
-          {
-            "key": "dhappq",
-            "text": "Dihydroartemisinin piperaquine (DHA-PPQ)"
-          },
-          {
-            "key": "iv",
-            "text": "IV Artesunate"
-          },
-          {
-            "key": "sp",
-            "text": "Sulfadoxine pyremethamine (SP)"
-          },
-          {
-            "key": "qn",
-            "text": "Quinine (QN)"
-          },
-          {
-            "key": "other",
-            "text": "Other specify"
-          }
-        ],
+        "type": "barcode",
+        "barcode_type": "qrcode",
+        "hint": "Referral QR Code",
+        "scanButtonText": "Scan QR Code",
         "v_required": {
-          "value": "true",
-          "err": "Required field"
+          "value": true,
+          "err": "Please scan barcode"
         },
         "relevance": {
           "step1:rdt": {
             "type": "string",
             "ex": "equalTo(., \"positive\")"
-          }
-        }
-      },
-      {
-        "key": "drug_given_other",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "edit_text",
-        "hint": "Other specify",
-        "text_size": "8sp",
-        "v_required": {
-          "value": "true",
-          "err": "Required field"
-        },
-        "relevance": {
-          "step1:drug_given": {
-            "type": "string",
-            "ex": "equalTo(., \"other\")"
           }
         }
       },

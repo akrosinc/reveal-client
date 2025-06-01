@@ -62,7 +62,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
       @NonNull String businessStatus,
       String interventionType) {
 
-    Timber.tag("RevealMap").i("FormSaved 1");
+    Timber.tag("RevealMap").i("FormSaved 1 taskIdentifier %s",taskIdentifier);
 
     Task task = gdrsActivity.getTaskRepository().getTaskByIdentifier(taskIdentifier);
     Set<HdssTask> tasksByStructure =
@@ -176,53 +176,4 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
     gdrsInteractor.findLastEvent(baseEntityId, eventType);
   }
 
-
-  public List<Action> getActionList() {
-    // Create an ExecutorService for background tasks
-    //        ExecutorService executor = Executors.newSingleThreadExecutor();
-    List<Action> actionList = new ArrayList<>();
-    //        actionAdapter = new ActionAdapter(actionList, presenter);
-
-    //        executor.execute(() -> {
-    // This code runs in the background
-
-    Set<HdssTask> tasksByStructure =
-        gdrsActivity.getHdssRepository().getTasksByStructure(
-            locationUUID, PreferencesUtil.getInstance().getCurrentPlanId());
-    Map<String, HdssIndividual> individualsByStructureId =
-        gdrsActivity.getHdssRepository().getIndividualsByStructureId(locationUUID);
-
-    Timber.tag("RevealMap").i("got tasks");
-
-    Set<HdssTask> sorted =
-        tasksByStructure.stream()
-            .sorted(Comparator.comparing(HdssTask::getHouseholdId))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-
-    for (HdssTask task : sorted) {
-      Timber.tag("RevealMap").i("got individual task %s", task.getIdentifier());
-      if (individualsByStructureId.containsKey(task.getForEntity())) {
-        HdssIndividual hdssIndividual = individualsByStructureId.get(task.getForEntity());
-        if (hdssIndividual != null) {
-          actionList.add(
-              new Action(
-                  hdssIndividual.getIndividualId(),
-                  hdssIndividual.getGender(),
-                  hdssIndividual.getDob(),
-                  task.getAuthoredOn().toString("yyyy-MM-dd"),
-                  task,
-                  hdssIndividual.getName(),
-                  task.getHouseholdId()));
-        }
-      }
-    }
-
-    return actionList;
-
-    // Update UI on the main thread
-    //            runOnUiThread(() -> {
-    //                progressBar.setVisibility(View.GONE);
-    //            });
-    //        });
-  }
 }

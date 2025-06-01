@@ -3,6 +3,7 @@ package org.smartregister.reveal.model;
 import com.vijay.jsonwizard.domain.MultiSelectItem;
 import com.vijay.jsonwizard.interfaces.MultiSelectListRepository;
 
+import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.domain.HdssCompoundHousehold;
@@ -23,7 +24,7 @@ public class HdssCompoundHouseholdRepository implements MultiSelectListRepositor
         HdssRepository hdssRepository =
                 RevealApplication.getInstance().getContext().getHdssRepository();
 
-        List<HdssCompoundHousehold> individualHouseholdCompounds = hdssRepository.getHouseholdCompound();
+        Set<HdssCompoundHousehold> individualHouseholdCompounds = hdssRepository.getHouseholdCompound();
 
         List<MultiSelectItem> multiSelectItems = new ArrayList<>();
 

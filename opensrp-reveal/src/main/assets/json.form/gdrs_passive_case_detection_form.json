@@ -139,6 +139,21 @@
         }
       },
       {
+        "key": "cluster",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "read_only": "true",
+        "hint": "Cluster",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
         "key": "receive_treatment",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

@@ -3,7 +3,6 @@ package org.smartregister.domain;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -18,13 +17,14 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
     private String structureId;
     private String name;
 
+    private String cluster;
     private String floatingLocationId;
     private String floatingLocationName;
     private String floatingLocationGeographicLevel;
 
     private String floatingHouseholdLocationName;
 
-    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name) {
+    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name, String cluster) {
         this.identifier = identifier;
         this.individualId = individualId;
         this.dob = dob;
@@ -32,9 +32,10 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
         this.householdId = householdId;
         this.compoundId = compoundId;
         this.name = name;
+        this.cluster = cluster;
     }
 
-    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String structureId, int serverVersion, String name, String floatingLocationId, String floatingLocationName, String floatingLocationGeographicLevel, String floatingHouseholdLocationName) {
+    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String structureId, int serverVersion, String name, String floatingLocationId, String floatingLocationName, String floatingLocationGeographicLevel, String floatingHouseholdLocationName, String cluster) {
         this.identifier = identifier;
         this.individualId = individualId;
         this.dob = dob;
@@ -53,6 +54,7 @@ public class HdssIndividualHouseHoldCompound implements Serializable {
         this.floatingLocationGeographicLevel = floatingLocationGeographicLevel;
 
         this.floatingHouseholdLocationName = floatingHouseholdLocationName;
+        this.cluster = cluster;
     }
 
 //    public HdssIndividualHouseHoldCompound(String identifier, String individualId, String dob, String gender, String householdId, String compoundId, String name) {

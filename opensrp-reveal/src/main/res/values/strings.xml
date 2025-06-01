@@ -1098,4 +1098,5 @@
     <string name="identifier">identifier</string>
     <string name="next_identifier">next_identifier</string>
     <string name="you_must_select_a_cluster_in_order_to_save">You must select a cluster in order to save</string>
+  <string name="not_available">Not Available</string>
 </resources>

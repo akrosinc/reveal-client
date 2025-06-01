@@ -22,6 +22,9 @@ public class SearchItem {
     private String  label6;
     private String  field6;
 
+    private String  label7;
+    private String  field7;
+
     private String result;
 
 }
