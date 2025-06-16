@@ -2,11 +2,15 @@ package org.smartregister.util;
 
 import static org.smartregister.AllConstants.TASK_IDENTIFIER;
 import static org.smartregister.cloudant.models.Event.date_created_key;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.DETAILS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_POP;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TOTAL_TREATED;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.gson.Gson;
@@ -780,6 +784,8 @@ public class JsonFormUtils {
         Predicate<String> isEligiblePop = o -> o!=null && o.equals(ELIGIBLE_POP);
         Predicate<String> isTotalTreated = o -> o!=null && o.equals(TOTAL_TREATED);
         Predicate<String> isHohType = o -> o!=null && o.equals("hoh_typed");
+        Predicate<String> rdt = o->o!=null&&o.equals("rdt");
+        Predicate<String> consent = o->o!=null&&o.equals("consent");
 
         JSONArray obs = getJSONArray(details, "obs");
         String eventType = getString(details, EVENT_TYPE_FIELD);
@@ -822,8 +828,66 @@ public class JsonFormUtils {
                                 interventionAdditionalDetail.setValueType("int");
                                 additionalDetails.add(interventionAdditionalDetail);
                             }
-
                         }
+                    }
+                    if (eventType != null && eventType.equals(RCD_EVENT)){
+                        if (rdt.test(fieldCode)) {
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                if (value.equals("positive")){
+                                    interventionAdditionalDetail.setValue("1");
+                                    interventionAdditionalDetail.setKey(fieldCode);
+                                    interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                    interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                    interventionAdditionalDetail.setEventType(eventType);
+
+                                    String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                    interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                    interventionAdditionalDetail.setValueType("int");
+                                    additionalDetails.add(interventionAdditionalDetail);
+                                }
+                            }
+                        }
+                        if (consent.test(fieldCode)){
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                if (value.equals("yes")){
+                                    interventionAdditionalDetail.setValue("1");
+                                    interventionAdditionalDetail.setKey(fieldCode);
+                                    interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                    interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                    interventionAdditionalDetail.setEventType(eventType);
+
+                                    String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                    interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                    interventionAdditionalDetail.setValueType("int");
+                                    additionalDetails.add(interventionAdditionalDetail);
+                                }
+                            }
+                        }
+                    }
+                    if (eventType != null && eventType.equals(PASSIVE_CASE_DETECTION_EVENT)){
+                        String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+                        String planIdentifier = detailsJson.getString("planIdentifier");
+
+                        interventionAdditionalDetail.setValue("1");
+                        interventionAdditionalDetail.setKey(fieldCode);
+                        interventionAdditionalDetail.setTaskKeyId(
+                            taskIdentifier.concat("-").concat(PASSIVE_CASE_DETECTION_EVENT));
+                        interventionAdditionalDetail.setTaskId(taskIdentifier);
+                        interventionAdditionalDetail.setEventType(eventType);
+                        interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+                        interventionAdditionalDetail.setValueType("int");
+                        additionalDetails.add(interventionAdditionalDetail);
+
                     }
                 }
                 catch (JSONException  e){

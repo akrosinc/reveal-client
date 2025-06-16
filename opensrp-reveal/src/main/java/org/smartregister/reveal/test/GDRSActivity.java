@@ -685,7 +685,7 @@ public class GDRSActivity extends AppCompatActivity {
     }
 
     List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
-        hdssRepository.getStructuresAndTasksForCompoundByHouseholdId(
+        hdssRepository.getStructuresAndTasksForHouseholdId(
             correctHousehold, planId);
 
     List<StructureTaskForCompound> potentialStructuresForTaskGeneration = new ArrayList<>();
@@ -702,19 +702,19 @@ public class GDRSActivity extends AppCompatActivity {
           taskRepository.cancelTaskByIdentifier(taskForCompound.getTaskId());
         }
       } else {
-        if (!taskForCompound.getStructureId().equals(this.locationUUID)) {
-          taskUtils.generateTask(
-              this,
-              taskForCompound.getStructureId(),
-              taskForCompound.getStructureId(),
-              NOT_VISITED,
-              RCD,
-              R.string.rcd);
-        }
+//        if (!taskForCompound.getStructureId().equals(this.locationUUID)) {
+//          taskUtils.generateTask(
+//              this,
+//              taskForCompound.getStructureId(),
+//              taskForCompound.getStructureId(),
+//              NOT_VISITED,
+//              RCD,
+//              R.string.rcd);
+//        }
       }
     }
     List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
-        hdssRepository.getIndividualsAndTasksForCompoundByHouseholdId(
+        hdssRepository.getIndividualsAndTasksForHouseholdId(
             correctHousehold, planId);
 
     String groupNameForSelectedStructure =
@@ -796,133 +796,131 @@ public class GDRSActivity extends AppCompatActivity {
 
       if (maps != null && !maps.isEmpty() && maps.get(0).getKey() != null) {
         String correctHousehold = maps.get(0).getKey();
-
-        if (correctHousehold != null) {
-
-          List<String> tasksForCompoundLinkedToHouseholdId =
-              hdssRepository.getTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId, "");
-          for (String id : tasksForCompoundLinkedToHouseholdId) {
-            taskRepository.cancelTaskByIdentifier(id);
-          }
-          String structureIdByHouseholdId =
-              hdssRepository.getStructureIdByHouseholdId(correctHousehold);
-          List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
-              hdssRepository.getStructuresAndTasksForCompoundByHouseholdId(
-                  correctHousehold, planId);
-
-          boolean hasExistingIndexCase = false;
-          List<StructureTaskForCompound> potentialStructuresForTaskGeneration = new ArrayList<>();
-          for (StructureTaskForCompound structure : structuresAndTasksForCompoundByHouseholdId) {
-
-            if (structure.getBusinessStatus() != null
-                && structure.getStatus() != null
-                && structure.getCode() != null
-                && !structure.getCode().equals(RCD)) {
-              if (structure.getCode().equals(INDEX_CASE)) {
-                if (!structure.getStatus().equals(Task.TaskStatus.CANCELLED.toString())
-                    && structure.getBusinessStatus().equals(INDEX_CASE_NOT_VISITED)) {
-                  hasExistingIndexCase = true;
-                }
-              }
-            } else {
-              potentialStructuresForTaskGeneration.add(structure);
-            }
-          }
-          for (StructureTaskForCompound taskForCompound : potentialStructuresForTaskGeneration) {
-            if (taskForCompound.getBusinessStatus() != null) {
-              if (taskForCompound.getStructureId().equals(structureIdByHouseholdId)
-                  && taskForCompound.getCode().equals(RCD)) {
-                taskRepository.cancelTaskByIdentifier(taskForCompound.getTaskId());
-              }
-            } else {
-              if (!taskForCompound.getStructureId().equals(structureIdByHouseholdId)) {
-                taskUtils.generateTask(
-                    this,
-                    taskForCompound.getStructureId(),
-                    taskForCompound.getStructureId(),
-                    NOT_VISITED,
-                    RCD,
-                    R.string.rcd);
-              }
-            }
-          }
-          List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
-              hdssRepository.getIndividualsAndTasksForCompoundByHouseholdId(
-                  correctHousehold, planId);
-
-          String groupNameForSelectedStructure =
-              locationRepository.getLocationsParentName(structureIdByHouseholdId);
-
-          if (groupNameForSelectedStructure == null) {
-            groupNameForSelectedStructure =
-                PreferencesUtil.getInstance().getCurrentOperationalArea();
-          }
-
-          for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
-              individualsAndTasksForCompoundByHouseholdId) {
-            if (individualsAndTasksForCompound.getBusinessStatus() == null) {
-
-              taskUtils.generateTaskWithGroupName(
-                  this,
-                  individualsAndTasksForCompound.getIndividualIdentifier(),
-                  structureIdByHouseholdId,
-                  NOT_VISITED,
-                  RCD_MEMBER,
-                  R.string.rcd,
-                  groupNameForSelectedStructure);
-            }
-          }
-
-          if (household != null) {
+        if (household != null) {
+          if (correctHousehold != null) {
 
             String householdIdValue = household.getString("value");
             if (householdIdValue != null) {
               hdssRepository.moveIndividualFromHouseholdToHousehold(
                   householdIdValue, correctHousehold, individualIdValue);
-            }
-          }
-          try {
-            HdssIndividual individualsByIndividualId =
-                hdssRepository.getIndividualByIndividualId(individualIdValue);
-            if (!hasExistingIndexCase) {
-              taskUtils.generateTaskWithGroupName(
-                  this,
-                  structureIdByHouseholdId,
-                  structureIdByHouseholdId,
-                  INDEX_CASE_NOT_VISITED,
-                  INDEX_CASE,
-                  R.string.index_case,
-                  groupNameForSelectedStructure);
 
-              taskUtils.generateTaskWithGroupName(
-                  this,
-                  individualsByIndividualId.getIdentifier(),
-                  structureIdByHouseholdId,
-                  NOT_VISITED,
-                  INDEX_CASE_MEMBER,
-                  R.string.index_case,
-                  groupNameForSelectedStructure);
+              List<String> tasksForCompoundLinkedToHouseholdId =
+                  hdssRepository.getTasksForHouseholdId(householdIdValue, planId, "");
+              for (String id : tasksForCompoundLinkedToHouseholdId) {
+                taskRepository.cancelTaskByIdentifier(id);
+              }
+              String structureIdByHouseholdId =
+                  hdssRepository.getStructureIdByHouseholdId(correctHousehold);
+              List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
+                  hdssRepository.getStructuresAndTasksForHouseholdId(correctHousehold, planId);
 
-            } else {
-              taskUtils.generateTaskWithGroupName(
-                  this,
-                  structureIdByHouseholdId,
-                  structureIdByHouseholdId,
-                  SECONDARY_INDEX_CASE_NOT_VISITED,
-                  SECONDARY_INDEX_CASE,
-                  R.string.index_case,
-                  groupNameForSelectedStructure);
-              taskUtils.generateTaskWithGroupName(
-                  this,
-                  individualsByIndividualId.getIndividualId(),
-                  structureIdByHouseholdId,
-                  NOT_VISITED,
-                  SECONDARY_INDEX_CASE_MEMBER,
-                  R.string.index_case,
-                  groupNameForSelectedStructure);
+              boolean hasExistingIndexCase = false;
+              List<StructureTaskForCompound> potentialStructuresForTaskGeneration = new ArrayList<>();
+              for (StructureTaskForCompound structure : structuresAndTasksForCompoundByHouseholdId) {
+
+                if (structure.getBusinessStatus() != null
+                    && structure.getStatus() != null
+                    && structure.getCode() != null
+                    && !structure.getCode().equals(RCD)) {
+                  if (structure.getCode().equals(INDEX_CASE)) {
+                    if (!structure.getStatus().equals(Task.TaskStatus.CANCELLED.toString())
+                        && structure.getBusinessStatus().equals(INDEX_CASE_NOT_VISITED)) {
+                      hasExistingIndexCase = true;
+                    }
+                  }
+                } else {
+                  potentialStructuresForTaskGeneration.add(structure);
+                }
+              }
+              for (StructureTaskForCompound taskForCompound : potentialStructuresForTaskGeneration) {
+                if (taskForCompound.getBusinessStatus() != null) {
+                  if (taskForCompound.getStructureId().equals(structureIdByHouseholdId)
+                      && taskForCompound.getCode().equals(RCD)) {
+                    taskRepository.cancelTaskByIdentifier(taskForCompound.getTaskId());
+                  }
+                } else {
+                  //              if
+                  // (!taskForCompound.getStructureId().equals(structureIdByHouseholdId)) {
+                  //                taskUtils.generateTask(
+                  //                    this,
+                  //                    taskForCompound.getStructureId(),
+                  //                    taskForCompound.getStructureId(),
+                  //                    NOT_VISITED,
+                  //                    RCD,
+                  //                    R.string.rcd);
+                  //              }
+                }
+              }
+              List<IndividualsAndTasksForCompound> individualsAndTasksForCompoundByHouseholdId =
+                  hdssRepository.getIndividualsAndTasksForHouseholdId(correctHousehold, planId);
+
+              String groupNameForSelectedStructure =
+                  locationRepository.getLocationsParentName(structureIdByHouseholdId);
+
+              if (groupNameForSelectedStructure == null) {
+                groupNameForSelectedStructure =
+                    PreferencesUtil.getInstance().getCurrentOperationalArea();
+              }
+
+              for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
+                  individualsAndTasksForCompoundByHouseholdId) {
+                if (individualsAndTasksForCompound.getBusinessStatus() == null) {
+
+                  taskUtils.generateTaskWithGroupName(
+                      this,
+                      individualsAndTasksForCompound.getIndividualIdentifier(),
+                      structureIdByHouseholdId,
+                      NOT_VISITED,
+                      RCD_MEMBER,
+                      R.string.rcd,
+                      groupNameForSelectedStructure);
+                }
+              }
+
+              try {
+                HdssIndividual individualsByIndividualId =
+                    hdssRepository.getIndividualByIndividualId(individualIdValue);
+                if (!hasExistingIndexCase) {
+                  taskUtils.generateTaskWithGroupName(
+                      this,
+                      structureIdByHouseholdId,
+                      structureIdByHouseholdId,
+                      INDEX_CASE_NOT_VISITED,
+                      INDEX_CASE,
+                      R.string.index_case,
+                      groupNameForSelectedStructure);
+
+                  taskUtils.generateTaskWithGroupName(
+                      this,
+                      individualsByIndividualId.getIdentifier(),
+                      structureIdByHouseholdId,
+                      NOT_VISITED,
+                      INDEX_CASE_MEMBER,
+                      R.string.index_case,
+                      groupNameForSelectedStructure);
+
+                } else {
+                  taskUtils.generateTaskWithGroupName(
+                      this,
+                      structureIdByHouseholdId,
+                      structureIdByHouseholdId,
+                      SECONDARY_INDEX_CASE_NOT_VISITED,
+                      SECONDARY_INDEX_CASE,
+                      R.string.index_case,
+                      groupNameForSelectedStructure);
+                  taskUtils.generateTaskWithGroupName(
+                      this,
+                      individualsByIndividualId.getIndividualId(),
+                      structureIdByHouseholdId,
+                      NOT_VISITED,
+                      SECONDARY_INDEX_CASE_MEMBER,
+                      R.string.index_case,
+                      groupNameForSelectedStructure);
+                }
+              } catch (Exception e) {
+                Timber.tag("RevealMap").e(e, "the error");
+              }
             }
-          } catch (Exception e) {
-            Timber.tag("RevealMap").e(e, "the error");
           }
         }
       }
@@ -961,115 +959,115 @@ public class GDRSActivity extends AppCompatActivity {
     }
   }
 
-  private void handleIndexCaseToNewStructureWithoutHousehold(
-      JSONObject capturedHousehold,
-      JSONObject capturedCompound,
-      String planId,
-      String currentHouseholdIdOfIndexCaseString,
-      String geoStructureValue)
-      throws JSONException {
-
-    hdssRepository.removeHouseholdFromStructure(currentHouseholdIdOfIndexCaseString);
-
-    if (capturedHousehold != null && capturedCompound != null) {
-      String capturedHouseholdValue = capturedHousehold.getString("value");
-      String capturedCompoundValue = capturedCompound.getString("value");
-      if (capturedHouseholdValue != null
-          && !capturedHouseholdValue.isEmpty()
-          && capturedCompoundValue != null
-          && !capturedCompoundValue.isEmpty()) {
-
-        int maxServerVersion = hdssRepository.getMaxServerVersion();
-
-        List<String> tasksForCompoundLinkedToHouseholdId =
-            hdssRepository.getStructureTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId);
-
-        if (tasksForCompoundLinkedToHouseholdId != null
-            && !tasksForCompoundLinkedToHouseholdId.isEmpty()) {
-          for (String id : tasksForCompoundLinkedToHouseholdId) {
-            taskRepository.cancelTaskByIdentifier(id);
-          }
-        }
-
-        String householdIdValue = currentHouseholdIdOfIndexCaseString;
-
-        if (householdIdValue != null) {
-
-          hdssRepository.removeHouseholdFromCompound(householdIdValue);
-
-          List<String> individualTasksForCompoundExcludingHousehold =
-              hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
-                  thisCompoundId, householdIdValue, planId);
-
-          if (individualTasksForCompoundExcludingHousehold != null
-              && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
-            for (String id : individualTasksForCompoundExcludingHousehold) {
-              taskRepository.cancelTaskByIdentifier(id);
-            }
-          }
-        }
-
-        HdssCompound hdssCompound =
-            HdssCompound.builder()
-                .compoundId(capturedCompoundValue)
-                .serverVersion(maxServerVersion)
-                .build();
-        hdssRepository.addOrUpdateCompounds(List.of(hdssCompound));
-
-        HdssCompoundHousehold compoundHousehold =
-            HdssCompoundHousehold.builder()
-                .householdId(capturedHouseholdValue)
-                .compoundId(capturedCompoundValue)
-                .serverVersion(maxServerVersion)
-                .build();
-        hdssRepository.addOrUpdateCompoundHouseholds(List.of(compoundHousehold));
-
-        HdssHouseholdStructure hdssHouseholdStructure =
-            HdssHouseholdStructure.builder()
-                .householdId(capturedHouseholdValue)
-                .structureId(geoStructureValue)
-                .serverVersion(maxServerVersion)
-                .build();
-        hdssRepository.addOrUpdateHouseholdStructure(List.of(hdssHouseholdStructure));
-
-        List<HdssIndividual> individualsByHouseholdId =
-            hdssRepository.getIndividualsByHouseholdId(capturedHouseholdValue);
-
-        for (HdssIndividual hdssIndividual : individualsByHouseholdId) {
-          HdssHouseholdIndividual hdssHouseholdIndividual =
-              HdssHouseholdIndividual.builder()
-                  .householdId(capturedHouseholdValue)
-                  .individualId(hdssIndividual.getIndividualId())
-                  .serverVersion(maxServerVersion++)
-                  .build();
-
-          hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
-        }
-
-        taskUtils.generateTask(
-            this,
-            geoStructureValue,
-            geoStructureValue,
-            INDEX_CASE_NOT_VISITED,
-            INDEX_CASE,
-            R.string.index_case);
-      }
-    }
-  }
+//  private void handleIndexCaseToNewStructureWithoutHousehold(
+//      JSONObject capturedHousehold,
+//      JSONObject capturedCompound,
+//      String planId,
+//      String currentHouseholdIdOfIndexCaseString,
+//      String geoStructureValue)
+//      throws JSONException {
+//
+//    hdssRepository.removeHouseholdFromStructure(currentHouseholdIdOfIndexCaseString);
+//
+//    if (capturedHousehold != null && capturedCompound != null) {
+//      String capturedHouseholdValue = capturedHousehold.getString("value");
+//      String capturedCompoundValue = capturedCompound.getString("value");
+//      if (capturedHouseholdValue != null
+//          && !capturedHouseholdValue.isEmpty()
+//          && capturedCompoundValue != null
+//          && !capturedCompoundValue.isEmpty()) {
+//
+//        int maxServerVersion = hdssRepository.getMaxServerVersion();
+//
+//        List<String> tasksForCompoundLinkedToHouseholdId =
+//            hdssRepository.getStructureTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId);
+//
+//        if (tasksForCompoundLinkedToHouseholdId != null
+//            && !tasksForCompoundLinkedToHouseholdId.isEmpty()) {
+//          for (String id : tasksForCompoundLinkedToHouseholdId) {
+//            taskRepository.cancelTaskByIdentifier(id);
+//          }
+//        }
+//
+//        String householdIdValue = currentHouseholdIdOfIndexCaseString;
+//
+//        if (householdIdValue != null) {
+//
+//          hdssRepository.removeHouseholdFromCompound(householdIdValue);
+//
+//          List<String> individualTasksForCompoundExcludingHousehold =
+//              hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
+//                  thisCompoundId, householdIdValue, planId);
+//
+//          if (individualTasksForCompoundExcludingHousehold != null
+//              && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
+//            for (String id : individualTasksForCompoundExcludingHousehold) {
+//              taskRepository.cancelTaskByIdentifier(id);
+//            }
+//          }
+//        }
+//
+//        HdssCompound hdssCompound =
+//            HdssCompound.builder()
+//                .compoundId(capturedCompoundValue)
+//                .serverVersion(maxServerVersion)
+//                .build();
+//        hdssRepository.addOrUpdateCompounds(List.of(hdssCompound));
+//
+//        HdssCompoundHousehold compoundHousehold =
+//            HdssCompoundHousehold.builder()
+//                .householdId(capturedHouseholdValue)
+//                .compoundId(capturedCompoundValue)
+//                .serverVersion(maxServerVersion)
+//                .build();
+//        hdssRepository.addOrUpdateCompoundHouseholds(List.of(compoundHousehold));
+//
+//        HdssHouseholdStructure hdssHouseholdStructure =
+//            HdssHouseholdStructure.builder()
+//                .householdId(capturedHouseholdValue)
+//                .structureId(geoStructureValue)
+//                .serverVersion(maxServerVersion)
+//                .build();
+//        hdssRepository.addOrUpdateHouseholdStructure(List.of(hdssHouseholdStructure));
+//
+//        List<HdssIndividual> individualsByHouseholdId =
+//            hdssRepository.getIndividualsByHouseholdId(capturedHouseholdValue);
+//
+//        for (HdssIndividual hdssIndividual : individualsByHouseholdId) {
+//          HdssHouseholdIndividual hdssHouseholdIndividual =
+//              HdssHouseholdIndividual.builder()
+//                  .householdId(capturedHouseholdValue)
+//                  .individualId(hdssIndividual.getIndividualId())
+//                  .serverVersion(maxServerVersion++)
+//                  .build();
+//
+//          hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
+//        }
+//
+//        taskUtils.generateTask(
+//            this,
+//            geoStructureValue,
+//            geoStructureValue,
+//            INDEX_CASE_NOT_VISITED,
+//            INDEX_CASE,
+//            R.string.index_case);
+//      }
+//    }
+//  }
 
   private void handleIndexCaseToNewStructure(
       String planId, String geoStructureValue, String currentHouseholdIdOfIndexCaseString)
       throws JSONException {
 
     HdssCompoundHousehold householdIdCompoundIdInSelectedStructure =
-        hdssRepository.getHouseholdIdCompoundIdByStructureId(geoStructureValue);
+        hdssRepository.getHouseholdIdCompoundIdByHouseholdId(currentHouseholdIdOfIndexCaseString);
 
     List<StructureTaskForCompound> structuresAndTasksForCompound = new ArrayList<>();
 
     if (householdIdCompoundIdInSelectedStructure != null) {
       structuresAndTasksForCompound =
-          hdssRepository.getStructuresAndTasksForCompound(
-              householdIdCompoundIdInSelectedStructure.getCompoundId(), planId);
+          hdssRepository.getStructuresAndTasksForHousehold(
+              householdIdCompoundIdInSelectedStructure.getHouseholdId(), planId);
     }
 
     List<StructureTaskForCompound> potentialStructuresForRCDTaskGeneration = new ArrayList<>();
@@ -1090,11 +1088,11 @@ public class GDRSActivity extends AppCompatActivity {
           }
         }
       } else {
-        if (structureCompoundTask.getStructureId().equals(geoStructureValue)) {
-
-        } else {
-          potentialStructuresForRCDTaskGeneration.add(structureCompoundTask);
-        }
+//        if (structureCompoundTask.getStructureId().equals(geoStructureValue)) {
+//
+//        } else {
+//          potentialStructuresForRCDTaskGeneration.add(structureCompoundTask);
+//        }
       }
     }
 
@@ -1122,24 +1120,24 @@ public class GDRSActivity extends AppCompatActivity {
       Timber.tag("RevealMap").i("Dont create any index cases");
     }
 
-    for (StructureTaskForCompound task : potentialStructuresForRCDTaskGeneration) {
-      taskUtils.generateTask(
-          this, task.getStructureId(), task.getStructureId(), NOT_VISITED, RCD, R.string.rcd);
-      Map<String, HdssIndividual> individualsByStructureId =
-          hdssRepository.getIndividualsByStructureId(task.getStructureId());
-      for (Map.Entry<String, HdssIndividual> entry : individualsByStructureId.entrySet()) {
-        taskUtils.generateTask(
-            this,
-            entry.getKey(),
-            task.getStructureId(),
-            NOT_VISITED,
-            RCD_MEMBER,
-            R.string.rcd_member);
-      }
-    }
+//    for (StructureTaskForCompound task : potentialStructuresForRCDTaskGeneration) {
+//      taskUtils.generateTask(
+//          this, task.getStructureId(), task.getStructureId(), NOT_VISITED, RCD, R.string.rcd);
+//      Map<String, HdssIndividual> individualsByStructureId =
+//          hdssRepository.getIndividualsByStructureId(task.getStructureId());
+//      for (Map.Entry<String, HdssIndividual> entry : individualsByStructureId.entrySet()) {
+//        taskUtils.generateTask(
+//            this,
+//            entry.getKey(),
+//            task.getStructureId(),
+//            NOT_VISITED,
+//            RCD_MEMBER,
+//            R.string.rcd_member);
+//      }
+//    }
 
     List<String> tasksForCompoundLinkedToHouseholdId =
-        hdssRepository.getStructureTasksForCompoundLinkedToHouseholdId(thisCompoundId, planId);
+        hdssRepository.getStructureTasksForHouseholdId(currentHouseholdIdOfIndexCaseString, planId);
 
     if (tasksForCompoundLinkedToHouseholdId != null
         && !tasksForCompoundLinkedToHouseholdId.isEmpty()) {
@@ -1152,16 +1150,16 @@ public class GDRSActivity extends AppCompatActivity {
       hdssRepository.removeHouseholdFromStructure(currentHouseholdIdOfIndexCaseString);
       hdssRepository.removeHouseholdFromCompound(currentHouseholdIdOfIndexCaseString);
 
-      List<String> individualTasksForCompoundExcludingHousehold =
-          hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
-              thisCompoundId, currentHouseholdIdOfIndexCaseString, planId);
-
-      if (individualTasksForCompoundExcludingHousehold != null
-          && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
-        for (String id : individualTasksForCompoundExcludingHousehold) {
-          taskRepository.cancelTaskByIdentifier(id);
-        }
-      }
+//      List<String> individualTasksForCompoundExcludingHousehold =
+//          hdssRepository.getIndividualTasksForCompoundExcludingHousehold(
+//              thisCompoundId, currentHouseholdIdOfIndexCaseString, planId);
+//
+//      if (individualTasksForCompoundExcludingHousehold != null
+//          && !individualTasksForCompoundExcludingHousehold.isEmpty()) {
+//        for (String id : individualTasksForCompoundExcludingHousehold) {
+//          taskRepository.cancelTaskByIdentifier(id);
+//        }
+//      }
 
       int maxServerVersion = hdssRepository.getMaxServerVersion();
       maxServerVersion++;

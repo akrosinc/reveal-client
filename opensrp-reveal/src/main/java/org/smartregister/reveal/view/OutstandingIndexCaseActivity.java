@@ -306,8 +306,8 @@ public class OutstandingIndexCaseActivity extends MultiLanguageActivity {
 
     if (householdIdCompoundIdInSelectedStructure != null) {
       structuresAndTasksForCompound =
-          hdssRepository.getStructuresAndTasksForCompound(
-              householdIdCompoundIdInSelectedStructure.getCompoundId(), planId);
+          hdssRepository.getStructuresAndTasksForHousehold(
+              householdIdCompoundIdInSelectedStructure.getHouseholdId(), planId);
     }
 
     StructureTaskForCompound existingIndexCase = null;
@@ -464,7 +464,7 @@ public class OutstandingIndexCaseActivity extends MultiLanguageActivity {
           String structureIdByHouseholdId =
               hdssRepository.getStructureIdByHouseholdId(correctHousehold);
           List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
-              hdssRepository.getStructuresAndTasksForCompoundByHouseholdId(
+              hdssRepository.getStructuresAndTasksForHouseholdId(
                   correctHousehold, planId);
 
           boolean hasExistingIndexCase = false;

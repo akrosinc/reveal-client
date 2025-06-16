@@ -39,6 +39,14 @@
         app:progressBarBackgroundColor="@color/text_black"
         app:progressBarForegroundColor="@color/colorPastelGreen"
         app:subTitle="@string/spray_success_rate" />
-
+    <org.smartregister.reporting.view.ProgressIndicatorView
+      android:id="@+id/progressIndicatorView4"
+      android:layout_width="4dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="2"
+      app:progress="0"
+      app:progressBarBackgroundColor="@color/text_black"
+      app:progressBarForegroundColor="@color/colorPastelGreen"
+      app:subTitle="@string/spray_success_rate" />
 
 </LinearLayout>

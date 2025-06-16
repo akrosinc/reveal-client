@@ -43,6 +43,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     private ProgressIndicatorView progressIndicator;
     private ProgressIndicatorView progressIndicator2;
     private ProgressIndicatorView progressIndicator3;
+    private ProgressIndicatorView progressIndicator4;
     protected Activity activity;
     private List<TaskDetails> tasks;
     private TableView tableView;
@@ -71,6 +72,8 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
         progressIndicator = activity.findViewById(R.id.progressIndicatorView);
         progressIndicator2 = activity.findViewById(R.id.progressIndicatorView2);
         progressIndicator3 = activity.findViewById(R.id.progressIndicatorView3);
+        progressIndicator4 = activity.findViewById(R.id.progressIndicatorView4);
+        progressIndicator4.setVisibility(View.GONE);
         tableView = activity.findViewById(R.id.tableView);
         tempTableLayoutView = activity.findViewById(R.id.tempTableView);
         tempTableLayoutViewNG = activity.findViewById(R.id.tempTableViewNG);
@@ -234,6 +237,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
             populateTableView(getTableRowsKenya(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewKenya);
         } else if (getBuildCountry() == Country.GDRS) {
             tempTableLayoutViewGdrs.setVisibility(View.VISIBLE);
+            Timber.tag("searching").i("indicatorDetails.getSprayIndicatorList() %s indicatorDetails %s",indicatorDetails.getSprayIndicatorList(),indicatorDetails);
             populateTableView(getTableRowsGdrs(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewGdrs);
         } else if(getBuildCountry() == Country.NIH){
             tempTableLayoutViewNIH.setVisibility(View.VISIBLE);
@@ -313,17 +317,23 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
 
     private void setGdrsProgressIndicators(final IndicatorDetails indicatorDetails) {
 
-        progressIndicator.setProgress(indicatorDetails.getIndexStructureCoverage());
-        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getIndexStructureCoverage()));
-        progressIndicator.setSubTitle(activity.getString(R.string.index_case_coverage));
+        progressIndicator4.setVisibility(View.VISIBLE);
 
-        progressIndicator2.setProgress(indicatorDetails.getRcdStructureCoverage());
-        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getRcdStructureCoverage()));
+        progressIndicator.setProgress(indicatorDetails.getIndexMemberCoverage());
+        progressIndicator.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getIndexMemberCoverage()));
+        progressIndicator.setSubTitle(activity.getString(R.string.index_case_confirmation));
+
+        progressIndicator2.setProgress(indicatorDetails.getRcdMemberCoverage());
+        progressIndicator2.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getRcdMemberCoverage()));
         progressIndicator2.setSubTitle(activity.getString(R.string.rcd_coverage));
 
-        progressIndicator3.setProgress(indicatorDetails.getVisitedGDRSCoverage());
-        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getVisitedGDRSCoverage()));
-        progressIndicator.setSubTitle(activity.getString(R.string.gdrs_visited_coverage));
+        progressIndicator3.setProgress(indicatorDetails.getRcdPositiveMalariaMemberCoverage());
+        progressIndicator3.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getRcdPositiveMalariaMemberCoverage()));
+        progressIndicator3.setSubTitle(activity.getString(R.string.racd_malaria_prevalence));
+
+        progressIndicator4.setProgress(indicatorDetails.getPassiveIndexCaseDetection());
+        progressIndicator4.setTitle(this.activity.getString(R.string.n_percent, indicatorDetails.getPassiveIndexCaseDetection()));
+        progressIndicator4.setSubTitle(activity.getString(R.string.passive_index_case_detection));
 
     }
 
@@ -423,19 +433,17 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
     }
 
     private List<Integer> getTableRowsGdrs() {
-        return Arrays.asList(R.id.gdrs_totalRcdStructures,
-                R.id.gdrs_totalRcdMemberTasks,
-                R.id.gdrs_totalIndexStructure,
-                R.id.gdrs_totalIndexMemberTasks,
-                R.id.gdrs_totalCompleteRcdStructures,
-                R.id.gdrs_totalCompleteRcdMemberTasks,
-                R.id.gdrs_totalCompleteIndexStructure,
-                R.id.gdrs_totalCompleteIndexMemberTasks,
-                R.id.gdrs_totalUnVisitRcdStructures,
-                R.id.gdrs_totalUnVisitIndexStructure,
-                R.id.gdrs_totalVisitIndexStructure,
-                R.id.gdrs_totalVisitRCDStructure);
+        return Arrays.asList(R.id.gdrs_total_index_cases_unconfirmed,
+                R.id.gdrs_total_index_cases_confirmed,
+                R.id.gdrs_total_individuals_to_be_tested_for_RACD,
+                R.id.gdrs_total_HDSS_individuals_tested_for_RACD,
+                R.id.gdrs_total_RACD_cases_detected);
     }
+
+
+
+
+
     private List<Integer> getTableRowsNIHStr() {
         return Arrays.asList(R.id.nih_total_structures,
             R.id.nih_totalStructuresCompleted,

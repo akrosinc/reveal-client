@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
+@ToString
 public class IndicatorDetails {
 
     private int sprayed;
@@ -55,21 +57,21 @@ public class IndicatorDetails {
     private int partialDrugDistribution;
     private int totalIndividualTreated;
     private int childrenEligible;
-    private int totalRcdStructures;
+
+    private int rdtCount;
     private int totalRcdMemberTasks;
-    private int totalIndexStructure;
     private int totalIndexMemberTasks;
-    private int totalCompleteRcdStructures;
     private int totalCompleteRcdMemberTasks;
-    private int totalCompleteIndexStructure;
     private int totalCompleteIndexMemberTasks;
-    private int totalUnVisitRcdStructures;
-    private int totalUnVisitIndexStructure;
-    private int totalVisitIndexStructure;
-    private int totalVisitRCDStructure;
-    int indexStructureCoverage;
-    int rcdStructureCoverage;
-    int visitedGDRSCoverage;
+    private int totalUnVisitRcdMembers;
+    private int totalUnVisitIndexMembers;
+    private int totalToBeTested;
+    int indexMemberCoverage;
+    int rcdMemberCoverage;
+    int rcdPositiveMalariaMemberCoverage;
+    private int totalRcdConsent;
+    private int totalPassiveICC;
+    private int passiveIndexCaseDetection;
 
     //Mali Indicators
 

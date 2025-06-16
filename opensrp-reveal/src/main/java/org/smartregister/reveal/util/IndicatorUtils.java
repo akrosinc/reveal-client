@@ -23,6 +23,7 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_I
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_RECEIVED_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.CDD_DRUG_WITHDRAWAL_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
 import static org.smartregister.reveal.util.Constants.Intervention.CELL_COORDINATION;
 import static org.smartregister.reveal.util.Constants.JsonForm.HEALTH_EDUCATION_5_TO_15;
@@ -55,10 +56,12 @@ import net.sqlcipher.database.SQLiteException;
 
 import org.joda.time.DateTime;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.IndividualTask;
 import org.smartregister.domain.Obs;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -322,41 +325,48 @@ public class IndicatorUtils {
 
         List<String> indicators = new ArrayList<>();
 
-        indicators.add(context.getResources().getString(R.string.totalRcdStructures));
-        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+//        indicators.add(context.getResources().getString(R.string.totalRcdStructures));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
 
-        indicators.add(context.getResources().getString(R.string.totalIndexStructure));
-        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+//        indicators.add(context.getResources().getString(R.string.totalIndexStructure));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
 
-        indicators.add(context.getResources().getString(R.string.totalRcdMemberTasks));
-        indicators.add(String.valueOf(indicatorDetails.getTotalRcdMemberTasks()));
 
-        indicators.add(context.getResources().getString(R.string.totalIndexMemberTasks));
-        indicators.add(String.valueOf(indicatorDetails.getTotalIndexMemberTasks()));
 
-        indicators.add(context.getResources().getString(R.string.totalCompleteRcdStructures));
-        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteRcdStructures()));
+        indicators.add(context.getResources().getString(R.string.totalIndexCasesUnconfirmed));
+        indicators.add(String.valueOf(indicatorDetails.getTotalUnVisitIndexMembers()));
 
-        indicators.add(context.getResources().getString(R.string.totalCompleteIndexStructure));
-        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteIndexStructure()));
-
-        indicators.add(context.getResources().getString(R.string.totalCompleteRcdMemberTasks));
-        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteRcdMemberTasks()));
-
-        indicators.add(context.getResources().getString(R.string.totalCompleteIndexMemberTasks));
+        indicators.add(context.getResources().getString(R.string.totalIndexCasesConfirmed));
         indicators.add(String.valueOf(indicatorDetails.getTotalCompleteIndexMemberTasks()));
 
-        indicators.add(context.getResources().getString(R.string.totalVisitRCDStructure));
-        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+        indicators.add(context.getResources().getString(R.string.totalToBeTested));
+        indicators.add(String.valueOf(indicatorDetails.getTotalToBeTested()));
 
-        indicators.add(context.getResources().getString(R.string.totalVisitIndexStructure));
-        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+        indicators.add(context.getResources().getString(R.string.totalHDSSindividualsTestedForRACD));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdConsent()));
 
-        indicators.add(context.getResources().getString(R.string.totalUnVisitRcdStructures));
-        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+        indicators.add(context.getResources().getString(R.string.totalRACDCasesDetected));
+        indicators.add(String.valueOf(indicatorDetails.getTotalRcdMemberTasks()));
 
-        indicators.add(context.getResources().getString(R.string.totalUnVisitIndexStructure));
-        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+
+////        indicators.add(context.getResources().getString(R.string.totalCompleteIndexStructure));
+////        indicators.add(String.valueOf(indicatorDetails.getTotalCompleteIndexStructure()));
+//
+//
+//
+//
+//
+//        indicators.add(context.getResources().getString(R.string.totalVisitRCDStructure));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+//
+//        indicators.add(context.getResources().getString(R.string.totalVisitIndexStructure));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
+//
+//        indicators.add(context.getResources().getString(R.string.totalUnVisitRcdStructures));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalRcdStructures()));
+//
+//        indicators.add(context.getResources().getString(R.string.totalUnVisitIndexStructure));
+//        indicators.add(String.valueOf(indicatorDetails.getTotalIndexStructure()));
 
         return indicators;
 
@@ -641,75 +651,110 @@ public class IndicatorUtils {
 
     public static IndicatorDetails processIndicatorsGdrs(final List<TaskDetails> tasks) {
 
-        Map<String, List<TaskDetails>> tasksByTaskCode = tasks.stream()
-                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+        HdssRepository hdssRepository =  RevealApplication.getInstance().getContext().getHdssRepository();
 
-        Map<String, List<TaskDetails>> completedTasksByTaskCode = tasks.stream()
-                .filter(details -> COMPLETE.equals(details.getBusinessStatus()))
-                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+        Set<IndividualTask> individualBusinessStatuses = tasks.stream().flatMap(task ->{
+            Timber.tag("searching").i("Task %s",task.getStructureId());
+            return hdssRepository.getIndividualTasksByStructureId(task.getStructureId(),PreferencesUtil.getInstance().getCurrentPlanId())
+                .stream();
+            }
+        ).collect(Collectors.toSet());
 
-        Map<String, List<TaskDetails>> unvisitedTasksByTaskCode = tasks.stream()
-                .filter(details -> NOT_VISITED.equals(details.getBusinessStatus()))
-                .collect(Collectors.groupingBy(BaseTaskDetails::getTaskCode, toList()));
+        Timber.tag("searching").i("task list %s",individualBusinessStatuses);
 
-        List<TaskDetails> total = tasks.stream()
-                .filter(details -> List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(details.getTaskCode()))
-                .collect(toList());
+        Map<String, List<IndividualTask>> individualTotalIndexTasks = individualBusinessStatuses.stream()
+            .filter(task -> INDEX_CASE_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
 
-        List<TaskDetails> totalVisited = tasks.stream()
-                .filter(details -> List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(details.getTaskCode()))
-                .filter(details -> !List.of(NOT_VISITED, INDEX_CASE_NOT_VISITED, SECONDARY_INDEX_CASE_NOT_VISITED).contains(details.getBusinessStatus()))
-                .collect(toList());
+        Map<String, List<IndividualTask>> individualTotalRCDTasks = individualBusinessStatuses.stream()
+            .filter(task -> RCD_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
 
-        List<TaskDetails> indexStructuresVisited = tasks.stream()
-                .filter(details -> Constants.Action.INDEX_CASE.equals(details.getTaskCode()))
-                .filter(details -> !NOT_VISITED.equals(details.getBusinessStatus()))
-                .collect(Collectors.toList());
+        Map<String, List<IndividualTask>> individualCompleteIndexTasks = individualBusinessStatuses.stream()
+            .filter(task->  COMPLETE.equals(task.getBusinessStatus()))
+            .filter(task -> INDEX_CASE_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
 
-        List<TaskDetails> rcdStructuresVisited = tasks.stream()
-                .filter(details -> RCD.equals(details.getTaskCode()))
-                .filter(details -> !INDEX_CASE_COMPLETE.equals(details.getBusinessStatus())
-                        && !SECONDARY_INDEX_CASE_COMPLETE.equals(details.getBusinessStatus()))
-                .collect(Collectors.toList());
+        Map<String, List<IndividualTask>> individualCompleteRCDTasks = individualBusinessStatuses.stream()
+            .filter(task->  COMPLETE.equals(task.getBusinessStatus()))
+            .filter(task -> RCD_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
+
+        Map<String, List<IndividualTask>> individualIncompleteIndexTasks = individualBusinessStatuses.stream()
+            .filter(task->  NOT_VISITED.equals(task.getBusinessStatus()))
+            .filter(task -> INDEX_CASE_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
+
+        Map<String, List<IndividualTask>> individualIncompleteRCDTasks = individualBusinessStatuses.stream()
+            .filter(task->  NOT_VISITED.equals(task.getBusinessStatus()))
+            .filter(task -> RCD_MEMBER.equals(task.getCode()))
+            .collect(Collectors.groupingBy(IndividualTask::getCode, toList()));
+
+        InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
+        int rdt = 0;
+        try {
+            rdt = interventionAdditionalDetailsRepository.getSumPerFieldCode("rdt"
+                , PreferencesUtil.getInstance().getCurrentPlanId()
+                , PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e.toString());
+        }
+
+        int consent = 0;
+        try {
+            consent = interventionAdditionalDetailsRepository.getSumPerFieldCode("consent"
+                , PreferencesUtil.getInstance().getCurrentPlanId()
+                , PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e.toString());
+        }
+
+        int passive = 0;
+        try {
+            passive = interventionAdditionalDetailsRepository.getSumPerFieldCode(PASSIVE_CASE_DETECTION_EVENT
+                , PreferencesUtil.getInstance().getCurrentPlanId()
+                , PreferencesUtil.getInstance().getCurrentOperationalAreaId());
+
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e.toString());
+        }
+
+        int totalRcdMemberTasks = individualTotalRCDTasks.containsKey(RCD_MEMBER) ? Objects.requireNonNull(individualTotalRCDTasks.get(RCD_MEMBER)).size() : 0;
+        int totalIndexMemberTasks = individualTotalIndexTasks.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(individualTotalIndexTasks.get(INDEX_CASE_MEMBER)).size() : 0;
+
+        int totalCompleteRcdMemberTasks = individualCompleteRCDTasks.containsKey(RCD_MEMBER) ? Objects.requireNonNull(individualCompleteRCDTasks.get(RCD_MEMBER)).size() : 0;
+        int totalCompleteIndexMemberTasks = individualCompleteIndexTasks.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(individualCompleteIndexTasks.get(INDEX_CASE_MEMBER)).size() : 0;
+
+        int totalIncompleteRcdMemberTasks = individualIncompleteRCDTasks.containsKey(RCD_MEMBER) ? Objects.requireNonNull(individualIncompleteRCDTasks.get(RCD_MEMBER)).size() : 0;
+        int totalIncompleteIndexMemberTasks = individualIncompleteIndexTasks.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(individualIncompleteIndexTasks.get(INDEX_CASE_MEMBER)).size() : 0;
+
+        int indexMemberCoverage = totalIndexMemberTasks > 0 ? (int)(((double)totalCompleteIndexMemberTasks / (double)totalIndexMemberTasks * 100)): 0;
+        int rcdMemberCoverage = totalRcdMemberTasks > 0 ? (int)((double)consent / (double)totalRcdMemberTasks *100): 0;
+        int positiveMalariaCoverage = totalRcdMemberTasks > 0?(int)((double)rdt/(double)totalRcdMemberTasks *100):0;
+
+        int totalToBeTested = totalIncompleteRcdMemberTasks;
 
 
-        int totalRcdStructures = tasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(tasksByTaskCode.get(RCD)).size() : 0;
-        int totalRcdMemberTasks = tasksByTaskCode.containsKey(RCD_MEMBER) ? Objects.requireNonNull(tasksByTaskCode.get(RCD_MEMBER)).size() : 0;
-        int totalIndexStructure = tasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE)).size() : 0;
-        int totalIndexMemberTasks = tasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(tasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
-
-        int totalCompleteRcdStructures = completedTasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(completedTasksByTaskCode.get(RCD)).size() : 0;
-        int totalCompleteRcdMemberTasks = completedTasksByTaskCode.containsKey(RCD_MEMBER) ? Objects.requireNonNull(completedTasksByTaskCode.get(RCD_MEMBER)).size() : 0;
-        int totalCompleteIndexStructure = completedTasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
-        int totalCompleteIndexMemberTasks = completedTasksByTaskCode.containsKey(INDEX_CASE_MEMBER) ? Objects.requireNonNull(completedTasksByTaskCode.get(INDEX_CASE_MEMBER)).size() : 0;
-
-        int totalUnVisitRcdStructures = unvisitedTasksByTaskCode.containsKey(RCD) ? Objects.requireNonNull(unvisitedTasksByTaskCode.get(RCD)).size() : 0;
-        int totalUnVisitIndexStructure = unvisitedTasksByTaskCode.containsKey(INDEX_CASE) ? Objects.requireNonNull(unvisitedTasksByTaskCode.get(INDEX_CASE)).size() : 0;
-
-        int totalVisitIndexStructure = indexStructuresVisited.size();
-        int totalVisitRCDStructure = rcdStructuresVisited.size();
-
-        int indexStructureCoverage = totalIndexStructure > 0 ? totalCompleteIndexStructure / totalIndexStructure : 0;
-        int rcdStructureCoverage = totalRcdStructures > 0 ? totalCompleteRcdStructures / totalRcdStructures : 0;
-        int visitedCoverage = !total.isEmpty() ? totalVisited.size() / total.size() : 0;
-
+        int totalCaseConfirmed = totalIndexMemberTasks + passive;
+        int passiveIndexCaseDetection = totalCaseConfirmed > 0 ? (int)((double)totalIndexMemberTasks / (double)totalCaseConfirmed * 100) :0;
 
         IndicatorDetails indicatorDetails = IndicatorDetails.builder()
-                .totalRcdStructures(totalRcdStructures)
                 .totalRcdMemberTasks(totalRcdMemberTasks)
-                .totalIndexStructure(totalIndexStructure)
                 .totalIndexMemberTasks(totalIndexMemberTasks)
-                .totalCompleteRcdStructures(totalCompleteRcdStructures)
                 .totalCompleteRcdMemberTasks(totalCompleteRcdMemberTasks)
-                .totalCompleteIndexStructure(totalCompleteIndexStructure)
                 .totalCompleteIndexMemberTasks(totalCompleteIndexMemberTasks)
-                .totalUnVisitRcdStructures(totalUnVisitRcdStructures)
-                .totalUnVisitIndexStructure(totalUnVisitIndexStructure)
-                .totalVisitIndexStructure(totalVisitIndexStructure)
-                .totalVisitRCDStructure(totalVisitRCDStructure)
-                .indexStructureCoverage(indexStructureCoverage)
-                .rcdStructureCoverage(rcdStructureCoverage)
-                .visitedGDRSCoverage(visitedCoverage)
+                .totalUnVisitRcdMembers(totalIncompleteRcdMemberTasks)
+                .totalUnVisitIndexMembers(totalIncompleteIndexMemberTasks)
+            .totalToBeTested(totalToBeTested)
+                .totalPassiveICC(passive)
+                .totalRcdConsent(consent)
+                .indexMemberCoverage(indexMemberCoverage)
+                .rcdMemberCoverage(rcdMemberCoverage)
+                .rcdPositiveMalariaMemberCoverage(positiveMalariaCoverage)
+            .passiveIndexCaseDetection(passiveIndexCaseDetection)
+                .rdtCount(rdt)
                 .build();
         return indicatorDetails;
     }

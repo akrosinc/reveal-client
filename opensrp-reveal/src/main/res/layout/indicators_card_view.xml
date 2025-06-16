@@ -831,10 +831,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:width="0dp"
-                        android:text="@string/totalRcdStructures"
+                        android:text="@string/totalIndexCasesUnconfirmed"
                         android:textStyle="normal"/>
                     <TextView
-                        android:id="@+id/gdrs_totalRcdStructures"
+                        android:id="@+id/gdrs_total_index_cases_unconfirmed"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -848,10 +848,10 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="@string/totalRcdMemberTasks"
+                        android:text="@string/totalIndexCasesConfirmed"
                         android:textStyle="normal"/>
                     <TextView
-                        android:id="@+id/gdrs_totalRcdMemberTasks"
+                        android:id="@+id/gdrs_total_index_cases_confirmed"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -865,10 +865,10 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="@string/totalIndexStructure"
+                        android:text="@string/totalIndividualsToBeTestedForRACD"
                         android:textStyle="normal"/>
                     <TextView
-                        android:id="@+id/gdrs_totalIndexStructure"
+                        android:id="@+id/gdrs_total_individuals_to_be_tested_for_RACD"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -881,10 +881,10 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:text="@string/totalIndexMemberTasks"
+                        android:text="@string/totalHDSSIndividualsTestedForRACD"
                         android:textStyle="normal"/>
                     <TextView
-                        android:id="@+id/gdrs_totalIndexMemberTasks"
+                        android:id="@+id/gdrs_total_HDSS_individuals_tested_for_RACD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
@@ -892,142 +892,17 @@
                         android:text="0"
                         android:textStyle="normal"/>
                 </TableRow>
+
                 <TableRow android:background="@color/white" android:padding="5dp">
                     <TextView
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:width="0dp"
-                        android:text="@string/totalCompleteRcdStructures"
+                        android:text="@string/totalRACDCasesDetected"
                         android:textStyle="normal"/>
                     <TextView
-                        android:id="@+id/gdrs_totalCompleteRcdStructures"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalCompleteRcdMemberTasks"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalCompleteRcdMemberTasks"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalCompleteIndexStructure"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalCompleteIndexStructure"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalCompleteIndexMemberTasks"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalCompleteIndexMemberTasks"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalUnVisitRcdStructures"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalUnVisitRcdStructures"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalUnVisitIndexStructure"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalUnVisitIndexStructure"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalVisitIndexStructure"
-                        android:textStyle="normal"/>
-                    <TextView
-                        android:id="@+id/gdrs_totalVisitIndexStructure"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textStyle="normal"/>
-                </TableRow>
-                <TableRow android:background="@color/white" android:padding="5dp">
-                    <android.widget.TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:width="0dp"
-                        android:text="@string/totalVisitRCDStructure"
-                        android:textStyle="normal"/>
-                    <android.widget.TextView
-                        android:id="@+id/gdrs_totalVisitRCDStructure"
+                        android:id="@+id/gdrs_total_RACD_cases_detected"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"

@@ -286,14 +286,13 @@
     <string name="totalStructuresNotEligible">Total Structures Not Eligible</string>
 
 
-    <string name="totalRcdStructures">Total RCD Structures</string>
-    <string name="totalRcdMemberTasks">Total RCD Member Tasks</string>
-    <string name="totalIndexStructure">Total Index Case Structures</string>
-    <string name="totalIndexMemberTasks">Total Index Case Member Tasks</string>
-    <string name="totalCompleteRcdStructures">Total Complete RCD Structures</string>
-    <string name="totalCompleteRcdMemberTasks">Total Complete RCD Member Tasks</string>
-    <string name="totalCompleteIndexStructure">Total Complete Index Case Structures</string>
-    <string name="totalCompleteIndexMemberTasks">Total Complete Index Case Member Tasks</string>
+    <string name="totalHDSSIndividualsTestedForRACD"> total HDSS individuals tested for RACD</string>
+    <string name="totalIndexCasesUnconfirmed">total index cases unconfirmed</string>
+    <string name="totalIndexCasesConfirmed">total index cases confirmed</string>
+    <string name="totalIndividualsToBeTestedForRACD">total individuals to be tested for RACD</string>
+    <string name="totalHDSSindividualsTestedForRACD">total HDSS individuals tested for RACD</string>
+    <string name="totalRACDCasesDetected">total RACD cases detected</string>
+    <string name="totalToBeTested"> total individuals to be tested for RACD</string>
     <string name="totalUnVisitRcdStructures">Total Un-visited RCD Structures</string>
     <string name="totalUnVisitIndexStructure">Total Un-visited Index Case Structures</string>
     <string name="totalVisitIndexStructure">Total Visited Index Case Structures</string>
@@ -490,9 +489,10 @@
     <string name="coverage_of_structures_completed">Coverage of Structures Completed</string>
 
 
-    <string name="index_case_coverage">Index Case Coverage</string>
+    <string name="index_case_confirmation">Index Case Confirmation</string>
     <string name="rcd_coverage">RCD Coverage</string>
-    <string name="gdrs_visited_coverage">Visited Coverage</string>
+    <string name="racd_malaria_prevalence">RACD-based malaria prevalence</string>
+    <string name="passive_index_case_detection">Passive index case detection</string>
 
 
     <string name="and_individuals_complete">And Individuals complete</string>
