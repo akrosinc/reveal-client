@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.Objects;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.TaskDetails;
@@ -117,7 +118,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
                     actionView.setTextColor(context.getResources().getColor(R.color.text_black));
                     actionView.setBackground(actionViewPair.first);
                     actionView.setText(actionViewPair.second);
-                } else if (task.getTaskCount() == task.getCompleteTaskCount()) {
+                } else if (Objects.equals(task.getTaskCount(), task.getCompleteTaskCount())) {
                     showTasksCompleteActionView();
                 }
             }

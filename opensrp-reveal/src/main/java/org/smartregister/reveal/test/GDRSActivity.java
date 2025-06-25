@@ -684,6 +684,8 @@ public class GDRSActivity extends AppCompatActivity {
       }
     }
 
+    Timber.tag("RevealMap").i("correctHousehold %s",correctHousehold);
+
     List<StructureTaskForCompound> structuresAndTasksForCompoundByHouseholdId =
         hdssRepository.getStructuresAndTasksForHouseholdId(
             correctHousehold, planId);
@@ -717,17 +719,23 @@ public class GDRSActivity extends AppCompatActivity {
         hdssRepository.getIndividualsAndTasksForHouseholdId(
             correctHousehold, planId);
 
+    Timber.tag("RevealMap").i("individualsAndTasksForCompoundByHouseholdId %s",individualsAndTasksForCompoundByHouseholdId);
+
     String groupNameForSelectedStructure =
         locationRepository.getLocationsParentName(this.locationUUID);
+    Timber.tag("RevealMap").i("groupNameForSelectedStructure getLocationsParentName %s",groupNameForSelectedStructure);
 
     if (groupNameForSelectedStructure == null) {
       groupNameForSelectedStructure =
           PreferencesUtil.getInstance().getCurrentOperationalArea();
     }
+    Timber.tag("RevealMap").i("groupNameForSelectedStructure %s",groupNameForSelectedStructure);
+
 
     for (IndividualsAndTasksForCompound individualsAndTasksForCompound :
         individualsAndTasksForCompoundByHouseholdId) {
       if (individualsAndTasksForCompound.getBusinessStatus() == null) {
+        Timber.tag("RevealMap").i("generating for  %s",individualsAndTasksForCompound.getIndividualId());
 
         taskUtils.generateTaskWithGroupName(
             this,
