@@ -432,7 +432,7 @@ public abstract class RecyclerViewFragment extends
                         Sortqueries);
                 query = sqb.Endquery(query);
             } else {
-                sqb.addCondition(filters);
+                sqb.addCondition(" and ec_events.entity like '%".concat(filters).concat("%'"));
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(sqb.addlimitandOffset(query, clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset()));
 
@@ -458,7 +458,7 @@ public abstract class RecyclerViewFragment extends
                         Sortqueries);
                 query = sqb.Endquery(query);
             } else {
-                sqb.addCondition(filters);
+                sqb.addCondition(" and ec_events.entity like '%".concat(filters).concat("%'"));
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(sqb.addlimitandOffset(query, clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset()));
 
@@ -485,11 +485,10 @@ public abstract class RecyclerViewFragment extends
 
 
             } else {
-                sqb.addCondition(filters);
+                sqb.addCondition(" and ec_events.entity like '%".concat(filters).concat("%'"));
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(query);
 
-                Timber.i(query);
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
                 clientAdapter.setTotalcount(c.getInt(0));
