@@ -122,7 +122,7 @@ public class LocationTaskIntentService extends IntentService {
         }
 
         HdssServiceHelper hdssServiceHelper = HdssServiceHelper.getInstance();
-        hdssServiceHelper.syncHdssDetails();
+//        hdssServiceHelper.syncHdssDetails();
 
 
         new AppExecutors().mainThread().execute(new Runnable() {

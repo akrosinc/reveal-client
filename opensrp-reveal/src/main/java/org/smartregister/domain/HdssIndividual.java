@@ -3,10 +3,11 @@ package org.smartregister.domain;
 
 import java.io.Serializable;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-
+@Builder
 public class HdssIndividual implements Serializable {
     public HdssIndividual(String identifier, String individualId, String dob, String gender, String name, long serverVersion) {
         this.identifier = identifier;

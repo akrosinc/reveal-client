@@ -193,6 +193,14 @@ public class PreferencesUtil {
         return allSharedPreferences.getBooleanPreference(ALL_EVENTS_SYNCED);
     }
 
+    public void setAllHdssSynced(boolean isAllHdssSynced){
+        allSharedPreferences.saveBooleanPreference("all_hdss_synced",isAllHdssSynced);
+    }
+
+    public boolean isAllHdssSynced(){
+        return allSharedPreferences.getBooleanPreference("all_hdss_synced");
+    }
+
     public void setAllPlansSynced(boolean isAllPlansSynced){
         allSharedPreferences.saveBooleanPreference(ALL_PLANS_SYNCED,isAllPlansSynced);
     }
@@ -257,6 +265,38 @@ public class PreferencesUtil {
 
     public long getHdssMaxServerVersion(){
         return allSharedPreferences.getLongPreference(HDSS_MAX_SERVER_VERSION);
+    }
+
+    public boolean getHdssFileFetched(){
+        return  allSharedPreferences.getBooleanPreference("hdss_file_fetched");
+    }
+
+    public void setHdssFileFetched(boolean fileFetched){
+        allSharedPreferences.saveBooleanPreference("hdss_file_fetched",fileFetched);
+    }
+
+    public boolean getHdssFileProcessed(){
+        return  allSharedPreferences.getBooleanPreference("hdss_file_processed");
+    }
+
+    public void setHdssFileProcessed(boolean fileFetched){
+        allSharedPreferences.saveBooleanPreference("hdss_file_processed",fileFetched);
+    }
+
+    public int getHdssFileProcessingLineNumber(){
+        return  allSharedPreferences.getIntPreference("hdss_line_number");
+    }
+
+    public void setHdssFileProcessingLineNumber(int fileFetched){
+        allSharedPreferences.saveIntPreference("hdss_line_number",fileFetched);
+    }
+
+    public int getHdssFileTotalRecordCount(){
+        return  allSharedPreferences.getIntPreference("hdss_total_record_count");
+    }
+
+    public void setHdssFileTotalRecordCount(int fileFetched){
+        allSharedPreferences.saveIntPreference("hdss_total_record_count",fileFetched);
     }
 
 }

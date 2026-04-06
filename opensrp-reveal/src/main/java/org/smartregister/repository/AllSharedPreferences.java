@@ -245,6 +245,18 @@ public class AllSharedPreferences {
         return preferences.getBoolean(key, false);
     }
 
+    public  void saveBooleanPreference(String key,boolean value){
+        preferences.edit().putBoolean(key,value).apply();
+    }
+
+    public int getIntPreference(String key) {
+        return preferences.getInt(key, 0);
+    }
+
+    public  void saveIntPreference(String key,int value){
+        preferences.edit().putInt(key,value).apply();
+    }
+
     public void updateUrl(String baseUrl) {
         try {
 
@@ -399,8 +411,5 @@ public class AllSharedPreferences {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
 
-    public  void saveBooleanPreference(String key,boolean value){
-        preferences.edit().putBoolean(key,value).commit();
-    }
 }
 

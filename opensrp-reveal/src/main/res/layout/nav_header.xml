@@ -200,7 +200,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hdss_sync_progress_bar_label" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--sync progress indication end-->

@@ -39,10 +39,13 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.job.HdssServiceJob;
+import org.smartregister.job.SyncServiceJob;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.sync.helper.ValidateAssignmentHelper;
@@ -103,6 +106,13 @@ public class SyncIntentService extends BaseSyncIntentService {
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
 
         doSync();
+
+        (new AppExecutors()).mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+            }
+        });
     }
 
     private void doSync() {
@@ -128,6 +138,9 @@ public class SyncIntentService extends BaseSyncIntentService {
                 }
             } else {
                 pullECFromServer();
+
+
+
             }
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w(e);

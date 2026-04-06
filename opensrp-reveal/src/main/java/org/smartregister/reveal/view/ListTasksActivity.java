@@ -1511,6 +1511,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
 
+        Timber.tag("SecureStore").i("entity %s progress %s",entity,progress);
         if (syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)) {
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
@@ -1556,16 +1557,35 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             } else {
                 PreferencesUtil.getInstance().setAllEventsSynced(false);
             }
-        } else if(syncProgress.getSyncEntity().equals(SyncEntity.HDSS)){
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.HDSS)
+            || syncProgress.getSyncEntity().equals(SyncEntity.HDSS_OFFLINE)
+            || syncProgress.getSyncEntity().equals(SyncEntity.HDSS_FILE)){
             ProgressBar syncProgressBar = findViewById(R.id.hdss_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.hdss_sync_progress_bar_label);
-            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+
+            String prefix = "";
+            switch (syncProgress.getSyncEntity()){
+                case HDSS:
+                    prefix = "";
+                    break;
+                case HDSS_OFFLINE:
+                    prefix = "Processing Data Offline: ";
+                    break;
+                case HDSS_FILE:
+                    prefix = "Fetching Bulk Data: ";
+                    break;
+                default:
+                    prefix = "";
+            }
+            String labelText =
+                prefix.concat(String.format(getResources().getString(R.string.progressBarLabel), entity, progress));
+
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
             if (progress == 100) {
-                PreferencesUtil.getInstance().setAllEventsSynced(true);
+                PreferencesUtil.getInstance().setAllHdssSynced(true);
             } else {
-                PreferencesUtil.getInstance().setAllEventsSynced(false);
+                PreferencesUtil.getInstance().setAllHdssSynced(false);
             }
         }
 

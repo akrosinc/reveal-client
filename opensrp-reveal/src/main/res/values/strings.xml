@@ -1087,6 +1087,7 @@
     <string name="edit_racd">EDIT RACD</string>
     <string name="action_racd">RACD</string>
     <string name="hdss">Hdss</string>
+    <string name="hdss_offline">Hdss Offline</string>
     <string name="select_structure">Select Structure</string>
     <string name="must_capture_compound_and_household">Must capture compound and household</string>
     <string name="must_capture_compound">Must capture compound</string>

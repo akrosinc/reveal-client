@@ -2,37 +2,53 @@ package org.smartregister.domain;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class HdssCompoundObj implements Serializable {
 
-    List<HdssCompound> allCompounds;
+    @Builder.Default
+    private List<HdssCompound> allCompounds = new ArrayList<>();
 
-    List<HdssCompoundHousehold> compoundHouseHolds;
+    @Builder.Default
+    private List<HdssCompoundHousehold> compoundHouseHolds = new ArrayList<>();
 
-    List<HdssHouseholdIndividual> allHouseholdIndividual;
+    @Builder.Default
+    private List<HdssHouseholdIndividual> allHouseholdIndividual = new ArrayList<>();
 
-    List<HdssHouseholdStructure> allHouseholdStructure;
+    @Builder.Default
+    private List<HdssHouseholdStructure> allHouseholdStructure = new ArrayList<>();
 
-    List<HdssIndividual> allIndividuals;
+    @Builder.Default
+    private List<HdssIndividual> allIndividuals = new ArrayList<>();
 
-    List<HdssHousehold> allHouseholds;
+    @Builder.Default
+    private List<HdssHousehold> allHouseholds = new ArrayList<>();
 
-    List<String> allHouseholdIndividualToDelete;
+    @Builder.Default
+    private List<String> allHouseholdIndividualToDelete = new ArrayList<>();
 
-    List<String> allCompoundHouseholdToDelete;
+    @Builder.Default
+    private List<String> allCompoundHouseholdToDelete = new ArrayList<>();
 
-    boolean empty;
+    @Builder.Default
+    private boolean empty = true;
 
-    long serverVersion;
+    @Builder.Default
+    private long serverVersion = 0L;
 
-    int totalRecords;
-
+    @Builder.Default
+    private int totalRecords = 0;
     public boolean getEmpty(){
         return empty;
     }

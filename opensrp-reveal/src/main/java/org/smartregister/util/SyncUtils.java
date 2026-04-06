@@ -35,6 +35,7 @@ import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import timber.log.Timber;
 
@@ -192,10 +193,19 @@ public class SyncUtils {
     }
 
     public static int getTotalSyncProgress() {
+
+    if (Country.GDRS.equals(PreferencesUtil.getInstance().getBuildCountry())) {
+            return  (BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllEventsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllLocationsSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced()) +
+                BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllHdssSynced())) * 100 / 5;
+        } else {
         return  (BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllEventsSynced()) +
                 BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllLocationsSynced()) +
                 BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllPlansSynced()) +
                 BooleanUtils.toInteger(PreferencesUtil.getInstance().isAllTasksSynced())) * 100 / SYNC_ENTITY_COUNT;
+            }
     }
     public static void setAllEntityNotSynced(){
         PreferencesUtil.getInstance().setAllPlansSynced(false);

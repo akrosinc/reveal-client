@@ -467,5 +467,5 @@ task javadoc(type: Javadoc) {
     def mainSrc = "$project.projectDir/src/main/java"
     source = files([mainSrc])
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
+    classpath += configurations.implementation
 }

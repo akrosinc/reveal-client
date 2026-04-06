@@ -550,6 +550,8 @@ public class Utils {
       case TASKS:
         return context.getString(R.string.tasks_text);
       case HDSS:
+      case HDSS_OFFLINE:
+      case HDSS_FILE:
         return context.getString(R.string.hdss);
       default:
         throw new IllegalStateException("Invalid Sync Entity");

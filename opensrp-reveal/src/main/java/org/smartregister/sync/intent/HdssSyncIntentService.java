@@ -23,7 +23,7 @@ public class HdssSyncIntentService extends BaseSyncIntentService {
             currentlySyncing = true;
 
             this.hdssServiceHelper.syncHdssDetails();
-       currentlySyncing = false;
+            currentlySyncing = false;
         }
 
     }

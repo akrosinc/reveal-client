@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
+import java.util.concurrent.atomic.AtomicLong;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -20,6 +21,7 @@ import org.smartregister.domain.Task;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.searchbox.HdssSearchBoxFactory;
 import org.smartregister.reveal.test.HdssTask;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
@@ -390,6 +392,7 @@ public class HdssRepository extends BaseRepository {
 
     // Start a transaction to ensure atomicity and better performance
     writableDatabase.beginTransaction();
+    long currentMaxServerVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
     try {
       int batchSize = 40; // Set the batch size to 30
       for (int i = 0; i < compounds.size(); i += batchSize) {
@@ -408,6 +411,7 @@ public class HdssRepository extends BaseRepository {
                     + SERVER_VERSION
                     + ") VALUES ");
 
+
         // Add values for each compound in the batch
         for (int j = 0; j < batch.size(); j++) {
           HdssCompound compound = batch.get(j);
@@ -422,6 +426,10 @@ public class HdssRepository extends BaseRepository {
           if (j < batch.size() - 1) {
             sql.append(", "); // Separate with commas if not the last item
           }
+          if (compound.getServerVersion()>currentMaxServerVersion){
+            currentMaxServerVersion = compound.getServerVersion();
+          }
+
         }
 
         // Execute the batch insert for this batch
@@ -430,6 +438,7 @@ public class HdssRepository extends BaseRepository {
 
       // Mark the transaction as successful
       writableDatabase.setTransactionSuccessful();
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion);
     } catch (Exception e) {
       // Handle any errors
       Timber.tag("batching").e(e, "error");
@@ -454,6 +463,7 @@ public class HdssRepository extends BaseRepository {
   public void addOrUpdateCompoundHouseholdsBatched(
       List<HdssCompoundHousehold> hdssCompoundHousehold) {
     SQLiteDatabase writableDatabase = getWritableDatabase();
+    long currentMaxServerVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
 
     // Start a transaction for better performance
     writableDatabase.beginTransaction();
@@ -495,6 +505,9 @@ public class HdssRepository extends BaseRepository {
           if (j < batch.size() - 1) {
             sql.append(", "); // Separate values with commas, except for the last one
           }
+          if (household.getServerVersion()>currentMaxServerVersion){
+            currentMaxServerVersion = household.getServerVersion();
+          }
         }
 
         // Execute the batch insert for this batch
@@ -503,6 +516,7 @@ public class HdssRepository extends BaseRepository {
 
       // Commit the transaction after all batches have been processed
       writableDatabase.setTransactionSuccessful();
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion);
     } catch (Exception e) {
       // Handle any exceptions
       e.printStackTrace();
@@ -527,6 +541,7 @@ public class HdssRepository extends BaseRepository {
   public void addOrUpdateHouseholdStructureBatched(
       List<HdssHouseholdStructure> householdStructures) {
     SQLiteDatabase writableDatabase = getWritableDatabase();
+    long currentMaxServerVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
 
     // Start a transaction to improve performance and ensure atomicity
     writableDatabase.beginTransaction();
@@ -568,6 +583,9 @@ public class HdssRepository extends BaseRepository {
           if (j < batch.size() - 1) {
             sql.append(", "); // Separate values with commas, except for the last one
           }
+          if (household.getServerVersion()>currentMaxServerVersion){
+            currentMaxServerVersion = household.getServerVersion();
+          }
         }
 
         // Execute the batch insert for this batch
@@ -576,6 +594,7 @@ public class HdssRepository extends BaseRepository {
 
       // Commit the transaction after all batches have been processed
       writableDatabase.setTransactionSuccessful();
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion);
     } catch (Exception e) {
       // Handle any exceptions
       e.printStackTrace();
@@ -721,6 +740,7 @@ public class HdssRepository extends BaseRepository {
   public void addOrUpdateHouseholdIndividualBatched(
       List<HdssHouseholdIndividual> householdIndividuals) {
     SQLiteDatabase writableDatabase = getWritableDatabase();
+    long currentMaxServerVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
 
     // Start a transaction for better performance and atomicity
     writableDatabase.beginTransaction();
@@ -762,6 +782,10 @@ public class HdssRepository extends BaseRepository {
           if (j < batch.size() - 1) {
             sql.append(", "); // Separate values with commas, except for the last one
           }
+          if (householdIndividual.getServerVersion()>currentMaxServerVersion){
+            currentMaxServerVersion = householdIndividual.getServerVersion();
+          }
+
         }
 
         // Execute the batch insert for this batch
@@ -770,6 +794,7 @@ public class HdssRepository extends BaseRepository {
 
       // Commit the transaction after all batches have been processed
       writableDatabase.setTransactionSuccessful();
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion);
     } catch (Exception e) {
       // Handle any exceptions
       e.printStackTrace();
@@ -1261,7 +1286,10 @@ public class HdssRepository extends BaseRepository {
 
     public void addOrUpdateHousehold(List<HdssHousehold> households) {
         SQLiteDatabase writableDatabase = getWritableDatabase();
-        households.forEach(
+      AtomicLong currentMaxServerVersion = new AtomicLong(
+          PreferencesUtil.getInstance().getHdssMaxServerVersion());
+
+      households.forEach(
             hdssHousehold -> {
               Timber.tag("RevealMap").i("content values %s",households.toString());
 
@@ -1271,13 +1299,20 @@ public class HdssRepository extends BaseRepository {
                 if (hdssHousehold.getFloatingHouseholdLocationName() != null) {
                     contentValues.put(FLOATING_HOUSEHOLD_LOCATION_NAME, hdssHousehold.getFloatingHouseholdLocationName());
                 }
+                if (hdssHousehold.getServerVersion() > currentMaxServerVersion.get()){
+                  currentMaxServerVersion.set(hdssHousehold.getServerVersion());
+                }
               Timber.tag("RevealMap").i("content values %s",contentValues.toString());
                 writableDatabase.replace(HDSS_HOUSEHOLD, null, contentValues);
             });
+
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion.get());
     }
 
   public void addOrUpdateIndividualBatched(List<HdssIndividual> householdIndividuals) {
     Timber.tag("TotalCount").e("writing to db no of individs %s",householdIndividuals.size());
+    long currentMaxServerVersion = PreferencesUtil.getInstance().getHdssMaxServerVersion();
+
     SQLiteDatabase writableDatabase = getWritableDatabase();
 
     // Start a transaction to ensure atomicity and improve performance
@@ -1380,6 +1415,9 @@ public class HdssRepository extends BaseRepository {
           if (j < batch.size() - 1) {
             sql.append(", "); // Separate values with commas, except for the last one
           }
+          if (individual.getServerVersion()>currentMaxServerVersion){
+            currentMaxServerVersion = individual.getServerVersion();
+          }
         }
 
         // Execute the batch insert for this batch
@@ -1388,6 +1426,7 @@ public class HdssRepository extends BaseRepository {
 
       // Commit the transaction after all batches have been processed
       writableDatabase.setTransactionSuccessful();
+      PreferencesUtil.getInstance().setHdssMaxServerVersion(currentMaxServerVersion);
     } catch (Exception e) {
       // Handle any exceptions
       Timber.tag("TotalCount").e("db exception %s",e.getMessage());

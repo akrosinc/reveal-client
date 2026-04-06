@@ -7,6 +7,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
+
 import org.smartregister.view.activity.DrishtiApplication;
 
 import timber.log.Timber;
@@ -33,7 +34,6 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
         EventClientSync syncIntentService = new EventClientSync(application);
         syncIntentService.performSync();
-
         syncStatusBroadcastReceiver.removeSyncStatusListener(this);
     }
 

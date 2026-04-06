@@ -26,6 +26,7 @@ import org.smartregister.account.AccountResponse;
 import org.smartregister.account.AccountUserInfo;
 import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
+import org.smartregister.domain.HttpResponseWrapper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
@@ -200,6 +201,35 @@ public class HTTPAgent {
         } catch (IOException | URISyntaxException ex) {
             Timber.tag("Reveal Exception").w(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
+        }
+    }
+
+    public HttpResponseWrapper postForInputStream(String postURLPath, String jsonPayload) {
+        HttpURLConnection urlConnection = null;
+        try {
+            urlConnection = generatePostRequest(postURLPath, jsonPayload);
+
+            // If unauthorized, invalidate token and retry
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+                invalidateExpiredCachedAccessToken();
+                urlConnection = generatePostRequest(postURLPath, jsonPayload);
+            }
+
+            int responseCode = urlConnection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+
+                HttpResponseWrapper httpResponseWrapper = new HttpResponseWrapper();
+                httpResponseWrapper.setInputStream(urlConnection.getInputStream());
+                httpResponseWrapper.setHeaders(urlConnection.getHeaderFields());
+                return httpResponseWrapper; // ✅ return input stream
+            } else {
+                Timber.tag("HTTP POST").w("Unexpected response code: %d", responseCode);
+                return null;
+            }
+
+        } catch (IOException | URISyntaxException ex) {
+            Timber.tag("Reveal Exception").w(ex, "EXCEPTION: %s", ex.toString());
+            return null;
         }
     }
 
