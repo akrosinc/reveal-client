@@ -1,4 +1,3 @@
 include ':opensrp-reveal'
-include ':json2view'
-include ':sample'
 include ':opensrp-configurable-views'
+include ':opensrp-app'
