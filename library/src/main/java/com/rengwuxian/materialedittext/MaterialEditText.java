@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import timber.log.Timber;
 
 /**
  * EditText in Material Design
@@ -49,7 +51,7 @@ import java.util.regex.Pattern;
  * author:rengwuxian
  * <p/>
  */
-public class MaterialEditText extends TextInputEditText {
+public class MaterialEditText extends AppCompatEditText {
 
   @IntDef({FLOATING_LABEL_NONE, FLOATING_LABEL_NORMAL, FLOATING_LABEL_HIGHLIGHT})
   public @interface FloatingLabelType {
@@ -1402,7 +1404,13 @@ public class MaterialEditText extends TextInputEditText {
     }
 
     // draw the original things
-    super.onDraw(canvas);   }
+    try {
+      super.onDraw(canvas);
+    } catch (NullPointerException e) {
+      Timber.tag("WriteValue").e(e,"MaterialEditTex NPE during draw");
+      return;
+    }
+  }
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
   private boolean isRTL() {
