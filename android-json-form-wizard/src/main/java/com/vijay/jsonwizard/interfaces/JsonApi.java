@@ -77,6 +77,11 @@ public interface JsonApi extends ClientFormContract.View {
     void addFormDataView(View view);
 
     Collection<View> getFormDataViews();
+
+    void addNonFormDataView(View view);
+
+    Collection<View> getNonFormDataViews();
+
     Map<String, View> getFormDataViewMap();
 
     View getFormDataView(String address);

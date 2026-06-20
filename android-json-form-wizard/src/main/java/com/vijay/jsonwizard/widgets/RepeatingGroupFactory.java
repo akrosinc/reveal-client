@@ -97,6 +97,8 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
 
         final MaterialEditText referenceEditText = rootLayout.findViewById(R.id.reference_edit_text);
         final ImageButton doneButton = rootLayout.findViewById(R.id.btn_repeating_group_done);
+        doneButton.setTag(R.id.repeating_group_button_tag,"mybutton");
+        doneButton.setTag(R.id.repeating_group_button_clicked,false);
 
         final String referenceEditTextHint = jsonObject.optString(REFERENCE_EDIT_TEXT_HINT, context.getString(R.string.enter_number_of_repeating_group_items));
         final String repeatingGroupLabel = jsonObject.optString(REPEATING_GROUP_LABEL, context.getString(R.string.repeating_group_item));
@@ -135,12 +137,16 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             doneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    doneButton.setTag(R.id.repeating_group_button_clicked,true);
                     addOnDoneAction(referenceEditText, doneButton, widgetArgs);
                 }
             });
         }
 
         ((JsonApi) context).addFormDataView(referenceEditText);
+
+        ((JsonApi) context).addNonFormDataView(doneButton);
+
         setViewTags(rootLayout, widgetArgs);
         prepareViewChecks(rootLayout, context, widgetArgs);
 
@@ -344,6 +350,7 @@ public class RepeatingGroupFactory implements FormWidgetFactory {
             @Override
             public void afterTextChanged(Editable s) {
                 doneButton.setImageResource(R.drawable.ic_done_grey);
+                Timber.tag("RepeatingGroupFactory after TextChanged setting button to grey");
                 ValidationStatus validationStatus = JsonFormFragmentPresenter
                         .validate(widgetArgs.getFormFragment(), referenceEditText, false);
                 if (validationStatus.isValid() && widgetArgs.getJsonObject().optBoolean(JsonFormConstants.EXPAND_ON_TEXT_CHANGE)) {

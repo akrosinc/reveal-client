@@ -145,6 +145,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     private TextView selectedTextView = null;
     private boolean isNextStepRelevant;
     private String nextStep = "";
+    private Map<String,View> formNonDataViews = new ConcurrentHashMap<>();
 
 
     public void performActionOnReceived(String stepName) {
@@ -385,7 +386,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 try {
                     View curView = calculationLogicViews.get(viewId);
                     if (curView == null) {
-                        Timber.tag("WriteValue").w("calculationLogicViews Missing %s", viewId);
                         continue;
                     }
                     Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(curView);
@@ -486,6 +486,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
     @Override
     public Collection<View> getFormDataViews() {
         return formDataViews.values();
+    }
+
+    @Override
+    public void addNonFormDataView(View view) {
+        String address = String.valueOf(view.getTag(R.id.address));
+        formNonDataViews.put(address, view);
+    }
+    @Override
+    public Collection<View> getNonFormDataViews() {
+        return formNonDataViews.values();
     }
 
     @Override
@@ -1046,9 +1056,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                                       String value, boolean popup) throws JSONException {
 
         synchronized (getmJSONObject()) {
-            Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue"
-                    + " stepName %s parentKey %s childObjectKey %s childKey %s value %s",
-                        stepName,parentKey,childObjectKey,childKey,value);
+
             JSONObject checkboxObject = formFields.get(stepName + "_" + parentKey);
             JSONArray checkboxOptions = checkboxObject.getJSONArray(childObjectKey);
             HashSet<String> currentValues = new HashSet<>();
@@ -1058,15 +1066,10 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             if (checkboxObject.has(JsonFormConstants.VALUE)) {
                 formUtils.updateValueToJSONArray(checkboxObject, checkboxObject.optString(JsonFormConstants.VALUE, ""));
             }
-            Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue 2 checkboxObject %s",
-                checkboxObject);
+
             if (checkboxObject != null && checkboxOptions != null) {
                 if (checkboxObject.has(JsonFormConstants.VALUE) && StringUtils.isNotEmpty(checkboxObject.getString(JsonFormConstants.VALUE))) {
-                    Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue 3 has value %s",
-                        checkboxObject);
                     currentValues.addAll(getCurrentCheckboxValues(checkboxObject.getJSONArray(JsonFormConstants.VALUE)));
-                    Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue 1 currentValues %s",
-                        currentValues);
                 }
 
                 for (int index = 0; index < checkboxOptions.length(); index++) {
@@ -1092,16 +1095,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     }
                 }
 
-                Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue 2 currentValues %s",
-                    currentValues);
 
                 checkboxObject.put(JsonFormConstants.VALUE, getCheckboxValueJsonArray(currentValues));
             }
             invokeRefreshLogic(value, popup, parentKey, childKey, stepName, false);
-            Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue 3 checkboxObject %s",
-                checkboxObject);
-            Timber.tag("WriteValue").i("JsonFormActivity checkBoxWriteValue formFields %s",
-                formFields);
+
 
         }
     }

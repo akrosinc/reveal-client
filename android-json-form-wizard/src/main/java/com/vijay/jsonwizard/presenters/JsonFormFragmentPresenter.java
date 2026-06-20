@@ -465,9 +465,13 @@ public class JsonFormFragmentPresenter extends
                         getView().writeValue(mStepName, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
                         //for repeating grp referenceEditText validation
-                        if (editText.getId() == R.id.reference_edit_text && editText.getTag(R.id.has_required_validator) != null && validationStatus.isValid()) {
+                        Object hasRequiredValidator = editText.getTag(R.id.has_required_validator);
+                        Timber.tag("WriteValue").i("JsonFormFragmentPresenter validateAndWriteValues hasRequiredValidator %s",hasRequiredValidator);
+
+                        if (editText.getId() == R.id.reference_edit_text && hasRequiredValidator != null && validationStatus.isValid()) {
                             View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
                             Object o = doneButton.getTag(R.id.is_repeating_group_generated);
+                            Timber.tag("WriteValue").i("JsonFormFragmentPresenter validateAndWriteValues got done button is_repeating_group_generated %s",o);
                             if (o == null) {
                                 validationStatus.setIsValid(false);
                                 editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));

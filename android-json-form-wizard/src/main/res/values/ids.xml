@@ -89,5 +89,7 @@
     <item name="simprints_guid" type="id" />
     <item name="is_repeating_group_generated" type="id" />
     <item name="has_required_validator" type="id" />
+    <item name="repeating_group_button_tag" type="id" />
+    <item name="repeating_group_button_clicked" type="id" />
 
 </resources>

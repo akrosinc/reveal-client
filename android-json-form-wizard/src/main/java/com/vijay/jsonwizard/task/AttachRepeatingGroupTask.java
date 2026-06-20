@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vijay.jsonwizard.R;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
@@ -133,6 +134,8 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
     }
     updateRepeatingGrpCountObject();
 
+
+    publishProgress();
     return repeatingGroups;
   }
 
@@ -217,7 +220,14 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
 
         //for validation
         validationCleanUp();
+      Toast.makeText(rootLayout.getContext(), "Click completed",Toast.LENGTH_LONG).show();
     }
+  @Override
+  protected void onProgressUpdate(Void... values){
+    Toast.makeText(rootLayout.getContext(), "Click processing",Toast.LENGTH_SHORT).show();
+
+  }
+
 
     private void validationCleanUp() {
         doneButton.setTag(R.id.is_repeating_group_generated, true);

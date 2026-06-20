@@ -147,7 +147,7 @@ public class GeoJsonUtils {
 
         }
         String json = gson.toJson(structures);
-        Timber.tag("TaskList").i(json);
+
         return json;
     }
 

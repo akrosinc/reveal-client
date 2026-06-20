@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.vijay.jsonwizard.domain.WidgetArgs;
@@ -85,7 +86,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
   // TODO: test this method, after upgrading version of opensrp-native-form
   @Override
   protected void addOnDoneAction(TextView textView, ImageButton doneButton, WidgetArgs widgetArgs) {
-//    Timber.tag("WriteValue").i("Clicked to generate repeats");
+    Toast.makeText(textView.getContext(), "Click started",Toast.LENGTH_SHORT).show();
     RevealJsonFormActivity activity = (RevealJsonFormActivity) textView.getContext();
     if (Country.SENEGAL.equals(getBuildCountry()) || Country.SENEGAL_EN.equals(getBuildCountry())) {
       String inputText = textView.getText().toString();
@@ -122,11 +123,8 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
         ViewParent parent = textView.getParent();
         View parentView = (View) parent;
 
-//        Timber.tag("WriteValue").i(" parentView %s", parentView.getId());
-
         ViewParent parentParent = parentView.getParent();
         View parentParentView = (View) parentParent;
-//        Timber.tag("WriteValue").i(" parentParentView %s", parentParentView.getId());
 
         Map<String, JSONObject> formFieldsMap = activity.getFormFieldsMap();
         JSONObject rdtJsonObject = formFieldsMap.get("step1_rdt_results_number");
@@ -136,7 +134,6 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
         Map<Integer, String> repeatingGroupLayouts = new HashMap<>();
         repeatingGroupLayouts.put(parentParentView.getId(), repeatingGroupLayout.toString());
 
-//        Timber.tag("WriteValue").i("step1:rdt_results_number text view");
 
 /////////////////////
         List<String> keyList = new ArrayList<>();
@@ -164,7 +161,6 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
 /////////////////////
         List<String> keyListAutoSelect = new ArrayList<>();
         JSONObject jsonObjectAutoSelect = formFieldsMap.get("step1_additional_people_autoselect");
-//        Timber.tag("WriteValue").i("jsonObjectAutoSelect %s", jsonObjectAutoSelect);
         if (jsonObjectAutoSelect != null) {
           JSONArray value = jsonObjectAutoSelect.getJSONArray("value");
           for (int i = 0; i < value.length(); i++) {
@@ -173,7 +169,6 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
             keyListAutoSelect.add("step1_".concat(string));
           }
         }
-//        Timber.tag("WriteValue").i("keyList %s", keyListAutoSelect);
         Set<String> finalKeyListAutoSelect = new HashSet<>();
         Set<String> stringsAutoSelect = formFieldsMap.keySet();
         for (String key : stringsAutoSelect) {
@@ -192,7 +187,6 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
           JSONObject jsonObject1 = formFieldsMap.get("step1_child_name".concat("|").concat(key));
           if (jsonObject1 != null) {
             String childName = jsonObject1.getString("value");
-//            Timber.tag("WriteValue").i("childName %s", childName);
             Entry<String, String> stringStringSimpleEntry = new SimpleEntry<>(key, childName);
             childNameUniqueIdEntryList.add(stringStringSimpleEntry);
           }
@@ -201,26 +195,15 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
         TextView formDataView = (TextView) activity.getFormDataView(
             STEP1 + ":" + "additional_people_autoselect");
         Object tag1 = formDataView.getTag(com.vijay.jsonwizard.R.id.repeating_group_item_meta);
-//        Timber.tag("WriteValue").i("tag1 %s", tag1);
 
         for (String key : finalKeyListAutoSelect) {
-//          Timber.tag("WriteValue").i("key from finalKeyListAutoSelect key %s", key);
           if (tag1!=null&&!((String)tag1).isEmpty()){
             String childName = (String)tag1;
-//            Timber.tag("WriteValue").i("childName %s", childName);
             Entry<String, String> stringStringSimpleEntry = new SimpleEntry<>(key, childName);
             childNameUniqueIdEntryList.add(stringStringSimpleEntry);
           }
-//
-//          if (jsonObject1 != null) {
-//            String childName = jsonObject1.getString("value");
-//            Timber.tag("WriteValue").i("childName %s", childName);
-//            Entry<String, String> stringStringSimpleEntry = new SimpleEntry<>(key, childName);
-//            childNameUniqueIdEntryList.add(stringStringSimpleEntry);
-//          }
         }
 
-//        Timber.tag("WriteValue").i("childNameUniqueIdEntryList %s", childNameUniqueIdEntryList);
         addOnDoneActionCustom(
             textView,
             doneButton,
@@ -228,6 +211,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
             finalKeyList.size(),
             childNameUniqueIdEntryList,
             repeatingGroupLayouts);
+
         doneButton.setVisibility(GONE);
       } catch (JSONException e) {
         Timber.tag("WriteValue").e(e, "Error in addOnDoneAction");
@@ -298,7 +282,6 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
               childNameUniqueIdEntryList.get(random.nextInt(childNameUniqueIdEntryList.size()));
 
           selectedUniqueIdEntryList.add(stringStringEntry);
-//          Timber.tag("WriteValue").i("finalKeyList %s", finalKeyList);
 
           addOnDoneActionCustom(
               textView,
@@ -307,6 +290,7 @@ public class RevealRepeatingGroupFactory extends RepeatingGroupFactory {
               selectedUniqueIdEntryList.size(),
               selectedUniqueIdEntryList,
               repeatingGroupLayouts);
+
           doneButton.setVisibility(GONE);
         }
 

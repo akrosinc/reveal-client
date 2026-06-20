@@ -263,10 +263,20 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         mstepDup = getView().getArguments().getString("stepName");
         invalidFields = this.formFragment.getJsonApi().getInvalidFields();
         incorrectlyFormattedFields = new Stack<>();
+        for (View childView : formFragment.getJsonApi().getNonFormDataViews()) {
+            String key = (String) childView.getTag(R.id.key);
+            String address = (String) childView.getTag(R.id.address);
+            Timber.tag("WriteValue").i("validateAndWriteValuess address %s",address);
+            Timber.tag("WriteValue").i("validateAndWriteValuess key %s",key);
+
+        }
         for (View childView : formFragment.getJsonApi().getFormDataViews()) {
             ValidationStatus validationStatus = validateView(childView);
             String key = (String) childView.getTag(R.id.key);
             String address = (String) childView.getTag(R.id.address);
+            Timber.tag("WriteValue").i("validateAndWriteValuess address %s",address);
+            Timber.tag("WriteValue").i("validateAndWriteValuess key %s",key);
+
             String openMrsEntityParent = (String) childView.getTag(R.id.openmrs_entity_parent);
             String openMrsEntity = (String) childView.getTag(R.id.openmrs_entity);
             String openMrsEntityId = (String) childView.getTag(R.id.openmrs_entity_id);
@@ -291,15 +301,15 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                         getView().writeValue(mstepDup, key, rawValue, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
 
                         //for repeating grp referenceEditText validation
-//                        if (editText.getId() == R.id.reference_edit_text  && validationStatus.isValid()) {
-//                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
-//                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
-////                            if (o == null) {
-////                                validationStatus.setIsValid(false);
-////                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-////                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
-////                            }
-//                        }
+                        if (editText.getId() == R.id.reference_edit_text  && validationStatus.isValid()) {
+                            View doneButton = ((ViewGroup) editText.getParent()).findViewById(R.id.btn_repeating_group_done);
+                            Object o = doneButton.getTag(R.id.is_repeating_group_generated);
+                            if (o == null) {
+                                validationStatus.setIsValid(false);
+                                editText.setError(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                                validationStatus.setErrorMessage(getFormFragment().getString(R.string.repeating_group_not_generated_error_message));
+                            }
+                        }
                     } else {
                         validationStatus.setIsValid(true);
                     }

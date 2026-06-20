@@ -52,6 +52,29 @@
     "display_back_button": true,
     "fields":  [
       {
+        "key": "respondent_consent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "6. Did the respondent consent to the survey?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes, consent form completed"
+          },
+          {
+            "key": "no",
+            "text": "No, declined"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
         "key": "supervisor",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -59,51 +82,257 @@
         "type": "hidden"
       },
       {
-        "key": "type_of_structure_room_no_sleep",
+        "key": "children_under_5",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "Children under 5 (capture value and click on tick)",
+        "text_size": "6sp",
+        "repeating_group_label": "Child",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "openmrs_data_type": "select one",
-        "type": "check_box",
-        "label": "46. What type of structures or rooms are not used for sleeping but are used to spend time in the evening or early morning? (SELECT ALL THAT APPLY)",
-        "label_text_size": "14sp",
-        "label_text_color": "#FF9800",
-        "hint": "(SELECT ALL THAT APPLY)",
-        "options": [
-          {
-            "key": "cooking",
-            "text": "Cooking shelter/Kitchen",
-            "value": false,
-            "openmrs_choice_id": ""
-          },
-          {
-            "key": "meeting",
-            "text": "Meeting / socializing shed (e.g., roofed, but unwalled structure)",
-            "value": false,
-            "openmrs_choice_id": ""
-          },
-          {
-            "key": "living_room",
-            "text": "Living room",
-            "value": false,
-            "openmrs_choice_id": ""
-          },
-          {
-            "key": "porch",
-            "text": "Porch / veranda",
-            "value": false,
-            "openmrs_choice_id": ""
-          },
-          {
-            "key": "Other",
-            "text": "Other",
-            "value": false,
-            "openmrs_choice_id": ""
-          }
-        ],
         "v_required": {
           "value": true,
-          "err": "Required field"
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "child_name_label",
+            "type": "label",
+            "text": "17. What is the child's name?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "child_name",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Child's name",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": "true",
+              "err": "Field required"
+            }
+          }
+
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "additional_people",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number of people",
+        "text_size": "6sp",
+        "repeating_group_label": "Person",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "additional_people_name_label",
+            "type": "label",
+            "text": "31. What is the person's name?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "additional_people_name",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "enter person's name",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": "true",
+              "err": "Field required"
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "additional_people_autoselect",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "click on tick",
+        "text_size": "6sp",
+        "repeating_group_label": "Person",
+        "referred_repeating_group": "step1:additional_people",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "additional_individual_divider",
+            "type": "h_line",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "additional_individual_know_dob",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "32. Do you know the person's date of birth",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "additional_individual_dob_label",
+            "type": "label",
+            "text": "33. What is person’s date of birth?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "additional_individual_dob",
+            "type": "date_picker",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "select date",
+            "text_size": "6sp",
+            "max_date": "today",
+            "v_required": {
+              "value": true,
+              "err": "Please specify the date"
+            },
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "rdt_results_number",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number and click tick",
+        "text_size": "8sp",
+        "repeating_group_label": "RDT Test",
+        "referred_repeating_group": "step1:children_under_5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "rdt_result",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "82. RDT result",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "positive",
+                "text": "Positive"
+              },
+              {
+                "key": "negative",
+                "text": "Negative"
+              },
+              {
+                "key": "no_prepared",
+                "text": "RDT Test not prepared"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       }
     ]
