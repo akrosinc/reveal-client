@@ -27,4 +27,8 @@ public class HdssSearchRequest extends SearchRequest{
 
     private boolean useExactDate;
 
+    private int batchSize;
+
+    private int batchNumber;
+
 }

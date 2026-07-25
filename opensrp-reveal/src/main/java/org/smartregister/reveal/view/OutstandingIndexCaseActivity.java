@@ -179,7 +179,6 @@ public class OutstandingIndexCaseActivity extends MultiLanguageActivity {
 
       @Override
       public void afterTextChanged(Editable s) {
-        Timber.tag("Reveal").i("text changes %s",s.toString());
         filterList(s.toString());
         Button clearButton = findViewById(R.id.clearSearchButton);
         clearButton.setEnabled(!s.toString().isEmpty());

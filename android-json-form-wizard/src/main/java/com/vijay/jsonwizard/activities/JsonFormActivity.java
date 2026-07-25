@@ -282,7 +282,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     @Override
     public void addSkipLogicView(View view) {
-        skipLogicViews.put((String) view.getTag(R.id.address), view);
+        String tag = (String) view.getTag(R.id.address);
+        Timber.tag("WriteValue").i("JsonFormActvity addSkipLogicView tag: %s",tag);
+        skipLogicViews.put(tag, view);
     }
 
     @Override

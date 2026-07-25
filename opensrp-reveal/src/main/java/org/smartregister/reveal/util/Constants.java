@@ -326,6 +326,9 @@ public interface Constants {
 
         public static String CASE_CONFIRMATION_EVENT = "case_confirmation";
 
+        public static String GDRS_CREATE_INDEX_CASE = "create_index_case";
+        public static String GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD = "create_index_case_without_household";
+
         public static String CASE_DETAILS_EVENT = "Case_Details";
 
         public static String PAOT_EVENT = "PAOT";
@@ -669,10 +672,14 @@ public interface Constants {
 
         public static String GDRS_HEALTH_FACILITY_SCREENING = "json.form/gdrs_passive_case_detection_form.json";
 
+        public static String GDRS_CREATE_INDEX_CASE = "json.form/gdrs_create_index_case.json";
+
+        public static String GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD = "json.form/gdrs_create_index_case_without_household.json";
+
         public static String GDRS_HEALTH_FACILITY_PARASITOLOGY_FORM = "json.form/gdrs_health_facility_parasitology.json";
 
-        public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_individual_member.json";
-
+        public static String GDRS_ADD_MEMBER = "json.form/gdrs_add_rcd_individual_member.json";
+        public static String GDRS_MANUALLY_ADD_MEMBER = "json.form/gdrs_add_manual_rcd_individual_member.json";
         public static String GDRS_INDEX_CASE = "json.form/gdrs_index_case.json";
 
         public static String GDRS_INDEX_CASE_FLOATING_HOUSEHOLD = "json.form/gdrs_index_case_floating_household.json";
@@ -945,6 +952,8 @@ public interface Constants {
         public static String SCREENING = "Screening";
 
         public static String INDEX_CASE = "Index Case";
+
+        public static String CREATE_INDEX_CASE = "Create Index Case";
 
         public static String SECONDARY_INDEX_CASE = "Secondary Index Case";
 

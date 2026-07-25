@@ -2,9 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
-    android:id="@+id/action_add_member"
+    android:id="@+id/action_add_rcd_member"
     android:orderInCategory="100"
-    android:title="Add Member"
+    android:title="Add RCD Member"
+    android:visible="false"
+    app:showAsAction="never" />
+
+  <item
+    android:id="@+id/action_add_manual_rcd_member"
+    android:orderInCategory="100"
+    android:title="Add RCD Member Manually"
     android:visible="false"
     app:showAsAction="never" />
   <item

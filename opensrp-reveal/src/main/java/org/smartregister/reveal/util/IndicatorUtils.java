@@ -680,13 +680,13 @@ public class IndicatorUtils {
         HdssRepository hdssRepository =  RevealApplication.getInstance().getContext().getHdssRepository();
 
         Set<IndividualTask> individualBusinessStatuses = tasks.stream().flatMap(task ->{
-            Timber.tag("searching").i("Task %s",task.getStructureId());
+
             return hdssRepository.getIndividualTasksByStructureId(task.getStructureId(),PreferencesUtil.getInstance().getCurrentPlanId())
                 .stream();
             }
         ).collect(Collectors.toSet());
 
-        Timber.tag("searching").i("task list %s",individualBusinessStatuses);
+
 
         Map<String, List<IndividualTask>> individualTotalIndexTasks = individualBusinessStatuses.stream()
             .filter(task -> INDEX_CASE_MEMBER.equals(task.getCode()))

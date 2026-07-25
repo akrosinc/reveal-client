@@ -417,40 +417,55 @@ public class TaskServiceHelper extends BaseHelper {
         });
     }
 
-    private void appendCreatedHdssPersonDataToRequest(final List<Task> tasks) {
-        tasks.forEach(task -> {
+  private void appendCreatedHdssPersonDataToRequest(final List<Task> tasks) {
+    tasks.forEach(
+        task -> {
+          try {
+            HdssIndividual individualsByHdssId =
+                hdssRepository.getIndividualsByHdssId(task.getForEntity());
+            if (individualsByHdssId != null) {
+              PersonName personName =
+                  PersonName.builder()
+                      .use("OFFICIAL")
+                      .text(individualsByHdssId.getIndividualId())
+                      .family(individualsByHdssId.getIndividualId())
+                      .given(individualsByHdssId.getIndividualId())
+                      .prefix(individualsByHdssId.getIndividualId())
+                      .suffix(individualsByHdssId.getIndividualId())
+                      .build();
 
-             HdssIndividual individualsByHdssId = hdssRepository.getIndividualsByHdssId(task.getForEntity());
-             if (individualsByHdssId!=null){
-                 PersonName personName = PersonName.builder()
-                         .use("OFFICIAL").text(individualsByHdssId.getIndividualId())
-                         .family(individualsByHdssId.getIndividualId())
-                         .given(individualsByHdssId.getIndividualId())
-                         .prefix(individualsByHdssId.getIndividualId())
-                         .suffix(individualsByHdssId.getIndividualId())
-                         .build();
+              LocalDate dob = null;
+              try {
+                dob =
+                    LocalDate.parse(
+                        individualsByHdssId.getDob(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+              } catch (DateTimeParseException ep) {
+                try {
+                  dob =
+                      LocalDate.parse(
+                          individualsByHdssId.getDob(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                } catch (DateTimeParseException ep2) {
+                  Timber.tag("Reveal Exception")
+                      .e(
+                          "Cannot parse created persons dob %s",
+                          individualsByHdssId.getIndividualId());
+                }
+              }
 
-
-                 LocalDate dob = null;
-                 try {
-                     dob = LocalDate.parse(individualsByHdssId.getDob(),DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                 } catch (DateTimeParseException ep){
-                     try {
-                         dob = LocalDate.parse(individualsByHdssId.getDob(),DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                     } catch (DateTimeParseException ep2){
-                            Timber.tag("Reveal Exception").e("Cannot parse created persons dob %s",individualsByHdssId.getIndividualId());
-                     }
-                 }
-
-                 PersonRequest personRequest = PersonRequest.builder().identifier(UUID.fromString(individualsByHdssId.getIdentifier()))
-                         .name(personName).gender(individualsByHdssId.getGender().toUpperCase())
-                         .birthDate(dob).build();
-                task.setPersonRequest(personRequest);
-             }
-
+              PersonRequest personRequest =
+                  PersonRequest.builder()
+                      .identifier(UUID.fromString(individualsByHdssId.getIdentifier()))
+                      .name(personName)
+                      .gender(individualsByHdssId.getGender().toUpperCase())
+                      .birthDate(dob)
+                      .build();
+              task.setPersonRequest(personRequest);
+            }
+          } catch (IllegalArgumentException w) {
+            Timber.tag("Reveal Exception").e(w, "Error");
+          }
         });
-
-    }
+  }
 
     private HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();

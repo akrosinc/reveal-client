@@ -6,7 +6,7 @@
     android:minHeight="60dp"
     android:orientation="horizontal">
 
-    <com.google.android.material.textfield.TextInputEditText
+    <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

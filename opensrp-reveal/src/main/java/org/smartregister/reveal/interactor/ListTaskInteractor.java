@@ -84,6 +84,7 @@ import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Task;
@@ -208,7 +209,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         cardDetails.setInterventionType(interventionType);
                     }
                 } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w(e);
+                    Timber.tag("WriteValue").w(e);
                 } finally {
                     if (cursor != null) {
                         cursor.close();
@@ -217,9 +218,12 @@ public class ListTaskInteractor extends BaseInteractor {
 
                 // run on ui thread
                 final CardDetails CARD_DETAILS = cardDetails;
+                Timber.tag("WriteValue").i("ListTaskInteractor fetchInterventionDetails cardDetails %s",cardDetails);
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Timber.tag("WriteValue").i("ListTaskInteractor fetchInterventionDetails isForForm %s",isForForm);
+
                         if (isForForm) {
                             getSprayDetails(interventionType, featureId, CARD_DETAILS);
                             ((ListTaskPresenter) presenterCallBack).onInterventionFormDetailsFetched(CARD_DETAILS);
@@ -232,6 +236,11 @@ public class ListTaskInteractor extends BaseInteractor {
         };
 
         appExecutors.diskIO().execute(runnable);
+    }
+
+    public List<HdssCompoundHousehold> getHdssHouseHoldBStructure(String structureId){
+      return hdssRepository.getCompoundAndHouseholdListByStructureId(
+            structureId);
     }
 
     private void getSprayDetails(String interventionType, String structureId, CardDetails cardDetails) {
@@ -294,6 +303,8 @@ public class ListTaskInteractor extends BaseInteractor {
                 operator,
                 structureNumber);
     }
+
+
 
     private CardDetails createGdrsCardDetails(final Cursor cursor, final String interventionType, Location location) {
         String businessStatus = CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow(BUSINESS_STATUS)));

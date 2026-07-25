@@ -284,10 +284,7 @@ public class IndicatorsCalculatorTask extends AsyncTask<Void, Void, IndicatorDet
           getTableRowsKenya(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewKenya);
     } else if (getBuildCountry() == Country.GDRS) {
       tempTableLayoutViewGdrs.setVisibility(View.VISIBLE);
-      Timber.tag("searching")
-          .i(
-              "indicatorDetails.getSprayIndicatorList() %s indicatorDetails %s",
-              indicatorDetails.getSprayIndicatorList(), indicatorDetails);
+
       populateTableView(
           getTableRowsGdrs(), indicatorDetails.getSprayIndicatorList(), tempTableLayoutViewGdrs);
     } else if (getBuildCountry() == Country.NIH) {

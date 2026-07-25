@@ -50,6 +50,7 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.BaseTaskDetails;
 import org.smartregister.reveal.model.StructureDetails;
 
+import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.GeoJsonUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
@@ -69,6 +70,8 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
   Dialog resetTaskDialog;
 
   private String taskIdentifier;
+
+  private AppExecutors appExecutors = new AppExecutors();
 
   ActionAdapter(
       GDRSActivity gdrsActivity,
@@ -364,39 +367,43 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
   private void openNotVisitedTask(Task task, Action action) {
     BaseTaskDetails details = GDRSActivity.getBaseTaskDetails(task, task.getIdentifier(), null);
 
-    JSONObject formJSON;
-
-    if (task.getCode().equals(INDEX_CASE_MEMBER)
-        || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-      if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-        formJSON =
-            gdrsActivity
-                .getFormUtils()
-                .getFormJSON(
-                    gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
+    appExecutors.diskIO().execute(()->{
+      JSONObject formJSON;
+      if (task.getCode().equals(INDEX_CASE_MEMBER)
+          || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
+        if (task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
+          formJSON =
+              gdrsActivity
+                  .getFormUtils()
+                  .getFormJSON(
+                      gdrsActivity, Constants.JsonForm.GDRS_SECONDARY_INDEX_CASE, details, null);
+        } else {
+          formJSON =
+              gdrsActivity
+                  .getFormUtils()
+                  .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
+        }
       } else {
         formJSON =
             gdrsActivity
                 .getFormUtils()
-                .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_INDEX_CASE, details, null);
+                .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
       }
-    } else {
-      formJSON =
-          gdrsActivity
-              .getFormUtils()
-              .getFormJSON(gdrsActivity, Constants.JsonForm.GDRS_RCD, details, null);
-    }
 
-    populateGeneralTaskDetails(formJSON);
+      populateGeneralTaskDetails(formJSON);
 
-    if (task.getCode().equals(INDEX_CASE_MEMBER)
-        || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
-      formJSON = populateIndexCaseTaskDetails(task, action, details);
+      if (task.getCode().equals(INDEX_CASE_MEMBER)
+          || task.getCode().equals(Constants.Action.SECONDARY_INDEX_CASE_MEMBER)) {
+        formJSON = populateIndexCaseTaskDetails(task, action, details);
 
-    } else {
-      formJSON = populateRCDTaskDetails(action, details);
-    }
-    gdrsActivity.getFormUtils().startJsonForm(formJSON, gdrsActivity);
+      } else {
+        formJSON = populateRCDTaskDetails(action, details);
+      }
+      JSONObject finalFormJSON = formJSON;
+      appExecutors.mainThread().execute(()->{
+        gdrsActivity.getFormUtils().startJsonForm(finalFormJSON, gdrsActivity);
+      });
+    });
   }
 
   private JSONObject populateRCDTaskDetails(Action action, BaseTaskDetails details) {

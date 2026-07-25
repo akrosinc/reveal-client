@@ -18,6 +18,8 @@ import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BEDNET_DISTRIBUTION_EVENT;
 import static org.smartregister.reveal.util.Constants.BEHAVIOUR_CHANGE_COMMUNICATION;
 import static org.smartregister.reveal.util.Constants.BLOOD_SCREENING_EVENT;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.DETAILS;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FORM_SUBMISSION_ID;
@@ -30,7 +32,6 @@ import static org.smartregister.reveal.util.Constants.EventType.CDD_SUPERVISOR_D
 import static org.smartregister.reveal.util.Constants.EventType.CELL_COORDINATOR_DAILY_SUMMARY;
 import static org.smartregister.reveal.util.Constants.EventType.DAILY_SUMMARY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_EVENT;
-import static org.smartregister.reveal.util.Constants.EventType.INDEX_CASE_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.INDEX_CASE_MEMBER_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.IRS_SA_DECISION_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
@@ -65,6 +66,7 @@ import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.GPS_ACCURACY;
+import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.STRUCTURE;
@@ -103,6 +105,12 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Client;
+import org.smartregister.domain.HdssCompound;
+import org.smartregister.domain.HdssCompoundHousehold;
+import org.smartregister.domain.HdssHousehold;
+import org.smartregister.domain.HdssHouseholdIndividual;
+import org.smartregister.domain.HdssHouseholdStructure;
+import org.smartregister.domain.HdssIndividual;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Obs;
@@ -112,6 +120,7 @@ import org.smartregister.family.util.Constants.INTENT_KEY;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
@@ -154,258 +163,305 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-
-/**
- * Created by samuelgithengi on 3/25/19.
- */
+/** Created by samuelgithengi on 3/25/19. */
 public class BaseInteractor implements BaseContract.BaseInteractor {
 
-    public static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
-            .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
+  public static final Gson gson =
+      new GsonBuilder()
+          .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+          .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
+          .registerTypeAdapter(LocationProperty.class, new PropertiesConverter())
+          .create();
 
-    private RevealApplication revealApplication;
+  private RevealApplication revealApplication;
 
-    protected TaskRepository taskRepository;
+  protected TaskRepository taskRepository;
 
-    protected StructureRepository structureRepository;
+  protected StructureRepository structureRepository;
 
-    protected BasePresenter presenterCallBack;
+  protected BasePresenter presenterCallBack;
 
-    protected String operationalAreaId;
+  protected String operationalAreaId;
 
-    protected AppExecutors appExecutors;
+  protected AppExecutors appExecutors;
 
-    protected AllSharedPreferences sharedPreferences;
+  protected AllSharedPreferences sharedPreferences;
 
-    protected EventClientRepository eventClientRepository;
+  protected EventClientRepository eventClientRepository;
 
-    protected RevealClientProcessor clientProcessor;
+  protected RevealClientProcessor clientProcessor;
 
-    private TaskUtils taskUtils;
+  private HdssRepository hdssRepository;
 
-    private SQLiteDatabase database;
+  private TaskUtils taskUtils;
 
-    private CommonRepository commonRepository;
+  private SQLiteDatabase database;
 
-    private PreferencesUtil prefsUtil;
+  private CommonRepository commonRepository;
 
-    public BaseInteractor(BasePresenter presenterCallBack) {
-        revealApplication = RevealApplication.getInstance();
-        this.presenterCallBack = presenterCallBack;
-        appExecutors = revealApplication.getAppExecutors();
-        taskRepository = revealApplication.getTaskRepository();
-        structureRepository = revealApplication.getStructureRepository();
-        eventClientRepository = revealApplication.getContext().getEventClientRepository();
-        clientProcessor = RevealClientProcessor.getInstance(revealApplication.getApplicationContext());
-        sharedPreferences = revealApplication.getContext().allSharedPreferences();
-        taskUtils = TaskUtils.getInstance();
-        database = revealApplication.getRepository().getReadableDatabase();
-        prefsUtil = PreferencesUtil.getInstance();
+  private PreferencesUtil prefsUtil;
+
+  public BaseInteractor(BasePresenter presenterCallBack) {
+    revealApplication = RevealApplication.getInstance();
+    this.presenterCallBack = presenterCallBack;
+    appExecutors = revealApplication.getAppExecutors();
+    taskRepository = revealApplication.getTaskRepository();
+    structureRepository = revealApplication.getStructureRepository();
+    eventClientRepository = revealApplication.getContext().getEventClientRepository();
+    clientProcessor = RevealClientProcessor.getInstance(revealApplication.getApplicationContext());
+    sharedPreferences = revealApplication.getContext().allSharedPreferences();
+    taskUtils = TaskUtils.getInstance();
+    database = revealApplication.getRepository().getReadableDatabase();
+    prefsUtil = PreferencesUtil.getInstance();
+    hdssRepository = RevealApplication.getInstance().getHdssRepository();
+  }
+
+  @VisibleForTesting
+  public BaseInteractor(BasePresenter presenterCallBack, CommonRepository commonRepository) {
+    this(presenterCallBack);
+    this.commonRepository = commonRepository;
+  }
+
+  @Override
+  public void saveJsonForm(String json) {
+    String encounterType = null;
+    try {
+      JSONObject jsonForm = new JSONObject(json);
+      encounterType = jsonForm.optString(ENCOUNTER_TYPE);
+      switch (encounterType) {
+        case REGISTER_STRUCTURE_EVENT:
+          saveRegisterStructureForm(jsonForm);
+          break;
+        case EventType.MDA_DISPENSE:
+          taskUtils.generateMDAAdherenceTask(
+              RevealApplication.getInstance().getApplicationContext(),
+              getString(jsonForm, ENTITY_ID),
+              getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID),
+              JsonFormUtils.getFieldValue(json, JsonForm.ADMINISTERED_SPAQ));
+
+        case BLOOD_SCREENING_EVENT:
+        case EventType.MDA_DRUG_RECON:
+          saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
+          break;
+
+        case EventType.MDA_ADHERENCE:
+          saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
+          break;
+
+        case EventType.GDRS_CREATE_INDEX_CASE:
+          saveIndexCase(jsonForm, encounterType);
+          break;
+        case EventType.GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD:
+          saveIndexCaseForHousehold(jsonForm, encounterType);
+          break;
+
+        case CASE_CONFIRMATION_EVENT:
+          saveCaseConfirmation(jsonForm, encounterType);
+          break;
+        default:
+          saveLocationInterventionForm(jsonForm);
+          break;
+      }
+      revealApplication.setRefreshMapOnEventSaved(true);
+    } catch (Exception e) {
+      Timber.tag("Reveal Exception").w(e);
+      presenterCallBack.onFormSaveFailure(encounterType);
+    }
+  }
+
+  @Override
+  public void handleLasteventFound(org.smartregister.domain.Event event) {
+    // handle in child class
+  }
+
+  private org.smartregister.domain.Event saveEvent(
+      JSONObject jsonForm, String encounterType, String bindType) throws JSONException {
+    // TODO: clean up this method, upgrade native forms where necessary
+    String entityId = getString(jsonForm, ENTITY_ID);
+    String formSubmissionId = getString(jsonForm, FORM_SUBMISSION_ID);
+    JSONArray fields = JsonFormUtils.fields(jsonForm);
+    JSONObject metadata = getJSONObject(jsonForm, METADATA);
+    Event event =
+        JsonFormUtils.createEvent(
+            fields,
+            metadata,
+            Utils.getFormTag(),
+            entityId,
+            encounterType,
+            bindType,
+            formSubmissionId);
+    event.setEventDate(new Date());
+    JSONObject eventJson = new JSONObject(gson.toJson(event));
+    JSONArray obsList = (JSONArray) eventJson.get("obs");
+    if (getCountry().equals(Country.SENEGAL)
+        || getCountry().equals(Country.SENEGAL_EN)
+        || getCountry().equals(Country.ZAMBIA)) {
+      JSONObject compoundStructureField =
+          JsonFormUtils.getFieldJSONObject(fields, COMPOUND_STRUCTURE);
+      if (compoundStructureField != null) {
+        for (int i = 0; i < obsList.length(); i++) {
+          JSONObject obs = (JSONObject) obsList.get(i);
+          if (obs.get("formSubmissionField").equals(COMPOUND_STRUCTURE)) {
+            JSONObject value =
+                (JSONObject) new JSONArray(compoundStructureField.get(VALUE).toString()).get(0);
+            JSONArray values = new JSONArray();
+            values.put(value.get(KEY));
+            obs.put(VALUES, values);
+            obs.put("fieldCode", COMPOUND_STRUCTURE);
+            break;
+          }
+        }
+      }
     }
 
-    @VisibleForTesting
-    public BaseInteractor(BasePresenter presenterCallBack, CommonRepository commonRepository) {
-        this(presenterCallBack);
-        this.commonRepository = commonRepository;
-    }
-
-    @Override
-    public void saveJsonForm(String json) {
-        String encounterType = null;
-        try {
-            JSONObject jsonForm = new JSONObject(json);
-            encounterType = jsonForm.optString(ENCOUNTER_TYPE);
-            switch (encounterType) {
-                case REGISTER_STRUCTURE_EVENT:
-                    saveRegisterStructureForm(jsonForm);
-                    break;
-                case EventType.MDA_DISPENSE:
-                    taskUtils.generateMDAAdherenceTask(RevealApplication.getInstance().getApplicationContext(),
-                            getString(jsonForm, ENTITY_ID), getJSONObject(jsonForm, DETAILS).getString(Properties.LOCATION_ID), JsonFormUtils.getFieldValue(json, JsonForm.ADMINISTERED_SPAQ));
-
-                case BLOOD_SCREENING_EVENT:
-                case EventType.MDA_DRUG_RECON:
-                    saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
-                    break;
-
-                case EventType.MDA_ADHERENCE:
-                    saveMemberForm(jsonForm, encounterType, BLOOD_SCREENING);
-                    break;
-
-                case CASE_CONFIRMATION_EVENT:
-                    saveCaseConfirmation(jsonForm, encounterType);
-                    break;
-                default:
-                    saveLocationInterventionForm(jsonForm);
-                    break;
+    if (DAILY_SUMMARY_EVENT.equals(event.getEventType())
+        || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
+      JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
+      if (sprayArea != null && MULTI_SELECT_LIST.equals(sprayArea.optString(TYPE))) {
+        for (int i = 0; i < obsList.length(); i++) {
+          JSONObject obs = (JSONObject) obsList.get(i);
+          if (obs.get("formSubmissionField").equals(SPRAY_AREAS)) {
+            JSONArray multiSelectFieldValue = new JSONArray(sprayArea.get(VALUE).toString());
+            JSONArray values = new JSONArray();
+            for (int j = 0; j < multiSelectFieldValue.length(); j++) {
+              JSONObject each = multiSelectFieldValue.getJSONObject(j);
+              values.put(each.get(KEY));
             }
-            revealApplication.setRefreshMapOnEventSaved(true);
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e);
-            presenterCallBack.onFormSaveFailure(encounterType);
+            obs.put(VALUES, values);
+            obs.put("fieldCode", SPRAY_AREAS);
+            break;
+          }
         }
+      }
+    }
+    JSONObject details = getJSONObject(jsonForm, DETAILS);
+    details.put(
+        EVENT_POSITION,
+        String.format(
+            "%s,%s",
+            sharedPreferences.getPreference(EVENT_LATITUDE),
+            sharedPreferences.getPreference(EVENT_LONGITUDE)));
+    details.put(
+        Constants.ADMIN_PASSWORD_ENTERED, sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
+    details.put(Constants.GPS_ACCURACY, sharedPreferences.getPreference(GPS_ACCURACY));
+    eventJson.put(DETAILS, details);
+    eventClientRepository.addEvent(entityId, eventJson);
+    addInterventionAdditionalDetails(eventJson);
+    return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
+  }
+
+  private void addInterventionAdditionalDetails(JSONObject details) {
+    try {
+      List<InterventionAdditionalDetail> additionalDetails =
+          getInterventionAdditionalDetails(details);
+
+      InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository =
+          RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
+      interventionAdditionalDetailsRepository.addDetailsToTable(additionalDetails);
+    } catch (Exception e) {
+      Timber.tag("Reveal Exception").w(e.toString());
+    }
+  }
+
+  @NonNull
+  private Country getCountry() {
+    return PreferencesUtil.getInstance().getBuildCountry();
+  }
+
+  private void saveLocationInterventionForm(JSONObject jsonForm) {
+    String encounterType = null;
+    String interventionType = null;
+    try {
+      encounterType = jsonForm.getString(ENCOUNTER_TYPE);
+      if (encounterType.equals(SPRAY_EVENT)
+          || encounterType.equals(EventType.IRS_LITE_VERIFICATION)) {
+        interventionType = IRS;
+      } else if (encounterType.equals(MOSQUITO_COLLECTION_EVENT)) {
+        interventionType = MOSQUITO_COLLECTION;
+      } else if (encounterType.equals(LARVAL_DIPPING_EVENT)) {
+        interventionType = LARVAL_DIPPING;
+      } else if (encounterType.equals(BEDNET_DISTRIBUTION_EVENT)) {
+        interventionType = BEDNET_DISTRIBUTION;
+      } else if (encounterType.equals(BEHAVIOUR_CHANGE_COMMUNICATION)) {
+        interventionType = BCC;
+      } else if (encounterType.equals(EventType.PAOT_EVENT)) {
+        interventionType = PAOT;
+      } else if (encounterType.equals(EventType.MDA_DISPENSE)) {
+        interventionType = Intervention.MDA_DISPENSE;
+      } else if (encounterType.equals(EventType.MDA_ADHERENCE)) {
+        interventionType = Intervention.MDA_ADHERENCE;
+      } else if (encounterType.equals(EventType.MDA_DRUG_RECON)) {
+        interventionType = Intervention.MDA_DRUG_RECON;
+      } else if (encounterType.equals(EventType.IRS_VERIFICATION)) {
+        interventionType = Intervention.IRS_VERIFICATION;
+      } else if (encounterType.equals(EventType.DAILY_SUMMARY_EVENT)) {
+        jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
+      } else if (CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType)) {
+        interventionType = CDD_SUPERVISION;
+      } else if (CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)) {
+        interventionType = CELL_COORDINATION;
+      } else if (MDA_SURVEY_EVENT.equals(encounterType)) {
+        interventionType = MDA_SURVEY;
+      } else if (LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType)) {
+        interventionType = LSM_HOUSEHOLD_SURVEY;
+      } else if (HABITAT_SURVEY_EVENT.equals(encounterType)) {
+        interventionType = HABITAT_SURVEY;
+      } else if (MDA_ONCHO_EVENT.equals(encounterType)) {
+        interventionType = MDA_ONCHOCERCIASIS_SURVEY;
+      } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)) {
+        interventionType = STRUCTURE_SURVEY;
+      } else if (RCD_EVENT.equals(encounterType)) {
+        interventionType = RCD;
+      } else if (INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
+        interventionType = INDEX_CASE_MEMBER;
+      } else if (SECONDARY_INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
+        interventionType = SECONDARY_INDEX_CASE_MEMBER;
+      }
+    } catch (JSONException e) {
+      Timber.tag("Reveal Exception").w(e);
     }
 
-    @Override
-    public void handleLasteventFound(org.smartregister.domain.Event event) {
-        // handle in child class
-    }
-
-    private org.smartregister.domain.Event saveEvent(JSONObject jsonForm, String encounterType, String bindType) throws JSONException {
-        //TODO: clean up this method, upgrade native forms where necessary
-        String entityId = getString(jsonForm, ENTITY_ID);
-        String formSubmissionId = getString(jsonForm, FORM_SUBMISSION_ID);
-        JSONArray fields = JsonFormUtils.fields(jsonForm);
-        JSONObject metadata = getJSONObject(jsonForm, METADATA);
-        Event event = JsonFormUtils.createEvent(fields, metadata, Utils.getFormTag(), entityId, encounterType, bindType, formSubmissionId);
-        event.setEventDate(new Date());
-        JSONObject eventJson = new JSONObject(gson.toJson(event));
-        JSONArray obsList = (JSONArray) eventJson.get("obs");
-        if (getCountry().equals(Country.SENEGAL) || getCountry().equals(Country.SENEGAL_EN) || getCountry().equals(Country.ZAMBIA)) {
-            JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(fields, COMPOUND_STRUCTURE);
-            if (compoundStructureField != null) {
-                for (int i = 0; i < obsList.length(); i++) {
-                    JSONObject obs = (JSONObject) obsList.get(i);
-                    if (obs.get("formSubmissionField").equals(COMPOUND_STRUCTURE)) {
-                        JSONObject value = (JSONObject) new JSONArray(compoundStructureField.get(VALUE).toString()).get(0);
-                        JSONArray values = new JSONArray();
-                        values.put(value.get(KEY));
-                        obs.put(VALUES, values);
-                        obs.put("fieldCode", COMPOUND_STRUCTURE);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (DAILY_SUMMARY_EVENT.equals(event.getEventType()) || IRS_SA_DECISION_EVENT.equals(event.getEventType())) {
-            JSONObject sprayArea = JsonFormUtils.getFieldJSONObject(fields, SPRAY_AREAS);
-            if (sprayArea != null && MULTI_SELECT_LIST.equals(sprayArea.optString(TYPE))) {
-                for (int i = 0; i < obsList.length(); i++) {
-                    JSONObject obs = (JSONObject) obsList.get(i);
-                    if (obs.get("formSubmissionField").equals(SPRAY_AREAS)) {
-                        JSONArray multiSelectFieldValue = new JSONArray(sprayArea.get(VALUE).toString());
-                        JSONArray values = new JSONArray();
-                        for (int j = 0; j < multiSelectFieldValue.length(); j++) {
-                            JSONObject each = multiSelectFieldValue.getJSONObject(j);
-                            values.put(each.get(KEY));
-                        }
-                        obs.put(VALUES, values);
-                        obs.put("fieldCode", SPRAY_AREAS);
-                        break;
-                    }
-                }
-            }
-        }
-        JSONObject details = getJSONObject(jsonForm, DETAILS);
-        details.put(EVENT_POSITION, String.format("%s,%s", sharedPreferences.getPreference(EVENT_LATITUDE), sharedPreferences.getPreference(EVENT_LONGITUDE)));
-        details.put(Constants.ADMIN_PASSWORD_ENTERED, sharedPreferences.getPreference(ADMIN_PASSWORD_ENTERED));
-        details.put(Constants.GPS_ACCURACY, sharedPreferences.getPreference(GPS_ACCURACY));
-        eventJson.put(DETAILS, details);
-        eventClientRepository.addEvent(entityId, eventJson);
-        addInterventionAdditionalDetails(eventJson);
-        return gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class);
-    }
-
-    private void addInterventionAdditionalDetails(JSONObject details) {
-        try {
-            List<InterventionAdditionalDetail> additionalDetails = getInterventionAdditionalDetails(details);
-
-            InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository = RevealApplication.getInstance().getContext().getInterventionAdditionalDetailsRepository();
-            interventionAdditionalDetailsRepository.addDetailsToTable(additionalDetails);
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e.toString());
-        }
-
-    }
-
-
-    @NonNull
-    private Country getCountry() {
-        return PreferencesUtil.getInstance().getBuildCountry();
-    }
-
-    private void saveLocationInterventionForm(JSONObject jsonForm) {
-        String encounterType = null;
-        String interventionType = null;
-        try {
-            encounterType = jsonForm.getString(ENCOUNTER_TYPE);
-            if (encounterType.equals(SPRAY_EVENT) || encounterType.equals(EventType.IRS_LITE_VERIFICATION)) {
-                interventionType = IRS;
-            } else if (encounterType.equals(MOSQUITO_COLLECTION_EVENT)) {
-                interventionType = MOSQUITO_COLLECTION;
-            } else if (encounterType.equals(LARVAL_DIPPING_EVENT)) {
-                interventionType = LARVAL_DIPPING;
-            } else if (encounterType.equals(BEDNET_DISTRIBUTION_EVENT)) {
-                interventionType = BEDNET_DISTRIBUTION;
-            } else if (encounterType.equals(BEHAVIOUR_CHANGE_COMMUNICATION)) {
-                interventionType = BCC;
-            } else if (encounterType.equals(EventType.PAOT_EVENT)) {
-                interventionType = PAOT;
-            } else if (encounterType.equals(EventType.MDA_DISPENSE)) {
-                interventionType = Intervention.MDA_DISPENSE;
-            } else if (encounterType.equals(EventType.MDA_ADHERENCE)) {
-                interventionType = Intervention.MDA_ADHERENCE;
-            } else if (encounterType.equals(EventType.MDA_DRUG_RECON)) {
-                interventionType = Intervention.MDA_DRUG_RECON;
-            } else if (encounterType.equals(EventType.IRS_VERIFICATION)) {
-                interventionType = Intervention.IRS_VERIFICATION;
-            } else if (encounterType.equals(EventType.DAILY_SUMMARY_EVENT)) {
-                jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
-            } else if (CDD_SUPERVISOR_DAILY_SUMMARY.equals(encounterType)) {
-                interventionType = CDD_SUPERVISION;
-            } else if (CELL_COORDINATOR_DAILY_SUMMARY.equals(encounterType)) {
-                interventionType = CELL_COORDINATION;
-            } else if (MDA_SURVEY_EVENT.equals(encounterType)) {
-                interventionType = MDA_SURVEY;
-            } else if (LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType)) {
-                interventionType = LSM_HOUSEHOLD_SURVEY;
-            } else if (HABITAT_SURVEY_EVENT.equals(encounterType)) {
-                interventionType = HABITAT_SURVEY;
-            } else if (MDA_ONCHO_EVENT.equals(encounterType)) {
-                interventionType = MDA_ONCHOCERCIASIS_SURVEY;
-            } else if (STRUCTURE_SURVEY_EVENT.equals(encounterType)) {
-                interventionType = STRUCTURE_SURVEY;
-            } else if (RCD_EVENT.equals(encounterType)) {
-                interventionType = RCD;
-            }else if (INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
-                interventionType = INDEX_CASE_MEMBER;
-            }else if (SECONDARY_INDEX_CASE_MEMBER_EVENT.equals(encounterType)) {
-                interventionType = SECONDARY_INDEX_CASE_MEMBER;
-            }
-        } catch (JSONException e) {
-            Timber.tag("Reveal Exception").w(e);
-        }
-
-        final String finalInterventionType = interventionType;
-        final String finalEncounterType = encounterType;
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                  Timber.tag("WriteValue").i("About to Save Event jsonForm %s",jsonForm);
-                    org.smartregister.domain.Event event = saveEvent(jsonForm, finalEncounterType, STRUCTURE);
-                    clientProcessor.processClient(Collections.singletonList(new EventClient(event, null)), true);
-                    appExecutors.mainThread().execute(new Runnable() {
+    final String finalInterventionType = interventionType;
+    final String finalEncounterType = encounterType;
+    Runnable runnable =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              org.smartregister.domain.Event event =
+                  saveEvent(jsonForm, finalEncounterType, STRUCTURE);
+              clientProcessor.processClient(
+                  Collections.singletonList(new EventClient(event, null)), true);
+              appExecutors
+                  .mainThread()
+                  .execute(
+                      new Runnable() {
                         @Override
                         public void run() {
-                            String businessStatus = clientProcessor.calculateBusinessStatus(event);
-                            String taskID = event.getDetails() == null ? null : event.getDetails().get(Properties.TASK_IDENTIFIER);
-                            presenterCallBack.onFormSaved(event.getBaseEntityId(), taskID, Task.TaskStatus.COMPLETED, businessStatus, finalInterventionType);
+                          String businessStatus = clientProcessor.calculateBusinessStatus(event);
+                          String taskID =
+                              event.getDetails() == null
+                                  ? null
+                                  : event.getDetails().get(Properties.TASK_IDENTIFIER);
+                          presenterCallBack.onFormSaved(
+                              event.getBaseEntityId(),
+                              taskID,
+                              Task.TaskStatus.COMPLETED,
+                              businessStatus,
+                              finalInterventionType);
                         }
-                    });
-                } catch (JSONException e) {
-                    Timber.tag("Reveal Exception").w(e, "Error saving saving Form ");
-                    presenterCallBack.onFormSaveFailure(finalEncounterType);
-                }
+                      });
+            } catch (JSONException e) {
+              Timber.tag("Reveal Exception").w(e, "Error saving saving Form ");
+              presenterCallBack.onFormSaveFailure(finalEncounterType);
             }
+          }
         };
 
-        appExecutors.diskIO().execute(runnable);
-    }
+    appExecutors.diskIO().execute(runnable);
+  }
 
-    private void saveRegisterStructureForm(JSONObject jsonForm) {
+  private void saveRegisterStructureForm(JSONObject jsonForm) {
     Runnable runnable =
         new Runnable() {
           @Override
@@ -476,14 +532,14 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                   && Utils.isFocusInvestigationOrMDA()) {
                 task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
               } else if (getCountry() == Country.ZAMBIA && SURVEY.equals(interventionType)) {
-                  task =
-                      taskUtils.generateTask(
-                          applicationContext,
-                          structure.getId(),
-                          structure.getId(),
-                          BusinessStatus.NOT_VISITED,
-                          STRUCTURE_SURVEY,
-                          R.string.structure_survey);
+                task =
+                    taskUtils.generateTask(
+                        applicationContext,
+                        structure.getId(),
+                        structure.getId(),
+                        BusinessStatus.NOT_VISITED,
+                        STRUCTURE_SURVEY,
+                        R.string.structure_survey);
               } else if (getCountry() == Country.MOZAMBIQUE) {
                 task =
                     taskUtils.generateTask(
@@ -637,40 +693,383 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
           }
         };
 
-        appExecutors.diskIO().execute(runnable);
-    }
+    appExecutors.diskIO().execute(runnable);
+  }
 
-    private void saveMemberForm(JSONObject jsonForm, String eventType, String intervention) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    org.smartregister.domain.Event event = saveEvent(jsonForm, eventType, FAMILY_MEMBER);
-                    Client client = eventClientRepository.fetchClientByBaseEntityId(event.getBaseEntityId());
-                    clientProcessor.processClient(Collections.singletonList(new EventClient(event, client)), true);
-                    appExecutors.mainThread().execute(new Runnable() {
+  private void saveMemberForm(JSONObject jsonForm, String eventType, String intervention) {
+    Runnable runnable =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              org.smartregister.domain.Event event = saveEvent(jsonForm, eventType, FAMILY_MEMBER);
+              Client client =
+                  eventClientRepository.fetchClientByBaseEntityId(event.getBaseEntityId());
+              clientProcessor.processClient(
+                  Collections.singletonList(new EventClient(event, client)), true);
+              appExecutors
+                  .mainThread()
+                  .execute(
+                      new Runnable() {
                         @Override
                         public void run() {
-                            String businessStatus = clientProcessor.calculateBusinessStatus(event);
-                            String taskID = event.getDetails().get(Properties.TASK_IDENTIFIER);
-                            presenterCallBack.onFormSaved(event.getBaseEntityId(), taskID, Task.TaskStatus.COMPLETED, businessStatus, intervention);
+                          String businessStatus = clientProcessor.calculateBusinessStatus(event);
+                          String taskID = event.getDetails().get(Properties.TASK_IDENTIFIER);
+                          presenterCallBack.onFormSaved(
+                              event.getBaseEntityId(),
+                              taskID,
+                              Task.TaskStatus.COMPLETED,
+                              businessStatus,
+                              intervention);
                         }
-                    });
-                } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w("Error saving member event form");
-                }
+                      });
+            } catch (Exception e) {
+              Timber.tag("Reveal Exception").w("Error saving member event form");
             }
+          }
         };
-        appExecutors.diskIO().execute(runnable);
-    }
+    appExecutors.diskIO().execute(runnable);
+  }
 
-    private void saveCaseConfirmation(JSONObject jsonForm, String eventType) {
-        appExecutors.diskIO().execute(() -> {
+  private void saveIndexCase(JSONObject jsonForm, String eventType) {
+    Runnable runnable =
+        new Runnable() {
+          @Override
+          public void run() {
             try {
-                String baseEntityId = JsonFormUtils.getFieldValue(JsonFormUtils.fields(jsonForm), JsonForm.FAMILY_MEMBER);
+
+              Timber.tag("WriteValue").i("BaseInteractor createIndexCase jsonForm %s", jsonForm);
+
+              org.smartregister.domain.Event event = saveEvent(jsonForm, eventType, STRUCTURE);
+
+              String structureId = event.findObs(null, false, "structure").getValue().toString();
+
+              Timber.tag("WriteValue")
+                  .i("BaseInteractor createIndexCase structureId %s", structureId);
+
+              Context applicationContext = revealApplication.getApplicationContext();
+
+              if (structureId != null) {
+
+                JSONArray fields = JsonFormUtils.fields(jsonForm);
+                JSONObject individualIdObj =
+                    JsonFormUtils.getFieldJSONObject(fields, "individual_capture");
+
+                JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, "gender_capture");
+                JSONObject dobObj =
+                    JsonFormUtils.getFieldJSONObject(fields, "date_of_birth_capture");
+                JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name_capture");
+
+                int maxServerVersion = hdssRepository.getMaxServerVersion();
+                maxServerVersion++;
+
+                JSONObject capturedCompound =
+                    JsonFormUtils.getFieldJSONObject(fields, "compound_capture");
+                JSONObject capturedHousehold =
+                    JsonFormUtils.getFieldJSONObject(fields, "household_capture");
+
+                String compound = null;
+                if (capturedCompound != null) {
+                  compound = capturedCompound.optString("value");
+
+                  HdssCompound hdssCompound =
+                      HdssCompound.builder()
+                          .compoundId(compound)
+                          .serverVersion(maxServerVersion)
+                          .build();
+
+                  hdssRepository.addOrUpdateCompounds(List.of(hdssCompound));
+                }
+                String household = null;
+                if (capturedHousehold != null) {
+                  household = capturedHousehold.optString("value");
+                  HdssHousehold hdssHousehold =
+                      HdssHousehold.builder()
+                          .householdId(household)
+                          .serverVersion(maxServerVersion)
+                          .build();
+
+                  hdssRepository.addOrUpdateHousehold(List.of(hdssHousehold));
+
+                  HdssHouseholdStructure householdStructure =
+                      HdssHouseholdStructure.builder()
+                          .structureId(structureId)
+                          .householdId(household)
+                          .build();
+                  hdssRepository.addOrUpdateHouseholdStructure(List.of(householdStructure));
+                }
+
+                if (household != null && compound != null) {
+                  household = capturedHousehold.optString("value");
+                  HdssCompoundHousehold hdssCompoundHousehold =
+                      HdssCompoundHousehold.builder()
+                          .householdId(household)
+                          .compoundId(compound)
+                          .serverVersion(maxServerVersion)
+                          .build();
+
+                  hdssRepository.addOrUpdateCompoundHouseholds(List.of(hdssCompoundHousehold));
+                }
+
+                String individualId = null;
+                if (individualIdObj != null) {
+                  individualId = individualIdObj.optString("value");
+                }
+
+                String gender = null;
+                if (genderObj != null) {
+                  gender = genderObj.optString("value");
+                }
+
+                String dob = null;
+                if (dobObj != null) {
+                  dob = dobObj.optString("value");
+                }
+                String name = null;
+                if (nameObj != null) {
+                  name = nameObj.optString("value");
+                }
+
+                HdssIndividual individualByIndividualId =
+                    hdssRepository.getIndividualByIndividualId(individualId);
+
+                HdssIndividual hdssIndividual = null;
+                if (individualByIndividualId == null) {
+                  hdssIndividual =
+                      new HdssIndividual(
+                          UUID.randomUUID().toString(),
+                          individualId,
+                          dob,
+                          gender,
+                          name,
+                          maxServerVersion,
+                          null,
+                          null,
+                          null,
+                          PreferencesUtil.getInstance().getCurrentOperationalArea());
+                  hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
+                } else {
+                  hdssIndividual = individualByIndividualId;
+                }
+                hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
+
+                if (household != null && individualId != null) {
+                  HdssHouseholdIndividual hdssHouseholdIndividual =
+                      HdssHouseholdIndividual.builder()
+                          .householdId(household)
+                          .individualId(individualId)
+                          .build();
+                  hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
+                }
+
+                Timber.tag("WriteValue")
+                    .i("BaseInteractor createIndexCase individual %s", individualId);
+
+                Task indexCaseMemberTask =
+                    taskUtils.generateTaskWithGroupName(
+                        applicationContext,
+                        hdssIndividual.getIdentifier(),
+                        structureId,
+                        NOT_VISITED,
+                        INDEX_CASE_MEMBER,
+                        R.string.index_case,
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+
+                Task indexCaseTask =
+                    taskUtils.generateTask(
+                        applicationContext,
+                        structureId,
+                        structureId,
+                        INDEX_CASE_NOT_VISITED,
+                        INDEX_CASE,
+                        R.string.index_case);
+
+                Timber.tag("WriteValue")
+                    .i(
+                        "BaseInteractor createIndexCase indexCaseMemberTask %s",
+                        indexCaseMemberTask);
+
+                appExecutors
+                    .mainThread()
+                    .execute(
+                        () -> {
+                          Timber.tag("WriteValue")
+                              .d(
+                                  "BaseInteractor createIndexCase structureId=%s, identifier=%s, status=%s, businessStatus=%s",
+                                  indexCaseTask.getStructureId(),
+                                  indexCaseTask.getIdentifier(),
+                                  indexCaseTask.getStatus(),
+                                  indexCaseTask.getBusinessStatus());
+                          presenterCallBack.onFormSaved(
+                              indexCaseTask.getStructureId(),
+                              indexCaseTask.getIdentifier(),
+                              indexCaseTask.getStatus(),
+                              indexCaseTask.getBusinessStatus(),
+                              INDEX_CASE);
+                        });
+              }
+            } catch (Exception e) {
+              Timber.tag("Reveal Exception").w("Error saving member event form");
+            }
+          }
+        };
+    appExecutors.diskIO().execute(runnable);
+  }
+
+  private void saveIndexCaseForHousehold(JSONObject jsonForm, String eventType) {
+    Runnable runnable =
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+
+              org.smartregister.domain.Event event = saveEvent(jsonForm, eventType, STRUCTURE);
+              String structureId = event.findObs(null, false, "structure").getValue().toString();
+
+
+              Context applicationContext = revealApplication.getApplicationContext();
+
+              if (structureId != null) {
+
+                JSONArray fields = JsonFormUtils.fields(jsonForm);
+                JSONObject individualIdObj =
+                    JsonFormUtils.getFieldJSONObject(fields, "individual_capture");
+                JSONObject genderObj = JsonFormUtils.getFieldJSONObject(fields, "gender_capture");
+                JSONObject dobObj =
+                    JsonFormUtils.getFieldJSONObject(fields, "date_of_birth_capture");
+                JSONObject nameObj = JsonFormUtils.getFieldJSONObject(fields, "name_capture");
+                JSONObject householdIdObj = JsonFormUtils.getFieldJSONObject(fields, HOUSEHOLD_ID);
+
+                int maxServerVersion = hdssRepository.getMaxServerVersion();
+                maxServerVersion++;
+
+                String household = null;
+                if (householdIdObj != null) {
+                  household = householdIdObj.optString("value");
+                }
+
+                String individualId = null;
+                if (individualIdObj != null) {
+                  individualId = individualIdObj.optString("value");
+                }
+
+                String gender = null;
+                if (genderObj != null) {
+                  gender = genderObj.optString("value");
+                }
+
+                String dob = null;
+                if (dobObj != null) {
+                  dob = dobObj.optString("value");
+                }
+                String name = null;
+                if (nameObj != null) {
+                  name = nameObj.optString("value");
+                }
+
+                HdssIndividual individualByIndividualId =
+                    hdssRepository.getIndividualByIndividualId(individualId);
+
+                HdssIndividual hdssIndividual = null;
+                if (individualByIndividualId == null) {
+                  hdssIndividual =
+                      new HdssIndividual(
+                          UUID.randomUUID().toString(),
+                          individualId,
+                          dob,
+                          gender,
+                          name,
+                          maxServerVersion,
+                          null,
+                          null,
+                          null,
+                          PreferencesUtil.getInstance().getCurrentOperationalArea());
+                  hdssRepository.addOrUpdateIndividual(List.of(hdssIndividual));
+                } else {
+                  hdssIndividual = individualByIndividualId;
+                }
+
+
+                if (household != null && individualId != null) {
+                  HdssHouseholdIndividual hdssHouseholdIndividual =
+                      HdssHouseholdIndividual.builder()
+                          .householdId(household)
+                          .individualId(individualId)
+                          .build();
+                  hdssRepository.addOrUpdateHouseholdIndividual(List.of(hdssHouseholdIndividual));
+                }
+
+                Timber.tag("WriteValue")
+                    .i("BaseInteractor saveIndexCaseForHousehold individual %s", individualId);
+
+                Timber.tag("WriteValue")
+                    .i("BaseInteractor saveIndexCaseForHousehold household %s", household);
+
+                Task indexCaseMemberTask =
+                    taskUtils.generateTaskWithGroupName(
+                        applicationContext,
+                        hdssIndividual.getIdentifier(),
+                        structureId,
+                        NOT_VISITED,
+                        INDEX_CASE_MEMBER,
+                        R.string.index_case,
+                        PreferencesUtil.getInstance().getCurrentOperationalArea());
+
+                Task indexCaseTask =
+                    taskUtils.generateTask(
+                        applicationContext,
+                        structureId,
+                        structureId,
+                        INDEX_CASE_NOT_VISITED,
+                        INDEX_CASE,
+                        R.string.index_case);
+
+                Timber.tag("WriteValue")
+                    .i(
+                        "BaseInteractor saveIndexCaseForHousehold indexCaseMemberTask %s",
+                        indexCaseMemberTask);
+
+                appExecutors
+                    .mainThread()
+                    .execute(
+                        () -> {
+                          Timber.tag("WriteValue")
+                              .d(
+                                  "BaseInteractor saveIndexCaseForHousehold structureId=%s, identifier=%s, status=%s, businessStatus=%s",
+                                  indexCaseTask.getStructureId(),
+                                  indexCaseTask.getIdentifier(),
+                                  indexCaseTask.getStatus(),
+                                  indexCaseTask.getBusinessStatus());
+                          presenterCallBack.onFormSaved(
+                              indexCaseTask.getStructureId(),
+                              indexCaseTask.getIdentifier(),
+                              indexCaseTask.getStatus(),
+                              indexCaseTask.getBusinessStatus(),
+                              INDEX_CASE);
+                        });
+              }
+            } catch (Exception e) {
+              Timber.tag("Reveal Exception").w("Error saving member event form");
+            }
+          }
+        };
+    appExecutors.diskIO().execute(runnable);
+  }
+
+  private void saveCaseConfirmation(JSONObject jsonForm, String eventType) {
+    appExecutors
+        .diskIO()
+        .execute(
+            () -> {
+              try {
+                String baseEntityId =
+                    JsonFormUtils.getFieldValue(
+                        JsonFormUtils.fields(jsonForm), JsonForm.FAMILY_MEMBER);
                 jsonForm.put(ENTITY_ID, baseEntityId);
-                org.smartregister.domain.Event event = saveEvent(jsonForm, eventType, CASE_CONFIRMATION);
-                Client client = eventClientRepository.fetchClientByBaseEntityId(event.getBaseEntityId());
+                org.smartregister.domain.Event event =
+                    saveEvent(jsonForm, eventType, CASE_CONFIRMATION);
+                Client client =
+                    eventClientRepository.fetchClientByBaseEntityId(event.getBaseEntityId());
                 String taskID = event.getDetails().get(Properties.TASK_IDENTIFIER);
                 String businessStatus = clientProcessor.calculateBusinessStatus(event);
                 Task task = taskRepository.getTaskByIdentifier(taskID);
@@ -680,137 +1079,180 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 task.setSyncStatus(BaseRepository.TYPE_Created);
                 taskRepository.addOrUpdate(task);
                 Set<Task> removedTasks = new HashSet<>();
-                for (Task bloodScreeningTask : taskRepository.getTasksByEntityAndCode(prefsUtil.getCurrentPlanId(),
-                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId(), baseEntityId, BLOOD_SCREENING)) {
-                    bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
-                    bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
-                    taskRepository.addOrUpdate(bloodScreeningTask);
-                    removedTasks.add(bloodScreeningTask);
+                for (Task bloodScreeningTask :
+                    taskRepository.getTasksByEntityAndCode(
+                        prefsUtil.getCurrentPlanId(),
+                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea())
+                            .getId(),
+                        baseEntityId,
+                        BLOOD_SCREENING)) {
+                  bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
+                  bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
+                  taskRepository.addOrUpdate(bloodScreeningTask);
+                  removedTasks.add(bloodScreeningTask);
                 }
                 revealApplication.setSynced(false);
-                clientProcessor.processClient(Collections.singletonList(new EventClient(event, client)), true);
-                appExecutors.mainThread().execute(() -> {
-                    ((StructureTasksContract.Presenter) presenterCallBack).onIndexConfirmationFormSaved(taskID, Task.TaskStatus.COMPLETED, businessStatus, removedTasks);
-                });
-            } catch (Exception e) {
+                clientProcessor.processClient(
+                    Collections.singletonList(new EventClient(event, client)), true);
+                appExecutors
+                    .mainThread()
+                    .execute(
+                        () -> {
+                          ((StructureTasksContract.Presenter) presenterCallBack)
+                              .onIndexConfirmationFormSaved(
+                                  taskID, Task.TaskStatus.COMPLETED, businessStatus, removedTasks);
+                        });
+              } catch (Exception e) {
                 Timber.tag("Reveal Exception").w("Error saving case confirmation data");
-            }
-        });
-    }
-
-    protected String getMemberTasksSelect(String mainCondition, String[] memberColumns) {
-        SmartRegisterQueryBuilder queryBuilder = new SmartRegisterQueryBuilder();
-        queryBuilder.selectInitiateMainTable(STRUCTURES_TABLE, memberColumns, ID_);
-        queryBuilder.customJoin(String.format(" JOIN %s ON %s.%s = %s.%s ",
-                FAMILY_MEMBER, FAMILY_MEMBER, STRUCTURE_ID, STRUCTURES_TABLE, ID_));
-        queryBuilder.customJoin(String.format(" JOIN %s ON %s.%s = %s.%s ",
-                TASK_TABLE, TASK_TABLE, FOR, FAMILY_MEMBER, BASE_ENTITY_ID));
-        return queryBuilder.mainCondition(mainCondition);
-    }
-
-    public void fetchFamilyDetails(String structureId) {
-        appExecutors.diskIO().execute(() -> {
-            Cursor cursor = null;
-            CommonPersonObjectClient family = null;
-            try {
-                cursor = database.rawQuery(String.format("SELECT %s FROM %S WHERE %s = ? AND %s IS NULL",
-                        INTENT_KEY.BASE_ENTITY_ID, TABLE_NAME.FAMILY, STRUCTURE_ID, DATE_REMOVED), new String[]{structureId});
-                if (cursor.moveToNext()) {
-                    String baseEntityId = cursor.getString(0);
-                    setCommonRepository();
-                    final CommonPersonObject personObject = commonRepository.findByBaseEntityId(baseEntityId);
-                    family = new CommonPersonObjectClient(personObject.getCaseId(),
-                            personObject.getDetails(), "");
-                    family.setColumnmaps(personObject.getColumnmaps());
-                }
-            } catch (Exception e) {
-                Timber.tag("Reveal Exception").w(e);
-            } finally {
-                if (cursor != null)
-                    cursor.close();
-            }
-
-            CommonPersonObjectClient finalFamily = family;
-            appExecutors.mainThread().execute(() -> {
-                presenterCallBack.onFamilyFound(finalFamily);
+              }
             });
-        });
+  }
+
+  protected String getMemberTasksSelect(String mainCondition, String[] memberColumns) {
+    SmartRegisterQueryBuilder queryBuilder = new SmartRegisterQueryBuilder();
+    queryBuilder.selectInitiateMainTable(STRUCTURES_TABLE, memberColumns, ID_);
+    queryBuilder.customJoin(
+        String.format(
+            " JOIN %s ON %s.%s = %s.%s ",
+            FAMILY_MEMBER, FAMILY_MEMBER, STRUCTURE_ID, STRUCTURES_TABLE, ID_));
+    queryBuilder.customJoin(
+        String.format(
+            " JOIN %s ON %s.%s = %s.%s ",
+            TASK_TABLE, TASK_TABLE, FOR, FAMILY_MEMBER, BASE_ENTITY_ID));
+    return queryBuilder.mainCondition(mainCondition);
+  }
+
+  public void fetchFamilyDetails(String structureId) {
+    appExecutors
+        .diskIO()
+        .execute(
+            () -> {
+              Cursor cursor = null;
+              CommonPersonObjectClient family = null;
+              try {
+                cursor =
+                    database.rawQuery(
+                        String.format(
+                            "SELECT %s FROM %S WHERE %s = ? AND %s IS NULL",
+                            INTENT_KEY.BASE_ENTITY_ID,
+                            TABLE_NAME.FAMILY,
+                            STRUCTURE_ID,
+                            DATE_REMOVED),
+                        new String[] {structureId});
+                if (cursor.moveToNext()) {
+                  String baseEntityId = cursor.getString(0);
+                  setCommonRepository();
+                  final CommonPersonObject personObject =
+                      commonRepository.findByBaseEntityId(baseEntityId);
+                  family =
+                      new CommonPersonObjectClient(
+                          personObject.getCaseId(), personObject.getDetails(), "");
+                  family.setColumnmaps(personObject.getColumnmaps());
+                }
+              } catch (Exception e) {
+                Timber.tag("Reveal Exception").w(e);
+              } finally {
+                if (cursor != null) cursor.close();
+              }
+
+              CommonPersonObjectClient finalFamily = family;
+              appExecutors
+                  .mainThread()
+                  .execute(
+                      () -> {
+                        presenterCallBack.onFamilyFound(finalFamily);
+                      });
+            });
+  }
+
+  public void startGDRSActivity(Context context, TaskDetails details) {
+    Intent intent = new Intent(context, GDRSActivity.class);
+    intent.putExtra(Properties.LOCATION_UUID, details.getStructureId());
+    intent.putExtra(Properties.TASK_IDENTIFIER, details.getTaskId());
+    intent.putExtra(Properties.TASK_BUSINESS_STATUS, details.getBusinessStatus());
+    intent.putExtra(Properties.TASK_CODE, details.getTaskCode());
+
+    context.startActivity(intent);
+  }
+
+  public SQLiteDatabase getDatabase() {
+    return database;
+  }
+
+  public void setCommonRepository() {
+    if (commonRepository == null) {
+      commonRepository =
+          revealApplication.getContext().commonrepository(metadata().familyRegister.tableName);
     }
+  }
 
-    public void startGDRSActivity(Context context, TaskDetails details) {
-        Intent intent = new Intent(context, GDRSActivity.class);
-        intent.putExtra(Properties.LOCATION_UUID, details.getStructureId());
-        intent.putExtra(Properties.TASK_IDENTIFIER, details.getTaskId());
-        intent.putExtra(Properties.TASK_BUSINESS_STATUS, details.getBusinessStatus());
-        intent.putExtra(Properties.TASK_CODE, details.getTaskCode());
+  @Override
+  public void findLastEvent(String eventBaseEntityId, String eventType) {
 
-        context.startActivity(intent);
+    appExecutors
+        .diskIO()
+        .execute(
+            () -> {
+              String events =
+                  String.format(
+                      "select %s from %s where %s = ? and %s =? order by %s desc limit 1",
+                      EventClientRepository.event_column.json,
+                      EventClientRepository.Table.event.name(),
+                      EventClientRepository.event_column.baseEntityId,
+                      EventClientRepository.event_column.eventType,
+                      EventClientRepository.event_column.updatedAt);
 
-    }
-
-    public SQLiteDatabase getDatabase() {
-        return database;
-    }
-
-    public void setCommonRepository() {
-        if (commonRepository == null) {
-            commonRepository = revealApplication.getContext().commonrepository(metadata().familyRegister.tableName);
-
-        }
-    }
-
-    @Override
-    public void findLastEvent(String eventBaseEntityId, String eventType) {
-
-        appExecutors.diskIO().execute(() -> {
-            String events = String.format("select %s from %s where %s = ? and %s =? order by %s desc limit 1",
-                    EventClientRepository.event_column.json, EventClientRepository.Table.event.name(), EventClientRepository.event_column.baseEntityId, EventClientRepository.event_column.eventType, EventClientRepository.event_column.updatedAt);
-
-            try (Cursor cursor = getDatabase().rawQuery(events, new String[]{eventBaseEntityId, eventType});) {
+              try (Cursor cursor =
+                  getDatabase().rawQuery(events, new String[] {eventBaseEntityId, eventType}); ) {
 
                 if (cursor.moveToFirst()) {
-                    String eventJSON = cursor.getString(0);
-                    handleLasteventFound(eventClientRepository.convert(eventJSON, org.smartregister.domain.Event.class));
+                  String eventJSON = cursor.getString(0);
+                  handleLasteventFound(
+                      eventClientRepository.convert(
+                          eventJSON, org.smartregister.domain.Event.class));
 
                 } else {
-                    handleLasteventFound(null);
+                  handleLasteventFound(null);
                 }
-            } catch (SQLException e) {
+              } catch (SQLException e) {
                 Timber.tag("Reveal Exception").w(e);
-            }
-        });
+              }
+            });
+  }
 
+  private String getStructureIdByName(String locationName) {
+    String structureId = null;
+    String query =
+        String.format(
+            "select %s from  %s where %s = ? limit 1",
+            ID_, STRUCTURES_TABLE, Constants.DatabaseKeys.NAME);
+    try (Cursor cursor = getDatabase().rawQuery(query, new String[] {locationName})) {
+      if (cursor.moveToFirst()) {
+        structureId = cursor.getString(0);
+      }
+    } catch (SQLException e) {
+      Timber.tag("Reveal Exception").w(e);
     }
+    return structureId;
+  }
 
-    private String getStructureIdByName(String locationName) {
-        String structureId = null;
-        String query = String.format("select %s from  %s where %s = ? limit 1", ID_, STRUCTURES_TABLE, Constants.DatabaseKeys.NAME);
-        try (Cursor cursor = getDatabase().rawQuery(query, new String[]{locationName})) {
-            if (cursor.moveToFirst()) {
-                structureId = cursor.getString(0);
-            }
-        } catch (SQLException e) {
-            Timber.tag("Reveal Exception").w(e);
+  private void fixEditTextValueWithCorrectDateFormat(
+      JSONArray obsList, JSONArray fields, String key) throws JSONException {
+    JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, key);
+    for (int i = 0; i < obsList.length(); i++) {
+      JSONObject obs = (JSONObject) obsList.get(i);
+      if (obs.get("fieldCode").equals(key)) {
+        JSONArray values = obs.optJSONArray("values");
+        if (values != null) {
+          String oldFormatDate = (String) values.get(0);
+          List<String> items = Arrays.asList(oldFormatDate.split("-"));
+          String newFormatDate =
+              String.format("%s-%s-%s", items.get(2), items.get(1), items.get(0));
+          obs.put("values", new JSONArray().put(newFormatDate));
+          collectionDateField.put("value", newFormatDate);
+          break;
         }
-        return structureId;
+      }
     }
-
-    private void fixEditTextValueWithCorrectDateFormat(JSONArray obsList, JSONArray fields, String key) throws JSONException {
-        JSONObject collectionDateField = JsonFormUtils.getFieldJSONObject(fields, key);
-        for (int i = 0; i < obsList.length(); i++) {
-            JSONObject obs = (JSONObject) obsList.get(i);
-            if (obs.get("fieldCode").equals(key)) {
-                JSONArray values = obs.optJSONArray("values");
-                if (values != null) {
-                    String oldFormatDate = (String) values.get(0);
-                    List<String> items = Arrays.asList(oldFormatDate.split("-"));
-                    String newFormatDate = String.format("%s-%s-%s", items.get(2), items.get(1), items.get(0));
-                    obs.put("values", new JSONArray().put(newFormatDate));
-                    collectionDateField.put("value", newFormatDate);
-                    break;
-                }
-            }
-        }
-    }
-
+  }
 }

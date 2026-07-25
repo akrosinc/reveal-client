@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.vijay.jsonwizard.customviews.NativeEditText;
 import com.vijay.jsonwizard.fragments.JsonFormFragment;
 import com.vijay.jsonwizard.interfaces.CommonListener;
 
+import com.vijay.jsonwizard.interfaces.JsonApi;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -51,6 +53,7 @@ import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.HdssRepository;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.widget.RevealSearchBoxFactory;
 
 import java.io.Serializable;
@@ -134,9 +137,13 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     private static final long SEARCH_DELAY = 800;
     private Handler handler = new Handler();
 
+    private final AppExecutors appExecutors = new AppExecutors();
+
     public HdssSearchBoxFactory() {
         this.hdssRepository = CoreLibrary.getInstance().context().getHdssRepository();
-        HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase());
+        appExecutors.diskIO().execute(() ->
+            HdssRepository.createSearchResultsTable(hdssRepository.getWritableDatabase())
+        );
     }
 
     @Override
@@ -159,7 +166,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         addSearchButton(context, jsonObject, resultTextView);
         addGenderSpinner(resultTextView);
         addClearButton(resultTextView);
-        attachLogic(jsonObject, context, linearLayout);
         setTags(stepName, jsonObject, resultTextView, popup);
 
         addAgeRangeFields();
@@ -172,8 +178,11 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
         views.add(linearLayout);
         formFragment.getJsonApi().addFormDataView(resultTextView);
+        attachLogic(jsonObject, context, resultTextView);
+
         return views;
     }
+
 
     private void addAgeRangeFields(){
         startAgeEditText = linearLayout.findViewById(R.id.start_age);
@@ -311,7 +320,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         if (editTextDate != null && clearDateButton != null) {
 
             String text = editTextDate.getText().toString().trim();
-            Timber.tag("hdsssearch").i("updateClearButtonState %s",text);
             boolean hasText = !text.isEmpty();
 
             clearDateButton.setEnabled(hasText);
@@ -354,7 +362,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 } else {
                     gender = parent.getItemAtPosition(position).toString();
                 }
-                Timber.tag("hdsssearch").i("addGenderSpinner");
+
 //                enqueueSearchWork(getSearchRequest(), linearLayout.getContext(), resultTextView);
             }
 
@@ -385,7 +393,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             }
 
             if (useAgeRange){
-                Timber.tag("hdsssearch").i("startAge %s endAge %s",startAgeText,endAgeText);
                 if (startAgeText == null || startAgeText.trim().isEmpty() || endAgeText == null || endAgeText.trim().isEmpty()) {
                     currentToast = Toast.makeText(context, "must capture start age AND end age in order to search", Toast.LENGTH_LONG);
                     currentToast.show();
@@ -530,17 +537,36 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
             HdssSearchRequest hdssSearchRequest = (HdssSearchRequest) request;
             batchNumber = 0;
-            Data inputData = getSearchRequest(hdssSearchRequest);
-            Timber.tag("hdsssearch").i("submit search");
+            hdssSearchRequest.setBatchNumber(batchNumber);
+//            Data inputData = getSearchRequest(hdssSearchRequest);
             isLoading = true;
             currentToast = Toast.makeText(context, "Searching...", Toast.LENGTH_SHORT);
             currentToast.show();
-            OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
-            WorkManager.getInstance(context).enqueue(searchWorkRequest);
-            observeWorkInfo(context, resultTextView, searchWorkRequest);
+
+            appExecutors.diskIO().execute(() -> {
+                HdssSearchTask task = new HdssSearchTask(
+                    CoreLibrary.getInstance().context().getHdssRepository());
+
+                SearchTaskResult result = task.execute(hdssSearchRequest);
+
+                appExecutors.mainThread().execute(()->{
+                    if (result.isSuccess()) {
+                        handleSucceeded(result, context, resultTextView);
+                    } else {
+                        handleFailure(result, context);
+                    }
+                });
+            });
+
+
+//            OneTimeWorkRequest searchWorkRequest = new OneTimeWorkRequest.Builder(HdssSearchWorker.class).setInputData(inputData).build();
+//            WorkManager.getInstance(context).enqueue(searchWorkRequest);
+//            observeWorkInfo(context, resultTextView, searchWorkRequest);
 
         }
     }
+
+
 
     private void observeWorkInfo(Context context, TextView resultTextView, OneTimeWorkRequest searchWorkRequest) {
         WorkManager.getInstance(context)
@@ -584,6 +610,29 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         isLoading = false;
     }
 
+    private void handleFailure(SearchTaskResult result, Context context) {
+
+        if (currentToast != null) {
+            currentToast.cancel();
+            currentToast = null;
+        }
+
+        if (result.getError() != null) {
+            currentToast = Toast.makeText(
+                context,
+                result.getError(),
+                Toast.LENGTH_LONG);
+        } else {
+            currentToast = Toast.makeText(
+                context,
+                "Error searching data",
+                Toast.LENGTH_LONG);
+        }
+
+        currentToast.show();
+        isLoading = false;
+    }
+
     private void handleSucceeded(WorkInfo workInfo, Context context, TextView resultTextView) {
         if (currentToast!=null){
             currentToast.cancel();
@@ -600,12 +649,9 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 searchItemAdapter.notifyDataSetChanged();
             }
         }
-        Timber.tag("hdsssearch").i("json %s",json);
         List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
         }.getType());
-        Timber.tag("hdsssearch").i("resultList %s",resultList);
         if (resultList != null && !resultList.isEmpty()) {
-            Timber.tag("hdsssearch").i("resultList size%s",resultList.size());
             searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
             if (dialog == null) {
                 dialog = setupDialog(context, resultTextView);
@@ -619,6 +665,57 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         }
         isLoading = false;
 
+    }
+
+    private void handleSucceeded(SearchTaskResult result,
+        Context context,
+        TextView resultTextView) {
+
+        if (currentToast != null) {
+            currentToast.cancel();
+            currentToast = null;
+        }
+
+        String json = result.getJson();
+        Gson gson = new Gson();
+
+        if (searchItems != null) {
+            searchItems.clear();
+            if (searchItemAdapter != null) {
+                searchItemAdapter.notifyDataSetChanged();
+            }
+        }
+
+
+        List<SearchResponse> resultList = gson.fromJson(
+            json,
+            new TypeToken<List<SearchResponse>>() {}.getType());
+
+
+        if (resultList != null && !resultList.isEmpty()) {
+
+            searchItems = resultList.stream()
+                .map(HdssSearchBoxFactory::getSearchItem)
+                .collect(Collectors.toList());
+
+            if (dialog == null) {
+                dialog = setupDialog(context, resultTextView);
+            }
+
+            setupRecyclerView(context, resultTextView, dialog);
+            dialog.show();
+
+        } else {
+
+            currentToast = Toast.makeText(
+                context,
+                "No data returned for search criteria",
+                Toast.LENGTH_LONG);
+
+            currentToast.show();
+        }
+
+        isLoading = false;
     }
 
     private static @NonNull Dialog setupDialog(Context context, View anchorView) {
@@ -676,7 +773,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
     }
 
     private void handleItemOnClick(SearchItem item, TextView resultTextView, Dialog dialog) {
-        Timber.tag("hdsssearch").i("handleItemOnClick 1");
 
         Collection<View> formDataViews = formFragment.getJsonApi().getFormDataViews();
         for (View view : formDataViews) {
@@ -714,7 +810,6 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                     textView.setText(R.string.not_available);
                 }
             }
-            Timber.tag("hdsssearch").i("handleItemOnClick 2");
               if (view.getTag(R.id.key).equals("cluster")) {
                   MaterialEditText textView = (MaterialEditText) view;
                   if (item.getField7()!=null){
@@ -737,14 +832,12 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         formFragment.writeValue(stepName, GENDER, item.getField4(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "individual", item.getResult(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         formFragment.writeValue(stepName, "name", item.getField6(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
-        Timber.tag("hdsssearch").i("handleItemOnClick 4");
         if (item.getField2()!=null){
             formFragment.writeValue(stepName, "household", item.getField2(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         }
         if (item.getField1()!=null){
             formFragment.writeValue(stepName, "compound", item.getField1(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
         }
-        Timber.tag("hdsssearch").i("item %s ",item);
 
         if (item.getField7()!=null){
           formFragment.writeValue(stepName, "cluster", item.getField7(), getOpenMrsEntityParent(), getOpenMrsEntity(), getOpenMrsEntityId(), popup);
@@ -876,8 +969,31 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         request.setCluster(clusterText);
         request.setUseAgeRange(useAgeRange);
         request.setUseExactDate(useExactDate);
+        request.setBatchNumber(batchNumber);
+        request.setBatchSize(batchSize);
         Timber.tag("hdsssearch").i("getSearchRequest request %s",request);
         return request;
+    }
+    @Override
+    public void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, View constraintLayout) {
+        if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
+            constraintLayout.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
+            Timber.tag("WriteValue").i("HdssSearchBoxFactory attachRefreshLogic constraintLayout >%s< ",constraintLayout);
+            JsonApi context1 = (JsonApi) context;
+            Timber.tag("WriteValue").i("HdssSearchBoxFactory attachRefreshLogic constraintLayout >%s< ",constraintLayout);
+
+            context1.addSkipLogicView(constraintLayout);
+        }
+
+        if (!TextUtils.isEmpty(calculation) && context instanceof JsonApi) {
+            constraintLayout.setTag(com.vijay.jsonwizard.R.id.calculation, calculation);
+            ((JsonApi) context).addCalculationLogicView(constraintLayout);
+        }
+
+        if (!TextUtils.isEmpty(constraints) && context instanceof JsonApi) {
+            constraintLayout.setTag(com.vijay.jsonwizard.R.id.constraints, constraints);
+            ((JsonApi) context).addCalculationLogicView(constraintLayout);
+        }
     }
 
     @lombok.Data

@@ -432,7 +432,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
                 mMapboxMap = mapboxMap;
 
-                mapboxMap.setMinZoomPreference(10);
+                mapboxMap.setMinZoomPreference(3);
                 mapboxMap.setMaxZoomPreference(21);
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -1270,7 +1270,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK && data.hasExtra(JSON_FORM_PARAM_JSON)) {
             String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
-            Timber.d(json);
+            Timber.tag("WriteValue").d("ListTasksActivity onActivityResult json %s",json);
             listTaskPresenter.saveJsonForm(json);
         } else if (requestCode == Constants.RequestCode.LOCATION_SETTINGS && hasRequestedLocation) {
             if (resultCode == RESULT_OK) {

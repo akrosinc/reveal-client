@@ -62,7 +62,7 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
     public abstract List<View> attachJson(String stepName, Context context, JSONObject jsonObject, CommonListener
             listener, boolean popup, JsonFormFragment formFragment) throws JSONException ;
 
-    protected void attachLogic(JSONObject jsonObject, Context context, LinearLayout linearLayout) {
+    protected void attachLogic(JSONObject jsonObject, Context context, View linearLayout) {
         String relevance = jsonObject.optString(JsonFormConstants.RELEVANCE);
         String calculation = jsonObject.optString(JsonFormConstants.CALCULATION);
         String constraints = jsonObject.optString(JsonFormConstants.CONSTRAINTS);
@@ -70,7 +70,7 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
         attachRefreshLogic(context, relevance, calculation, constraints, linearLayout);
     }
 
-    protected void setTags(String stepName, JSONObject jsonObject, NativeEditText view, boolean popup) throws JSONException {
+    protected void setTags(String stepName, JSONObject jsonObject, View view, boolean popup) throws JSONException {
 
         this.openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT, null);
         this.openMrsEntity = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY, null);
@@ -100,7 +100,7 @@ public abstract class RevealSearchBoxFactory implements FormWidgetFactory {
 
 
 
-    public void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, LinearLayout constraintLayout) {
+    public void attachRefreshLogic(Context context, String relevance, String calculation, String constraints, View constraintLayout) {
         if (!TextUtils.isEmpty(relevance) && context instanceof JsonApi) {
             constraintLayout.setTag(com.vijay.jsonwizard.R.id.relevance, relevance);
             ((JsonApi) context).addSkipLogicView(constraintLayout);

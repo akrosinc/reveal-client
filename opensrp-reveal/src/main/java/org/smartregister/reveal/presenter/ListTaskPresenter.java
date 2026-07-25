@@ -78,6 +78,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Country.GDRS;
 import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
 import static org.smartregister.reveal.util.Utils.formatDate;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
@@ -101,6 +102,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.core.util.Pair;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
@@ -108,8 +110,8 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+
 import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -118,6 +120,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.reveal.R;
@@ -137,6 +140,7 @@ import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.task.IndicatorsCalculatorTask;
+import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
@@ -144,6 +148,7 @@ import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PasswordDialogUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
@@ -489,16 +494,90 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void onFeatureSelectedByLongClick(Feature feature) {
+        Timber.tag("WriteValue").i("ListTaskPresenter onFeatureSelectedByLongClick enter");
+
         String code = getPropertyValue(feature, TASK_CODE);
         String taskBusinessStatus = getPropertyValue(feature, TASK_BUSINESS_STATUS);
         selectedFeatureInterventionType = code;
         if (COMPLETE.equals(taskBusinessStatus) && (isKenyaMDALite() || isRwandaMDALite())) {
             listTaskView.displayEditCDDTaskCompleteDialog();
+        } else {
+            if (GDRS.equals(getBuildCountry())){
+
+                openCreateTaskForm(feature);
+            }
+
         }
     }
 
-    @Override
-    public void validateUserLocation() {
+  private void openCreateTaskForm(Feature feature) {
+    Timber.tag("WriteValue").i("ListTaskPresenter openCreateTaskForm enter");
+
+    String taskId = feature.getStringProperty(TASK_IDENTIFIER);
+    Timber.tag("WriteValue").i("ListTaskPresenter openCreateTaskForm taskId %s", taskId);
+    if (taskId == null) {
+      RevealApplication.getInstance().getAppExecutors().diskIO().execute(()->{
+        try {
+
+          String structureId = feature.id();
+          String structureUUID = getPropertyValue(feature, Properties.LOCATION_UUID);
+          String structureVersion = getPropertyValue(feature, Properties.LOCATION_VERSION);
+
+          String gdrsCreateIndexCase;
+
+          List<HdssCompoundHousehold> hdssHouseHoldBStructure =
+              listTaskInteractor.getHdssHouseHoldBStructure(structureId);
+          if (!hdssHouseHoldBStructure.isEmpty()) {
+            gdrsCreateIndexCase = JsonForm.GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD;
+          } else {
+            gdrsCreateIndexCase = JsonForm.GDRS_CREATE_INDEX_CASE;
+          }
+
+          JSONObject formJSON =
+              jsonFormUtils.getFormJSON(
+                  this.listTaskView.getContext(), gdrsCreateIndexCase, null, null);
+
+          jsonFormUtils.populateField(formJSON, "structure", feature.id(), JsonFormConstants.VALUE);
+
+          if (JsonForm.GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD.equals(gdrsCreateIndexCase)) {
+            try {
+              List<Pair<String, String>> householdPairs = new ArrayList<>();
+              for (HdssCompoundHousehold householdId : hdssHouseHoldBStructure) {
+                householdPairs.add(
+                    new Pair<>(householdId.getHouseholdId(), householdId.getHouseholdId()));
+              }
+
+              jsonFormUtils.populateSpinner(formJSON, HOUSEHOLD_ID, householdPairs);
+            } catch (JSONException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          formJSON =
+              jsonFormUtils.populateFormDetails(
+                  formJSON.toString(),
+                  feature.id(),
+                  structureId,
+                  null,
+                  null,
+                  null,
+                  structureUUID,
+                  structureVersion == null ? null : Integer.valueOf(structureVersion));
+
+          JSONObject finalFormJSON = formJSON;
+          RevealApplication.getInstance().getAppExecutors().mainThread().execute(()->
+            jsonFormUtils.startJsonForm(finalFormJSON, this.listTaskView.getActivity())
+          );
+        } catch (JSONException e) {
+          Timber.tag("WriteValue").e(e, "Error Writing Structure to Form");
+        }
+      });
+    }
+  }
+
+
+  @Override
+  public void validateUserLocation() {
         Location location = listTaskView.getUserCurrentLocation();
         if (location == null) {
             locationPresenter.requestUserLocation();

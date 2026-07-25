@@ -145,10 +145,9 @@ public class TaskUtils {
         task.setLastModified(now);
         task.setOwner(sharedPreferences.fetchRegisteredANM());
         task.setSyncStatus(BaseRepository.TYPE_Created);
-        Timber.tag("RevealMap").i("about to save task id %s", task.getIdentifier());
         taskRepository.addOrUpdate(task);
         revealApplication.setSynced(false);
-        Timber.tag("RevealMap").i("task id %s", task.getIdentifier());
+
         return task;
     }
 

@@ -287,6 +287,7 @@ public class HdssRepository extends BaseRepository {
   }
 
   public static void createSearchResultsTable(SQLiteDatabase database) {
+
     database.execSQL(DROP_HDSS_SEARCH_RESULTS);
     database.execSQL(CREATE_HDSS_SEARCH_RESULTS);
   }
@@ -915,7 +916,6 @@ public class HdssRepository extends BaseRepository {
             + "OR hh.server_version > ? \n"
             + "OR hc.server_version > ?";
 
-    Timber.tag("reveal_individual").i("q %s %s",query,serverVersion);
     try {
       cursor =
           readableDatabase.rawQuery(
@@ -978,7 +978,6 @@ public class HdssRepository extends BaseRepository {
                     floatingHouseholdLocationName,
                     cluster);
 
-            Timber.tag("reveal_individual").i("i %s",hdssIndividual);
             values.add(hdssIndividual);
           } while (cursor.moveToNext());
         }
@@ -992,8 +991,7 @@ public class HdssRepository extends BaseRepository {
 
   public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual2(
       String searchtext, String genderSearch, String dob, String name) {
-    Timber.tag("searching")
-        .i("searchtext %s genderSearch %s dob %s", searchtext, genderSearch, dob);
+
     SQLiteDatabase readableDatabase = getReadableDatabase();
 
     String query;
@@ -1132,8 +1130,7 @@ public class HdssRepository extends BaseRepository {
 
   public List<HdssIndividualHouseHoldCompound> searchHouseholdIndividual(
       String searchtext, String genderSearch, String dob, String name, String cluster, String startAge, String endAge,boolean useAgeRange, boolean useExactDate) {
-    Timber.tag("searching")
-        .i("searchtext %s genderSearch %s dob %s startAge %s endAge %s", searchtext, genderSearch, dob,startAge,endAge);
+
     SQLiteDatabase readableDatabase = getReadableDatabase();
 
     String query =
@@ -1181,7 +1178,6 @@ public class HdssRepository extends BaseRepository {
 
         String start = "'-"+startAge.trim()+" years'";
         String end = "'-"+endAge.trim()+" years'";
-        Timber.tag("hdsssearch").i("HdssRepository startAge %s endAge %s",start,end);
         whereClauses.add("hi.dob BETWEEN DATE('now', "+end+") AND DATE('now', "+start+")");
 
       }
@@ -1236,8 +1232,7 @@ public class HdssRepository extends BaseRepository {
 
     // Execute the query
     Cursor cursor = readableDatabase.rawQuery(query, selectionArgs);
-    Timber.tag("searching")
-        .i("query %s %s", query,selectionArgs);
+
     // Process the results
     List<HdssIndividualHouseHoldCompound> values = new ArrayList<>();
     if (cursor != null) {
@@ -1291,7 +1286,6 @@ public class HdssRepository extends BaseRepository {
 
       households.forEach(
             hdssHousehold -> {
-              Timber.tag("RevealMap").i("content values %s",households.toString());
 
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(HOUSEHOLD_ID, hdssHousehold.getHouseholdId());

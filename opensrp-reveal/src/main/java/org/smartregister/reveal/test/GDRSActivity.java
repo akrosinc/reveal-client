@@ -15,6 +15,7 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_I
 import static org.smartregister.reveal.util.Constants.JSON_FORM_PARAM_JSON;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.GDRS_ADD_MEMBER;
+import static org.smartregister.reveal.util.Constants.JsonForm.GDRS_MANUALLY_ADD_MEMBER;
 import static org.smartregister.reveal.util.Constants.Preferences.ADMIN_PASSWORD_ENTERED;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LATITUDE;
 import static org.smartregister.reveal.util.Constants.Preferences.EVENT_LONGITUDE;
@@ -57,13 +58,11 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.IntStream;
 import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
-import org.smartregister.domain.HdssCompound;
 import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.HdssHousehold;
 import org.smartregister.domain.HdssHouseholdIndividual;
@@ -136,6 +135,8 @@ public class GDRSActivity extends AppCompatActivity {
   private LinearLayout progressBar;
 
   private MenuItem addMemberItem;
+
+  private MenuItem addManualMemberItem;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -222,7 +223,6 @@ public class GDRSActivity extends AppCompatActivity {
 
       @Override
       public void afterTextChanged(Editable s) {
-        Timber.tag("Reveal").i("text changes %s",s.toString());
         filterList(s.toString());
         Button clearButton = findViewById(R.id.clearSearchButton);
         clearButton.setEnabled(!s.toString().isEmpty());
@@ -289,7 +289,9 @@ public class GDRSActivity extends AppCompatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.gdrs_menu, menu);
 
-    this.addMemberItem = menu.findItem(R.id.action_add_member);
+    this.addMemberItem = menu.findItem(R.id.action_add_rcd_member);
+
+    this.addManualMemberItem = menu.findItem(R.id.action_add_manual_rcd_member);
 
     populateList("Loading Tasks...");
 
@@ -298,9 +300,32 @@ public class GDRSActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.action_add_member) {
+    if (item.getItemId() == R.id.action_add_rcd_member) {
       JSONObject formJSON = formUtils.getFormJSON(GDRSActivity.this, GDRS_ADD_MEMBER, null, null);
       formUtils.populateFormWithServerOptions(GDRS_ADD_MEMBER, formJSON, null);
+      AllSharedPreferences sharedPreferences =
+          new AllSharedPreferences(
+              PreferenceManager.getDefaultSharedPreferences(
+                  RevealApplication.getInstance().getApplicationContext()));
+      sharedPreferences.savePreference(EVENT_LATITUDE, "");
+      sharedPreferences.savePreference(EVENT_LONGITUDE, "");
+      sharedPreferences.savePreference(ADMIN_PASSWORD_ENTERED, "");
+      sharedPreferences.savePreference(GPS_ACCURACY, "");
+      try {
+        List<Pair<String, String>> householdPairs = new ArrayList<>();
+        for (String householdId : houseHoldIds) {
+          householdPairs.add(new Pair<>(householdId, householdId));
+        }
+
+        formUtils.populateSpinner(formJSON, HOUSEHOLD_ID, householdPairs);
+      } catch (JSONException e) {
+        throw new RuntimeException(e);
+      }
+      formUtils.startJsonForm(formJSON, this);
+      return true;
+    }  else if (item.getItemId() == R.id.action_add_manual_rcd_member) {
+      JSONObject formJSON = formUtils.getFormJSON(GDRSActivity.this, GDRS_MANUALLY_ADD_MEMBER, null, null);
+      formUtils.populateFormWithServerOptions(GDRS_MANUALLY_ADD_MEMBER, formJSON, null);
       AllSharedPreferences sharedPreferences =
           new AllSharedPreferences(
               PreferenceManager.getDefaultSharedPreferences(
@@ -332,7 +357,6 @@ public class GDRSActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    Timber.tag("RevealMap").i("GDRSActivity: here 1");
 
     if (requestCode == REQUEST_CODE_GET_JSON
         && resultCode == RESULT_OK
@@ -340,16 +364,16 @@ public class GDRSActivity extends AppCompatActivity {
         && data.hasExtra(JSON_FORM_PARAM_JSON)) {
       TextView textView = progressBar.findViewById(R.id.loadingText);
       textView.setText("Saving Task...");
-      Timber.tag("RevealMap").i("Show progress");
+
       progressBar.setVisibility(View.VISIBLE);
-      Timber.tag("RevealMap").i("GDRSActivity: here 2");
+
       String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
-      Timber.tag("RevealMap").d(json);
+
       try {
         JSONObject jsonForm = new JSONObject(json);
         String encounter = jsonForm.optString(ENCOUNTER_TYPE);
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
-        Timber.tag("RevealMap").i("GDRSActivity: encounter %s", encounter);
+
         if (encounter.equals(ADD_MEMBER)
             && PreferencesUtil.getInstance()
                 .getInterventionTypeForPlan(planId)
@@ -362,7 +386,7 @@ public class GDRSActivity extends AppCompatActivity {
           handleIndexCaseMemberTask(jsonForm, planId);
         }
       } catch (JSONException e) {
-        Timber.tag("RevealMap").i("GDRSActivity: here 8");
+        Timber.tag("RevealMap").e(e,"GDRSActivity: here 8");
       } catch (Exception e) {
         Timber.tag("RevealMap").e(e, "GDRSActivity: ee 9");
       }
@@ -461,9 +485,12 @@ public class GDRSActivity extends AppCompatActivity {
                           Timber.tag("RevealMap").i("any.isPresent()");
 
                           addMemberItem.setVisible(false);
+                          addManualMemberItem.setVisible(false);
                         } else {
                           Timber.tag("RevealMap").i("any is NOT Present()");
                           addMemberItem.setVisible(true);
+                          addManualMemberItem.setVisible(true);
+
                         }
                       }
                     });
