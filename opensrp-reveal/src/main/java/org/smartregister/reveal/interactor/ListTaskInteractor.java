@@ -497,10 +497,12 @@ public class ListTaskInteractor extends BaseInteractor {
                 JSONObject featureCollection = null;
 
                 Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+//                Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation  %s", operationalAreaLocation.getId());
 
                 parentLocations = new ArrayList<>();
 
                 if (operationalAreaLocation != null && operationalAreaLocation.getProperties() != null) {
+                    Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation getId %s", operationalAreaLocation.getId());
                     if (operationalAreaLocation.getProperties().getParentId() != null) {
                         getParentLocations(parentLocations, operationalAreaLocation);
                     }
@@ -526,12 +528,14 @@ public class ListTaskInteractor extends BaseInteractor {
                             tasks = taskRepository
                                     .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
                         }
+                        Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation structures size %s", tasks.size());
                         List<Location> structures;
                         if (Utils.isCurrentTargetLevelStructure()) {
                             structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
                         } else {
                             structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
                         }
+                        Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation structures size %s", structures.size());
                         Map<String, Boolean> isAHouseholdByStructureList =  hdssRepository.getIsAHouseholdByStructureList(structures.stream().map(PhysicalLocation::getId).collect(Collectors.toList()));
                         Map<String, StructureDetails> structureNames = getStructureName(
                                 operationalAreaLocation.getId());
@@ -551,6 +555,7 @@ public class ListTaskInteractor extends BaseInteractor {
                             featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
                         }
 
+                        Timber.tag("WriteValue").i("operationalAreaLocation structures size %s", structures.size());
 
                         adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
                     }
@@ -563,7 +568,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (operationalAreaLocation != null) {
+                        if (operationalAreaLocation != null && finalAdjacentOperationalAreaLocations!=null) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
                             List<Feature> adjacentOperationalAreaFeatures = finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(

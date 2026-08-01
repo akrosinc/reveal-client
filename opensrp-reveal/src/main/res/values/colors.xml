@@ -116,6 +116,7 @@
 
     <color name="search_bar_background_black">#2E383D</color>
     <color name="search_hint_white">#dbdbdb</color>
+    <color name="black">#000000</color>
 
     <color name="scan_qr_code_bg_st_grey">#585858</color>
     <color name="scan_qr_code_bg_end_grey">#3e3e3e</color>

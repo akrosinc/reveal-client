@@ -1,0 +1,111 @@
+{
+  "count": "1",
+  "encounter_type": "structure_survey",
+  "form_version": "0.0.2",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Structure Survey",
+    "display_back_button": true,
+    "fields":  [
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "type_of_structure_room_no_sleep",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "46. What type of structures or rooms are not used for sleeping but are used to spend time in the evening or early morning? (SELECT ALL THAT APPLY)",
+        "label_text_size": "14sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "cooking",
+            "text": "Cooking shelter/Kitchen",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "meeting",
+            "text": "Meeting / socializing shed (e.g., roofed, but unwalled structure)",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "living_room",
+            "text": "Living room",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "porch",
+            "text": "Porch / veranda",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      }
+    ]
+  }
+}

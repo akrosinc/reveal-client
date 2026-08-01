@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="project_id" type="id" />
+    <item name="user_id" type="id" />
+    <item name="module_id" type="id" />
+    <item name="guid" type="id" />
+    <item name="finger_print_option" type="id" />
+    <item name="label" type="id" />
+    <item name="key" type="id" />
+    <item name="address" type="id" />
+    <item name="type" type="id" />
+    <item name="childKey" type="id" />
+    <item name="imagePath" type="id" />
+    <item name="raw_value" type="id" />
+    <item name="canvas_ids" type="id" />
+    <item name="relevance_decided" type="id"/>
+    <item name="repeating_group_remote_reference_value" type="id"/>
+    <item name="after_look_up" type="id" />
+    <item name="editable_view" type="id" />
+    <item name="repeating_group_item_count" type="id" />
+    <item name="repeating_group_item_meta" type="id" />
+    <item name="repeating_group_label" type="id" />
+    <item name="repeating_group_key" type="id" />
+
+    <item name="v_required" type="id" />
+    <item name="error" type="id" />
+    <item name="openmrs_entity_parent" type='id' />
+    <item name="openmrs_entity" type='id' />
+    <item name="openmrs_entity_id" type='id' />
+    <item name="keys" type='id' />
+    <item name="relevance" type="id" />
+    <item name="calculation" type="id" />
+    <item name="constraints" type="id" />
+    <item name="skip_validation" type="id" />
+    <item name="label_dialog_info" type="id" />
+    <item name="label_dialog_title" type="id" />
+    <item name="dynamic_label_info" type="id" />
+    <item name="original_text" type="id" />
+    <item name="specify_textview" type="id" />
+    <item name="specify_reasons_textview" type="id" />
+    <item name="specify_extra_info_textview" type="id" />
+    <item name="main_textview" type="id" />
+    <item name="specify_type" type="id" />
+    <item name="specify_widget" type="id" />
+    <item name="specify_content" type="id" />
+    <item name="specify_content_form" type="id" />
+    <item name="specify_listener" type="id" />
+    <item name="specify_step_name" type="id" />
+    <item name="specify_fragment" type="id" />
+    <item name="specify_context" type="id" />
+    <item name="native_radio_button" type="id" />
+    <item name="native_radio_button_extra_info" type="id" />
+    <item name="native_radio_button_view_id" type="id" />
+    <item name="native_radio_button_layout_view_id" type="id" />
+    <item name="number_selector_textview" type="id" />
+    <item name="number_selector_item" type="id" />
+    <item name="number_selector_number_of_selectors" type="id" />
+    <item name="number_selector_max_number" type="id" />
+    <item name="number_selector_layout" type="id" />
+    <item name="json_object" type="id" />
+    <item name="number_selector_default_text_color" type="id" />
+    <item name="number_selector_selected_text_color" type="id" />
+    <item name="number_selector_listener" type="id" />
+    <item name="number_selector_start_selection_number" type="id" />
+    <item name="number_selector_dialog_numbers" type="id" />
+
+    <item name="extraRelCheck" type="id" />
+    <item name="extraRelArray" type="id" />
+    <item name="extraContent" type="id" />
+    <item name="extraContentForm" type="id" />
+    <item name="extraPopup" type="id" />
+    <item name="secondaryValues" type="id" />
+    <item name="is_automatic" type="id" />
+    <item name="option_json_object" type="id" />
+    <item name="is_checkbox_linear_layout" type="id" />
+    <item name="next_step" type="id" />
+    <item name="is_number_selector_linear_layout" type="id" />
+    <item name="selected_number_value" type="id" />
+    <item name="locale_independent_value" type="id" />
+    <item name="is_number_selector_dialog_textview" type="id" />
+    <item name="number_selector_dialog" type="id" />
+    <item name="number_selector_main_textview" type="id" />
+    <item name="submit" type="id" />
+    <item name="label_dialog_image_src" type="id"/>
+    <item name="error_textView" type="id" />
+    <item name="maxSelectable" type="id"/>
+    <item name="is_multiselect_relative_layout" type="id" />
+
+    <item name="simprints_guid" type="id" />
+    <item name="is_repeating_group_generated" type="id" />
+    <item name="has_required_validator" type="id" />
+
+</resources>

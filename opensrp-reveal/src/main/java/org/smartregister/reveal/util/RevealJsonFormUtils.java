@@ -527,7 +527,7 @@ public class RevealJsonFormUtils {
         } else if (getBuildCountry() == Country.ZAMBIA && (Action.LSM_HOUSEHOLD_SURVEY.equals(taskCode) || LSM_HOUSEHOLD_SURVEY_EVENT.equals(encounterType))) {
             formName = JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA;
         } else if (getBuildCountry() == Country.NIGERIA && (Action.STRUCTURE_SURVEY.equals(taskCode) || STRUCTURE_SURVEY_EVENT.equals(encounterType))) {
-            formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
+            formName = JsonForm.STRUCTURE_SURVEY;
         } else if (EventType.TREATMENT_OUTSIDE_HOUSEHOLD_EVENT.equals(encounterType)) {
             formName = JsonForm.TREATMENT_OUTSIDE_HOUSEHOLD_FORM;
         } else if (EventType.ADVERSE_EVENTS_RECORD_EVENT.equals(encounterType)) {
@@ -541,7 +541,7 @@ public class RevealJsonFormUtils {
                 formName = JsonForm.STRUCTURE_SURVEY_NIH_STR;
             }
             else {
-                formName = JsonForm.STRUCTURE_SURVEY_NIGERIA;
+                formName = JsonForm.STRUCTURE_SURVEY;
             }
         } else if ((RCD_EVENT.equals(encounterType) || RCD.equals(taskCode)) && getBuildCountry() == Country.GDRS) {
             formName = JsonForm.GDRS_RCD;
@@ -657,7 +657,12 @@ public class RevealJsonFormUtils {
                         obs = obsOptional.get();
                     }
                 } else {
-                    obs = event.findObs(null, true, key);
+                    Optional<Obs> obsOptional = event.getObs().stream()
+                        .filter(obs1 -> obs1.getFieldCode().equals(key)).findFirst();
+                    if (obsOptional.isPresent()) {
+                        obs = obsOptional.get();
+                    }
+//                    obs = event.findObs(null, true, key);
                 }
                 if (obs != null && obs.getValues() != null) {
                     if (CHECK_BOX.equals(field.getString(TYPE))) {
@@ -802,6 +807,7 @@ public class RevealJsonFormUtils {
     public void generateRepeatingGroupFields(JSONObject field, List<Obs> obs, JSONObject formJSON) {
         try {
             LinkedHashMap<String, HashMap<String, String>> repeatingGroupMap = Utils.buildRepeatingGroup(field, obs);
+//            Timber.tag("WriteValue").i("field %s repeatingGroupMap = %s",field, repeatingGroupMap);
             List<HashMap<String, String>> repeatingGroupMapList = Utils.generateListMapOfRepeatingGrp(
                     repeatingGroupMap);
             new RepeatingGroupGenerator(formJSON.optJSONObject(JsonFormConstants.STEP1),
@@ -810,6 +816,14 @@ public class RevealJsonFormUtils {
                     new HashMap<>(),
                     JsonForm.REPEATING_GROUP_UNIQUE_ID,
                     repeatingGroupMapList).init();
+
+            String string = field.getString("key");
+//            if (string!=null && string.equals("mosquito_nets")){
+////                Timber.tag("WriteValue").i("FORM AFTER RG GENERATION:\n%s",
+//                formJSON.toString(2));
+//            }
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -944,7 +958,7 @@ public class RevealJsonFormUtils {
                             dataCollector);
                 }
                 break;
-            case JsonForm.STRUCTURE_SURVEY_NIGERIA:
+            case JsonForm.STRUCTURE_SURVEY:
                 setDefaultValue(formJSON, SUPERVISOR,
                         RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
                 break;

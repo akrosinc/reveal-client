@@ -21,6 +21,7 @@ import androidx.core.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+//import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -319,6 +320,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
                         getView().writeValue(mstepDup, key, (String) path, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
                     }
                 } else if (childView instanceof CheckBox) {
+                    Timber.tag("WriteValues").i("writing for checkbox");
                     String parentKey = (String) childView.getTag(R.id.key);
                     String childKey = (String) childView.getTag(R.id.childKey);
                     getView().writeValue(mstepDup, parentKey, JsonFormConstants.OPTIONS_FIELD_NAME, childKey, String.valueOf(((CheckBox) childView).isChecked()), openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
@@ -415,6 +417,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         }
         Map<String, ValidationStatus> invalidFields = this.getInvalidFields();
         if (isFormValid()) {// if form is valid and did not have a map, if it had a map view it will be handled above
+            Timber.tag("WriteValue").i("RevealJsonFormFragmentPresenter validateAndWriteValues isFormValid true");
             onLocationValidated();
 
         } else {//if form is invalid whether having a map or not
@@ -450,6 +453,7 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
 
     @Override
     public void onSaveClick(LinearLayout mainView) {
+        Timber.tag("WriteValue").i("Click on Save");
         validateAndWriteValues();
     }
 

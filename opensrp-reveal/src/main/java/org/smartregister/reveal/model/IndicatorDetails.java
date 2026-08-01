@@ -39,6 +39,9 @@ public class IndicatorDetails {
     private double completeCoverage;
     private double successRate;
 
+    //Zam Indicator
+
+    private int structuresToComplete;
 
     //RWANDA indicators
     private int healthEducatedChildren5To15;
@@ -104,6 +107,8 @@ public class IndicatorDetails {
     private int pzqDispensed;
     private int mbzDamaged;
     private int pzqDamaged;
+
+
 
     public String toMaliIndicatorString() {
         return "IndicatorDetails{" +

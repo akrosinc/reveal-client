@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
-
 import org.json.JSONObject;
 import org.smartregister.reveal.R;
 import org.smartregister.family.util.Constants;

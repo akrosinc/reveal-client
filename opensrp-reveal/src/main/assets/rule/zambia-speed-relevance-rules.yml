@@ -1,0 +1,306 @@
+---
+name: step1_child_eligible_for_test
+description: step1_child_eligible_for_test
+priority: 1
+condition: "(revealhelper.getAgeInMonths(step1_dob) >= 6 && revealhelper.getAgeInMonths(step1_dob) <= 59 ) && step1_child_present.equals('yes') && step1_child_severely_ill.equals('no')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_prepared_rdt
+description: step1_prepared_rdt
+priority: 1
+condition: "(Double.valueOf(helper.ifNull(step1_calculated_age,0)) >= 6 && Double.valueOf(helper.ifNull(step1_calculated_age,0)) <= 59) && step1_child_present.equals('yes') && step1_child_severely_ill.equals('no')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_estimated_age_months
+description: step1_estimated_age_months
+priority: 1
+condition: "helper.ifNull(step1_estimated_age,999999) < 1"
+actions:
+ - "isRelevant = true"
+---
+name: step1_additional_individual_estimated_age_months
+description: step1_additional_individual_estimated_age_months
+priority: 1
+condition: "helper.ifNull(step1_additional_individual_estimated_age,999999) < 1"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_under_five_label
+description: step1_building_sleep_time_under_five_label
+priority: 1
+condition: "step1_children_under_5_count > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_under_five
+description: step1_building_sleep_time_under_five
+priority: 1
+condition: "step1_children_under_5_count > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_school_age_label
+description: step1_building_sleep_time_school_age_label
+priority: 1
+condition: "step1_children_5_to_17 > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_school_age
+description: step1_building_sleep_time_school_age
+priority: 1
+condition: "step1_children_5_to_17 > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_adult_women_label
+description: step1_building_sleep_time_adult_women_label
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_adult_women
+description: step1_building_sleep_time_adult_women
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_adult_men_label
+description: step1_building_sleep_time_adult_men_label
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_building_sleep_time_adult_men
+description: step1_building_sleep_time_adult_men
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+
+---
+name: step1_under_net_time_under_five_label
+description: step1_under_net_time_under_five_label
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_under_five
+description: step1_under_net_time_under_five
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_school_age_label
+description: step1_under_net_time_school_age_label
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_school_age
+description: step1_under_net_time_school_age
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_women_label
+description: step1_under_net_time_adult_women_label
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_women
+description: step1_under_net_time_adult_women
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_men_label
+description: step1_under_net_time_adult_men_label
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_men
+description: step1_under_net_time_adult_men
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+
+
+---
+name: step1_under_net_time_under_five_morning_label
+description: step1_under_net_time_under_five_morning_label
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_under_five_morning
+description: step1_under_net_time_under_five_morning
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_school_age_morning_label
+description: step1_under_net_time_school_age_morning_label
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_school_age_morning
+description: step1_under_net_time_school_age_morning
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_women_morning_label
+description: step1_under_net_time_adult_women_morning_label
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_women_morning
+description: step1_under_net_time_adult_women_morning
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_men_morning_label
+description: step1_under_net_time_adult_men_morning_label
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_net_time_adult_men_morning
+description: step1_under_net_time_adult_men_morning
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')  && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+
+
+---
+name: step1_go_out_building_under_five_morning_label
+description: step1_go_out_building_under_five_morning_label
+priority: 1
+condition: "step1_children_under_5_count > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_under_five_morning
+description: step1_go_out_building_under_five_morning
+priority: 1
+condition: "step1_children_under_5_count > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_school_age_morning_label
+description: step1_go_out_building_school_age_morning_label
+priority: 1
+condition: "step1_children_5_to_17 > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_school_age_morning
+description: step1_go_out_building_school_age_morning
+priority: 1
+condition: "step1_children_5_to_17 > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_adult_women_morning_label
+description: step1_go_out_building_adult_women_morning_label
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_adult_women_morning
+description: step1_go_out_building_adult_women_morning
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('women')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_adult_men_morning_label
+description: step1_go_out_building_adult_men_morning_label
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_go_out_building_adult_men_morning
+description: step1_go_out_building_adult_men_morning
+priority: 1
+condition: "step1_adults > 0 && step1_any_men_or_women.contains('men')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_five_under_net_label
+description: step1_under_five_under_net_label
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_under_five_under_net
+description: step1_under_five_under_net
+priority: 1
+condition: "step1_children_under_5_count > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_school_age_under_net_label
+description: step1_school_age_under_net_label
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_school_age_under_net
+description: step1_school_age_under_net
+priority: 1
+condition: "step1_children_5_to_17 > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_adults_under_net_label
+description: step1_adults_under_net_label
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_adults_under_net
+description: step1_adults_under_net
+priority: 1
+condition: "step1_adults > 0 && step1_anyone_use_mosquito_net.equals('yes')"
+actions:
+ - "isRelevant = true"
+---
+name: step1_any_men_or_women
+description: step1_any_men_or_women
+priority: 1
+condition: "step1_adults > 0"
+actions:
+ - "isRelevant = true"

@@ -1,0 +1,63 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="NativeFormsAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorButtonNormal">@color/primary</item>
+    </style>
+
+    <style name="AppTheme.DarkToolbar" parent="NativeFormsAppTheme">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:actionMenuTextColor">#FFFFFF</item>
+        <item name="actionMenuTextColor">#FFFFFF</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="CheckBoxStyle">
+        <item name="cbd_width">@dimen/default_checkbox_width</item>
+        <item name="cbd_height">@dimen/default_checkbox_height</item>
+        <item name="cbd_boxSize">@dimen/default_checkbox_size</item>
+    </style>
+
+    <style name="CheckBoxStyle.color">
+        <item name="colorControlNormal">@color/primary_text</item>
+    </style>
+
+    <style name="AppThemeAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/opensrp_primary</item>
+        <item name="colorPrimaryDark">@color/opensrp_primary_dark</item>
+        <item name="colorAccent">@color/opensrp_accent</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="NativeFormsFullScreenDialogStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowEnterAnimation">@anim/slide_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_out</item>
+    </style>
+
+    <style name="FullScreenDialogStyle" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary</item>
+        <!-- Set this to true if you want Full Screen without status bar -->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <!-- This is important! Don't forget to set window background -->
+        <item name="android:windowBackground">@color/white</item>
+        <!-- Additionally if you want animations when dialog opening -->
+        <!--   <item name="android:windowEnterAnimation">@anim/slide_up</item>
+           <item name="android:windowExitAnimation">@anim/slide_down</item>-->
+    </style>
+</resources>

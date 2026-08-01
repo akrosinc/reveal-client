@@ -308,7 +308,7 @@ public class CardDetailsUtil {
             changeLsmHouseholdStatus.setVisibility(Action.LSM_HOUSEHOLD_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeOnchoStatus.setVisibility(Action.MDA_ONCHOCERCIASIS_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
-            undoStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
+            undoStructureSurveyStatus.setVisibility(Action.STRUCTURE_SURVEY.equals(surveyCardDetails.getInterventionType()) ? View.GONE : View.GONE);
             changeGdrsRcdStatus.setVisibility(Action.RCD.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeGdrsIndexStatus.setVisibility(Action.INDEX_CASE.equals(surveyCardDetails.getInterventionType()) ? View.VISIBLE : View.GONE);
             changeSprayStatus.setVisibility(View.GONE);

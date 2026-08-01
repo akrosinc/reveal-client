@@ -132,6 +132,9 @@ public class RevealApplication extends DrishtiApplication
     public void onCreate() {
         super.onCreate();
 
+//        EmojiCompat.init(
+//            new BundledEmojiCompatConfig(this)
+//        );
 
         mInstance = this;
         context = Context.getInstance();

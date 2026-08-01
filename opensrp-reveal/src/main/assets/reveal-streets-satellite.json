@@ -104,7 +104,8 @@
             "round_two_refused",
             "round_three_refused",
             "enrollednotcomplete",
-            "RCD Partially complete"
+            "RCD Partially complete",
+            "No appropriate adult available"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -136,7 +137,8 @@
             "round_one_skip",
             "Index Case Not Visited",
             "monththreecomplete",
-            "Require Revisit"
+            "Require Revisit",
+            "No one home"
           ],
           "hsl(191, 89%, 61%)",
           [
@@ -263,7 +265,8 @@
             "round_two_refused",
             "round_three_refused",
             "enrollednotcomplete",
-            "RCD Partially complete"
+            "RCD Partially complete",
+            "No appropriate adult available"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -295,7 +298,8 @@
             "round_one_skip",
             "Index Case Not Visited",
             "monththreecomplete",
-            "Require Revisit"
+            "Require Revisit",
+            "No one home"
           ],
           "hsl(191, 89%, 61%)",
           [

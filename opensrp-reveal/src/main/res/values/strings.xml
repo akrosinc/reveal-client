@@ -487,6 +487,8 @@
     <string name="distribution_coverage">Distribution coverage</string>
     <string name="visited_over_total">Visited over Total</string>
     <string name="coverage_of_structures_completed">Coverage of Structures Completed</string>
+    <string name="cluster_survey_completion">Cluster survey completion</string>
+    <string name="cluster_survey_completion_perc">Cluster survey completion %</string>
 
 
     <string name="index_case_confirmation">Index Case Confirmation</string>
@@ -509,6 +511,9 @@
     <string name="structure_treated_total">Structure: TREATED STRUCTURE TOTAL</string>
     <string name="structure_complete_mda">Structure: MDA COMPLETE </string>
     <string name="structure_complete">Structure: COMPLETED STRUCTURES TOTAL </string>
+    <string name="structure_complete_short">Structure: COMPLETED </string>
+
+    <string name="target_structures_to_complete">Target structures to complete </string>
 
     <string name="structure_partial_complete_mda">Structure: PARTIALLY COMPLETE </string>
 

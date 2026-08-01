@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 
+import android.util.Log;
+import android.view.View;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
@@ -18,6 +20,7 @@ import org.smartregister.reveal.fragment.RevealJsonFormFragment;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.rule.RevealRuleEngineFactory;
 import io.ona.kujaku.utils.Constants;
+import timber.log.Timber;
 
 
 public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity implements UserLocationView {
@@ -119,6 +122,7 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
                                      String openMrsEntity, String openMrsEntityId, boolean popup) throws JSONException {
         super.widgetsWriteValue(stepName, key, value, openMrsEntityParent, openMrsEntity, openMrsEntityId, popup);
     }
+
 
     @Override
     public void writeValue(String stepName, String key, String value, String openMrsEntityParent, String openMrsEntity,

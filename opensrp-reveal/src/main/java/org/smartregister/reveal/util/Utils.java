@@ -588,8 +588,13 @@ public class Utils {
         JSONObject valueField = jsonArray.optJSONObject(i);
         String fieldKey = valueField.optString(JsonFormConstants.KEY);
         keysArrayList.add(fieldKey);
+        Timber.d(
+            "obs parsedKey=%s contains=%s",
+            fieldKey,
+            keysArrayList.contains(fieldKey)
+        );
       }
-
+//      Timber.tag("WriteValue").i("RG template keys = %s", keysArrayList);
       for (int k = 0; k < obs.size(); k++) {
         Obs valueField = obs.get(k);
         String fieldKey = valueField.getFormSubmissionField();

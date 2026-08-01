@@ -110,6 +110,25 @@
               "err": "Please enter a valid Household ID"
             }
 
+          },
+          {
+            "key": "household_test",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Household test",
+            "edit_type": "name",
+            "text_size": "8sp",
+            "v_required": {
+              "value": "true",
+              "err": "Field required"
+            },
+            "v_regex": {
+              "value": "^[A-Za-z]{3}[0-9]{9}",
+              "err": "Please enter a valid Household ID"
+            }
+
           }
         ],
         "v_required": {

@@ -171,6 +171,7 @@ public class JsonFormUtils {
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
+
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
                 if (jsonObject.has(AllConstants.TYPE) &&
@@ -419,12 +420,15 @@ public class JsonFormUtils {
 
         String type = getString(jsonObject, AllConstants.TYPE);
         if (AllConstants.CHECK_BOX.equals(type)) {
+            Timber.tag("WriteValue").i("JsonFormUtils addObservation for checkbox jsonObject %s",jsonObject);
             try {
                 List<Object> optionValues = new ArrayList<>();
                 List<Object> optionEntityIds = new ArrayList<>();
                 Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
+                    Timber.tag("WriteValue").i("has options");
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    Timber.tag("WriteValue").i("options length %s",options.length());
                     String fieldsOpenmrsEntityId = jsonObject.optString(OPENMRS_ENTITY_ID);
                     String fieldOpenmrsEntityParent = jsonObject.optString(OPENMRS_ENTITY_PARENT);
                     String fieldKey = jsonObject.optString(KEY);
@@ -432,12 +436,14 @@ public class JsonFormUtils {
                     String entity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
+                        Timber.tag("WriteValue").i("option %s",option);
                         boolean optionValue = option.optBoolean(VALUE);
+                        Timber.tag("WriteValue").i("optionValue %s",optionValue);
                         if (!optionValue) {
                             continue;
                         }
                         if (CONCEPT.equals(entity)) {
-
+                            Timber.tag("WriteValue").i("is concept");
                             if (shouldBeCombined) {
                                 String optionKey = option.optString(KEY);
                                 String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
@@ -452,11 +458,15 @@ public class JsonFormUtils {
 
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
+
                             String optionText = option.optString(AllConstants.TEXT);
+                            Timber.tag("WriteValue").i("optionText %s",optionText);
                             optionValues.add(optionText);
                             optionKeyVals.put(option.optString(KEY), optionText);
                         }
                     }
+                    Timber.tag("WriteValue").i("JsonFormUtils addObservation optionKeyVals %s",optionKeyVals);
+                    Timber.tag("WriteValue").i("JsonFormUtils addObservation optionValues %s",optionValues);
                     if (!optionValues.isEmpty()) {
                         if (CONCEPT.equals(entity) && shouldBeCombined) {
                             e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, fieldsOpenmrsEntityId, fieldOpenmrsEntityParent, optionEntityIds, optionValues, null,
@@ -468,7 +478,7 @@ public class JsonFormUtils {
                     }
                 }
             } catch (JSONException e1) {
-                Timber.tag("Reveal Exception").w(e1);
+                Timber.tag("WriteValue").w(e1);
             }
         } else if (AllConstants.GPS.equals(type)) {
             createGpsObservation(e, jsonObject, value);

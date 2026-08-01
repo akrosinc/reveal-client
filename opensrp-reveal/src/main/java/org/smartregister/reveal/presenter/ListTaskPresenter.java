@@ -26,6 +26,8 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBL
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYABLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_APPROPRIATE_ADULT_AVAILABLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_ONE_HOME;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE;
@@ -58,7 +60,6 @@ import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
 import static org.smartregister.reveal.util.Constants.JsonForm.LOCATION_COMPONENT_ACTIVE;
 import static org.smartregister.reveal.util.Constants.JsonForm.PROVINCE_NAME;
-import static org.smartregister.reveal.util.Constants.JsonForm.SUPERVISOR;
 import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL_AREA;
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
@@ -107,6 +108,9 @@ import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -315,7 +319,12 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         setChangeMapPosition(drawerPresenter.isChangedCurrentSelection() || (drawerPresenter.isChangedCurrentSelection() && changeMapPosition));
         drawerPresenter.setChangedCurrentSelection(false);
         if (structuresGeoJson.has(FEATURES) && StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+            Timber.tag("WriteValue").i("fetchLocationsWithParents structuresGeoJson .has(FEATURES)");
+
             featureCollection = FeatureCollection.fromJson(structuresGeoJson.toString());
+            if (featureCollection !=null && featureCollection.features()!=null){
+                Timber.tag("WriteValue").i("fetchLocationsWithParents featureCollection %s",featureCollection.features().size());
+            }
             isTasksFiltered = false;
             if (filterParams != null && !filterParams.getCheckedFilters().isEmpty() && StringUtils.isBlank(searchPhrase)) {
                 filterFeatureCollection = null;
@@ -464,7 +473,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         return (Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
                 && (List.of(INDEX_CASE_NOT_VISITED, NOT_VISITED, INDEX_CASE_COMPLETE, INDEX_COMPLETE_RCD_INCOMPLETE
                 , RCD_PARTIALLY_COMPLETE, RCD_COMPLETE_INDEX_INCOMPLETE, RCD_INCOMPLETE_INDEX_INCOMPLETE, SECONDARY_INDEX_CASE_NOT_VISITED,
-                SECONDARY_INDEX_CASE_COMPLETE).contains(businessStatus) || businessStatus == null ||
+                SECONDARY_INDEX_CASE_COMPLETE,NO_ONE_HOME,NO_APPROPRIATE_ADULT_AVAILABLE).contains(businessStatus) || businessStatus == null ||
                 (businessStatus.equals(COMPLETE) && List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(taskCode)))
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
                 || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
@@ -657,6 +666,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void startForm(String formName, Feature feature, String sprayStatus, String familyHead, Event event) {
+//        Timber.tag("WriteValue").i("start form");
         JSONObject formJson = jsonFormUtils.getFormJSON(listTaskView.getContext()
                 , formName, feature, sprayStatus, familyHead);
         if (cardDetails instanceof MosquitoHarvestCardDetails && PAOT.equals(cardDetails.getInterventionType())) {
@@ -708,13 +718,29 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)) {
             jsonFormUtils.populateForm(event, formJson);
             jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
-        } else if (JsonForm.STRUCTURE_SURVEY_NIGERIA.equals(formName)) {
+        } else if (JsonForm.STRUCTURE_SURVEY.equals(formName)) {
+//            Timber.tag("WriteValue").i("start form structure survey");
             jsonFormUtils.populateForm(event, formJson);
+            try {
+                jsonFormUtils.populateField(
+                    formJson, "household_id", UUID.randomUUID().toString(), VALUE);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+//            if (Country.ZAMBIA.equals(getBuildCountry())) {
+//              try {
+//                jsonFormUtils.populateField(
+//                    formJson, "household_id", UUID.randomUUID().toString().replace("-",""), VALUE);
+//              } catch (JSONException e) {
+//                throw new RuntimeException(e);
+//              }
+//            }
             jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
         } else if (JsonForm.STRUCTURE_SURVEY_UW.equals(formName)) {
             jsonFormUtils.populateForm(event, formJson);
             jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
         }
+
         listTaskView.startJsonForm(formJson);
     }
 

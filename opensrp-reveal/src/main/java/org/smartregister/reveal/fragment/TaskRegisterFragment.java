@@ -234,8 +234,13 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
 
     public void displayTaskActionDialog(TaskDetails details, View view) {
         int viewDetailsStringResource = PAOT.equals(details.getTaskCode()) ? R.string.view_paot_details : R.string.view_details;
-        AlertDialogUtils.displayNotificationWithCallback(getContext(), R.string.select_task_action,
-                R.string.choose_action, viewDetailsStringResource, R.string.undo, new Dialog.OnClickListener() {
+        AlertDialogUtils.displayNotificationWithCallback(
+            getContext(),
+            R.string.select_task_action,
+                R.string.choose_action,
+            viewDetailsStringResource,
+            R.string.undo,
+            new Dialog.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {

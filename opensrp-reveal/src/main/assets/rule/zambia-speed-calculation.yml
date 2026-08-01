@@ -1,0 +1,42 @@
+---
+name: step1_calculated_age
+description: Age Calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation =    'yes'.equals(step1_know_dob) ? revealhelper.getAgeInMonths(step1_dob) : (helper.ifNull(step1_estimated_age,0) < 1 ? step1_estimated_age_months : Double.valueOf(helper.ifNull(step1_estimated_age,0)) * 12)"
+---
+name: step1_additional_individual_calculated_age
+description: Age Calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = 'yes'.equals(step1_additional_individual_know_dob) ? revealhelper.getAgeInMonths(step1_additional_individual_dob) : (helper.ifNull(step1_additional_individual_estimated_age,0) < 1 ? step1_additional_individual_estimated_age_months : Double.valueOf(helper.ifNull(step1_additional_individual_estimated_age,0)) * 12)"
+---
+name: step1_business_status
+description: Business status calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_eligible_structure == 'no' ? 'Not Eligible' : step1_eligible_person == 'no' ? 'No appropriate adult available' : step1_eligible_person == 'none' ? 'No one home' : step1_respondent_consent == 'no' ?  'Refused' : step1_eligible_structure == 'no_already_visited' ? 'Not Eligible' :'Complete'"
+---
+name: step1_calculated_total_people
+description: step1_calculated_total_people
+priority: 1
+condition: "true"
+actions:
+ - "calculation = Double.valueOf(helper.ifNull(step1_children_5_to_17,0)) + Double.valueOf(helper.ifNull(step1_adults,0))  + Double.valueOf(helper.ifNull(step1_children_under_5_count,0))"
+---
+name: step1_date
+description: step1_date
+priority: 1
+condition: "true"
+actions:
+ - "calculation = helper.getDateToday()"
+---
+name: step1_household_id_value
+description: step1_household_id_value
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_household_id"

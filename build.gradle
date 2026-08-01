@@ -5,6 +5,7 @@ buildscript {
         kotlin_version = '1.7.22'
         android_gradle_plugin = '7.3.1'
         jacoco_version = '0.8.6'
+
     }
 
     repositories {
@@ -30,16 +31,31 @@ allprojects {
     group = 'org.smartregister'
 
     ext {
-        androidCompileSdkVersion = 28
+        androidCompileSdkVersion = 31
         androidBuildToolsVersion = '28.0.3'
-        androidMinSdkVersion = 16
+        androidMinSdkVersion = 26
         androidTargetSdkVersion = 28
         androidAnnotationsVersion = '3.0.1'
+        androidToolsBuildGradle = '4.2.2'
     }
 
     repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/akrosinc/maven-repo")
+
+            Properties localProperties = new Properties()
+            File localPropertiesFile = rootProject.file("local.properties")
+            if (localPropertiesFile.exists()) {
+                localProperties.load(new FileInputStream(localPropertiesFile))
+            }
+
+            credentials {
+                username = localProperties.getProperty("githubUsername")
+                password = localProperties.getProperty("githubToken")
+            }
+        }
         google()
-        jcenter()
+
         mavenCentral()
         maven { url 'https://jitpack.io' }
         maven { url "https://repo.maven.apache.org/maven2" }

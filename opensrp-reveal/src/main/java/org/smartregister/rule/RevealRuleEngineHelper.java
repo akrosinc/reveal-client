@@ -1,4 +1,5 @@
 package org.smartregister.rule;
+import java.util.UUID;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -56,5 +57,10 @@ public class RevealRuleEngineHelper {
         return String.valueOf(period.getYears() * 12 + period.getMonths());
 
         // Return the total number of months
+    }
+    public String getMyRandValue(){
+        return java.util.UUID.randomUUID()
+            .toString()
+            .replace("-", "");
     }
 }

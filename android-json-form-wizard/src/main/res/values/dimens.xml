@@ -1,0 +1,73 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="default_left_margin">24dp</dimen>
+    <dimen name="default_right_margin">24dp</dimen>
+    <integer name="navigationAnimTime">300</integer>
+
+    <dimen name="default_text_size">20sp</dimen>
+    <dimen name="default_info_icon_size">22dp</dimen>
+    <dimen name="button_text_size">16sp</dimen>
+    <dimen name="button_padding">7dp</dimen>
+    <dimen name="label_text_size">18dp</dimen>
+    <dimen name="tree_widget_text_size">6dp</dimen>
+    <dimen name="default_text_top_bottom_padding">8sp</dimen>
+    <dimen name="default_bottom_margin">8dp</dimen>
+    <dimen name="extra_bottom_margin">16dp</dimen>
+    <dimen name="error_label_spacing">15dp</dimen>
+    <dimen name="bottom_text_size">18dp</dimen>
+    <dimen name="right_left_spinner_padding">15dp</dimen>
+    <dimen name="spinner_error_left_margin">15dp</dimen>
+    <dimen name="button_height">10dp</dimen>
+    <dimen name="section_header_text_size">20sp</dimen>
+    <dimen name="default_qr_text_size">150dp</dimen>
+    <dimen name="date_duration_left_margin">130dp</dimen>
+    <dimen name="date_duration_bottom_padding">15dp</dimen>
+    <dimen name="default_spinner_arrow_size">12dp</dimen>
+    <dimen name="default_checkbox_size">18dp</dimen>
+    <dimen name="default_checkbox_height">25dp</dimen>
+    <dimen name="default_checkbox_width">25dp</dimen>
+    <dimen name="radio_button_icon_text_padding">30dp</dimen>
+    <dimen name="default_label_text_size">20px</dimen>
+    <dimen name="options_default_text_size">18px</dimen>
+    <dimen name="specify_date_default_text_size">6sp</dimen>
+    <dimen name="extra_info_default_text_size">7sp</dimen>
+    <dimen name="options_extra_info_text_size">18px</dimen>
+    <dimen name="native_radio_button_padding">20dp</dimen>
+    <dimen name="native_radio_button_label_bottom">5dp</dimen>
+    <dimen name="native_radio_button_text_view_initial_left_margin">53dp</dimen>
+    <dimen name="native_radio_button_text_view_height">32dp</dimen>
+    <dimen name="native_selector_total_screen_size_padding">70dp</dimen>
+    <dimen name="native_selector_button_max_padding">5sp</dimen>
+    <dimen name="native_selector_button_min_padding">1px</dimen>
+    <dimen name="dialog_content_margin">20dp</dimen>
+    <dimen name="toolbar_text_size">23sp</dimen>
+    <integer name="repeating_group_label_text_size">20</integer>
+
+    <!-- Form Container -->
+    <dimen name="form_container_default_padding">20dp</dimen>
+    <dimen name="form_container_start_end_navigation_padding">20dp</dimen>
+    <dimen name="form_container_top_bottom_navigation_padding">10dp</dimen>
+    <dimen name="form_container_default_margin">10dp</dimen>
+    <dimen name="form_container_step_title_text_size">18sp</dimen>
+    <dimen name="form_container_navigation_text_size">22sp</dimen>
+    <dimen name="form_container_navigation_elevation">3dp</dimen>
+    <dimen name="form_container_drawable_padding">10dp</dimen>
+    <dimen name="form_container_small_padding">5dp</dimen>
+    <dimen name="label_bottom_padding">6dp</dimen>
+    <dimen name="label_imageview_padding">4dp</dimen>
+
+    <dimen name="bottom_navigation_margin">4dp</dimen>
+    <dimen name="bottom_navigation_padding">8dp</dimen>
+    <dimen name="custom_dialog_margin">16dp</dimen>
+
+    <dimen name="floating_label_top_spacing">4dp</dimen>
+    <dimen name="expansion_panel_dialog_padding">20dp</dimen>
+    <dimen name="accordion_content_margin">10dp</dimen>
+    <dimen name="referral_dialog_padding">20dp</dimen>
+    <dimen name="referral_dialog_title_text_size">22sp</dimen>
+    <dimen name="referral_dialog_text_size">16sp</dimen>
+    <dimen name="advanced_search_label_padding">5dp</dimen>
+    <dimen name="advanced_search_toolbar_padding">20dp</dimen>
+    <dimen name="advanced_search_toolbar_drawable_padding">10dp</dimen>
+    <dimen name="advanced_search_toolbar_text_size">20sp</dimen>
+</resources>

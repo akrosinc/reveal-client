@@ -14,6 +14,9 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_APPROPRIATE_ADULT_AVAILABLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_ONE_HOME;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.REFUSED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.STRUCTURE_PART_OF_HOH;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
@@ -316,6 +319,29 @@ public class IndicatorUtils {
 
         indicators.add(context.getResources().getString(R.string.structure_complete));
         indicators.add(String.valueOf(indicatorDetails.getComplete()));
+
+        return indicators;
+
+    }
+
+    public static List<String> populateZamSurIndicators(Context context, IndicatorDetails indicatorDetails) {
+
+        List<String> indicators = new ArrayList<>();
+
+        indicators.add(context.getResources().getString(R.string.cluster_survey_completion_perc));
+        indicators.add(String.valueOf(indicatorDetails.getCompleteCoverage()));
+
+        indicators.add(context.getResources().getString(R.string.total_structures));
+        indicators.add(String.valueOf(indicatorDetails.getTotal()));
+
+        indicators.add(context.getResources().getString(R.string.structure_visited));
+        indicators.add(String.valueOf(indicatorDetails.getVisited()));
+
+        indicators.add(context.getResources().getString(R.string.structure_complete_short));
+        indicators.add(String.valueOf(indicatorDetails.getComplete()));
+
+        indicators.add(context.getResources().getString(R.string.target_structures_to_complete));
+        indicators.add(String.valueOf(indicatorDetails.getStructuresToComplete()));
 
         return indicators;
 
@@ -901,6 +927,64 @@ public class IndicatorUtils {
         double successRate = visited > 0 ? (double) (complete) / (double) visited * 100 : 0;
 
         indicatorDetails.setSuccessRate(successRate);
+
+        return indicatorDetails;
+    }
+    public static IndicatorDetails processIndicatorsZamSurStr(final List<TaskDetails> tasks) {
+
+        IndicatorDetails indicatorDetails = new IndicatorDetails();
+        List<TaskDetails> validTasks = tasks.stream()
+            .filter(taskDetails -> taskDetails.getTaskCode()
+                .equals(STRUCTURE_SURVEY))
+            .collect(toList());
+
+        long complete = validTasks.stream()
+            .filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                    && taskDetails.getBusinessStatus().equals(COMPLETE))
+            .map(BaseTaskDetails::getStructureId).distinct().count();
+        indicatorDetails.setComplete(Long.valueOf(complete).intValue());
+
+//        long noOneHome = validTasks.stream()
+//            .filter(taskDetails ->
+//                taskDetails.getBusinessStatus() != null
+//                    && taskDetails.getBusinessStatus().equals(NO_ONE_HOME))
+//            .map(BaseTaskDetails::getStructureId).distinct().count();
+//
+//
+//        long noAppropriateAdultAvailable = validTasks.stream()
+//            .filter(taskDetails ->
+//                taskDetails.getBusinessStatus() != null
+//                    && taskDetails.getBusinessStatus().equals(NO_APPROPRIATE_ADULT_AVAILABLE))
+//            .map(BaseTaskDetails::getStructureId).distinct().count();
+//
+        long notVisited = validTasks.stream().filter(taskDetails ->
+                taskDetails.getBusinessStatus() != null
+                    && taskDetails.getBusinessStatus().equals(NOT_VISITED))
+            .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+//
+//        long notEligible = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+//                && taskDetails.getBusinessStatus().equals(NOT_ELIGIBLE))
+//            .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+//
+//        long refused = validTasks.stream().filter(taskDetails -> taskDetails.getBusinessStatus() != null
+//                && taskDetails.getBusinessStatus().equals(REFUSED))
+//            .map(BaseTaskDetails::getStructureId).filter(Objects::nonNull).distinct().count();
+
+
+        long visited = validTasks.size() - notVisited;
+
+        indicatorDetails.setVisited(Long.valueOf(visited).intValue());
+
+        long total = validTasks.size();
+
+        indicatorDetails.setTotal(Long.valueOf(total).intValue());
+
+        indicatorDetails.setStructuresToComplete(28);
+
+        double coverageOfCompleted = (total) > 0 ? (double) (complete) / (double) (indicatorDetails.getStructuresToComplete()) * 100 : 0;
+
+        indicatorDetails.setCompleteCoverage(Math.floor(coverageOfCompleted));
 
         return indicatorDetails;
     }

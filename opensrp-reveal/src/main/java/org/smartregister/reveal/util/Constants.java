@@ -7,7 +7,6 @@ import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
-import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 
 import java.util.Arrays;
 import java.util.List;
@@ -317,7 +316,7 @@ public interface Constants {
 
         public static List<String> LOCATION_VALIDATION_TASK_CODES = Arrays.asList(IRS,MOSQUITO_COLLECTION,LARVAL_DIPPING
                 ,PAOT,IRS_VERIFICATION,REGISTER_FAMILY,MDA_SURVEY,LSM_HOUSEHOLD_SURVEY
-                ,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY,STRUCTURE_SURVEY,RCD,INDEX_CASE,SECONDARY_INDEX_CASE);
+                ,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY, Action.STRUCTURE_SURVEY,RCD,INDEX_CASE,SECONDARY_INDEX_CASE);
 
         public static String LSM = "LSM";
     }
@@ -420,6 +419,10 @@ public interface Constants {
         public static String SPRAYED = "Sprayed";
         public static String NOT_SPRAYABLE = "Not Sprayable";
         public static String COMPLETE = "Complete";
+
+        public static String NO_APPROPRIATE_ADULT_AVAILABLE =  "No appropriate adult available";
+        public static String NO_ONE_HOME =  "NO ONE HOME";
+        public static String REFUSED = "Refused";
 
         public static String INDEX_COMPLETE_RCD_INCOMPLETE = "Index complete RCD Incomplete";
         public static String RCD_COMPLETE_INDEX_INCOMPLETE = "RCD complete Index Incomplete";
@@ -658,7 +661,7 @@ public interface Constants {
 
         public static String LSM_HOUSEHOLD_SURVEY_ZAMBIA = "json.form/lsm_household_survey_form_zambia.json";
 
-        public static String STRUCTURE_SURVEY_NIGERIA = "json.form/structure_survey_form_nigeria.json";
+        public static String STRUCTURE_SURVEY = "json.form/structure_survey_form_speed_zam.json";
 
         public static String GDRS_RCD = "json.form/gdrs_rcd_form.json";
 
@@ -695,7 +698,7 @@ public interface Constants {
 
         public static String NO_PADDING = "no_padding";
 
-        public static String SHORTENED_HINT = "shortened_h public static int";
+        public static String SHORTENED_HINT = "shortened_h";
 
         public static String HINT = "h public static int";
 
