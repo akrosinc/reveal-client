@@ -363,20 +363,24 @@ public class HdssServiceHelper extends BaseHelper {
               break;
 
             case "allIndividuals":
-              serverVersion = safeParseLong(fields[10]);
-              batch.getAllIndividuals().add(
-                  HdssIndividual.builder()
-                      .identifier(fields[1])
-                      .individualId(fields[2])
-                      .name(fields[3])
-                      .dob(fields[4])
-                      .gender(fields[5])
-                      .cluster(fields[6])
-                      .floatingLocationId(fields[7])
-                      .floatingLocationName(fields[8])
-                      .floatingLocationGeographicLevel(fields[9])
-                      .serverVersion(safeParseLong(fields[10]))
-                      .build());
+//              serverVersion = safeParseLong(fields[10]);
+              try{
+                batch.getAllIndividuals().add(
+                    HdssIndividual.builder()
+                        .identifier(fields[1])
+                        .individualId(fields[2])
+                        .name(fields[3])
+                        .dob(fields[4])
+                        .gender(fields[5])
+                        .cluster(fields[6])
+                        .floatingLocationId(fields[7])
+                        .floatingLocationName(fields[8])
+                        .floatingLocationGeographicLevel(fields[9])
+                        .serverVersion(safeParseLong(fields[10]))
+                        .build());
+              } catch (ArrayIndexOutOfBoundsException e){
+                Timber.tag("FileError").e(e,"Incorrect file %s",line);
+              }
               break;
 
             case "allHouseholds":

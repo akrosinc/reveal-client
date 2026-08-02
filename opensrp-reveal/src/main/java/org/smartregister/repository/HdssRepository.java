@@ -746,7 +746,7 @@ public class HdssRepository extends BaseRepository {
     // Start a transaction for better performance and atomicity
     writableDatabase.beginTransaction();
     try {
-      int batchSize = 30; // Batch size of 30 items
+      int batchSize = 300; // Batch size of 30 items
       for (int i = 0; i < householdIndividuals.size(); i += batchSize) {
         // Get the sublist representing the current batch (up to 30 items)
         int end = Math.min(i + batchSize, householdIndividuals.size());
