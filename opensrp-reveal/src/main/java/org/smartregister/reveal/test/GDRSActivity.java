@@ -575,18 +575,18 @@ public class GDRSActivity extends AppCompatActivity {
       if (anyRCDComplete) {
         String businessStatusIndexCase = Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
         task.setBusinessStatus(businessStatusIndexCase);
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
       }
 
     } else if (INDEX_CASE.equals(task.getCode())) {
       if (COMPLETE.equals(task.getBusinessStatus())) {
         task.setBusinessStatus(INDEX_CASE_COMPLETE);
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
       }
     } else {
       if (COMPLETE.equals(task.getBusinessStatus())) {
         task.setBusinessStatus(SECONDARY_INDEX_CASE_COMPLETE);
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
       }
     }
   }

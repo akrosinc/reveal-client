@@ -135,6 +135,7 @@ public class PreferencesUtil {
         return allSharedPreferences.getPreference(FACILITY_LEVEL);
     }
 
+
     public String isGdrsPlan(){
         return allSharedPreferences.getPreference(IS_GDRS_PLAN);
     }

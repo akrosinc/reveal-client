@@ -23,7 +23,6 @@ import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.sync.helper.PlanIntentServiceHelper;
 import org.smartregister.sync.helper.TaskServiceHelper;
-import org.smartregister.sync.intent.HdssSyncIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
 
@@ -120,9 +119,6 @@ public class LocationTaskIntentService extends IntentService {
                 || !org.smartregister.util.Utils.isEmptyCollection(synchedTasks)) {
             doSync();
         }
-
-        HdssServiceHelper hdssServiceHelper = HdssServiceHelper.getInstance();
-//        hdssServiceHelper.syncHdssDetails();
 
 
         new AppExecutors().mainThread().execute(new Runnable() {

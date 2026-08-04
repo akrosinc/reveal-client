@@ -290,7 +290,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        gdrsActivity.getTaskRepository().addOrUpdate(task);
+        gdrsActivity.getTaskRepository().add(task);
       } else if (INDEX_CASE.equals(task.getCode())) {
         Timber.tag("RevealMap").i("Is index case");
         String businessStatusIndexCase;
@@ -320,7 +320,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        gdrsActivity.getTaskRepository().addOrUpdate(task);
+        gdrsActivity.getTaskRepository().add(task);
         Timber.tag("RevealMap").i("FormSaved 3");
       } else {
         String businessStatusIndexCase;
@@ -351,7 +351,7 @@ class ActionAdapter extends RecyclerView.Adapter<ActionAdapter.ActionViewHolder>
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        gdrsActivity.getTaskRepository().addOrUpdate(task);
+        gdrsActivity.getTaskRepository().add(task);
       }
     }
   }

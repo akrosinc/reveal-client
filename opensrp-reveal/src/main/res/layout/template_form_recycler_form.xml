@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout for FormRecyclerFormActivity.
+
+  Three slots:
+    @id/container          : Form 1 (EmbeddedFormFragment)
+    @id/container_recycler : TaskRecyclerFragment (child tasks)
+    @id/container_form2    : Form 2 (EmbeddedFormFragment, initially GONE)
+
+  Required base-class IDs preserved:
+    @id/native_form_activity, @id/tb_top, @id/default_focus_view, @id/container
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/native_form_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingEnd="20dp"
+        app:theme="@style/AppTheme.DarkToolbar" />
+
+    <EditText
+        android:id="@+id/default_focus_view"
+        android:layout_width="1dp"
+        android:layout_height="1dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Slot 1: Form 1 -->
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Divider between form 1 and task list -->
+            <View
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
+                android:visibility="gone" />
+
+            <!-- Section header above the task list -->
+            <TextView
+                android:id="@+id/tv_section_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Tasks"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!-- Slot 2: Task Recycler -->
+            <FrameLayout
+                android:id="@+id/container_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Divider between task list and form 2 -->
+            <View
+                android:id="@+id/view_divider_form2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
+                android:visibility="gone" />
+
+            <!-- Slot 3: Form 2 (hidden until gate opens) -->
+            <FrameLayout
+                android:id="@+id/container_form2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Progress overlay -->
+    <LinearLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#66000000"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_progress_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading…"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

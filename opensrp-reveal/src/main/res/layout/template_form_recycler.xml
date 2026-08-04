@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout for FormRecyclerTemplate.
+
+  Must keep the IDs expected by JsonFormBaseActivity:
+    - @id/native_form_activity  : root (setFilterTouchesWhenObscured)
+    - @id/tb_top                : Toolbar (setSupportActionBar)
+    - @id/default_focus_view    : focus sink (base class calls findViewById)
+    - @id/container             : FrameLayout where EmbeddedFormFragment is committed
+
+  Adds:
+    - @id/container_recycler    : FrameLayout where TaskRecyclerFragment is committed
+    - @id/view_divider          : visual separator between the two sections
+    - @id/tv_section_header     : optional label above the task list
+    - @id/layout_progress       : full-screen loading overlay
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/native_form_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Toolbar — same ID as base layout -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:paddingEnd="20dp"
+        app:theme="@style/AppTheme.DarkToolbar" />
+
+    <!-- Focus sink — base class calls findViewById on this ID -->
+    <EditText
+        android:id="@+id/default_focus_view"
+        android:layout_width="1dp"
+        android:layout_height="1dp" />
+
+    <!--
+      Scrollable body: form fragment on top, task recycler below.
+      We use a NestedScrollView so the whole page scrolls as one unit —
+      the form fields and the task list all live in one scroll container.
+    -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!--
+              Fragment slot for EmbeddedFormFragment.
+              wrap_content height: the form determines its own size,
+              the outer NestedScrollView handles the scroll.
+            -->
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Divider between form and task list (hidden until tasks load) -->
+            <View
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
+                android:visibility="gone" />
+
+            <!-- Section header above the task list -->
+            <TextView
+                android:id="@+id/tv_section_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Tasks"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <!--
+              Fragment slot for TaskRecyclerFragment.
+              nestedScrollingEnabled=false: scroll is handled by outer NestedScrollView.
+            -->
+            <FrameLayout
+                android:id="@+id/container_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Full-screen loading overlay -->
+    <LinearLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#66000000"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_progress_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading…"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

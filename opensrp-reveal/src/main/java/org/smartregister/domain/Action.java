@@ -35,6 +35,8 @@ public class Action implements Serializable {
 
     private String code;
 
+    private FormFacade form;
+
     private Period timingPeriod;
 
     private String reason;

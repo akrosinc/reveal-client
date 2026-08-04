@@ -67,6 +67,8 @@ import static org.smartregister.reveal.util.Constants.Map.CLICK_SELECT_RADIUS;
 import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_TEMPLATE;
 import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.STRUCTURE_NAME;
@@ -121,6 +123,7 @@ import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.HdssCompoundHousehold;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.reveal.R;
@@ -194,6 +197,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     private Feature selectedFeature;
 
     private String selectedFeatureInterventionType;
+
+  private String formForTask;
+  private String formTemplate;
 
     private LatLng clickedPoint;
 
@@ -409,6 +415,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void onFeatureSelected(Feature feature, boolean isLongclick) {
+        Timber.tag("TestFrag").i("ListTaskPresenter onFeatureSelected feature clicked");
         this.selectedFeature = feature;
         this.changeInterventionStatus = false;
         markStructureIneligibleSelected = false;
@@ -441,13 +448,22 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
         String businessStatus = getPropertyValue(feature, FEATURE_SELECT_TASK_BUSINESS_STATUS);
         String code = getPropertyValue(feature, TASK_CODE);
+        String formForTaskFromFeature = getPropertyValue(feature, FORM_FOR_TASK);
+        String formTemplateFromFeature = getPropertyValue(feature, FORM_TEMPLATE);
+
         selectedFeatureInterventionType = code;
-        if (interventionHasLocationValidation(businessStatus, code)) {
-            if (validateFarStructures()) {
-                validateUserLocation();
-            } else {
+        formForTask = formForTaskFromFeature;
+        formTemplate = formTemplateFromFeature;
+      Timber.tag("TestFrag").i("ListTaskPresenter onFeatureSelectedByNormalClick feature clicked");
+      Timber.tag("TestFrag").i("ListTaskPresenter formTemplate=%s, formForTask=%s, code=%s, businessStatus=%s",
+              formTemplate, formForTask, code, businessStatus);
+//        if (interventionHasLocationValidation(businessStatus, code)) {
+        if (true) {
+//            if (validateFarStructures()) {
+//                validateUserLocation();
+//            } else {
                 onLocationValidated();
-            }
+//            }
         } else if (IRS.equals(code) &&
                 (NOT_SPRAYED.equals(businessStatus) || SPRAYED.equals(businessStatus) || NOT_SPRAYABLE.equals(businessStatus) || PARTIALLY_SPRAYED.equals(businessStatus)
                         || COMPLETE.equals(businessStatus) || NOT_ELIGIBLE.equals(businessStatus) || NOT_VISITED.equals(businessStatus))) {
@@ -481,7 +497,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 SECONDARY_INDEX_CASE_COMPLETE,NO_ONE_HOME,NO_APPROPRIATE_ADULT_AVAILABLE).contains(businessStatus) || businessStatus == null ||
                 (businessStatus.equals(COMPLETE) && List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(taskCode)))
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
-                || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
+                || shouldOpenCellCoordinatorForm(businessStatus, taskCode) ;
     }
 
     private boolean shouldOpenCDDSupervisionForm(String businessStatus, String code) {
@@ -744,6 +760,15 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         startForm(formName, feature, sprayStatus, familyHead, event);
     }
 
+  public void startFormWithFormName(String formName, Feature feature, CardDetails cardDetails, Event event) {
+    String sprayStatus = cardDetails == null ? null : cardDetails.getStatus();
+    String familyHead = null;
+    if (cardDetails instanceof SprayCardDetails) {
+      familyHead = ((SprayCardDetails) cardDetails).getFamilyHead();
+    }
+    startForm(formName, feature, sprayStatus, familyHead, event);
+  }
+
     private void startForm(String formName, Feature feature, String sprayStatus, String familyHead, Event event) {
 //        Timber.tag("WriteValue").i("start form");
         JSONObject formJson = jsonFormUtils.getFormJSON(listTaskView.getContext()
@@ -957,6 +982,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     @Override
     public void onLocationValidated() {
+
+      Timber.tag("TestFrag").i("cardDetails %s changeInterventionStatus %s",cardDetails,changeInterventionStatus);
         if (markStructureIneligibleConfirmed) {
             onMarkStructureIneligibleConfirmed();
             markStructureIneligibleConfirmed = false;
@@ -966,10 +993,19 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
             listTaskView.registerFamily();
         } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
-            listTaskView.openRCD();
+//            listTaskView.openRCD();
+            listTaskView.openFormByTemplate("test");
+        } else if (formTemplate != null) {
+            // Template-based tasks always open the template regardless of cardDetails
+            listTaskView.openFormByTemplate(formTemplate);
         } else if (cardDetails == null || !changeInterventionStatus) {
-            startForm(selectedFeature, null, selectedFeatureInterventionType);
-        } else {
+
+            if (formForTask != null) {
+              startFormWithFormName(formForTask, selectedFeature, null, null);
+            } else {
+              startForm(selectedFeature, null, selectedFeatureInterventionType);
+            }
+    } else {
             if (IRS.equals(cardDetails.getInterventionType())) {
                 if (isZambiaIRSLite()) {
                     findLastEvent(selectedFeature.id(), Constants.EventType.IRS_LITE_VERIFICATION);

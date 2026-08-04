@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
 import org.smartregister.reveal.model.CardDetails;
@@ -46,6 +47,8 @@ public interface ListTaskContract {
         void registerFamily();
 
         void openRCD();
+
+        void openFormByTemplate(String formTemplate);
 
 //        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition);
 

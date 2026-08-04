@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -58,9 +59,11 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteException;
 
 import org.joda.time.DateTime;
+import org.smartregister.domain.Action;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.IndividualTask;
 import org.smartregister.domain.Obs;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.EventClientRepository;
@@ -157,6 +160,7 @@ public class IndicatorUtils {
         taskDetails.setTaskStatus(task.getStatus().name());
         taskDetails.setStructureId(task.getStructureId());
         taskDetails.setGroupId(task.getGroupIdentifier());
+
 
         return taskDetails;
 

@@ -71,7 +71,7 @@
           [
             "Not Sprayed",
             "Incomplete",
-            "In Progress",
+
             "None Received",
             "Refused or Permanently Absent",
             "Refused",
@@ -138,6 +138,7 @@
             "Index Case Not Visited",
             "monththreecomplete",
             "Require Revisit",
+            "In Progress",
             "No one home"
           ],
           "hsl(191, 89%, 61%)",
@@ -299,6 +300,7 @@
             "Index Case Not Visited",
             "monththreecomplete",
             "Require Revisit",
+            "In Progress",
             "No one home"
           ],
           "hsl(191, 89%, 61%)",

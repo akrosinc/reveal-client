@@ -205,7 +205,7 @@ public class TaskServiceHelper extends BaseHelper {
                     try {
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
                         task.setLastModified(new DateTime());
-                        taskRepository.addOrUpdate(task);
+                        taskRepository.add(task);
                     } catch (Exception e) {
                         Timber.tag("Reveal Exception").w(e, "Error saving task %s", task.getIdentifier());
                     }

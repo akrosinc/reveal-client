@@ -21,6 +21,7 @@ import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Period;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
@@ -28,7 +29,6 @@ import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.DateUtil;
-import org.smartregister.util.P2PUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +61,7 @@ public class TaskRepository extends BaseRepository {
 
     public static final String PRIORITY = "priority";
     public static final String CODE = "code";
+    public static final String ACTION = "action";
     public static final String DESCRIPTION = "description";
     public static final String FOCUS = "focus";
     public static final String FOR = "for";
@@ -82,6 +83,7 @@ public class TaskRepository extends BaseRepository {
     public static final String RESTRICTION_END = "restriction_end";
     public static final String HOUSEHOLD_ID = "household_id";
     public static final String COMPOUND_ID = "compound_id";
+    public static final String PARENT_TASK_ID = "parent_task_id";
 
     public final TaskNotesRepository taskNotesRepository;
 
@@ -98,6 +100,7 @@ public class TaskRepository extends BaseRepository {
                     BUSINESS_STATUS + " VARCHAR,  " +
                     PRIORITY + " VARCHAR,  " +
                     CODE + " VARCHAR , " +
+                    ACTION + " VARCHAR ," +
                     DESCRIPTION + " VARCHAR , " +
                     FOCUS + " VARCHAR , " +
                     FOR + " VARCHAR NOT NULL, " +
@@ -114,7 +117,8 @@ public class TaskRepository extends BaseRepository {
                     REQUESTER + " VARCHAR,  " +
                     RESTRICTION_REPEAT + " INTEGER,  " +
                     RESTRICTION_START + " INTEGER,  " +
-                    RESTRICTION_END + " INTEGER )";
+                    RESTRICTION_END + " INTEGER, " +
+                    PARENT_TASK_ID + " VARCHAR )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
@@ -122,10 +126,41 @@ public class TaskRepository extends BaseRepository {
     public TaskRepository(TaskNotesRepository taskNotesRepository) {
         this.taskNotesRepository = taskNotesRepository;
     }
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TASK_TABLE);
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
+    }
+
+    /**
+     * Returns all active child tasks whose {@code parent_task_id} matches the given
+     * parent task identifier, filtered by plan.
+     *
+     * @param parentTaskId the identifier of the parent task
+     * @param planId       the current plan identifier
+     * @return set of child tasks, never null
+     */
+    public Set<Task> getTasksByParentId(String parentTaskId, String planId) {
+        return getTasks(
+                String.format("SELECT * FROM %s WHERE %s = ? AND %s = ? AND %s NOT IN (%s)",
+                        TASK_TABLE, PARENT_TASK_ID, PLAN_ID, STATUS,
+                        TextUtils.join(",",
+                                Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                ArrayUtils.addAll(new String[]{parentTaskId, planId},
+                        INACTIVE_TASK_STATUS));
+    }
+
+    /**
+     * Returns all child tasks for a parent regardless of plan — useful when
+     * checking completion across a session.
+     */
+    public Set<Task> getTasksByParentId(String parentTaskId) {
+        return getTasks(
+                String.format("SELECT * FROM %s WHERE %s = ? AND %s NOT IN (%s)",
+                        TASK_TABLE, PARENT_TASK_ID, STATUS,
+                        TextUtils.join(",",
+                                Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                ArrayUtils.addAll(new String[]{parentTaskId},
+                        INACTIVE_TASK_STATUS));
     }
 
     /**
@@ -141,7 +176,7 @@ public class TaskRepository extends BaseRepository {
         database.execSQL(String.format("UPDATE %s SET %s=?", TASK_TABLE, PRIORITY), new Object[]{Task.TaskPriority.ROUTINE.name()});
     }
 
-    public void addOrUpdate(Task task) {
+    public void add(Task task) {
         addOrUpdate(task, false);
     }
 
@@ -173,6 +208,7 @@ public class TaskRepository extends BaseRepository {
             contentValues.put(PRIORITY, Task.TaskPriority.ROUTINE.name());
         }
         contentValues.put(CODE, task.getCode());
+        contentValues.put(ACTION, task.getAction());
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
         contentValues.put(FOR, task.getForEntity());
@@ -196,12 +232,13 @@ public class TaskRepository extends BaseRepository {
                 contentValues.put(RESTRICTION_END, DateUtil.getMillis(task.getRestriction().getPeriod().getEnd()));
             }
         }
+        contentValues.put(PARENT_TASK_ID, task.getParentTaskId()); // nullable
 
         if (updateOnly) {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
         } else {
             long replace = getWritableDatabase().replace(TASK_TABLE, null, contentValues);
-//            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
+            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
         }
 
         if (task.getNotes() != null) {
@@ -213,13 +250,15 @@ public class TaskRepository extends BaseRepository {
     }
 
     public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
+
         Cursor cursor = null;
         Map<String, Set<Task>> tasks = new HashMap<>();
         try {
             String[] params = new String[]{planId, groupId};
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s)",
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s) AND %s IS NULL",
                             TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
-                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")),
+                            PARENT_TASK_ID),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
@@ -273,7 +312,6 @@ public class TaskRepository extends BaseRepository {
 
     public Map<String, TaskCount> getGdrsMemberTaskCounts(List<String> structureIds
             , List<String> businessStatuses, List<String> taskStates) {
-        Cursor cursor = null;
 
 
         StringBuilder inClause = new StringBuilder();
@@ -295,7 +333,7 @@ public class TaskRepository extends BaseRepository {
         StringBuilder businessStatesInClause = new StringBuilder();
         for (int i = 0; i < businessStatuses.size(); i++) {
             businessStatesInClause.append("?");
-            if (i < taskStates.size() - 1) {
+            if (i < businessStatuses.size() - 1) {
                 businessStatesInClause.append(", ");
             }
         }
@@ -317,25 +355,26 @@ public class TaskRepository extends BaseRepository {
         parameters.addAll(businessStatuses); // Example business status to exclude (replace with your actual value)
         parameters.addAll(structureIds);
 
-        cursor = getReadableDatabase().rawQuery(sql, parameters.toArray(new String[0]));
+        try (Cursor cursor = getReadableDatabase().rawQuery(sql, parameters.toArray(new String[0]))) {
 
-        List<TaskCount> taskCounts = new ArrayList<>();
+            List<TaskCount> taskCounts = new ArrayList<>();
 
-        while (cursor.moveToNext()) {
-            TaskCount taskCount = new TaskCount();
-            taskCount.setCount(cursor.getInt(cursor.getColumnIndexOrThrow("count")));
-            taskCount.setBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow("businessStatus")));
-            taskCount.setStructureId(cursor.getString(cursor.getColumnIndexOrThrow("structureId")));
-            taskCount.setCode(cursor.getString(cursor.getColumnIndexOrThrow("code")));
+            while (cursor.moveToNext()) {
+                TaskCount taskCount = new TaskCount();
+                taskCount.setCount(cursor.getInt(cursor.getColumnIndexOrThrow("count")));
+                taskCount.setBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow("businessStatus")));
+                taskCount.setStructureId(cursor.getString(cursor.getColumnIndexOrThrow("structureId")));
+                taskCount.setCode(cursor.getString(cursor.getColumnIndexOrThrow("code")));
 
-            taskCounts.add(taskCount);
-        }
-        Map<String, TaskCount> collect = taskCounts.stream()
+                taskCounts.add(taskCount);
+            }
+
+            return taskCounts.stream()
                 .collect(Collectors.toMap(
-                        taskCount -> taskCount.getStructureId().concat("-").concat(taskCount.getCode())
-                        , taskCount -> taskCount, (a, b) -> a));
-
-        return collect;
+                    tc -> tc.getStructureId() + "-" + tc.getCode(),
+                    tc -> tc,
+                    (a, b) -> a));
+        }
     }
 
     @Getter
@@ -352,32 +391,7 @@ public class TaskRepository extends BaseRepository {
         private int count;
     }
 
-    /**
-     * Accepts a stream of tasks
-     *
-     * @param planId
-     * @param groupId
-     * @param consumer
-     */
-    public void readTasks(String planId, String groupId, String code, Consumer<Task> consumer) {
-        Cursor cursor = null;
-        try {
-            String[] params = new String[]{planId, groupId, code};
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
-                            TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
-                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
-                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
-            while (cursor.moveToNext()) {
-                Task task = readCursor(cursor);
-                consumer.accept(task);
-            }
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-    }
+
 
 
     public Task getTaskByIdentifier(String identifier) {
@@ -479,6 +493,11 @@ public class TaskRepository extends BaseRepository {
         Task.Restriction restriction = new Task.Restriction(cursor.getInt(cursor.getColumnIndex(RESTRICTION_REPEAT)), restrictionPeriod);
         if (restriction.getRepetitions() != 0 || restrictionPeriod.getStart() != null && restrictionPeriod.getEnd() != null) {
             task.setRestriction(restriction);
+        }
+        // nullable — column may not exist in older DB versions
+        int parentTaskCol = cursor.getColumnIndex(PARENT_TASK_ID);
+        if (parentTaskCol >= 0 && !cursor.isNull(parentTaskCol)) {
+            task.setParentTaskId(cursor.getString(parentTaskCol));
         }
         return task;
     }
@@ -695,7 +714,7 @@ public class TaskRepository extends BaseRepository {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
                 Task task = TaskServiceHelper.taskGson.fromJson(jsonObject.toString(), Task.class);
-                addOrUpdate(task);
+                add(task);
             }
 
             getWritableDatabase().setTransactionSuccessful();

@@ -21,6 +21,10 @@ import lombok.ToString;
 @Data
 public class Task implements Serializable {
 
+    public Task(){
+
+    }
+
     private static final long serialVersionUID = -9118755114172291102L;
 
     public enum TaskStatus {
@@ -104,6 +108,8 @@ public class Task implements Serializable {
 
     private String code;
 
+    private String action;
+
     private String description;
 
     private String focus;
@@ -145,6 +151,13 @@ public class Task implements Serializable {
     private String householdId;
 
     private String compoundId;
+
+    /**
+     * Nullable. When set, this task is a child of the task identified by this ID.
+     * Used by {@link org.smartregister.repository.TaskRepository#getTasksByParentId}
+     * to fetch all child tasks for a given parent.
+     */
+    private String parentTaskId;
 
     public Long getServerVersion() {
         return serverVersion;

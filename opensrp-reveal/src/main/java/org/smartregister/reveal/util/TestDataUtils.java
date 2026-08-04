@@ -67,7 +67,7 @@ public class TestDataUtils {
             }.getType());
             for (Task task : tasks) {
                 try {
-                    taskRepository.addOrUpdate(task);
+                    taskRepository.add(task);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

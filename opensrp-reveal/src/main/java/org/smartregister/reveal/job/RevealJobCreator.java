@@ -13,7 +13,6 @@ import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.ValidateSyncDataServiceJob;
 import org.smartregister.reveal.sync.RevealSyncIntentService;
-import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.sync.intent.DocumentConfigurationIntentService;
 
 import timber.log.Timber;

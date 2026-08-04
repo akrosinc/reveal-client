@@ -34,6 +34,8 @@ import static org.smartregister.reveal.util.Constants.MDA_TASK_COUNT;
 import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_TEMPLATE;
 import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_TYPE;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_UUID;
@@ -52,12 +54,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Action;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.model.StructureDetails;
+import org.smartregister.reveal.model.TaskDetails;
 import timber.log.Timber;
 
 /**
@@ -71,7 +77,7 @@ public class GeoJsonUtils {
         return gson.toJson(locations);
     }
 
-    public static String getGeoJsonFromStructuresAndTasks(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames) {
+    public static String getGeoJsonFromStructuresAndTasks(List<Location> structures, Map<String, Set<Task>> tasks, String indexCase, Map<String, StructureDetails> structureNames, PlanDefinition planDefinition) {
         for (Location structure : structures) {
             Set<Task> taskSet = tasks.get(structure.getId());
             HashMap<String, String> taskProperties = new HashMap<>();
@@ -112,6 +118,20 @@ public class GeoJsonUtils {
                 taskProperties.put(FEATURE_SELECT_TASK_BUSINESS_STATUS, task.getBusinessStatus()); // used to determine action to take when a feature is selected
                 taskProperties.put(TASK_STATUS, task.getStatus().name());
                 taskProperties.put(TASK_CODE, task.getCode());
+
+                Optional<Action> anyAction = planDefinition.getActions().stream()
+                    .filter(action -> action.getForm() != null)
+                    .filter(action -> action.getCode().equals(task.getCode())).findAny();
+
+                if (anyAction.isPresent()){
+                    Action action = anyAction.get();
+                    if (action.getForm()!=null){
+                        taskProperties.put(FORM_FOR_TASK,action.getForm().getName());
+                        if (action.getForm().isTemplate()){
+                            taskProperties.put(FORM_TEMPLATE,action.getForm().getTitle());
+                        }
+                    }
+                }
 
                 if (indexCase != null && structure.getId().equals(indexCase)) {
                     taskProperties.put(IS_INDEX_CASE, Boolean.TRUE.toString());

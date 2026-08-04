@@ -111,7 +111,7 @@ public class TaskUtils {
         task.setLastModified(now);
         task.setOwner(sharedPreferences.fetchRegisteredANM());
         task.setSyncStatus(BaseRepository.TYPE_Created);
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
         revealApplication.setSynced(false);
         return task;
     }
@@ -145,7 +145,7 @@ public class TaskUtils {
         task.setLastModified(now);
         task.setOwner(sharedPreferences.fetchRegisteredANM());
         task.setSyncStatus(BaseRepository.TYPE_Created);
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
         revealApplication.setSynced(false);
 
         return task;
@@ -230,7 +230,7 @@ public class TaskUtils {
             task.setStatus(READY);
             task.setLastModified(new DateTime());
             task.setSyncStatus(BaseRepository.TYPE_Unsynced);
-            taskRepository.addOrUpdate(task);
+            taskRepository.add(task);
             revealApplication.setSynced(false);
 
             revealApplication.setRefreshMapOnEventSaved(true);

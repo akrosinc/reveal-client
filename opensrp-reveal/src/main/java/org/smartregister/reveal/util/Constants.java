@@ -222,6 +222,8 @@ public interface Constants {
         public static String TASK_BUSINESS_STATUS = "taskBusinessStatus";
         public static String TASK_STATUS = "taskStatus";
         public static String TASK_CODE = "taskCode";
+        public static String FORM_FOR_TASK = "taskForm";
+        public static String FORM_TEMPLATE = "formTemplate";
         public static String LOCATION_UUID = "locationUUID";
         public static String LOCATION_VERSION = "locationVersion";
         public static String LOCATION_TYPE = "locationType";

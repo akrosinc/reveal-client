@@ -87,9 +87,11 @@ import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.PhysicalLocation;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
@@ -118,7 +120,6 @@ import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.InteractorUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
-import org.smartregister.util.JsonFormUtils;
 
 import lombok.Getter;
 import timber.log.Timber;
@@ -137,6 +138,8 @@ public class ListTaskInteractor extends BaseInteractor {
     private LocationRepository locationRepository;
 
     private TaskRepository taskRepository;
+
+    private PlanDefinitionRepository planRepository;
 
     private HdssRepository hdssRepository;
 
@@ -158,6 +161,7 @@ public class ListTaskInteractor extends BaseInteractor {
         taskDetails = new ArrayList<>();
         locationRepository = RevealApplication.getInstance().getLocationRepository();
         hdssRepository = RevealApplication.getInstance().getHdssRepository();
+        planRepository = RevealApplication.getInstance().getPlanDefinitionRepository();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -528,6 +532,9 @@ public class ListTaskInteractor extends BaseInteractor {
                         Map<String, Set<Task>> tasks;
                         Map<String, TaskRepository.TaskCount> taskCounts = null;
 
+                        PlanDefinition planDefinitionById = planRepository.findPlanDefinitionById(
+                            PreferencesUtil.getInstance().getCurrentPlanId());
+
                         if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))) {
                             tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
 
@@ -562,7 +569,7 @@ public class ListTaskInteractor extends BaseInteractor {
                             featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
                         } else {
                            features = GeoJsonUtils
-                                    .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+                                    .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames,planDefinitionById);
                             featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
                         }
 
@@ -575,6 +582,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 }
                 JSONObject finalFeatureCollection = featureCollection;
                 List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+
                 final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
@@ -692,6 +700,7 @@ public class ListTaskInteractor extends BaseInteractor {
         Location currentOperationalArea = locationRepository
                 .getLocationByName(PreferencesUtil.getInstance().getCurrentOperationalArea());
         if (currentOperationalArea != null) {
+
             Map<String, Set<Task>> tasks = taskRepository
                     .getTasksByPlanAndGroup(PreferencesUtil.getInstance().getCurrentPlanId(),
                             currentOperationalArea.getId());
@@ -728,7 +737,7 @@ public class ListTaskInteractor extends BaseInteractor {
             details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
             details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
             task.setSyncStatus(TYPE_Unsynced);
-            taskRepository.addOrUpdate(task);
+            taskRepository.add(task);
             Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details,
                     FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
             event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible")
@@ -836,7 +845,7 @@ public class ListTaskInteractor extends BaseInteractor {
         task.setBusinessStatus(businessStatus);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        taskRepository.addOrUpdate(task);
+        taskRepository.add(task);
         revealApplication.setSynced(false);
         appExecutors.mainThread().execute(new Runnable() {
             @Override

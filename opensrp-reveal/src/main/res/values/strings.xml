@@ -166,6 +166,7 @@
     <string name="residents">RESIDENTS</string>
     <string name="return_to_all_families">Return</string>
     <string name="tasks">TASKS (%1$d)</string>
+    <string name="tasks_section_header">Tasks</string>
     <string name="comma">,</string>
     <string name="distribute_llin">Distribute Bednet</string>
     <string name="record_llin">Record\nDistribution</string>

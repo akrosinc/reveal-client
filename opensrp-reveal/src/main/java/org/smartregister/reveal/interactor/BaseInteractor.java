@@ -1077,7 +1077,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                 task.setBusinessStatus(businessStatus);
                 task.setStatus(Task.TaskStatus.COMPLETED);
                 task.setSyncStatus(BaseRepository.TYPE_Created);
-                taskRepository.addOrUpdate(task);
+                taskRepository.add(task);
                 Set<Task> removedTasks = new HashSet<>();
                 for (Task bloodScreeningTask :
                     taskRepository.getTasksByEntityAndCode(
@@ -1088,7 +1088,7 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
                         BLOOD_SCREENING)) {
                   bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
                   bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
-                  taskRepository.addOrUpdate(bloodScreeningTask);
+                  taskRepository.add(bloodScreeningTask);
                   removedTasks.add(bloodScreeningTask);
                 }
                 revealApplication.setSynced(false);

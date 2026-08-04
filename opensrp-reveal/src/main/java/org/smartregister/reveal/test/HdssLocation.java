@@ -2,4 +2,4 @@ package org.smartregister.reveal.test;
 
 import org.smartregister.domain.Location;
 
-class HdssLocation extends Location {}
+public class HdssLocation extends Location {}

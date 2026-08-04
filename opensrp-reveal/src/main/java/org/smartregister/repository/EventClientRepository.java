@@ -1617,7 +1617,8 @@ public class EventClientRepository extends BaseRepository {
                     + eventTable.name()
                     + " WHERE "
                     + event_column.baseEntityId.name()
-                    + "= ? AND " + event_column.eventType.name() + "= ? ", new String[]{baseEntityId, eventType});
+                    + "= ? AND " + event_column.eventType.name() + "= ? ORDER BY "
+                    + event_column.updatedAt.name() + " DESC LIMIT 1", new String[]{baseEntityId, eventType});
             if (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 

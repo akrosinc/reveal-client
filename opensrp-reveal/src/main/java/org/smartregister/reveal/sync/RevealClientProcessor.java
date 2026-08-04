@@ -284,7 +284,7 @@ public class RevealClientProcessor extends ClientProcessorForJava {
                 task.setSyncStatus(BaseRepository.TYPE_Unsynced);
                 revealApplication.setSynced(false);
             }
-            taskRepository.addOrUpdate(task);
+            taskRepository.add(task);
             operationalAreaId = task.getGroupIdentifier();
         }
         return operationalAreaId;

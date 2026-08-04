@@ -555,6 +555,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                     } else {
                         handleFailure(result, context);
                     }
+
                 });
             });
 

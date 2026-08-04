@@ -132,6 +132,7 @@ import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.template.FormRecyclerFormActivity;
 import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
@@ -720,6 +721,65 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         intent.putExtra(Properties.TASK_IDENTIFIER, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(Properties.TASK_BUSINESS_STATUS, feature.getStringProperty(Properties.TASK_BUSINESS_STATUS));
         intent.putExtra(Properties.TASK_CODE, feature.getStringProperty(Properties.TASK_CODE));
+        startActivity(intent);
+    }
+
+    public void openFormByTemplate(String formTemplate){
+        Timber.tag("TestFrag").i("ListTaskActivity openFormByTemplate feature clicked");
+
+//        if (formTemplate == "Form-List-Form"){
+            openTemplate();
+//        }
+    }
+
+
+    /**
+     * Opens {@link org.smartregister.reveal.template.GDRSFormRecyclerActivity} for the
+     * selected feature — the template-based replacement for {@link #openRCD()}.
+     *
+     * <p>The parent form name is resolved from the task code so the correct
+     * JSON form is embedded at the top of the template screen.
+     */
+    public void openGDRSTemplate() {
+        clearSelectedFeature();
+        Feature feature = listTaskPresenter.getSelectedFeature();
+
+        Intent intent = new Intent(this,
+                org.smartregister.reveal.template.GDRSFormRecyclerActivity.class);
+        intent.putExtra(
+                org.smartregister.reveal.template.GDRSFormRecyclerActivity.EXTRA_PARENT_FORM_NAME,
+//            feature.getStringProperty(Properties.FORM_FOR_TASK));
+            "gdrs_index_case.json");
+        intent.putExtra(Properties.LOCATION_UUID,
+                feature.id());
+        intent.putExtra(Properties.TASK_IDENTIFIER,
+                feature.getStringProperty(Properties.TASK_IDENTIFIER));
+        intent.putExtra(Properties.TASK_CODE,
+                feature.getStringProperty(Properties.TASK_CODE));
+
+        startActivity(intent);
+    }
+
+    public void openTemplate() {
+        clearSelectedFeature();
+        Feature feature = listTaskPresenter.getSelectedFeature();
+
+        Intent intent = new Intent(this, FormRecyclerFormActivity.class);
+        String upperForm = feature.getStringProperty(Properties.FORM_FOR_TASK);
+        Timber.tag("TestFrag").i("ListTasksActivity openTemplate form %s",upperForm);
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_NAME, "json.form/"+ upperForm);
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEY, "show_other_form");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Structure");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_child.json");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_BUSINESS_STATUS_FIELD, "business_status");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_HEADER, "Structures");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_HINT, "Capture number of structures");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEY, "show_list");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes");
+
         startActivity(intent);
     }
 

@@ -1296,7 +1296,6 @@ public class HdssRepository extends BaseRepository {
                 if (hdssHousehold.getServerVersion() > currentMaxServerVersion.get()){
                   currentMaxServerVersion.set(hdssHousehold.getServerVersion());
                 }
-              Timber.tag("RevealMap").i("content values %s",contentValues.toString());
                 writableDatabase.replace(HDSS_HOUSEHOLD, null, contentValues);
             });
 
