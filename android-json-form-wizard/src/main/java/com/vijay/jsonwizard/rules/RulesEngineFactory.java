@@ -117,9 +117,16 @@ public class RulesEngineFactory implements RuleListener {
 
         rules = getRulesFromAsset(RULE_FOLDER_PATH + ruleFilename);
 
+        Timber.tag("RelevanceDebug").i("getRelevance: ruleFilename=%s, rulesLoaded=%b",
+                ruleFilename, rules != null);
+        Timber.tag("RelevanceDebug").i("getRelevance: facts before rules=%s", facts.asMap().toString());
+
         processDefaultRules(rules, facts);
 
         Boolean b = facts.get(RuleConstant.IS_RELEVANT);
+
+        Timber.tag("RelevanceDebug").i("getRelevance: ruleFilename=%s, isRelevant=%b, facts after=%s",
+                ruleFilename, b, facts.asMap().toString());
 
         return b;
     }
@@ -157,6 +164,7 @@ public class RulesEngineFactory implements RuleListener {
                         BufferedReader bufferedReader = ((ClientFormContract.View) context).getRules(context, fileName);
                         ruleMap.put(fileName, mvelRuleFactory.createRules(bufferedReader));
                     } catch (Exception ex) {
+                        Timber.tag("RelevanceDebug").e(ex, "getRulesFromAsset: failed to load '%s'", fileName);
                         ((ClientFormContract.View) context).handleFormError(true, fileName);
                         return null;
                     }
@@ -175,7 +183,9 @@ public class RulesEngineFactory implements RuleListener {
     }
 
     protected void processDefaultRules(Rules rules, Facts facts) {
-        defaultRulesEngine.fire(rules, facts);
+        if (rules != null) {
+            defaultRulesEngine.fire(rules, facts);
+        }
     }
 
     protected Object getValue(String value) {

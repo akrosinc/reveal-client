@@ -72,8 +72,11 @@ public class RepeatingGroupGenerator {
             }
         }
 
+        if (repeatingGrpValues == null) {
+            Timber.tag("RepeatingGroupGenerator").w("init: repeatingGrpValues is null for key=%s — field not found in step", repeatingGroupKey);
+            return;
+        }
         updateGroupValue(repeatingGrpValues, stepFields, pos);
-//        Timber.tag("WriteValue").i("storedValues = %s", storedValues);
 
     }
 
@@ -111,7 +114,7 @@ public class RepeatingGroupGenerator {
                     updateFieldProperties(repeatingGrpField, repeatingGrpFieldKey);
 
                     updateField(repeatingGrpField, entryMap);
-                    repeatingGrpField.put(JsonFormConstants.KEY, repeatingGrpFieldKey + "_" + baseEntityIdModified);
+                    repeatingGrpField.put(JsonFormConstants.KEY, repeatingGrpFieldKey + "|" + baseEntityIdModified);
 
 //                    Timber.tag("WriteValue").i(
 //                        "generated key=%s relevance=%s",

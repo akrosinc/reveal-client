@@ -211,6 +211,18 @@
         }
       },
       {
+        "key": "household_section",
+        "type": "collapsible_section",
+        "label": "Household Details",
+        "field_keys": ["continue_over_step", "show_other_form","show_list","name_capture","allow_work"],
+        "relevance": {
+          "step1:is_valid_household": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
         "key": "business_status",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",

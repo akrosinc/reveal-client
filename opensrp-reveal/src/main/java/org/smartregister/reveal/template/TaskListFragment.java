@@ -63,6 +63,8 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
     private TaskRecyclerAdapter adapter;
     private State               currentState = State.EMPTY;
     private String              countHintText;
+    private String              countLabelText;
+    private String              emptyMessageText;
     private String              headerText;
 
     /* ------------------------------------------------------------------ views */
@@ -95,6 +97,16 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
     /** Set the hint text for the count input field. */
     public void setCountHint(String hint) {
         this.countHintText = hint;
+    }
+
+    /** Set the label text shown above the count input field. */
+    public void setCountLabel(String label) {
+        this.countLabelText = label;
+    }
+
+    /** Set the empty state message. */
+    public void setEmptyMessage(String message) {
+        this.emptyMessageText = message;
     }
 
     /** Set the header text shown above the task list. */
@@ -157,10 +169,15 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
         if (countHintText != null && !countHintText.isEmpty()) {
             etCount.setHint(countHintText);
         }
-        if (headerText != null && !headerText.isEmpty()) {
-            // The header is the section label — set on tvSectionHeader in the host layout.
-            // Since TaskListFragment doesn't own the header view, we leave it to the host.
-            // But if there's a local label, we can set it on tvEmpty as fallback text.
+        if (countLabelText != null && !countLabelText.isEmpty()) {
+            android.widget.TextView tvCountLabel = view.findViewById(R.id.tv_count_label);
+            if (tvCountLabel != null) {
+                tvCountLabel.setText(countLabelText);
+                tvCountLabel.setVisibility(View.VISIBLE);
+            }
+        }
+        if (emptyMessageText != null && !emptyMessageText.isEmpty()) {
+            tvEmpty.setText(emptyMessageText);
         }
 
         // Button listeners

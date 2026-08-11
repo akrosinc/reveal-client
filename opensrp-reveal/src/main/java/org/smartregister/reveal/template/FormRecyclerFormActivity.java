@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import org.joda.time.DateTime;
 import org.json.JSONObject;
+import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.R;
@@ -64,14 +66,23 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     public static final String EXTRA_CHILD_FORM_NAME       = "childFormName";
     public static final String EXTRA_BUSINESS_STATUS_FIELD = "businessStatusField";
     public static final String EXTRA_COUNT_HINT            = "countHint";
+    public static final String EXTRA_COUNT_LABEL           = "countLabel";
     public static final String EXTRA_RECYCLER_HEADER       = "recyclerHeader";
     public static final String EXTRA_RECYCLER_GATE_KEY     = "recyclerGateFieldKey";
     public static final String EXTRA_RECYCLER_GATE_VALUE   = "recyclerGateFieldValue";
+    public static final String EXTRA_EMPTY_MESSAGE         = "emptyMessage";
 
     /* ------------------------------------------------------------------ fragment tags */
     private static final String TAG_FORM1    = "form1";
     private static final String TAG_FORM2    = "form2";
     private static final String TAG_RECYCLER = "task_recycler";
+
+    /* ------------------------------------------------------------------ form field keys */
+    private static final String FIELD_VISIT_DATE       = "visit_date";
+    private static final String FIELD_HOUSEHOLD_ID     = "household_id_value";
+    private static final String FIELD_TASK_ID          = "task_id";
+    private static final String FIELD_ENTITY_ID        = "entity_id";
+    private static final String FIELD_BUSINESS_STATUS  = "business_status";
 
     /* ------------------------------------------------------------------ state */
     private String formName;
@@ -83,9 +94,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private String childFormName;
     private String businessStatusField;
     private String countHint;
+    private String countLabel;
     private String recyclerHeader;
     private String recyclerGateKey;
     private String recyclerGateValue;
+    private String emptyMessage;
 
     private boolean recyclerVisible = false;
 
@@ -132,6 +145,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
         // Load the single form JSON (contains step1 + optionally step2)
         JSONObject formJSON = formUtils.getFormJSON(this, formName, null, null);
+
+
         getIntent().putExtra(JsonFormConstants.JSON_FORM_KEY.JSON,
                 formJSON != null ? formJSON.toString()
                         : "{\"encounter_type\":\"placeholder\",\"count\":\"1\","
@@ -261,6 +276,29 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 currentForm.put("details", details);
                 Timber.tag("FormSaveInteractor").i("populateForm1: injected entity_id=%s, taskIdentifier=%s",
                         parentTask.getForEntity(), parentTaskId);
+
+                // Pre-populate date field with today's date for fresh forms
+                try {
+                    formUtils.populateField(currentForm, FIELD_VISIT_DATE,
+                            org.joda.time.LocalDate.now().toString("dd-MM-yyyy"),
+                            com.vijay.jsonwizard.constants.JsonFormConstants.VALUE);
+                    Timber.tag("FormSaveInteractor").i("populateForm1: date set to %s",
+                            org.joda.time.LocalDate.now().toString("dd-MM-yyyy"));
+                } catch (Exception dateEx) {
+                    Timber.tag("FormSaveInteractor").e(dateEx, "populateForm1: date population failed");
+                }
+
+                // Pre-populate household_id_value with UUID for fresh forms only
+                // (when re-opening, populateForm from last event will overwrite with the saved value)
+                if (Constants.BusinessStatus.NOT_VISITED.equals(parentTask.getBusinessStatus())) {
+                    try {
+                        formUtils.populateField(currentForm, FIELD_HOUSEHOLD_ID,
+                                java.util.UUID.randomUUID().toString(),
+                                com.vijay.jsonwizard.constants.JsonFormConstants.VALUE);
+                    } catch (Exception e) {
+                        Timber.tag("FormSaveInteractor").w(e, "populateForm1: household_id_value population failed");
+                    }
+                }
             }
         } catch (Exception e) {
             Timber.tag("FormSaveInteractor").e(e, "populateForm1: error injecting entity_id/details");
@@ -326,6 +364,30 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
             return json.optString(Constants.JsonForm.ENCOUNTER_TYPE, "");
         }
         return "";
+    }
+
+    /**
+     * Finds the latest event for a specific task using the taskId column on the event table.
+     * Must be called on the disk thread.
+     */
+    private JSONObject findEventByTaskIdentifier(String taskIdentifier) {
+        if (taskIdentifier == null) return null;
+        try {
+            net.sqlcipher.database.SQLiteDatabase db =
+                    RevealApplication.getInstance().getRepository().getReadableDatabase();
+            String query = "SELECT json FROM event WHERE taskId = ? ORDER BY updatedAt DESC LIMIT 1";
+            try (net.sqlcipher.Cursor cursor = db.rawQuery(query, new String[]{taskIdentifier})) {
+                if (cursor.moveToFirst()) {
+                    String jsonStr = cursor.getString(0);
+                    if (jsonStr != null) {
+                        return new JSONObject(jsonStr.replaceAll("'", ""));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.tag("FormSaveInteractor").e(e, "findEventByTaskIdentifier error for taskId=%s", taskIdentifier);
+        }
+        return null;
     }
 
     private void onFormSaved(String json) {
@@ -504,7 +566,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         taskListFragment.setDisplayProvider(new DefaultTaskDisplayProvider());
         taskListFragment.setCallbacks(this);
         if (countHint != null) taskListFragment.setCountHint(countHint);
+        if (countLabel != null) taskListFragment.setCountLabel(countLabel);
         if (recyclerHeader != null) taskListFragment.setHeader(recyclerHeader);
+        if (emptyMessage != null) taskListFragment.setEmptyMessage(emptyMessage);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -589,8 +653,15 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 childTask.setOwner(owner);
                 childTask.setSyncStatus(org.smartregister.repository.BaseRepository.TYPE_Created);
                 childTask.setParentTaskId(parentTaskId);
+                childTask.setExecutionPeriod(new Period(DateTime.now(),DateTime.now()));
 
-                taskRepository.addOrUpdate(childTask, false);
+                Task task = taskRepository.addOrUpdate(childTask, false);
+
+                Timber.tag("FormSaveInteractor").i("onGenerateTasks: created child %d/%d id=%s, parentId=%s",
+                    (i + 1), count, childTask.getIdentifier(), parentTaskId);
+
+                Timber.tag("FormSaveInteractor").i("onGenerateTasks: saved child %d/%d id=%s, parentId=%s",
+                    (i + 1), count, task.getIdentifier(), parentTaskId);
             }
 
             // 3. Update parent task to "In Progress" since it now has child tasks
@@ -639,9 +710,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
             // Pre-populate entity/task info
             try {
-                formUtils.populateField(formJSON, "task_id", task.getIdentifier(),
+                formUtils.populateField(formJSON, FIELD_TASK_ID, task.getIdentifier(),
                         JsonFormConstants.VALUE);
-                formUtils.populateField(formJSON, "entity_id", task.getForEntity(),
+                formUtils.populateField(formJSON, FIELD_ENTITY_ID, task.getForEntity(),
                         JsonFormConstants.VALUE);
             } catch (Exception e) {
                 Timber.tag("FormRecyclerForm").w(e, "Pre-population failed");
@@ -649,18 +720,15 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
             // If child task is already completed, find last event and populate form
             if (!NOT_VISITED.equals(task.getBusinessStatus())) {
-                Timber.tag("FormSaveInteractor").i("onTaskTap: task completed, finding last event for entity=%s",
-                        task.getForEntity());
+                Timber.tag("FormSaveInteractor").i("onTaskTap: task completed, finding last event for taskId=%s",
+                        task.getIdentifier());
 
                 org.smartregister.repository.EventClientRepository ecRepo =
                         RevealApplication.getInstance().getContext().getEventClientRepository();
 
-                // The event's baseEntityId = task.forEntity
-                String encounterType = formJSON.optString(Constants.JsonForm.ENCOUNTER_TYPE, "");
-
-                // Use a query that gets the LATEST event (ordered by updatedAt desc)
-                JSONObject eventJson = ecRepo.getEventsByBaseEntityIdAndEventType(
-                        task.getForEntity(), encounterType);
+                // Query by taskIdentifier in event details — not by baseEntityId,
+                // since all child tasks share the same forEntity.
+                JSONObject eventJson = findEventByTaskIdentifier(task.getIdentifier());
 
                 if (eventJson != null) {
                     org.smartregister.domain.Event lastEvent =
@@ -670,8 +738,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                         Timber.tag("FormSaveInteractor").i("onTaskTap: populated form from last event");
                     }
                 } else {
-                    Timber.tag("FormSaveInteractor").i("onTaskTap: no last event found for entity=%s, encounterType=%s",
-                            task.getForEntity(), encounterType);
+                    Timber.tag("FormSaveInteractor").i("onTaskTap: no event found for taskId=%s",
+                            task.getIdentifier());
                 }
             }
 
@@ -838,9 +906,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         childFormName       = intent.getStringExtra(EXTRA_CHILD_FORM_NAME);
         businessStatusField = intent.getStringExtra(EXTRA_BUSINESS_STATUS_FIELD);
         countHint           = intent.getStringExtra(EXTRA_COUNT_HINT);
+        countLabel          = intent.getStringExtra(EXTRA_COUNT_LABEL);
         recyclerHeader      = intent.getStringExtra(EXTRA_RECYCLER_HEADER);
         recyclerGateKey     = intent.getStringExtra(EXTRA_RECYCLER_GATE_KEY);
         recyclerGateValue   = intent.getStringExtra(EXTRA_RECYCLER_GATE_VALUE);
+        emptyMessage        = intent.getStringExtra(EXTRA_EMPTY_MESSAGE);
 
         if (gateFieldValue == null) gateFieldValue = "yes";
         if (recyclerGateValue == null) recyclerGateValue = "yes";
@@ -906,8 +976,14 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                                     ? businessStatus : Constants.BusinessStatus.COMPLETE);
                             task.setStatus(Task.TaskStatus.COMPLETED);
                             task.setLastModified(org.joda.time.DateTime.now());
-                            task.setSyncStatus(
+                            // Only change to Unsynced if already Synced.
+                            // If still Created (never synced to server), keep as Created
+                            // so the server receives it as a new task, not an update.
+                            if (org.smartregister.repository.BaseRepository.TYPE_Synced
+                                .equals(task.getSyncStatus())) {
+                                task.setSyncStatus(
                                     org.smartregister.repository.BaseRepository.TYPE_Unsynced);
+                            }
                             repo.addOrUpdate(task, false);
                             Timber.tag("FormSaveInteractor")
                                     .i("Child task %s → %s", taskID, businessStatus);

@@ -897,7 +897,7 @@ public class TaskRepository extends BaseRepository {
                 "    DISTINCT(for) " +
                 "FROM " +
                 "    task " +
-                "WHERE status IN (?, ?) " +
+                "WHERE status IN (?, ?) and parent_task_id IS NULL" +
                 "GROUP BY " +
                 "    plan_id, for, code " +
                 "HAVING " +

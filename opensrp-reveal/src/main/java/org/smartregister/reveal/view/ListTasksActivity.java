@@ -768,17 +768,22 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         String upperForm = feature.getStringProperty(Properties.FORM_FOR_TASK);
         Timber.tag("TestFrag").i("ListTasksActivity openTemplate form %s",upperForm);
         intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_NAME, "json.form/"+ upperForm);
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEY, "show_other_form");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEY, "permission_enter");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes_all");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Structure");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_child.json");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Coverage Structure");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_formB.json");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_BUSINESS_STATUS_FIELD, "business_status");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_HEADER, "Structures");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_HINT, "Capture number of structures");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEY, "show_list");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_LABEL,
+            "14. How many separate structures are there in this household? "
+                + "Do not include any livestock shelters or storage areas.");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEY, "permission_enter");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes_all");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_EMPTY_MESSAGE,
+            "No structures generated yet. Enter the number above and tap Generate.");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_HINT, "enter number");
 
         startActivity(intent);
     }

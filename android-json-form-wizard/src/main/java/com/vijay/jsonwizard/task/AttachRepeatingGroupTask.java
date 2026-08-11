@@ -179,11 +179,13 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
                 ArrayList<String> deletedFields = new ArrayList<>();
                 int len = fields.length();
                 for (int i = len - 1; i >= 0; i--) {
-                    String[] key = ((String) fields.getJSONObject(i).get(KEY)).split("_");
-                    if (keysToRemove.contains(key[key.length - 1])) {
-                        String fieldKey = fields.getJSONObject(i).optString(KEY);
-                        deletedFields.add((String) fields.getJSONObject(i).get(KEY));
-                        widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().remove(widgetArgs.getStepName() + "_" + fieldKey);
+                    String fieldFullKey = fields.getJSONObject(i).optString(KEY);
+                    // Split on pipe separator to get the group unique id
+                    int pipeIdx = fieldFullKey.lastIndexOf("|");
+                    String groupId = pipeIdx >= 0 ? fieldFullKey.substring(pipeIdx + 1) : null;
+                    if (groupId != null && keysToRemove.contains(groupId)) {
+                        deletedFields.add(fieldFullKey);
+                        widgetArgs.getFormFragment().getJsonApi().getFormFieldsMap().remove(widgetArgs.getStepName() + "_" + fieldFullKey);
                         fields.remove(i);
                     }
                 }

@@ -1,0 +1,996 @@
+﻿{
+  "count": "2",
+  "encounter_type": "rapid_coverage_survey",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Rapid Coverage Survey",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "identification_label",
+        "type": "label",
+        "text": "Identification / eligibility",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "eligible_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this an eligible structure?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          },
+          {
+            "key": "no_already_visited",
+            "text": "No; this structure is part of a household that was already visited"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "household_id_value",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter household id",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "editable": true,
+        "read_only": true,
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "date_label",
+        "type": "label",
+        "text": "2. Visit Date: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "visit_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "enter date",
+        "default":"today",
+
+        "text_size": "6sp",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "eligible_person",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "4. Did you find someone at the household to answer questions?",
+        "options": [
+          { "key": "yes", "text": "Yes, someone is available to answer questions" },
+          { "key": "no_adult", "text": "No appropriate adult available" },
+          { "key": "no_one_home", "text": "No-one home" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "explain_consent",
+        "type": "label",
+        "text": "5. Field worker: Please explain consent form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "18sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "respondent_consent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "6. Did the respondent consent to the survey?",
+        "options": [
+          { "key": "yes", "text": "Yes, consent form completed" },
+          { "key": "no", "text": "No, declined" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_person": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_people_household_label",
+        "type": "label",
+        "text": "7. How many people usually live in your household?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_people_household",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "edit_type": "number",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_people_slept_label",
+        "type": "label",
+        "text": "8. How many people slept in the household last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_people_slept",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_relative_max": {
+          "value": "num_people_household",
+          "err": "Cannot be more than number of people in household"
+        },
+        "edit_type": "number",
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_nets_label",
+        "type": "label",
+        "text": "9. How many mosquito nets does the household have?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_nets",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "edit_type": "number",
+        "is_mandatory": true,
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_slept_under_net_label",
+        "type": "label",
+        "text": "10. How many people slept under a mosquito net last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "num_slept_under_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "edit_type": "number",
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "received_emanators",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "11. Did you receive any spatial emanators (devices placed inside houses to repel mosquitoes)?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "know_received_emanators",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "11. Do you know how many emanators were received?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_received_label",
+        "type": "label",
+        "text": "12. How many spatial emanators did you receive?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:know_received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_received",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": { "value": "true", "err": "Required field" },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "30",
+          "err": "This field must be less than or equal to 30"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Must be a whole number"
+        },
+        "relevance": {
+          "step1:know_received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "know_hanging_emanators",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "11. Did you know how many emanators are hanging inside your house?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_hanging_label",
+        "type": "label",
+        "text": "13. How many spatial emanators are hanging inside your house?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_hanging",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "edit_type": "number",
+        "v_required": { "value": "true", "err": "Required field" },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "v_max": {
+          "value": "30",
+          "err": "This field must be less than or equal to 30"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Must be a whole number"
+        },
+        "relevance": {
+          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "permission_enter",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "15. Did the respondent give permission for you to enter the structures?",
+        "options": [
+          { "key": "yes_all", "text": "Yes, consent to enter all rooms" },
+          { "key": "yes_some", "text": "Consent to enter some, but not all rooms" },
+          { "key": "no", "text": "No, refused entry" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_coverage_calculation.yml"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "step2": {
+    "title": "Household Questions (continued)",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "household_questions_continued_label",
+        "type": "label",
+        "text": "Household Questions (continued)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "other_emanators_not_recorded",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "27. Are there any other emanators that are placed outside, in storage, or in another location?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" }
+      },
+      {
+        "key": "num_additional_emanators_label",
+        "type": "label",
+        "text": "28. How many emanators owned by this household have not yet been recorded?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:other_emanators_not_recorded": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_additional_emanators",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number of emanators not recorded",
+        "v_required": { "value": "true", "err": "Required field" },
+        "text_size": "6sp",
+        "repeating_group_label": "Additional Emanator",
+        "value": [
+          {
+            "key": "additional_emanator_location",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "29. Where is additional emanator #?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "toilet",
+                "text": "a. Toilet"
+              },
+              {
+                "key": "cooking_shelter",
+                "text": "b. Cooking shelter"
+              },
+              {
+                "key": "meeting_shelter",
+                "text": "c. Meeting shelter"
+              },
+              {
+                "key": "animal_shelter",
+                "text": "d. Animal shelter"
+              },
+              {
+                "key": "on_exterior_of_structure",
+                "text": "e. On exterior of structure already described"
+              },
+              {
+                "key": "outside_but_not_on_a_structure",
+                "text": "f. Outside, but not on a structure"
+              },
+              {
+                "key": "taken_by_household_member",
+                "text": "g. Taken by household member to another location"
+              },
+              {
+                "key": "other",
+                "text": "h. Other"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "additional_emanator_location_other_label",
+            "type": "label",
+            "text": "29.h Other additional emanator location",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:additional_emanator_location": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "additional_emanator_location_other",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "29.h. Other additional emanator location",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "relevance": {
+              "step1:additional_emanator_location": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step2:other_emanators_not_recorded": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "other_structures_not_assessed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "30. Are there any other structures, rooms, or parts of the household that have not yet been assessed, but where people spend time in the evenings, overnight, or in the early morning?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" }
+      },
+      {
+        "key": "other_structure_types",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "31. What type of structure(s) have not yet been assessed?",
+        "options": [
+          { "key": "toilet", "text": "a. Toilet" },
+          { "key": "cooking_shelter", "text": "b. Cooking shelter" },
+          { "key": "meeting_shelter", "text": "c. Meeting shelter" },
+          { "key": "other", "text": "d. Other" }
+        ],
+        "relevance": {
+          "step2:other_structures_not_assessed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "not_assessed_structure_other_label",
+        "type": "label",
+        "text": "31.d Not assessed structure other",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:other_structure_types": {
+            "ex-checkbox": [
+              {
+                "or": ["other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "not_assessed_structure_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other structure",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:other_structure_types": {
+            "ex-checkbox": [
+              {
+                "or": ["other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "num_emanators_other_structures_label",
+        "type": "label",
+        "text": "32. How many emanators in total are deployed in these other structures/rooms?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:other_structures_not_assessed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_other_structures",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "relevance": {
+          "step2:other_structures_not_assessed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "emanators_disposed",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "33. Did this household receive any other emanators that have been disposed, lost, or given away to another household?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" }
+      },
+      {
+        "key": "num_emanators_lost_label",
+        "type": "label",
+        "text": "34. How many emanators were lost, disposed of, or given away?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:emanators_disposed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_emanators_lost",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter number",
+        "edit_type": "number",
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step2:emanators_disposed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "reason_no_longer_have",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "check_box",
+        "label": "35. What happened to the emanator(s) that you no longer have?",
+        "options": [
+          { "key": "taken_other_location", "text": "a. It was taken by a member of the household to another location" },
+          { "key": "discarded", "text": "b. It was discarded by a member of the household" },
+          { "key": "donated", "text": "c. It was donated to someone else" },
+          { "key": "stolen", "text": "d. It was stolen" },
+          { "key": "other", "text": "e. Other" },
+          { "key": "dont_know", "text": "f. Don't know" }
+        ],
+        "relevance": {
+          "step2:emanators_disposed": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "reason_no_longer_have_other_label",
+        "type": "label",
+        "text": "36.e What was the other reason it was discarded?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:reason_no_longer_have": {
+            "ex-checkbox": [
+              {
+                "or": ["other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "reason_no_longer_have_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "enter other reason",
+        "relevance": {
+          "step2:reason_no_longer_have": {
+            "ex-checkbox": [
+              {
+                "or": ["other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "reason_discarded_label",
+        "type": "label",
+        "text": "enter reason",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:reason_no_longer_have": {
+            "ex-checkbox": [
+              {
+                "or": ["discarded"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "reason_discarded",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "36. What was the reason it was discarded?",
+        "relevance": {
+          "step2:reason_no_longer_have": {
+            "ex-checkbox": [
+              {
+                "or": ["discarded"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "how_discarded",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "37. How was it discarded?",
+        "options": [
+          { "key": "burned", "text": "a. Burned" },
+          { "key": "rubbish_pit", "text": "b. Placed in rubbish pit" },
+          { "key": "latrine", "text": "c. Placed in latrine" },
+          { "key": "other", "text": "d. Other" }
+        ],
+        "relevance": {
+          "step2:reason_no_longer_have": {
+            "ex-checkbox": [
+              {
+                "or": ["discarded"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "how_discarded_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "37.d How discarded other",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:how_discarded": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "fieldworker_comments_label",
+        "type": "label",
+        "text": "38. Fieldworker: Any comments on this visit to record?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "fieldworker_comments",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "38. Enter comment"
+      },
+      {
+        "key": "thank_you_label",
+        "type": "label",
+        "text": "39. Fieldworker: Please thank the participant for their time, and ask if they have any additional questions before you move to the next house",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      }
+    ]
+  }
+}

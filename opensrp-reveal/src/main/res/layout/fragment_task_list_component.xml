@@ -5,6 +5,24 @@
     android:orientation="vertical"
     android:padding="8dp">
 
+    <!-- Upper boundary line -->
+    <View
+        android:id="@+id/view_top_border"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?attr/colorPrimary"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Label above count input -->
+    <TextView
+        android:id="@+id/tv_count_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#000000"
+        android:paddingBottom="4dp"
+        android:visibility="gone" />
+
     <!-- Count input row -->
     <LinearLayout
         android:id="@+id/layout_count_input"

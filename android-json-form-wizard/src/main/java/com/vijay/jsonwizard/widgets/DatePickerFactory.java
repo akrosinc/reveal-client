@@ -305,11 +305,24 @@ public class DatePickerFactory implements FormWidgetFactory {
         String openMrsEntity = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY);
         String openMrsEntityId = jsonObject.getString(JsonFormConstants.OPENMRS_ENTITY_ID);
         String dateValue = "";
+
+        String rawValue = jsonObject.optString(KEY.VALUE);
+        String fieldKey = jsonObject.optString(KEY.KEY);
+        Timber.tag("DatePickerDebug").i("updateEditText: key=%s, rawValue='%s', isNotBlank=%b",
+                fieldKey, rawValue, StringUtils.isNotBlank(rawValue));
+
         if (StringUtils.isNotBlank(jsonObject.optString(KEY.VALUE))) {
             dateValue = StringUtils.isNoneBlank(Form.getDatePickerDisplayFormat())
                     ? Utils.formatDateToPattern(jsonObject.optString(KEY.VALUE), Form.getDatePickerDisplayFormat(), FormUtils.NATIIVE_FORM_DATE_FORMAT_PATTERN)
                     : jsonObject.optString(KEY.VALUE);
+        } else if ("today".equalsIgnoreCase(jsonObject.optString(JsonFormConstants.DEFAULT))) {
+            // Auto-populate with today's date when default is "today"
+            dateValue = DATE_FORMAT_LOCALE.format(Calendar.getInstance().getTime());
+            jsonObject.put(KEY.VALUE, dateValue);
+            Timber.tag("DatePickerDebug").i("updateEditText: key=%s, default=today, auto-set dateValue='%s'", fieldKey, dateValue);
         }
+
+        Timber.tag("DatePickerDebug").i("updateEditText: key=%s, dateValue='%s'", fieldKey, dateValue);
 
         editText.setHint(jsonObject.getString(KEY.HINT));
         editText.setFloatingLabelText(jsonObject.getString(KEY.HINT));
@@ -332,7 +345,10 @@ public class DatePickerFactory implements FormWidgetFactory {
         }
 
         if (StringUtils.isNotBlank(dateValue)) {
+            Timber.tag("DatePickerDebug").i("updateEditText: key=%s, calling updateDateText with dateValue='%s'", fieldKey, dateValue);
             updateDateText(context, editText, duration, DATE_FORMAT_LOCALE.format(FormUtils.getDate(dateValue).getTime()));
+        } else {
+            Timber.tag("DatePickerDebug").i("updateEditText: key=%s, dateValue is blank — NOT setting text", fieldKey);
         }
 
         if (jsonObject.has(JsonFormConstants.READ_ONLY)) {

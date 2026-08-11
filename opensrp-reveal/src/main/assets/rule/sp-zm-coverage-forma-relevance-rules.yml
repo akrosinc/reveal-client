@@ -1,0 +1,14 @@
+---
+name: step1_num_slept_under_net_label
+description: step1_num_slept_under_net_label
+priority: 1
+condition: "Double.valueOf(helper.ifNull(step1_num_nets,'0')) > 0"
+actions:
+ - "isRelevant = true"
+---
+name: step1_num_slept_under_net
+description: step1_num_slept_under_net
+priority: 1
+condition: "Double.valueOf(helper.ifNull(step1_num_nets,'0')) > 0"
+actions:
+ - "isRelevant = true"

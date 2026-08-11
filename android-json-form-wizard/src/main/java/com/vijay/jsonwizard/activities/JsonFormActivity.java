@@ -305,7 +305,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 String[] address = addressString.split(":");
                 try {
                     JSONObject viewData = getObjectUsingAddress(address, popup);
-                    if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
+                    if (viewData != null && viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
                         toggleViewVisibility(curView, false, popup);
                     }
                 } catch (JSONException e) {
@@ -1194,21 +1194,27 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void addRelevance(View view, boolean popup, boolean isForNextStep) {
         try {
+            String viewKey = (String) view.getTag(R.id.key);
             Pair<String[], JSONObject> addressPair = getRelevanceAddress(view, popup);
             boolean comparison = true;
             if (addressPair != null) {
                 String[] address = addressPair.first;
                 JSONObject curRelevance = addressPair.second;
                 boolean isPopup = checkPopUpValidity(address, popup);
+                Timber.tag("RelevanceDebug").i("addRelevance key=%s, address=%s, addressLength=%d",
+                        viewKey, java.util.Arrays.toString(address), address.length);
                 if (address.length > 1) {
 
                     Facts curValueMap = getValueFromAddress(address, isPopup);
+                    Timber.tag("RelevanceDebug").i("addRelevance key=%s, factsSize=%d, facts=%s",
+                            viewKey, curValueMap.asMap().size(), curValueMap.asMap().toString());
                     try {
                         comparison = isRelevant(curValueMap, curRelevance);
                     } catch (Exception e) {
                         Timber.tag("WriteValue").e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
-
+                    Timber.tag("RelevanceDebug").i("addRelevance key=%s, comparison=%b",
+                            viewKey, comparison);
                 }
 
                 if (isForNextStep) {
@@ -1220,6 +1226,9 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                         toggleViewVisibility(view, comparison, isPopup);
                     }
                 }
+            } else {
+                Timber.tag("RelevanceDebug").i("addRelevance key=%s, addressPair is NULL - no relevance evaluated",
+                        viewKey);
             }
 
 
@@ -2272,6 +2281,16 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private void clearHiddenViewsValues(JSONObject object, String addressString) {
         if (object != null) {
+            // Don't clear values for read_only fields — they are pre-populated
+            // programmatically and should persist through visibility changes.
+            if (object.optBoolean(JsonFormConstants.READ_ONLY, false)) {
+                return;
+            }
+            // Don't clear values for fields with a default — they will be
+            // re-applied when the field becomes visible again.
+            if (object.has(JsonFormConstants.DEFAULT)) {
+                return;
+            }
             String objectKey = addressString.replace(":", "_");
             formValuesCacheMap.remove(objectKey);
             formValuesCacheMap.put(objectKey, "");
@@ -2305,7 +2324,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 curCanvasView.invalidate();
             } else {
-                if (!JsonFormConstants.REPEATING_GROUP.contains(object.optString(JsonFormConstants.TYPE))) {
+                if (object != null && !JsonFormConstants.REPEATING_GROUP.contains(object.optString(JsonFormConstants.TYPE))) {
                     clearHiddenViewsValues(object, addressString);
                 }
                 curCanvasView.setEnabled(false);
@@ -2364,7 +2383,11 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     ((RadioButton) child).setChecked(false);
                 } else if (child instanceof EditText) {
                     EditText editText = (EditText) child;
-                    if (!TextUtils.isEmpty(editText.getText().toString())) {
+                    // Don't clear read_only fields — their values are pre-populated
+                    // and should persist through visibility changes
+                    boolean isReadOnly = child.getTag(R.id.key) != null
+                            && !editText.isFocusable();
+                    if (!isReadOnly && !TextUtils.isEmpty(editText.getText().toString())) {
                         editText.setText("");
                     }
                 } else if (child instanceof MaterialSpinner) {

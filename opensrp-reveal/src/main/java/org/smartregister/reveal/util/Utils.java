@@ -588,18 +588,31 @@ public class Utils {
         JSONObject valueField = jsonArray.optJSONObject(i);
         String fieldKey = valueField.optString(JsonFormConstants.KEY);
         keysArrayList.add(fieldKey);
-        Timber.d(
-            "obs parsedKey=%s contains=%s",
-            fieldKey,
-            keysArrayList.contains(fieldKey)
-        );
       }
-//      Timber.tag("WriteValue").i("RG template keys = %s", keysArrayList);
+      Timber.tag("RepeatingGroupGen").i("buildRepeatingGroup: template keys=%s, obs count=%d", keysArrayList, obs.size());
       for (int k = 0; k < obs.size(); k++) {
         Obs valueField = obs.get(k);
         String fieldKey = valueField.getFormSubmissionField();
         List<Object> values = valueField.getValues();
-        if (values != null && !values.isEmpty() && fieldKey.contains("_")) {
+        if (values != null && !values.isEmpty() && fieldKey.contains("|")) {
+          // Split on pipe separator (used by repeating group to avoid conflicts with underscores in field keys)
+          int pipeIdx = fieldKey.lastIndexOf("|");
+          String baseKey = fieldKey.substring(0, pipeIdx);
+          String fieldKeyId = fieldKey.substring(pipeIdx + 1);
+          if (keysArrayList.contains(baseKey)) {
+            String fieldValue = (String) values.get(0);
+            if (StringUtils.isNotBlank(fieldValue)) {
+              HashMap<String, String> hashMap =
+                  repeatingGroupMap.get(fieldKeyId) == null
+                      ? new HashMap<>()
+                      : repeatingGroupMap.get(fieldKeyId);
+              hashMap.put(baseKey, fieldValue);
+              hashMap.put(Constants.JsonForm.REPEATING_GROUP_UNIQUE_ID, fieldKeyId);
+              repeatingGroupMap.put(fieldKeyId, hashMap);
+            }
+          }
+        } else if (values != null && !values.isEmpty() && fieldKey.contains("_")) {
+          // Fallback: legacy underscore separator for older saved data
           fieldKey = fieldKey.substring(0, fieldKey.lastIndexOf("_"));
           if (keysArrayList.contains(fieldKey)) {
             String fieldValue = (String) values.get(0);

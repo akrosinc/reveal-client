@@ -642,8 +642,14 @@ public class RevealJsonFormUtils {
         }
 
         boolean processedRepeatingGroup = false;
-        JSONArray fields = JsonFormUtils.fields(formJSON);
-        JSONArray fieldsCopy = JsonFormUtils.fields(JsonFormUtils.toJSONObject(formJSON.toString()));
+        JSONArray fields;
+        JSONArray fieldsCopy;
+        // Synchronized to prevent ConcurrentModificationException when another thread
+        // reads/writes formJSON (e.g., fragment setup on main thread)
+        synchronized (formJSON) {
+            fields = JsonFormUtils.fields(formJSON);
+            fieldsCopy = JsonFormUtils.fields(JsonFormUtils.toJSONObject(formJSON.toString()));
+        }
         for (int i = 0; i < fields.length(); i++) {
             try {
                 JSONObject field = fields.getJSONObject(i);
@@ -807,12 +813,43 @@ public class RevealJsonFormUtils {
     public void generateRepeatingGroupFields(JSONObject field, List<Obs> obs, JSONObject formJSON) {
         try {
             LinkedHashMap<String, HashMap<String, String>> repeatingGroupMap = Utils.buildRepeatingGroup(field, obs);
-//            Timber.tag("WriteValue").i("field %s repeatingGroupMap = %s",field, repeatingGroupMap);
+            Timber.tag("RepeatingGroupGen").i("generateRepeatingGroupFields: field key=%s, obs count=%d, repeatingGroupMap size=%d",
+                    field.optString(KEY), obs != null ? obs.size() : 0, repeatingGroupMap.size());
+            if (repeatingGroupMap.isEmpty()) {
+                Timber.tag("RepeatingGroupGen").i("generateRepeatingGroupFields: no matching obs found for repeating group '%s'", field.optString(KEY));
+                return;
+            }
             List<HashMap<String, String>> repeatingGroupMapList = Utils.generateListMapOfRepeatingGrp(
                     repeatingGroupMap);
-            new RepeatingGroupGenerator(formJSON.optJSONObject(JsonFormConstants.STEP1),
-                    //    JsonFormConstants.STEP1,
-                    field.optString(KEY),
+
+            // Find the step that actually contains this repeating group field
+            String rgKey = field.optString(KEY);
+            JSONObject targetStep = null;
+            int count = Integer.parseInt(formJSON.optString("count", "1"));
+            for (int s = 1; s <= count; s++) {
+                String stepName = "step" + s;
+                JSONObject step = formJSON.optJSONObject(stepName);
+                if (step == null) continue;
+                JSONArray fields = step.optJSONArray(JsonFormConstants.FIELDS);
+                if (fields == null) continue;
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject f = fields.optJSONObject(i);
+                    if (f != null && rgKey.equals(f.optString(KEY))) {
+                        targetStep = step;
+                        break;
+                    }
+                }
+                if (targetStep != null) break;
+            }
+
+            Timber.tag("RepeatingGroupGen").i("generateRepeatingGroupFields: targetStep found=%b for key=%s",
+                    targetStep != null, rgKey);
+            if (targetStep == null) {
+                Timber.tag("RepeatingGroupGen").w("generateRepeatingGroupFields: repeating group '%s' not found in any step", rgKey);
+                return;
+            }
+            new RepeatingGroupGenerator(targetStep,
+                    rgKey,
                     new HashMap<>(),
                     JsonForm.REPEATING_GROUP_UNIQUE_ID,
                     repeatingGroupMapList).init();
