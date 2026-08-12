@@ -769,7 +769,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         Timber.tag("TestFrag").i("ListTasksActivity openTemplate form %s",upperForm);
         intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_NAME, "json.form/"+ upperForm);
         intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEY, "permission_enter");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes_all");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes_all,yes_some");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
         intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Coverage Structure");
@@ -780,7 +780,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             "14. How many separate structures are there in this household? "
                 + "Do not include any livestock shelters or storage areas.");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEY, "permission_enter");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes_all");
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes_all,yes_some");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_EMPTY_MESSAGE,
             "No structures generated yet. Enter the number above and tap Generate.");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_HINT, "enter number");

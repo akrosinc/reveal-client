@@ -64,6 +64,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": ""
       },
+
       {
         "key": "eligible_structure",
         "openmrs_entity_parent": "",
@@ -317,6 +318,10 @@
           "value": "true",
           "err": "This field must be a number"
         },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
         "v_required": { "value": "true", "err": "Required field" },
         "relevance": {
           "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
@@ -350,6 +355,14 @@
         "text_size": "6sp",
         "hint": "enter number",
         "edit_type": "number",
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
         "v_required": { "value": "true", "err": "Required field" },
         "relevance": {
           "rules-engine": {
@@ -357,7 +370,19 @@
               "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
             }
           }
-        }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:num_nets)",
+            "err": "Value should be less than or equal to the number of nets"
+          },
+          {
+            "type": "numeric",
+            "ex": "lessThanEqualTo(.,step1:num_people_slept)",
+            "err": "Value should be less than or equal to the number of people slept last night"
+          }
+        ]
       },
       {
         "key": "received_emanators",
@@ -484,6 +509,10 @@
         "v_numeric_integer": {
           "value": "true",
           "err": "Must be a whole number"
+        },
+        "v_relative_max": {
+          "value": "num_emanators_received",
+          "err": "Cannot be more than the number of emanators received"
         },
         "relevance": {
           "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }

@@ -4,4 +4,4 @@ description: Business status calculation
 priority: 1
 condition: "true"
 actions:
- - "calculation = step1_eligible_structure == 'no' ? 'Not Eligible' : step1_eligible_person == 'no' ? 'No appropriate adult available' : step1_eligible_person == 'none' ? 'No one home' : step1_respondent_consent == 'no' ?  'Refused' : step1_eligible_structure == 'no_already_visited' ? 'Not Eligible' :'Not Visited'"
+ - "calculation = step1_eligible_structure == 'no' ? 'Not Eligible' : step1_eligible_person == 'no_adult' ? 'No appropriate adult available' : step1_eligible_person == 'no_one_home' ? 'No one home' : step1_respondent_consent == 'no' ?  'Refused' : step1_eligible_structure == 'no_already_visited' ? 'Not Eligible' :'Not Visited'"

@@ -1,5 +1,6 @@
 package org.smartregister.reveal.template;
 
+import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 
 import android.content.Intent;
@@ -25,11 +26,10 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.util.JsonFormUtils;
-
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -87,7 +87,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     /* ------------------------------------------------------------------ state */
     private String formName;
     private String gateFieldKey;
-    private String gateFieldValue;
+    private Set<String> gateFieldValues;
     private String parentTaskId;
     private String locationUUID;
     private String childTaskCode;
@@ -97,7 +97,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private String countLabel;
     private String recyclerHeader;
     private String recyclerGateKey;
-    private String recyclerGateValue;
+    private Set<String> recyclerGateValues;
     private String emptyMessage;
 
     private boolean recyclerVisible = false;
@@ -183,6 +183,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Timber.tag("RevealCamera").i("FormRecyclerFormActivity.onActivityResult: requestCode=%d, resultCode=%d", requestCode, resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
         // Child task form returned
@@ -454,7 +455,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
         // Form 2 gate
         if (gateFieldKey != null && gateFieldKey.equals(key)) {
-            if (gateFieldValue.equalsIgnoreCase(value)) {
+            if (gateFieldValues.contains(value.toLowerCase())) {
                 showStep2();
             } else {
                 hideStep2();
@@ -463,7 +464,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
         // Recycler gate
         if (recyclerGateKey != null && recyclerGateKey.equals(key)) {
-            if (recyclerGateValue.equalsIgnoreCase(value)) {
+            if (recyclerGateValues.contains(value.toLowerCase())) {
                 showRecycler();
             } else {
                 hideRecycler();
@@ -518,9 +519,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Check Form 2 gate
         if (gateFieldKey != null) {
             String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, gateFieldKey);
-            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: gateFieldKey=%s, value=%s, gateFieldValue=%s",
-                    gateFieldKey, value, gateFieldValue);
-            if (gateFieldValue.equalsIgnoreCase(value)) {
+            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: gateFieldKey=%s, value=%s, gateFieldValues=%s",
+                    gateFieldKey, value, gateFieldValues);
+            if (value != null && gateFieldValues.contains(value.toLowerCase())) {
                 showStep2();
             }
         }
@@ -528,9 +529,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Check Recycler gate
         if (recyclerGateKey != null) {
             String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, recyclerGateKey);
-            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: recyclerGateKey=%s, value=%s, recyclerGateValue=%s",
-                    recyclerGateKey, value, recyclerGateValue);
-            if (recyclerGateValue.equalsIgnoreCase(value)) {
+            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: recyclerGateKey=%s, value=%s, recyclerGateValues=%s",
+                    recyclerGateKey, value, recyclerGateValues);
+            if (value != null && recyclerGateValues.contains(value.toLowerCase())) {
                 showRecycler();
             }
         }
@@ -841,7 +842,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         }
 
         // If no explicit status from form, derive it from child task state
-        if (status == null || status.isEmpty() || status.equals(NOT_VISITED)) {
+        if (status == null || status.isEmpty() || status.equals(NOT_VISITED) || status.equals(IN_PROGRESS)) {
             String planId = PreferencesUtil.getInstance().getCurrentPlanId();
             Set<Task> childTasks = taskRepository.getTasksByParentId(parentTaskId, planId);
 
@@ -899,7 +900,6 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         Intent intent       = getIntent();
         formName            = intent.getStringExtra(EXTRA_FORM_NAME);
         gateFieldKey        = intent.getStringExtra(EXTRA_GATE_FIELD_KEY);
-        gateFieldValue      = intent.getStringExtra(EXTRA_GATE_FIELD_VALUE);
         parentTaskId        = intent.getStringExtra(EXTRA_PARENT_TASK_ID);
         locationUUID        = intent.getStringExtra(EXTRA_LOCATION_UUID);
         childTaskCode       = intent.getStringExtra(EXTRA_CHILD_TASK_CODE);
@@ -909,11 +909,29 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         countLabel          = intent.getStringExtra(EXTRA_COUNT_LABEL);
         recyclerHeader      = intent.getStringExtra(EXTRA_RECYCLER_HEADER);
         recyclerGateKey     = intent.getStringExtra(EXTRA_RECYCLER_GATE_KEY);
-        recyclerGateValue   = intent.getStringExtra(EXTRA_RECYCLER_GATE_VALUE);
         emptyMessage        = intent.getStringExtra(EXTRA_EMPTY_MESSAGE);
 
-        if (gateFieldValue == null) gateFieldValue = "yes";
-        if (recyclerGateValue == null) recyclerGateValue = "yes";
+        // Parse gate field values as comma-separated list (e.g. "yes_all,yes_some")
+        String gateRaw = intent.getStringExtra(EXTRA_GATE_FIELD_VALUE);
+        if (gateRaw == null || gateRaw.isEmpty()) {
+            gateFieldValues = new HashSet<>(Collections.singletonList("yes"));
+        } else {
+            gateFieldValues = new HashSet<>();
+            for (String v : gateRaw.split(",")) {
+                gateFieldValues.add(v.trim().toLowerCase());
+            }
+        }
+
+        // Parse recycler gate values as comma-separated list (e.g. "yes_all,yes_some")
+        String recyclerGateRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_VALUE);
+        if (recyclerGateRaw == null || recyclerGateRaw.isEmpty()) {
+            recyclerGateValues = new HashSet<>(Collections.singletonList("yes"));
+        } else {
+            recyclerGateValues = new HashSet<>();
+            for (String v : recyclerGateRaw.split(",")) {
+                recyclerGateValues.add(v.trim().toLowerCase());
+            }
+        }
     }
 
     /* ------------------------------------------------------------------ default display provider */
