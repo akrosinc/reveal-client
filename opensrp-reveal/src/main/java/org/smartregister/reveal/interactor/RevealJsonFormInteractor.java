@@ -75,8 +75,7 @@ public class RevealJsonFormInteractor extends JsonFormInteractor {
         map.put(HIERARCHY_HTTP_DATA_RETRIEVER,new HierarchyHttpDataRetrieverFactory());
         map.put(org.smartregister.reveal.widget.CollapsibleSectionFactory.COLLAPSIBLE_SECTION,
                 new org.smartregister.reveal.widget.CollapsibleSectionFactory());
-        map.put(org.smartregister.reveal.widget.RevealCameraFactory.REVEAL_CAMERA,
-                new org.smartregister.reveal.widget.RevealCameraFactory());
+
     }
 
     @NonNull
