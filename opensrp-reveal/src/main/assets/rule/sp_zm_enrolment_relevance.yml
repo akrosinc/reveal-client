@@ -1,0 +1,161 @@
+---
+name: step2_structure_has_id_destruction
+description: step2_structure_has_id_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_prepare_emanator_label_instruction_destruction
+description: step2_prepare_emanator_label_instruction_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_record_information_instruction_destruction
+description: step2_record_information_instruction_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_roof_material_destruction
+description: step2_roof_material_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_wall_material_destruction
+description: step2_wall_material_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_floor_material_destruction
+description: step2_floor_material_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_eaves_destruction
+description: step2_eaves_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_separate_rooms_label_destruction
+description: step2_separate_rooms_label_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_separate_rooms_destruction
+description: step2_separate_rooms_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_structure_emanator_label_destruction
+description: step2_structure_emanator_label_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_on_furniture_round_destruction
+description: step2_emanator_on_furniture_round_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_in_front_window_round_destruction
+description: step2_emanator_in_front_window_round_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_touching_items_round_destruction
+description: step2_emanator_touching_items_round_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_in_sunlight_round_destruction
+description: step2_emanator_in_sunlight_round_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_within_fire_stove_destruction
+description: step2_emanator_within_fire_stove_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_photo_instruction_destruction
+description: step2_photo_instruction_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_any_damage_destruction
+description: step2_emanator_any_damage_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_touched_moved_destruction
+description: step2_emanator_touched_moved_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_confirm_stored_destruction
+description: step2_emanator_confirm_stored_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanator_confirm_replaced_destruction
+description: step2_emanator_confirm_replaced_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_structure_shape_destruction
+description: step2_structure_shape_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_anyone_cook_destruction
+description: step2_anyone_cook_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_anyone_sleep_destruction
+description: step2_anyone_sleep_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"

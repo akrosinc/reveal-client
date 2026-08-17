@@ -768,19 +768,30 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         String upperForm = feature.getStringProperty(Properties.FORM_FOR_TASK);
         Timber.tag("TestFrag").i("ListTasksActivity openTemplate form %s",upperForm);
         intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_NAME, "json.form/"+ upperForm);
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEY, "permission_enter");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_VALUE, "yes_all,yes_some");
+
         intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Coverage Structure");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_formB.json");
+
+        if (upperForm.equals("sp_zm_enrolment_formA.json")){
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Enrolment Structure");
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "respondent_consent_enrolment:yes|respondent_consent_destruction:yes");
+
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_enrolment_formB.json");
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "respondent_consent_enrolment:yes");
+        } else {
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Coverage Structure");
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "permission_enter:yes_all,yes_some");
+
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_formB.json");
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "permission_enter:yes_all,yes_some");
+        }
+
         intent.putExtra(FormRecyclerFormActivity.EXTRA_BUSINESS_STATUS_FIELD, "business_status");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_HEADER, "Structures");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_LABEL,
             "14. How many separate structures are there in this household? "
                 + "Do not include any livestock shelters or storage areas.");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEY, "permission_enter");
-        intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_VALUE, "yes_all,yes_some");
+
         intent.putExtra(FormRecyclerFormActivity.EXTRA_EMPTY_MESSAGE,
             "No structures generated yet. Enter the number above and tap Generate.");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_HINT, "enter number");

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
@@ -26,10 +27,11 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.util.JsonFormUtils;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,8 +46,10 @@ import timber.log.Timber;
  * <h3>Intent extras</h3>
  * <ul>
 
- *   <li>{@link #EXTRA_GATE_FIELD_KEY}     – field key in Form 1 that gates Form 2 visibility</li>
- *   <li>{@link #EXTRA_GATE_FIELD_VALUE}   – value that makes Form 2 visible (default "yes")</li>
+ *   <li>{@link #EXTRA_GATE_FIELD_KEYS}    – gate field keys with per-key values (format: "key1:val1,val2|key2:val3")</li>
+ *   <li>{@link #EXTRA_GATE_LOGIC}         – "or" (default) or "and" logic for multi-key gates</li>
+ *   <li>{@link #EXTRA_RECYCLER_GATE_KEYS} – recycler gate field keys with per-key values (same format)</li>
+ *   <li>{@link #EXTRA_RECYCLER_GATE_LOGIC}– "or" (default) or "and" logic for recycler gate</li>
  *   <li>{@link #EXTRA_PARENT_TASK_ID}     – parent task identifier</li>
  *   <li>{@link #EXTRA_LOCATION_UUID}      – structure UUID</li>
  *   <li>{@link #EXTRA_CHILD_TASK_CODE}    – code for generated child tasks</li>
@@ -58,8 +62,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     /* ------------------------------------------------------------------ intent extra keys */
     public static final String EXTRA_FORM_NAME             = "formName";
-    public static final String EXTRA_GATE_FIELD_KEY        = "gateFieldKey";
-    public static final String EXTRA_GATE_FIELD_VALUE      = "gateFieldValue";
+    public static final String EXTRA_GATE_FIELD_KEYS       = "gateFieldKeys";
+    public static final String EXTRA_GATE_LOGIC            = "gateLogic";
     public static final String EXTRA_PARENT_TASK_ID        = Constants.Properties.TASK_IDENTIFIER;
     public static final String EXTRA_LOCATION_UUID         = Constants.Properties.LOCATION_UUID;
     public static final String EXTRA_CHILD_TASK_CODE       = "childTaskCode";
@@ -68,8 +72,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     public static final String EXTRA_COUNT_HINT            = "countHint";
     public static final String EXTRA_COUNT_LABEL           = "countLabel";
     public static final String EXTRA_RECYCLER_HEADER       = "recyclerHeader";
-    public static final String EXTRA_RECYCLER_GATE_KEY     = "recyclerGateFieldKey";
-    public static final String EXTRA_RECYCLER_GATE_VALUE   = "recyclerGateFieldValue";
+    public static final String EXTRA_RECYCLER_GATE_KEYS    = "recyclerGateFieldKeys";
+    public static final String EXTRA_RECYCLER_GATE_LOGIC   = "recyclerGateLogic";
     public static final String EXTRA_EMPTY_MESSAGE         = "emptyMessage";
 
     /* ------------------------------------------------------------------ fragment tags */
@@ -86,8 +90,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     /* ------------------------------------------------------------------ state */
     private String formName;
-    private String gateFieldKey;
-    private Set<String> gateFieldValues;
+    /** Map of gate field key → set of acceptable values for that key */
+    private Map<String, Set<String>> gateFieldMap;
+    private boolean gateLogicAnd = false; // false = OR (default), true = AND
     private String parentTaskId;
     private String locationUUID;
     private String childTaskCode;
@@ -96,8 +101,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private String countHint;
     private String countLabel;
     private String recyclerHeader;
-    private String recyclerGateKey;
-    private Set<String> recyclerGateValues;
+    /** Map of recycler gate field key → set of acceptable values for that key */
+    private Map<String, Set<String>> recyclerGateFieldMap;
+    private boolean recyclerGateLogicAnd = false; // false = OR (default), true = AND
     private String emptyMessage;
 
     private boolean recyclerVisible = false;
@@ -453,22 +459,14 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         super.writeValue(stepName, key, value, openMrsEntityParent, openMrsEntity,
                 openMrsEntityId, popup);
 
-        // Form 2 gate
-        if (gateFieldKey != null && gateFieldKey.equals(key)) {
-            if (gateFieldValues.contains(value.toLowerCase())) {
-                showStep2();
-            } else {
-                hideStep2();
-            }
+        // Form 2 gate — supports multiple keys with OR/AND logic
+        if (!gateFieldMap.isEmpty() && gateFieldMap.containsKey(key)) {
+            evaluateGate();
         }
 
-        // Recycler gate
-        if (recyclerGateKey != null && recyclerGateKey.equals(key)) {
-            if (recyclerGateValues.contains(value.toLowerCase())) {
-                showRecycler();
-            } else {
-                hideRecycler();
-            }
+        // Recycler gate — supports multiple keys with OR/AND logic
+        if (!recyclerGateFieldMap.isEmpty() && recyclerGateFieldMap.containsKey(key)) {
+            evaluateRecyclerGate();
         }
     }
 
@@ -516,23 +514,115 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         if (json == null) return;
         String jsonStr = json.toString();
 
-        // Check Form 2 gate
-        if (gateFieldKey != null) {
-            String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, gateFieldKey);
-            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: gateFieldKey=%s, value=%s, gateFieldValues=%s",
-                    gateFieldKey, value, gateFieldValues);
-            if (value != null && gateFieldValues.contains(value.toLowerCase())) {
-                showStep2();
-            }
+        // Check Form 2 gate — multi-key OR/AND with per-key values
+        if (!gateFieldMap.isEmpty()) {
+            evaluateGateFromJson(jsonStr);
         }
 
-        // Check Recycler gate
-        if (recyclerGateKey != null) {
-            String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, recyclerGateKey);
-            Timber.tag("FormSaveInteractor").i("checkGateFieldOnLoad: recyclerGateKey=%s, value=%s, recyclerGateValues=%s",
-                    recyclerGateKey, value, recyclerGateValues);
-            if (value != null && recyclerGateValues.contains(value.toLowerCase())) {
+        // Check Recycler gate — multi-key OR/AND with per-key values
+        if (!recyclerGateFieldMap.isEmpty()) {
+            evaluateRecyclerGateFromJson(jsonStr);
+        }
+    }
+
+    /**
+     * Evaluates the multi-key gate condition using the current form JSON object.
+     * Called from writeValue() when one of the gate keys changes.
+     */
+    private void evaluateGate() {
+        JSONObject json = getmJSONObject();
+        if (json == null) return;
+        evaluateGateFromJson(json.toString());
+    }
+
+    /**
+     * Evaluates whether the gate condition is satisfied given the form JSON string.
+     * Each gate key has its own set of acceptable values.
+     * Supports OR logic (any gate field matches its values) and AND logic (all must match).
+     */
+    private void evaluateGateFromJson(String jsonStr) {
+        if (gateLogicAnd) {
+            // AND: all gate fields must have a value matching their specific acceptable values
+            boolean allMatch = true;
+            for (Map.Entry<String, Set<String>> entry : gateFieldMap.entrySet()) {
+                String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, entry.getKey());
+                if (value == null || !entry.getValue().contains(value.toLowerCase())) {
+                    allMatch = false;
+                    break;
+                }
+            }
+            Timber.tag("FormSaveInteractor").i("evaluateGate AND: keys=%s, result=%s", gateFieldMap.keySet(), allMatch);
+            if (allMatch) {
+                showStep2();
+            } else {
+                hideStep2();
+            }
+        } else {
+            // OR: any gate field matching its acceptable values is sufficient
+            boolean anyMatch = false;
+            for (Map.Entry<String, Set<String>> entry : gateFieldMap.entrySet()) {
+                String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, entry.getKey());
+                if (value != null && entry.getValue().contains(value.toLowerCase())) {
+                    anyMatch = true;
+                    break;
+                }
+            }
+            Timber.tag("FormSaveInteractor").i("evaluateGate OR: keys=%s, result=%s", gateFieldMap.keySet(), anyMatch);
+            if (anyMatch) {
+                showStep2();
+            } else {
+                hideStep2();
+            }
+        }
+    }
+
+    /**
+     * Evaluates the multi-key recycler gate condition using the current form JSON object.
+     * Called from writeValue() when one of the recycler gate keys changes.
+     */
+    private void evaluateRecyclerGate() {
+        JSONObject json = getmJSONObject();
+        if (json == null) return;
+        evaluateRecyclerGateFromJson(json.toString());
+    }
+
+    /**
+     * Evaluates whether the recycler gate condition is satisfied given the form JSON string.
+     * Each gate key has its own set of acceptable values.
+     * Supports OR logic (any gate field matches its values) and AND logic (all must match).
+     */
+    private void evaluateRecyclerGateFromJson(String jsonStr) {
+        if (recyclerGateLogicAnd) {
+            // AND: all gate fields must match their specific acceptable values
+            boolean allMatch = true;
+            for (Map.Entry<String, Set<String>> entry : recyclerGateFieldMap.entrySet()) {
+                String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, entry.getKey());
+                if (value == null || !entry.getValue().contains(value.toLowerCase())) {
+                    allMatch = false;
+                    break;
+                }
+            }
+            Timber.tag("FormSaveInteractor").i("evaluateRecyclerGate AND: keys=%s, result=%s", recyclerGateFieldMap.keySet(), allMatch);
+            if (allMatch) {
                 showRecycler();
+            } else {
+                hideRecycler();
+            }
+        } else {
+            // OR: any gate field matching its acceptable values is sufficient
+            boolean anyMatch = false;
+            for (Map.Entry<String, Set<String>> entry : recyclerGateFieldMap.entrySet()) {
+                String value = org.smartregister.util.JsonFormUtils.getFieldValue(jsonStr, entry.getKey());
+                if (value != null && entry.getValue().contains(value.toLowerCase())) {
+                    anyMatch = true;
+                    break;
+                }
+            }
+            Timber.tag("FormSaveInteractor").i("evaluateRecyclerGate OR: keys=%s, result=%s", recyclerGateFieldMap.keySet(), anyMatch);
+            if (anyMatch) {
+                showRecycler();
+            } else {
+                hideRecycler();
             }
         }
     }
@@ -577,7 +667,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 .commit();
 
         // If a recycler gate is configured, start hidden
-        if (recyclerGateKey != null) {
+        if (!recyclerGateFieldMap.isEmpty()) {
             recyclerVisible = false;
             findViewById(R.id.container_recycler).setVisibility(View.GONE);
             setSectionVisible(false);
@@ -719,6 +809,18 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 Timber.tag("FormRecyclerForm").w(e, "Pre-population failed");
             }
 
+            // Pass matching field values from parent form to child form.
+            // Any hidden field in the child form whose key matches a field in the parent form
+            // will have its value automatically injected from the parent.
+            try {
+                JSONObject parentForm = getmJSONObject();
+                if (parentForm != null) {
+                    injectParentFieldsIntoChildForm(parentForm, formJSON);
+                }
+            } catch (Exception e) {
+                Timber.tag("FormRecyclerForm").w(e, "Failed to pass parent fields to child form");
+            }
+
             // If child task is already completed, find last event and populate form
             if (!NOT_VISITED.equals(task.getBusinessStatus())) {
                 Timber.tag("FormSaveInteractor").i("onTaskTap: task completed, finding last event for taskId=%s",
@@ -771,6 +873,68 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    /* ------------------------------------------------------------------ parent→child field injection */
+
+    /**
+     * Scans all hidden fields in the child form and, for each one whose key matches
+     * a field in the parent form, injects the parent field's value into the child.
+     * This allows any parent form to pass data to any child form generically —
+     * just add a hidden field in the child form with the same key as the parent field.
+     *
+     * Fields with keys "task_id", "entity_id", and "business_status" are skipped
+     * since they are system-managed.
+     */
+    private void injectParentFieldsIntoChildForm(JSONObject parentForm, JSONObject childForm) {
+        // Excluded keys that are system-managed and should not be overwritten
+        Set<String> excludedKeys = new HashSet<>();
+        excludedKeys.add(FIELD_TASK_ID);
+        excludedKeys.add(FIELD_ENTITY_ID);
+        excludedKeys.add(FIELD_BUSINESS_STATUS);
+
+        try {
+            // Build a map of all parent field values across all steps
+            Map<String, String> parentValues = new HashMap<>();
+            int stepCount = parentForm.optInt("count", 1);
+            for (int s = 1; s <= stepCount; s++) {
+                JSONObject step = parentForm.optJSONObject("step" + s);
+                if (step == null) continue;
+                JSONArray fields = step.optJSONArray("fields");
+                if (fields == null) continue;
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    String key = field.optString("key", "");
+                    String value = field.optString("value", "");
+                    if (!key.isEmpty() && !value.isEmpty()) {
+                        parentValues.put(key, value);
+                    }
+                }
+            }
+
+            // Scan child form hidden fields and inject matching parent values
+            int childStepCount = childForm.optInt("count", 1);
+            for (int s = 1; s <= childStepCount; s++) {
+                JSONObject step = childForm.optJSONObject("step" + s);
+                if (step == null) continue;
+                JSONArray fields = step.optJSONArray("fields");
+                if (fields == null) continue;
+                for (int i = 0; i < fields.length(); i++) {
+                    JSONObject field = fields.getJSONObject(i);
+                    String key = field.optString("key", "");
+                    String type = field.optString("type", "");
+                    if ("hidden".equals(type) && !excludedKeys.contains(key)
+                            && parentValues.containsKey(key)) {
+                        field.put(JsonFormConstants.VALUE, parentValues.get(key));
+                        Timber.tag("FormRecyclerForm").i(
+                                "Injected parent field %s=%s into child form",
+                                key, parentValues.get(key));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.tag("FormRecyclerForm").w(e, "injectParentFieldsIntoChildForm error");
+        }
     }
 
     /* ------------------------------------------------------------------ completion check */
@@ -899,7 +1063,6 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private void readExtras() {
         Intent intent       = getIntent();
         formName            = intent.getStringExtra(EXTRA_FORM_NAME);
-        gateFieldKey        = intent.getStringExtra(EXTRA_GATE_FIELD_KEY);
         parentTaskId        = intent.getStringExtra(EXTRA_PARENT_TASK_ID);
         locationUUID        = intent.getStringExtra(EXTRA_LOCATION_UUID);
         childTaskCode       = intent.getStringExtra(EXTRA_CHILD_TASK_CODE);
@@ -908,30 +1071,52 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         countHint           = intent.getStringExtra(EXTRA_COUNT_HINT);
         countLabel          = intent.getStringExtra(EXTRA_COUNT_LABEL);
         recyclerHeader      = intent.getStringExtra(EXTRA_RECYCLER_HEADER);
-        recyclerGateKey     = intent.getStringExtra(EXTRA_RECYCLER_GATE_KEY);
         emptyMessage        = intent.getStringExtra(EXTRA_EMPTY_MESSAGE);
 
-        // Parse gate field values as comma-separated list (e.g. "yes_all,yes_some")
-        String gateRaw = intent.getStringExtra(EXTRA_GATE_FIELD_VALUE);
-        if (gateRaw == null || gateRaw.isEmpty()) {
-            gateFieldValues = new HashSet<>(Collections.singletonList("yes"));
-        } else {
-            gateFieldValues = new HashSet<>();
-            for (String v : gateRaw.split(",")) {
-                gateFieldValues.add(v.trim().toLowerCase());
+        // Parse gate field keys with per-key values
+        // Format: "key1:val1,val2|key2:val3,val4" — pipe separates entries, colon separates key from values
+        gateFieldMap = new HashMap<>();
+        String gateKeysRaw = intent.getStringExtra(EXTRA_GATE_FIELD_KEYS);
+        if (gateKeysRaw != null && !gateKeysRaw.isEmpty()) {
+            for (String entry : gateKeysRaw.split("\\|")) {
+                entry = entry.trim();
+                if (entry.contains(":")) {
+                    String[] parts = entry.split(":", 2);
+                    String fieldKey = parts[0].trim();
+                    Set<String> values = new HashSet<>();
+                    for (String v : parts[1].split(",")) {
+                        values.add(v.trim().toLowerCase());
+                    }
+                    gateFieldMap.put(fieldKey, values);
+                }
             }
         }
 
-        // Parse recycler gate values as comma-separated list (e.g. "yes_all,yes_some")
-        String recyclerGateRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_VALUE);
-        if (recyclerGateRaw == null || recyclerGateRaw.isEmpty()) {
-            recyclerGateValues = new HashSet<>(Collections.singletonList("yes"));
-        } else {
-            recyclerGateValues = new HashSet<>();
-            for (String v : recyclerGateRaw.split(",")) {
-                recyclerGateValues.add(v.trim().toLowerCase());
+        // Gate logic: "and" or "or" (default is "or")
+        String gateLogicRaw = intent.getStringExtra(EXTRA_GATE_LOGIC);
+        gateLogicAnd = "and".equalsIgnoreCase(gateLogicRaw != null ? gateLogicRaw.trim() : "");
+
+        // Parse recycler gate field keys with per-key values (same format as form2 gate)
+        recyclerGateFieldMap = new HashMap<>();
+        String recyclerGateKeysRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_KEYS);
+        if (recyclerGateKeysRaw != null && !recyclerGateKeysRaw.isEmpty()) {
+            for (String entry : recyclerGateKeysRaw.split("\\|")) {
+                entry = entry.trim();
+                if (entry.contains(":")) {
+                    String[] parts = entry.split(":", 2);
+                    String fieldKey = parts[0].trim();
+                    Set<String> values = new HashSet<>();
+                    for (String v : parts[1].split(",")) {
+                        values.add(v.trim().toLowerCase());
+                    }
+                    recyclerGateFieldMap.put(fieldKey, values);
+                }
             }
         }
+
+        // Recycler gate logic: "and" or "or" (default is "or")
+        String recyclerGateLogicRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_LOGIC);
+        recyclerGateLogicAnd = "and".equalsIgnoreCase(recyclerGateLogicRaw != null ? recyclerGateLogicRaw.trim() : "");
     }
 
     /* ------------------------------------------------------------------ default display provider */

@@ -374,8 +374,8 @@
         "constraints": [
           {
             "type": "numeric",
-            "ex": "lessThanEqualTo(.,step1:num_nets)",
-            "err": "Value should be less than or equal to the number of nets"
+            "ex": "lessThanEqualTo(.,step1:num_people_household)",
+            "err": "Value should be less than or equal to the number of people in household"
           },
           {
             "type": "numeric",
@@ -463,7 +463,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "11. Did you know how many emanators are hanging inside your house?",
+        "label": "11. Do you know how many emanators are hanging inside your house?",
         "options": [
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
@@ -485,7 +485,8 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "relevance": {
-          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" },
+          "step1:know_received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
         }
       },
       {
@@ -515,7 +516,8 @@
           "err": "Cannot be more than the number of emanators received"
         },
         "relevance": {
-          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
+          "step1:know_hanging_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" },
+          "step1:know_received_emanators": { "type": "string", "ex": "equalTo(., \"yes\")" }
         }
       },
       {
@@ -666,7 +668,7 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "relevance": {
-              "step1:additional_emanator_location": {
+              "step2:additional_emanator_location": {
                 "type": "string",
                 "ex": "equalTo(., \"other\")"
               }
@@ -686,7 +688,7 @@
               "err": "Field required"
             },
             "relevance": {
-              "step1:additional_emanator_location": {
+              "step2:additional_emanator_location": {
                 "type": "string",
                 "ex": "equalTo(., \"other\")"
               }
@@ -805,7 +807,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "33. Did this household receive any other emanators that have been disposed, lost, or given away to another household?",
+        "label": "33. Did this household receive any other emanators (which have not yet been described) that have been disposed, lost, or given away to another household?",
         "options": [
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }

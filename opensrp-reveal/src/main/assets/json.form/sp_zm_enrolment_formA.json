@@ -1,0 +1,1773 @@
+﻿{
+  "count": "2",
+  "encounter_type": "enrolment_initial",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Durability Enrolment",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "eligible_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "1. Is this an eligible structure?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          },
+          {
+            "key": "no_already_visited",
+            "text": "No; this structure is part of a household that was already visited"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "household_id_value",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter household id",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "editable": true,
+        "read_only": true,
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "date_label",
+        "type": "label",
+        "text": "2. Visit Date: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "visit_date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "enter date",
+        "default":"today",
+
+        "text_size": "6sp",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "is_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "2. Is this household part of the destruction sample?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "eligible_person",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "4. Did you find someone at the household to answer questions?",
+        "options": [
+          { "key": "yes", "text": "a. Yes, someone is available to answer questions" },
+          { "key": "no_adult", "text": "b. No appropriate adult available" },
+          { "key": "no_one_home", "text": "c. No-one home" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "explain_consent_enrolment",
+        "type": "label",
+        "text": "5. Field worker: Please explain consent form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "18sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+
+      {
+        "key": "explain_consent_destruction",
+        "type": "label",
+        "text": "5. Field worker: Please explain the purpose of today’s visit",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "18sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "respondent_consent_enrolment",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "6. Did the respondent consent to participation?",
+        "options": [
+          { "key": "yes", "text": "a. Yes, consent form completed" },
+          { "key": "no", "text": "b. No, declined" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "respondent_consent_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "6. Did the respondent consent to the visit?",
+        "options": [
+          { "key": "yes", "text": "Yes, participation agreed" },
+          { "key": "no", "text": "No, declined and wish to withdraw from study" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_initial_calculation.yml"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "step2": {
+    "title": "Household Questions (continued)",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "household_questions_continued_label_enrolment",
+        "type": "label",
+        "text": "Household Questions (continued)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent_enrolment": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "other_emanators_not_recorded_enrolment",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "33. Are any emanators located outside, under eaves, or another location that has not yet been recorded?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent_enrolment": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "num_additional_emanators_label_enrolment",
+        "type": "label",
+        "text": "34. How many additional emanators have been found?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:other_emanators_not_recorded_enrolment": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "num_additional_emanators_enrolment",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number of emanators not recorded",
+        "v_required": { "value": "true", "err": "Required field" },
+        "text_size": "6sp",
+        "repeating_group_label": "Additional Emanator",
+        "value": [
+          {
+            "key": "additional_emanator_location_enrolment",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "36. Describe the position of emanator",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "latrine",
+                "text": "a. Latrine"
+              },
+              {
+                "key": "animal_shelter",
+                "text": "b. Animal shelter"
+              },
+              {
+                "key": "cooking_shelter",
+                "text": "c. Cooking shelter"
+              },
+              {
+                "key": "exterior_already_described",
+                "text": "d. On exterior of a structure already described"
+              },
+              {
+                "key": "deployed_out_not_structure",
+                "text": "e. Deployed outside, but not on a structure"
+              },
+              {
+                "key": "stored_in_bag_container",
+                "text": "f. Stored in a bag or container"
+              },
+              {
+                "key": "other",
+                "text": "h. Other"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "additional_emanator_location_other_label_enrolment",
+            "type": "label",
+            "text": "29.h Other additional emanator location",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:additional_emanator_location_enrolment": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "additional_emanator_location_other_enrolment",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "29.h. Other additional emanator location",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "relevance": {
+              "step1:additional_emanator_location_enrolment": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "camera_instruction_enrolment",
+            "type": "label",
+            "text": "37. Please take a photograph of the emanator in its current location",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#B9A000",
+            "text_size": "20sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "emanator_any_damage_enrolment",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "38. Is any damage or discoloration visible on the emanator, or the plastic case?",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "type_of_damage_enrolment",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "39. What type of damage is visible?",
+            "text_size": "8sp",
+            "options": [
+
+              {
+                "key": "tear_or_hole",
+                "text": "a. Tear or hole in mesh"
+              },
+              {
+                "key": "crack_or_hole",
+                "text": "b. Crack or hole in plastic case"
+              },
+              {
+                "key": "discoloration",
+                "text": "c. Discoloration"
+              },
+              {
+                "key": "other",
+                "text": "d. Other"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step2:emanator_any_damage_enrolment": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "other_any_damage_label_enrolment",
+            "type": "label",
+            "text": "39.d. Other emanator damage: ",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step2:type_of_damage_enrolment": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "other_any_damage_enrolment",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Enter other damage",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "relevance": {
+              "step2:type_of_damage_enrolment": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step2:other_emanators_not_recorded_enrolment": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "household_participating_in_destruct_enrolment",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "39.1. Does this household have Destructive sample emanators?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent_enrolment": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          },
+          "step1:is_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"no\")"
+          }
+        }
+      },
+      {
+        "key": "structure_has_id_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "8. Does this structure have an ID written on the door frame from previous activities?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structure_id_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "9. What is the structure ID?",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:structure_has_id_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "prepare_emanator_label_instruction_destruction",
+        "type": "label",
+        "text": "10. Prepare a label for the emanator that will be removed. Write today’s date, the cluster ID, and household ID on the label. Place the label on the emanator, but do not cover any existing labels",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "label_text_style": "bold",
+        "text_size": "15sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "record_information_instruction_destruction",
+        "type": "label",
+        "text": "11. Record the information wrote on the label in your tracking sheet",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "label_text_style": "bold",
+        "text_size": "14sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "roof_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "12. What is the main roof material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "no_roof",
+            "text": "No roof"
+          },
+          {
+            "key": "thatch_or_leaf",
+            "text": "Thatch or leaf"
+          },
+          {
+            "key": "sticks_and_mud",
+            "text": "Sticks and mud"
+          },
+          {
+            "key": "thatch_or_leaf",
+            "text": "Thatch or leaf"
+          },
+          {
+            "key": "plastic_sheet",
+            "text": "Plastic sheet"
+          },
+          {
+            "key": "wood_plank",
+            "text": "Wood plank"
+          },
+          {
+            "key": "iron_sheet",
+            "text": "Iron sheet"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "other_roof_material_label_destruction",
+        "type": "label",
+        "text":"12g. Other roof material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:roof_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_roof_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other roof material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:roof_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "wall_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "13. What is the main wall material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "no_walls",
+            "text": "No walls"
+          },
+          {
+            "key": "cane_sticks_bamboo_reed",
+            "text": "Cane/sticks/bamboo/reed"
+          },
+          {
+            "key": "bamboo_wood_and_mud",
+            "text": "Bamboo/wood with mud"
+          },
+          {
+            "key": "stone_with_mud",
+            "text": "Stone with mud"
+          },
+          {
+            "key": "cement",
+            "text": "Cement"
+          },
+          {
+            "key": "stone_with_lime_cement",
+            "text": "Stone with lime/cement"
+          },
+          {
+            "key": "bricks",
+            "text": "Bricks"
+          },
+          {
+            "key": "blocks",
+            "text": "Blocks"
+          },
+          {
+            "key": "wood_planks_shingles",
+            "text": "Wood planks/shingles"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "other_wall_material_label_destruction",
+        "type": "label",
+        "text": "13j. Other wall material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:wall_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_wall_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other wall material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:wall_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "floor_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "14. What is the main floor material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "earth_sand",
+            "text": "Earth / sand"
+          },
+          {
+            "key": "dung",
+            "text": "Dung"
+          },
+          {
+            "key": "wood_plank",
+            "text": "Wood plank"
+          },
+          {
+            "key": "tiles",
+            "text": "Tiles"
+          },
+          {
+            "key": "cement",
+            "text": "Cement"
+          },
+          {
+            "key": "carpet",
+            "text": "Carpet"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "other_floor_material_label_destruction",
+        "type": "label",
+        "text": "14g. Other floor material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:floor_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_floor_material_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other floor material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:floor_material_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "eaves_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "15. Are the eaves of the residential structures open or closed?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "open",
+            "text": "a. Open"
+          },
+          {
+            "key": "closed",
+            "text": "b. Closed"
+          },
+
+          {
+            "key": "partially_closed",
+            "text": "c. Partially Closed"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "separate_rooms_label_destruction",
+        "type": "label",
+        "text": "16. How many separate rooms are there in structure #?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "separate_rooms_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of rooms",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "structure_emanator_label_destruction",
+        "type": "label",
+        "text": "Structure 1, room 1, emanator 1",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "label_text_style": "bold",
+        "text_size": "15sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+
+      {
+        "key": "anyone_cook_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "18. Did anyone cook in this room last night or this morning?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+
+      {
+        "key": "cooking_fuel_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "19. What fuel was used to cook in this room?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "electricity",
+            "text": "a. Electricity"
+          },
+          {
+            "key": "lpg_natural_gas",
+            "text": "b. LPG/Natural gas"
+          },
+          {
+            "key": "biogas",
+            "text": "c. Biogas"
+          },
+          {
+            "key": "kerosene",
+            "text": "d. Kerosene"
+          },
+          {
+            "key": "coal_lignite",
+            "text": "e. Coal/lignite"
+          },
+          {
+            "key": "charcoal",
+            "text": "f. Charcoal"
+          },
+          {
+            "key": "firewood_straw",
+            "text": "g. Firewood/straw"
+          },
+          {
+            "key": "dung",
+            "text": "h. Dung"
+          },
+          {
+            "key": "other",
+            "text": "i. Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step2:anyone_cook_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_cooking_fuel_label_destruction",
+        "type": "label",
+        "text": "19.i. Other cooking fuel: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:cooking_fuel_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_cooking_fuel_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter other cooking fuel",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:cooking_fuel_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "anyone_sleep_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "20. Did anyone sleep in this room last night?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "num_people_slept_room_round_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "text_size": "6sp",
+        "hint": "21. How many people slept in this room last night?",
+        "edit_type": "number",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "step2:anyone_sleep_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "emanator_on_furniture_round_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "22.a. The emanator is directly placed on furniture",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_in_front_window_round_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "22.b. Emanator is placed directly in front of a window",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_touching_items_round_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "22.c. Emanator is touching curtains, clothes, or other household items",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_in_sunlight_round_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "22.d. Emanator is in direct sunlight",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_within_fire_stove_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "22.e. Emanator is within 1 meter of a cooking fire / stove",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "photo_instruction_destruction",
+        "type": "label",
+        "text": "23. Please take a photograph of the emanator in its current location",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "18sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_any_damage_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "24. Is any damage or discoloration visible on the emanator, or the plastic case?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "type_of_damage_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "25. What type of damage is visible?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "tear_or_hole",
+            "text": "a. Tear or hole in mesh"
+          },
+          {
+            "key": "crack_or_hole",
+            "text": "b. Crack or hole in plastic case"
+          },
+          {
+            "key": "discoloration",
+            "text": "c. Discoloration"
+          },
+          {
+            "key": "other",
+            "text": "d. Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step2:emanator_any_damage_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_any_damage_label_destruction",
+        "type": "label",
+        "text": "25.d. Other emanator damage: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:type_of_damage_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_any_damage_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter other damage",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:type_of_damage_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "emanator_touched_moved_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "26. Has this emanator been re-positioned, cleaned, or touched for any other reason since the last visit?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "reason_for_contact_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "27. What was the reason for the contact with the emanator?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "rehang",
+            "text": "a. Re-hang after fell down"
+          },
+          {
+            "key": "moved_to_diff_position",
+            "text": "b. Moved to a different position"
+          },
+          {
+            "key": "removed_for_cleaning",
+            "text": "c. Removed for cleaning"
+          },
+          {
+            "key": "other",
+            "text": "d. Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step2:emanator_touched_moved_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_contact_reason_destruction_label",
+        "type": "label",
+        "text": "27.d. Other reason for contact with emanator:",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step2:reason_for_contact_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_contact_reason_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter other reason for contact",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:reason_for_contact_destruction": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "emanator_confirm_stored_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "28. Confirm the emanator has been removed and placed in a storage bag.",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "emanator_confirm_replaced_destruction",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "29. Please confirm that a new emanator has been placed in the same location, with today’s date (DD-MM-YYYY and “REPLACED”) written directly on the frame and on a new label attached to the frame",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp_zm_enrolment_relevance.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "have_comments",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "text_color": "#B90000",
+        "label": "40. Fieldworker: Any comments on this visit to record?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "comments_label",
+        "type": "label",
+        "text": "Enter Comment",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:have_comments": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "comments",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter comment",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step2:have_comments": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "thank_you_label",
+        "type": "label",
+        "text": "41. Fieldworker: Please thank the participant for their time, and ask if they have any additional questions.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "thank_you_label",
+        "type": "label",
+        "text": "42. Fieldworker: Advise the respondent that the team will return to visit in approximately one month.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      }
+    ]
+  }
+}

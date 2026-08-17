@@ -379,16 +379,47 @@ public class AttachRepeatingGroupTask extends AsyncTask<Void, Void, List<View>> 
         element.put(KEY, currKey);
         // modify relevance to reflect changes in unique key name
         if (widgetArgs != null && widgetArgs.getContext() != null) {
-            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
-            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName());
+            Set<String> repeatingGroupFieldKeys = getRepeatingGroupFieldKeys();
+            Utils.buildRulesWithUniqueId(element, uniqueId, RELEVANCE, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName(), repeatingGroupFieldKeys);
+            Utils.buildRulesWithUniqueId(element, uniqueId, CALCULATION, widgetArgs.getContext(), rulesFileMap, widgetArgs.getStepName(), repeatingGroupFieldKeys);
         }
         // modify relative max validator to reflect changes in unique key name
+        // Only suffix the reference if the referenced field is inside the repeating group.
+        // External fields (e.g., top-level hidden fields) should keep their original key.
         JSONObject relativeMaxValidator = element.optJSONObject(V_RELATIVE_MAX);
         if (relativeMaxValidator != null) {
             String currRelativeMaxValidatorValue = relativeMaxValidator.getString(VALUE);
-            String newRelativeMaxValidatorValue = currRelativeMaxValidatorValue + "|" + uniqueId;
-            relativeMaxValidator.put(VALUE, newRelativeMaxValidatorValue);
+            Set<String> rgKeys = getRepeatingGroupFieldKeys();
+            if (rgKeys.contains(currRelativeMaxValidatorValue)) {
+                String newRelativeMaxValidatorValue = currRelativeMaxValidatorValue + "|" + uniqueId;
+                relativeMaxValidator.put(VALUE, newRelativeMaxValidatorValue);
+            }
         }
+    }
+
+    /**
+     * Extracts the set of field keys from the repeating group template layout.
+     * These are the fields that belong to the repeating group and should have uniqueId appended.
+     * Fields referenced in relevance/calculation that are NOT in this set are external fields
+     * and should be left untouched.
+     */
+    private Set<String> getRepeatingGroupFieldKeys() {
+        Set<String> keys = new HashSet<>();
+        try {
+            String layoutJson = repeatingGroupLayouts.get(((LinearLayout) parent).getId());
+            if (layoutJson != null) {
+                JSONArray templateFields = new JSONArray(layoutJson);
+                for (int i = 0; i < templateFields.length(); i++) {
+                    JSONObject field = templateFields.optJSONObject(i);
+                    if (field != null && field.has(KEY)) {
+                        keys.add(field.getString(KEY));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error extracting repeating group field keys");
+        }
+        return keys;
     }
 
     @Override

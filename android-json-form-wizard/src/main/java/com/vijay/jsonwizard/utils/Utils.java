@@ -333,6 +333,20 @@ public class Utils {
 
     public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
                                               Context context, Map<String, List<Map<String, Object>>> rulesFileMap, String stepName) throws JSONException {
+        buildRulesWithUniqueId(element, uniqueId, ruleType, context, rulesFileMap, stepName, null);
+    }
+
+    /**
+     * Rewrites relevance/calculation keys to include the repeating group unique ID.
+     * If repeatingGroupFieldKeys is provided, only keys referencing fields within the repeating group
+     * get the unique ID appended. Keys referencing fields outside the group are left untouched.
+     *
+     * @param repeatingGroupFieldKeys set of field keys that belong to the repeating group template,
+     *                                or null to append uniqueId to all keys (legacy behavior)
+     */
+    public static void buildRulesWithUniqueId(JSONObject element, String uniqueId, String ruleType,
+                                              Context context, Map<String, List<Map<String, Object>>> rulesFileMap,
+                                              String stepName, Set<String> repeatingGroupFieldKeys) throws JSONException {
         JSONObject rules = element.optJSONObject(ruleType);
         if (rules != null) {
             if (rules.has(RuleConstant.RULES_ENGINE) && context != null) {
@@ -367,7 +381,11 @@ public class Utils {
 
                     for (String conditionKey : conditionKeys) {
                         if (conditionKey.startsWith(stepName)) {
-                            strCondition = strCondition.replace(conditionKey, conditionKey + "|" + uniqueId);
+                            // Only append uniqueId if the field belongs to the repeating group
+                            String fieldName = conditionKey.contains(":") ? conditionKey.split(":")[1] : conditionKey;
+                            if (repeatingGroupFieldKeys == null || repeatingGroupFieldKeys.contains(fieldName)) {
+                                strCondition = strCondition.replace(conditionKey, conditionKey + "|" + uniqueId);
+                            }
                         }
                     }
 
@@ -376,7 +394,10 @@ public class Utils {
                     String updatedAction = action;
                     for (String actionKey : actionKeys) {
                         if (actionKey.startsWith(stepName)) {
-                            updatedAction = action.replace(actionKey, actionKey + "|" + uniqueId);
+                            String fieldName = actionKey.contains(":") ? actionKey.split(":")[1] : actionKey;
+                            if (repeatingGroupFieldKeys == null || repeatingGroupFieldKeys.contains(fieldName)) {
+                                updatedAction = updatedAction.replace(actionKey, actionKey + "|" + uniqueId);
+                            }
                         }
                     }
 
@@ -391,11 +412,23 @@ public class Utils {
                 jsonExRules.put(RuleConstant.RULES_DYNAMIC, jsonArrayRules);
 
             } else {
-                String currKey = rules.keys().next();
-                JSONObject rulesObj = rules.getJSONObject(currKey);
-                String newKey = currKey + "|" + uniqueId;
-                rules.remove(currKey);
-                rules.put(newKey, rulesObj);
+                // Iterate all keys to support multi-field relevance (AND logic)
+                List<String> keys = new ArrayList<>();
+                Iterator<String> keysIterator = rules.keys();
+                while (keysIterator.hasNext()) {
+                    keys.add(keysIterator.next());
+                }
+                for (String currKey : keys) {
+                    // Extract field name from "stepX:field_name" format
+                    String fieldName = currKey.contains(":") ? currKey.split(":")[1] : currKey;
+                    // Only append uniqueId if the field belongs to the repeating group
+                    if (repeatingGroupFieldKeys == null || repeatingGroupFieldKeys.contains(fieldName)) {
+                        JSONObject rulesObj = rules.getJSONObject(currKey);
+                        String newKey = currKey + "|" + uniqueId;
+                        rules.remove(currKey);
+                        rules.put(newKey, rulesObj);
+                    }
+                }
             }
         }
 

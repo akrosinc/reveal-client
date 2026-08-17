@@ -67,6 +67,13 @@
         "type": "hidden"
       },
       {
+        "key": "num_people_household",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
         "key": "structure_shape",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -89,7 +96,7 @@
         }
       },
       {
-        "key": "emanator_repeat_round_label",
+        "key": "emanator_repeat_label",
         "type": "label",
         "text": "16. How many separate emanators are there in this structure #?",
         "read_only": false,
@@ -98,13 +105,10 @@
         "text_size": "13sp",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "relevance": {
-          "step1:structure_shape": { "type": "string", "ex": "equalTo(., \"round\")" }
-        }
+        "openmrs_entity_id": ""
       },
       {
-        "key": "emanator_repeat_round",
+        "key": "emanator_repeat",
         "type": "repeating_group",
         "reference_edit_text_hint": "enter number of emanators",
         "text_size": "6sp",
@@ -122,13 +126,13 @@
         },
         "value": [
           {
-            "key": "room_number_round",
+            "key": "room_number",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
             "text_size": "6sp",
-            "hint": "24. Enter the room number",
+            "hint": "17.1. Enter the room number",
             "edit_type": "number",
             "v_required": {
               "value": "true",
@@ -136,7 +140,29 @@
             }
           },
           {
-            "key": "able_to_enter_round",
+            "key": "already_captured",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "18.2. Have you already captured details about this room?",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "able_to_enter",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
@@ -155,38 +181,17 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
-            }
-          },
-          {
-            "key": "already_captured_round",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "18. Have you already captured details about this room?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
             },
             "relevance": {
-              "step1:able_to_enter_round": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               }
             }
           },
+
           {
-            "key": "room_diameter_round",
+            "key": "room_diameter",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
@@ -199,14 +204,67 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured_round": {
+              "step1:able_to_enter": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"round\")"
               }
             }
           },
           {
-            "key": "num_people_slept_room_round",
+            "key": "room_length",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "text_size": "6sp",
+            "hint": "20. What is the length of the room in paces?",
+            "edit_type": "number",
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"straight\")"
+              }
+            }
+          },
+          {
+            "key": "room_width",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "text_size": "6sp",
+            "hint": "21. What is the width of the room in paces?",
+            "edit_type": "number",
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"straight\")"
+              }
+            }
+          },
+
+          {
+            "key": "num_people_slept_room",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
@@ -218,15 +276,27 @@
               "value": "true",
               "err": "Required field"
             },
+            "v_numeric": {
+              "value": true,
+              "err": "This field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": true,
+              "err": "This field must be a number"
+            },
+            "v_relative_max": {
+              "value": "num_people_household",
+              "err": "The number of cannot be higher than the number of people in the household"
+            },
             "relevance": {
-              "step1:already_captured_round": {
+              "step1:able_to_enter": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
               }
             }
           },
           {
-            "key": "time_spent_evening_morning_round",
+            "key": "time_spent_evening_morning",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
@@ -247,47 +317,43 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured_round": {
+              "step1:able_to_enter": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
               }
             }
           },
           {
-            "key": "emanator_positioning_round",
+            "key": "emanator_position",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
             "label": "25. How is this emanator positioned around the room?",
+            "text_size": "8sp",
             "options": [
               {
                 "key": "evenly_spaced",
-                "text": "Evenly spaced in the room"
+                "text": "a. Evenly spaced in the room"
               },
               {
-                "key": "grouped",
-                "text": "Grouped close together in one area"
+                "key": "grouped_close_together",
+                "text": "b. Grouped close together in one area of the room"
               }
             ],
             "v_required": {
-              "value": "true",
+              "value": true,
               "err": "Required field"
-            },
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
             }
           },
+
           {
-            "key": "emanator_on_furniture_round",
+            "key": "emanator_on_furniture",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "26a. Is this emanator directly placed on furniture?",
+            "label": "26a. The emanator is directly placed on furniture",
             "options": [
               {
                 "key": "yes",
@@ -298,24 +364,18 @@
                 "text": "No"
               }
             ],
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
             "v_required": {
               "value": "true",
               "err": "Required field"
             }
           },
           {
-            "key": "emanator_in_front_window_round",
+            "key": "emanator_in_front_window",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "26b. Is this emanator placed directly in front of a window?",
+            "label": "26b. Emanator is placed directly in front of a window",
             "options": [
               {
                 "key": "yes",
@@ -326,24 +386,18 @@
                 "text": "No"
               }
             ],
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
             "v_required": {
               "value": "true",
               "err": "Required field"
             }
           },
           {
-            "key": "emanator_touching_items_round",
+            "key": "emanator_touching_items",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "26c. Is this emanator touching curtains, clothes, or other household items?",
+            "label": "26c. Emanator is touching curtains, clothes, or other household items",
             "options": [
               {
                 "key": "yes",
@@ -354,24 +408,18 @@
                 "text": "No"
               }
             ],
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
             "v_required": {
               "value": "true",
               "err": "Required field"
             }
           },
           {
-            "key": "emanator_in_sunlight_round",
+            "key": "emanator_in_sunlight",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "26d. Is this emanator in direct sunlight?",
+            "label": "26d. Emanator is in direct sunlight",
             "options": [
               {
                 "key": "yes",
@@ -382,19 +430,13 @@
                 "text": "No"
               }
             ],
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
             "v_required": {
               "value": "true",
               "err": "Required field"
             }
           },
           {
-            "key": "emanator_exposed_rain_round",
+            "key": "emanator_exposed_rain",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
@@ -410,45 +452,41 @@
                 "text": "No"
               }
             ],
-            "relevance": {
-              "step1:able_to_enter_round": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
             "v_required": {
               "value": "true",
               "err": "Required field"
             }
           }
-        ],
-        "relevance": {
-          "step1:structure_shape": { "type": "string", "ex": "equalTo(., \"round\")" }
-        }
+        ]
       },
-
       {
-        "key": "emanator_repeat_straight_label",
-        "type": "label",
-        "text": "16. How many separate emanators are there in this structure #?",
-        "read_only": false,
-        "hint_on_text": true,
-        "text_color": "#000000",
-        "text_size": "13sp",
+        "key": "additional_room_without_emanator",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
-        "relevance": {
-          "step1:structure_shape": { "type": "string", "ex": "equalTo(., \"straight\")" }
+        "type": "native_radio",
+        "label": "Add_17.0. Are there additional rooms in this structure that do not have Emanators?",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
         }
       },
-
       {
-        "key": "emanator_repeat_straight",
+        "key": "room_repeat",
         "type": "repeating_group",
-        "reference_edit_text_hint": "enter number of emanators",
+        "reference_edit_text_hint": "enter number of rooms",
         "text_size": "6sp",
-        "repeating_group_label": "Emanator",
+        "repeating_group_label": "Room",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
         "openmrs_entity_id": "",
@@ -462,13 +500,13 @@
         },
         "value": [
           {
-            "key": "room_number_straight",
+            "key": "room_number_additional",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
             "text_size": "6sp",
-            "hint": "24. Enter the room number",
+            "hint": "Add_17.1. Enter the room number",
             "edit_type": "number",
             "v_required": {
               "value": "true",
@@ -476,12 +514,12 @@
             }
           },
           {
-            "key": "able_to_enter_straight",
+            "key": "able_to_enter_additional",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "18. Are you able to enter this room to measure size and inspect emanators?",
+            "label": "Add_18. Are you able to enter this room to measure size and inspect emanators?",
             "options": [
               {
                 "key": "yes",
@@ -497,81 +535,119 @@
               "err": "Required field"
             }
           },
+
           {
-            "key": "already_captured_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "18. Have you already captured details about this room?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            },
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            }
-          },
-          {
-            "key": "room_diameter_straight",
+            "key": "room_diameter_additional",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
             "text_size": "6sp",
-            "hint": "19. What is the diameter of the room (in paces)?",
+            "hint": "Add_19. What is the diameter of the room (in paces)?",
             "edit_type": "number",
             "v_required": {
               "value": "true",
               "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured_straight": {
+              "step1:able_to_enter_additional": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"round\")"
               }
             }
           },
           {
-            "key": "num_people_slept_room_straight",
+            "key": "room_length_additional",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
             "text_size": "6sp",
-            "hint": "22. How many people slept in this room last night?",
+            "hint": "Add_20. What is the length of the room in paces?",
             "edit_type": "number",
             "v_required": {
               "value": "true",
               "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured_straight": {
+              "step1:able_to_enter_additional": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"straight\")"
               }
             }
           },
           {
-            "key": "time_spent_evening_morning_straight",
+            "key": "room_width_additional",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "text_size": "6sp",
+            "hint": "Add_21. What is the width of the room in paces?",
+            "edit_type": "number",
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter_additional": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              },
+              "step1:structure_shape": {
+                "type": "string",
+                "ex": "equalTo(., \"straight\")"
+              }
+            }
+          },
+
+          {
+            "key": "num_people_slept_room_additional",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "text_size": "6sp",
+            "hint": "Add_22. How many people slept in this room last night?",
+            "edit_type": "number",
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
+            },
+            "v_numeric": {
+              "value": true,
+              "err": "This field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": true,
+              "err": "This field must be a number"
+            },
+            "v_relative_max": {
+              "value": "num_people_household",
+              "err": "The number of cannot be higher than the number of people in the household"
+            },
+            "relevance": {
+              "step1:able_to_enter_additional": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "time_spent_evening_morning_additional",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "23. Did anyone spend time in this room yesterday evening or early this morning?",
+            "label": "Add_23. Did anyone spend time in this room yesterday evening or early this morning?",
             "options": [
               {
                 "key": "yes",
@@ -587,183 +663,18 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"no\")"
-              }
-            }
-          },
-          {
-            "key": "emanator_positioning_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "25. How is this emanator positioned around the room?",
-            "options": [
-              {
-                "key": "evenly_spaced",
-                "text": "Evenly spaced in the room"
-              },
-              {
-                "key": "grouped",
-                "text": "Grouped close together in one area"
-              }
-            ],
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            },
-            "relevance": {
-              "step1:able_to_enter_straight": {
+              "step1:able_to_enter_additional": {
                 "type": "string",
                 "ex": "equalTo(., \"yes\")"
               }
-            }
-          },
-          {
-            "key": "emanator_on_furniture_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "26a. Is this emanator directly placed on furniture?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            }
-          },
-          {
-            "key": "emanator_in_front_window_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "26b. Is this emanator placed directly in front of a window?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            }
-          },
-          {
-            "key": "emanator_touching_items_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "26c. Is this emanator touching curtains, clothes, or other household items?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            }
-          },
-          {
-            "key": "emanator_in_sunlight_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "26d. Is this emanator in direct sunlight?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            }
-          },
-          {
-            "key": "emanator_exposed_rain_straight",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "26e. Is this emanator exposed to potential rainfall?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "relevance": {
-              "step1:able_to_enter_straight": {
-                "type": "string",
-                "ex": "equalTo(., \"yes\")"
-              }
-            },
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
             }
           }
         ],
         "relevance": {
-          "step1:structure_shape": { "type": "string", "ex": "equalTo(., \"straight\")" }
+          "step1:additional_room_without_emanator": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
         }
       },
       {
