@@ -569,47 +569,47 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
 
 
 
-    private void observeWorkInfo(Context context, TextView resultTextView, OneTimeWorkRequest searchWorkRequest) {
-        WorkManager.getInstance(context)
-                .getWorkInfoByIdLiveData(searchWorkRequest.getId())
-                .observe(this.formFragment.getViewLifecycleOwner(), new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        if (workInfo != null && workInfo.getState().isFinished()) {
-                            // Handle the result or update the UI
-                            Timber.tag("hdsssearch").i("got response");
-                            handleWorkResult(workInfo, context, resultTextView);
-                        }
-                    }
-                });
-    }
+//    private void observeWorkInfo(Context context, TextView resultTextView, OneTimeWorkRequest searchWorkRequest) {
+//        WorkManager.getInstance(context)
+//                .getWorkInfoByIdLiveData(searchWorkRequest.getId())
+//                .observe(this.formFragment.getViewLifecycleOwner(), new Observer<WorkInfo>() {
+//                    @Override
+//                    public void onChanged(WorkInfo workInfo) {
+//                        if (workInfo != null && workInfo.getState().isFinished()) {
+//                            // Handle the result or update the UI
+//                            Timber.tag("hdsssearch").i("got response");
+//                            handleWorkResult(workInfo, context, resultTextView);
+//                        }
+//                    }
+//                });
+//    }
 
-    private void handleWorkResult(WorkInfo workInfo, Context context, TextView resultTextView) {
-        if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-            // Update the UI for success
-            handleSucceeded(workInfo, context, resultTextView);
+//    private void handleWorkResult(WorkInfo workInfo, Context context, TextView resultTextView) {
+//        if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+//            // Update the UI for success
+//            handleSucceeded(workInfo, context, resultTextView);
+//
+//        } else if (workInfo.getState() == WorkInfo.State.FAILED) {
+//            handleFailure(workInfo, context);
+//        }
+//        searchButton.setEnabled(true);
+//    }
 
-        } else if (workInfo.getState() == WorkInfo.State.FAILED) {
-            handleFailure(workInfo, context);
-        }
-        searchButton.setEnabled(true);
-    }
-
-    private void handleFailure(WorkInfo workInfo, Context context) {
-        Data outputData = workInfo.getOutputData();
-        if (currentToast!=null){
-            currentToast.cancel();
-            currentToast = null;
-        }
-        if (outputData.getString("error") != null) {
-            currentToast = Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG);
-            currentToast.show();
-        } else {
-            currentToast = Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG);
-            currentToast.show();
-        }
-        isLoading = false;
-    }
+//    private void handleFailure(WorkInfo workInfo, Context context) {
+//        Data outputData = workInfo.getOutputData();
+//        if (currentToast!=null){
+//            currentToast.cancel();
+//            currentToast = null;
+//        }
+//        if (outputData.getString("error") != null) {
+//            currentToast = Toast.makeText(context, outputData.getString("error"), Toast.LENGTH_LONG);
+//            currentToast.show();
+//        } else {
+//            currentToast = Toast.makeText(context, "Error searching data", Toast.LENGTH_LONG);
+//            currentToast.show();
+//        }
+//        isLoading = false;
+//    }
 
     private void handleFailure(SearchTaskResult result, Context context) {
 
@@ -629,44 +629,44 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 "Error searching data",
                 Toast.LENGTH_LONG);
         }
-
+        searchButton.setEnabled(true);
         currentToast.show();
         isLoading = false;
     }
 
-    private void handleSucceeded(WorkInfo workInfo, Context context, TextView resultTextView) {
-        if (currentToast!=null){
-            currentToast.cancel();
-            currentToast = null;
-        }
-        Data outputData = workInfo.getOutputData();
-
-        String json = outputData.getString("result");
-        Gson gson = new Gson();
-
-        if (searchItems != null) {
-            searchItems.clear();
-            if (searchItemAdapter != null) {
-                searchItemAdapter.notifyDataSetChanged();
-            }
-        }
-        List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
-        }.getType());
-        if (resultList != null && !resultList.isEmpty()) {
-            searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
-            if (dialog == null) {
-                dialog = setupDialog(context, resultTextView);
-            }
-            setupRecyclerView(context, resultTextView, dialog);
-
-            dialog.show();
-        } else {
-            currentToast = Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG);
-            currentToast.show();
-        }
-        isLoading = false;
-
-    }
+//    private void handleSucceeded(WorkInfo workInfo, Context context, TextView resultTextView) {
+//        if (currentToast!=null){
+//            currentToast.cancel();
+//            currentToast = null;
+//        }
+//        Data outputData = workInfo.getOutputData();
+//
+//        String json = outputData.getString("result");
+//        Gson gson = new Gson();
+//
+//        if (searchItems != null) {
+//            searchItems.clear();
+//            if (searchItemAdapter != null) {
+//                searchItemAdapter.notifyDataSetChanged();
+//            }
+//        }
+//        List<SearchResponse> resultList = gson.fromJson(json, new TypeToken<List<SearchResponse>>() {
+//        }.getType());
+//        if (resultList != null && !resultList.isEmpty()) {
+//            searchItems = resultList.stream().map(HdssSearchBoxFactory::getSearchItem).collect(Collectors.toList());
+//            if (dialog == null) {
+//                dialog = setupDialog(context, resultTextView);
+//            }
+//            setupRecyclerView(context, resultTextView, dialog);
+//
+//            dialog.show();
+//        } else {
+//            currentToast = Toast.makeText(context, "No data return for search criteria", Toast.LENGTH_LONG);
+//            currentToast.show();
+//        }
+//        isLoading = false;
+//
+//    }
 
     private void handleSucceeded(SearchTaskResult result,
         Context context,
@@ -700,14 +700,14 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
                 .collect(Collectors.toList());
 
             if (dialog == null) {
-                dialog = setupDialog(context, resultTextView);
+                dialog = setupDialog(context, resultTextView, searchButton);
             }
 
             setupRecyclerView(context, resultTextView, dialog);
             dialog.show();
 
         } else {
-
+            searchButton.setEnabled(true);
             currentToast = Toast.makeText(
                 context,
                 "No data returned for search criteria",
@@ -719,7 +719,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
         isLoading = false;
     }
 
-    private static @NonNull Dialog setupDialog(Context context, View anchorView) {
+    private static @NonNull Dialog setupDialog(Context context, View anchorView, Button searchButton) {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.search_dialog);
         TextView headerTextView = dialog.findViewById(R.id.dialogTitle);
@@ -731,6 +731,7 @@ public class HdssSearchBoxFactory extends RevealSearchBoxFactory {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                searchButton.setEnabled(true);
             }
         });
         if (dialog.getWindow() != null) {

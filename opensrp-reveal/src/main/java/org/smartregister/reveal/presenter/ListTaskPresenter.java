@@ -993,8 +993,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
             listTaskView.registerFamily();
         } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
-//            listTaskView.openRCD();
-            listTaskView.openFormByTemplate("test");
+            listTaskView.openRCD();
+//            listTaskView.openFormByTemplate("test");
         } else if (formTemplate != null) {
             // Template-based tasks always open the template regardless of cardDetails
             listTaskView.openFormByTemplate(formTemplate);
