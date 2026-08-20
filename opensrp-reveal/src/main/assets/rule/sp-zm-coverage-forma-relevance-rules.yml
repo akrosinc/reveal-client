@@ -12,3 +12,24 @@ priority: 1
 condition: "Double.valueOf(helper.ifNull(step1_num_nets,'0')) > 0"
 actions:
  - "isRelevant = true"
+---
+name: step2_other_emanators_not_recorded
+description: step2_other_emanators_not_recorded
+priority: 1
+condition: "step1_permission_enter.equals('yes_all') || step1_permission_enter.equals('yes_some') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_other_structures_not_assessed
+description: step2_other_structures_not_assessed
+priority: 1
+condition: "step1_permission_enter.equals('yes_all') || step1_permission_enter.equals('yes_some') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_emanators_disposed
+description: step2_emanators_disposed
+priority: 1
+condition: "step1_permission_enter.equals('yes_all') || step1_permission_enter.equals('yes_some') "
+actions:
+ - "isRelevant = true"

@@ -780,7 +780,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "respondent_consent_enrolment:yes");
         } else {
             intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Rapid Coverage Structure");
-            intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "permission_enter:yes_all,yes_some");
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "permission_enter:yes_all,yes_some,no");
 
             intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_coverage_formB.json");
             intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "permission_enter:yes_all,yes_some");

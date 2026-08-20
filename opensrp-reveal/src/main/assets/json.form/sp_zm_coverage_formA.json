@@ -385,6 +385,55 @@
         ]
       },
       {
+        "key": "have_pmi_evolve",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "11a. Do you have a sticker/card from PMI Evolve?",
+        "options": [
+          { "key": "yes", "text": "Yes" },
+          { "key": "no", "text": "No" }
+        ],
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "step1:respondent_consent": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "emanator_sticker_label",
+        "type": "label",
+        "text": "11b. How many emanators are indicated on the sticker/card?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:have_pmi_evolve": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
+        "key": "emanator_sticker_value",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": { "value": "true", "err": "Required field" },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "Must be a whole number"
+        },
+        "relevance": {
+          "step1:have_pmi_evolve": { "type": "string", "ex": "equalTo(., \"yes\")" }
+        }
+      },
+      {
         "key": "received_emanators",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -581,7 +630,14 @@
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
         ],
-        "v_required": { "value": "true", "err": "Required field" }
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
+            }
+          }
+        }
       },
       {
         "key": "num_additional_emanators_label",
@@ -710,7 +766,14 @@
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
         ],
-        "v_required": { "value": "true", "err": "Required field" }
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
+            }
+          }
+        }
       },
       {
         "key": "other_structure_types",
@@ -812,7 +875,14 @@
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
         ],
-        "v_required": { "value": "true", "err": "Required field" }
+        "v_required": { "value": "true", "err": "Required field" },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "sp-zm-coverage-forma-relevance-rules.yml"
+            }
+          }
+        }
       },
       {
         "key": "num_emanators_lost_label",
@@ -865,7 +935,7 @@
       {
         "key": "reason_no_longer_have_other_label",
         "type": "label",
-        "text": "36.e What was the other reason it was discarded?",
+        "text": "35.e What was the other reason you no longer have it?",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#000000",

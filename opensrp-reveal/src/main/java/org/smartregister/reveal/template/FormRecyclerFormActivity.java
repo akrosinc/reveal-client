@@ -409,6 +409,23 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                         "Please enter the number of tasks", android.widget.Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // If a count > 0 was entered, tasks must have been generated before saving
+            try {
+                int count = Integer.parseInt(countText.trim());
+                if (count > 0 && taskListFragment != null && !taskListFragment.hasGeneratedTasks()) {
+                    Timber.tag("FormSaveInteractor").i("onFormSaved: count=%d but tasks not generated, blocking save", count);
+                    android.widget.Toast.makeText(this,
+                            "Please press Generate to create the tasks before saving",
+                            android.widget.Toast.LENGTH_LONG).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Timber.tag("FormSaveInteractor").w(e, "onFormSaved: invalid count value");
+                android.widget.Toast.makeText(this,
+                        "Please enter a valid number for tasks", android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         showProgress("Saving…");

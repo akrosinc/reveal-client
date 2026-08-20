@@ -296,6 +296,22 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
         // After generation, the host calls setItems() which transitions to LOCKED
     }
 
+    /* ------------------------------------------------------------------ public queries */
+
+    /**
+     * Returns true if tasks have been generated (i.e., the adapter has at least one item).
+     */
+    public boolean hasGeneratedTasks() {
+        return adapter != null && adapter.getItemCount() > 0;
+    }
+
+    /**
+     * Returns the current state of the fragment (EMPTY, LOCKED, or UNLOCKED).
+     */
+    public State getCurrentState() {
+        return currentState;
+    }
+
     /* ------------------------------------------------------------------ TaskRowCallbacks */
 
     @Override

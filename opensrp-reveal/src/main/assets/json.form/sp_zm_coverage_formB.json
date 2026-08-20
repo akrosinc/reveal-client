@@ -197,7 +197,7 @@
             "openmrs_entity_id": "",
             "type": "edit_text",
             "text_size": "6sp",
-            "hint": "19. What is the diameter of the room (in paces)?",
+            "hint": "19. What is the diameter of room # (distance from one wall to the next, across the middle of the room) in paces?",
             "edit_type": "number",
             "v_required": {
               "value": "true",
@@ -344,6 +344,12 @@
             "v_required": {
               "value": true,
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           },
 
@@ -367,6 +373,12 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           },
           {
@@ -389,6 +401,12 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           },
           {
@@ -411,6 +429,12 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           },
           {
@@ -433,6 +457,12 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           },
           {
@@ -455,6 +485,12 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            },
+            "relevance": {
+              "step1:able_to_enter": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
             }
           }
         ]
@@ -519,7 +555,7 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "Add_18. Are you able to enter this room to measure size and inspect emanators?",
+            "label": "Add_18. Are you able to enter this room to measure size?",
             "options": [
               {
                 "key": "yes",
