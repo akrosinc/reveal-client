@@ -459,11 +459,11 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
               formTemplate, formForTask, code, businessStatus);
 //        if (interventionHasLocationValidation(businessStatus, code)) {
         if (true) {
-//            if (validateFarStructures()) {
-//                validateUserLocation();
-//            } else {
+            if (validateFarStructures()) {
+                validateUserLocation();
+            } else {
                 onLocationValidated();
-//            }
+            }
         } else if (IRS.equals(code) &&
                 (NOT_SPRAYED.equals(businessStatus) || SPRAYED.equals(businessStatus) || NOT_SPRAYABLE.equals(businessStatus) || PARTIALLY_SPRAYED.equals(businessStatus)
                         || COMPLETE.equals(businessStatus) || NOT_ELIGIBLE.equals(businessStatus) || NOT_VISITED.equals(businessStatus))) {

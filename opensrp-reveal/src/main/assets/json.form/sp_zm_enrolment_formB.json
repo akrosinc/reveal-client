@@ -72,7 +72,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "8. Does this structure have an ID written on the door frame from previous activities?",
+        "label": "8. Does this structure have a PMI Evolve ID (sticker/card)?",
         "options": [
           {
             "key": "yes",
@@ -94,7 +94,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "9. What is the structure ID?",
+        "hint": "9. What is the PMI Evolve Structure ID?",
         "edit_type": "name",
         "text_size": "6sp",
         "v_required": {
@@ -140,7 +140,7 @@
         "text": "11. Please take a photograph of the exterior of the structure, including the full height of the roof and the calibration/measuring stick",
         "read_only": false,
         "hint_on_text": true,
-        "text_color": "#B9A000",
+        "text_color": "#AA0000",
         "text_size": "20sp",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -152,7 +152,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "12. What is the main roof material for this household’s residential structures?",
+        "label": "12. What is the main roof material for this structure?",
         "text_size": "8sp",
         "options": [
 
@@ -238,7 +238,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "13. What is the main wall material for this household’s residential structures?",
+        "label": "13. What is the main wall material for this structure?",
         "text_size": "8sp",
         "options": [
 
@@ -332,7 +332,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "14. What is the main floor material for this household’s residential structures?",
+        "label": "14. What is the main floor material for this structure?",
         "text_size": "8sp",
         "options": [
 
@@ -440,7 +440,7 @@
       {
         "key": "separate_rooms_label",
         "type": "label",
-        "text": "16. How many separate rooms are there in structure #?",
+        "text": "16. How many separate rooms are there in structure?",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#000000",
@@ -500,7 +500,7 @@
       {
         "key": "emanator_repeat_label",
         "type": "label",
-        "text": "16. How many separate emanators are there in this structure #?",
+        "text": "16_se. How many separate emanators are there in this structure?",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#000000",
@@ -679,7 +679,7 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "native_radio",
-            "label": "21. Did anyone cook in this room last night or this morning?",
+            "label": "22. Did anyone cook in this room last night or this morning?",
             "options": [
               {
                 "key": "yes",
@@ -885,10 +885,10 @@
           {
             "key": "emanator_label",
             "type": "label",
-            "text": "28. Please write the following unique code on the emanator",
+            "text": "28. Attach a pre-printed label on the emanator. Please enter the unique ID from the label",
             "read_only": false,
             "hint_on_text": true,
-            "text_color": "#B9A000",
+            "text_color": "#AA0000",
             "text_size": "20sp",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
@@ -903,8 +903,10 @@
             "hint": "enter unique code",
             "edit_type": "name",
             "text_size": "6sp",
-            "editable": true,
-            "read_only": true
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
           },
           {
             "key": "emanator_on_furniture_round",
@@ -1019,10 +1021,10 @@
           {
             "key": "photo_instruction",
             "type": "label",
-            "text": "30. Please take a photograph of the emanator in its current location",
+            "text": "30. Please take a photograph of the emanator in its current location, take 3 photos (SE front, SE back and SE surroundings)",
             "read_only": false,
             "hint_on_text": true,
-            "text_color": "#B90000",
+            "text_color": "#AA0000",
             "text_size": "18sp",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",

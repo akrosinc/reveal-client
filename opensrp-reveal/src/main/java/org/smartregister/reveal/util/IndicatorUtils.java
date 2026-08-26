@@ -937,10 +937,7 @@ public class IndicatorUtils {
     public static IndicatorDetails processIndicatorsZamSurStr(final List<TaskDetails> tasks) {
 
         IndicatorDetails indicatorDetails = new IndicatorDetails();
-        List<TaskDetails> validTasks = tasks.stream()
-            .filter(taskDetails -> taskDetails.getTaskCode()
-                .equals(STRUCTURE_SURVEY))
-            .collect(toList());
+        List<TaskDetails> validTasks = tasks;
 
         long complete = validTasks.stream()
             .filter(taskDetails ->
@@ -984,7 +981,7 @@ public class IndicatorUtils {
 
         indicatorDetails.setTotal(Long.valueOf(total).intValue());
 
-        indicatorDetails.setStructuresToComplete(28);
+        indicatorDetails.setStructuresToComplete(20);
 
         double coverageOfCompleted = (total) > 0 ? (double) (complete) / (double) (indicatorDetails.getStructuresToComplete()) * 100 : 0;
 

@@ -140,28 +140,6 @@
             }
           },
           {
-            "key": "already_captured",
-            "openmrs_entity_parent": "",
-            "openmrs_entity": "",
-            "openmrs_entity_id": "",
-            "type": "native_radio",
-            "label": "18.2. Have you already captured details about this room?",
-            "options": [
-              {
-                "key": "yes",
-                "text": "Yes"
-              },
-              {
-                "key": "no",
-                "text": "No"
-              }
-            ],
-            "v_required": {
-              "value": "true",
-              "err": "Required field"
-            }
-          },
-          {
             "key": "able_to_enter",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
@@ -181,14 +159,37 @@
             "v_required": {
               "value": "true",
               "err": "Required field"
+            }
+          },
+          {
+            "key": "already_captured",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "18.2. Have you already captured details about this room?",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": "true",
+              "err": "Required field"
             },
             "relevance": {
-              "step1:already_captured": {
+              "step1:able_to_enter": {
                 "type": "string",
-                "ex": "equalTo(., \"no\")"
+                "ex": "equalTo(., \"yes\")"
               }
             }
           },
+
 
           {
             "key": "room_diameter",
@@ -204,9 +205,9 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:able_to_enter": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               },
               "step1:structure_shape": {
                 "type": "string",
@@ -228,9 +229,9 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:able_to_enter": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               },
               "step1:structure_shape": {
                 "type": "string",
@@ -252,9 +253,9 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:able_to_enter": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               },
               "step1:structure_shape": {
                 "type": "string",
@@ -289,9 +290,9 @@
               "err": "The number of cannot be higher than the number of people in the household"
             },
             "relevance": {
-              "step1:able_to_enter": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               }
             }
           },
@@ -317,9 +318,9 @@
               "err": "Required field"
             },
             "relevance": {
-              "step1:able_to_enter": {
+              "step1:already_captured": {
                 "type": "string",
-                "ex": "equalTo(., \"yes\")"
+                "ex": "equalTo(., \"no\")"
               }
             }
           },

@@ -150,7 +150,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "2. Is this household part of the destruction sample?",
+        "label": "2. is this household part of the destructive sample only?",
         "options": [
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
@@ -367,6 +367,33 @@
         "repeating_group_label": "Additional Emanator",
         "value": [
           {
+            "key": "additional_emanator_location_unique_code_label",
+            "type": "label",
+            "text": "35. Attach a pre-printed label on the emanator. Please enter the unique ID from the label",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#AA0000",
+            "text_size": "20sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "additional_emanator_label_value",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "enter unique code",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+
             "key": "additional_emanator_location_enrolment",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
@@ -412,7 +439,7 @@
           {
             "key": "additional_emanator_location_other_label_enrolment",
             "type": "label",
-            "text": "29.h Other additional emanator location",
+            "text": "36.h Other additional emanator location",
             "read_only": false,
             "hint_on_text": true,
             "text_color": "#000000",
@@ -421,7 +448,7 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "relevance": {
-              "step1:additional_emanator_location_enrolment": {
+              "step2:additional_emanator_location_enrolment": {
                 "type": "string",
                 "ex": "equalTo(., \"other\")"
               }
@@ -433,7 +460,7 @@
             "openmrs_entity": "",
             "openmrs_entity_id": "",
             "type": "edit_text",
-            "hint": "29.h. Other additional emanator location",
+            "hint": "Enter other additional emanator location",
             "edit_type": "name",
             "text_size": "6sp",
             "v_required": {
@@ -441,7 +468,7 @@
               "err": "Field required"
             },
             "relevance": {
-              "step1:additional_emanator_location_enrolment": {
+              "step2:additional_emanator_location_enrolment": {
                 "type": "string",
                 "ex": "equalTo(., \"other\")"
               }
@@ -450,14 +477,22 @@
           {
             "key": "camera_instruction_enrolment",
             "type": "label",
-            "text": "37. Please take a photograph of the emanator in its current location",
+            "text": "37. Please take a photograph of the emanator in its current location, take 3 photos (SE front, SE back and SE surroundings)",
             "read_only": false,
             "hint_on_text": true,
-            "text_color": "#B9A000",
+            "text_color": "#AA0000",
             "text_size": "20sp",
             "openmrs_entity_parent": "",
             "openmrs_entity": "",
             "openmrs_entity_id": ""
+          },
+          {
+            "key": "spacer",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "spacer",
+            "type": "spacer",
+            "spacer_height": "20dp"
           },
           {
             "key": "emanator_any_damage_enrolment",
@@ -600,7 +635,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "8. Does this structure have an ID written on the door frame from previous activities?",
+        "label": "8. Does this structure have a PMI Evolve ID (sticker/card)?",
         "options": [
           {
             "key": "yes",
@@ -629,7 +664,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "edit_text",
-        "hint": "9. What is the structure ID?",
+        "hint": "9. What is the PMI Evolve Structure ID?",
         "edit_type": "name",
         "text_size": "6sp",
         "v_required": {
@@ -650,7 +685,7 @@
         "text": "10. Prepare a label for the emanator that will be removed. Write today’s date, the cluster ID, and household ID on the label. Place the label on the emanator, but do not cover any existing labels",
         "read_only": false,
         "hint_on_text": true,
-        "text_color": "#B90000",
+        "text_color": "#AA0000",
         "label_text_style": "bold",
         "text_size": "15sp",
         "openmrs_entity_parent": "",
@@ -670,7 +705,7 @@
         "text": "11. Record the information wrote on the label in your tracking sheet",
         "read_only": false,
         "hint_on_text": true,
-        "text_color": "#000000",
+        "text_color": "#AA0000",
         "label_text_style": "bold",
         "text_size": "14sp",
         "openmrs_entity_parent": "",
@@ -690,7 +725,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "12. What is the main roof material for this household’s residential structures?",
+        "label": "12. What is the main roof material for this structure?",
         "text_size": "8sp",
         "options": [
 
@@ -783,7 +818,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "13. What is the main wall material for this household’s residential structures?",
+        "label": "13. What is the main wall material for this structure?",
         "text_size": "8sp",
         "options": [
           {
@@ -883,7 +918,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "14. What is the main floor material for this household’s residential structures?",
+        "label": "14. What is the main floor material for this structure?",
         "text_size": "8sp",
         "options": [
           {
@@ -1059,7 +1094,7 @@
         "text": "Structure 1, room 1, emanator 1",
         "read_only": false,
         "hint_on_text": true,
-        "text_color": "#B90000",
+        "text_color": "#AA0000",
         "label_text_style": "bold",
         "text_size": "15sp",
         "openmrs_entity_parent": "",
@@ -1398,10 +1433,10 @@
       {
         "key": "photo_instruction_destruction",
         "type": "label",
-        "text": "23. Please take a photograph of the emanator in its current location",
+        "text": "23.  Please take a photograph of the emanator in its current location, with the label clearly readable.",
         "read_only": false,
         "hint_on_text": true,
-        "text_color": "#B90000",
+        "text_color": "#AA0000",
         "text_size": "18sp",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -1688,7 +1723,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "text_color": "#B90000",
+        "text_color": "#AA0000",
         "label": "40. Fieldworker: Any comments on this visit to record?",
         "text_size": "8sp",
         "options": [
@@ -1759,7 +1794,7 @@
       {
         "key": "thank_you_label",
         "type": "label",
-        "text": "42. Fieldworker: Advise the respondent that the team will return to visit in approximately one month.",
+        "text": "42. Fieldworker: Advise the respondent that the team will return to visit in approximately three months.",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B90000",

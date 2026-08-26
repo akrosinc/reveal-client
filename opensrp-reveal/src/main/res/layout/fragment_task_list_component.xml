@@ -112,6 +112,16 @@
         android:background="?attr/colorPrimary"
         android:layout_marginTop="4dp" />
 
+    <!-- Error message shown when save is blocked (e.g. incomplete child tasks) -->
+    <TextView
+        android:id="@+id/tv_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="13sp"
+        android:padding="8dp"
+        android:visibility="gone" />
+
     <!-- Empty state -->
     <TextView
         android:id="@+id/tv_empty"

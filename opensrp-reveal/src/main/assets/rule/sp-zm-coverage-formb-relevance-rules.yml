@@ -1,0 +1,42 @@
+---
+name: step1_emanator_position
+description: step1_emanator_position
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step1_emanator_on_furniture
+description: step1_emanator_on_furniture
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step1_emanator_in_front_window
+description: step1_emanator_in_front_window
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step1_emanator_touching_items
+description: step1_emanator_touching_items
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step1_emanator_in_sunlight
+description: step1_emanator_in_sunlight
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step1_emanator_exposed_rain
+description: step1_emanator_exposed_rain
+priority: 1
+condition: "step1_already_captured.equals('yes') || step1_able_to_enter.equals('yes') "
+actions:
+ - "isRelevant = true"

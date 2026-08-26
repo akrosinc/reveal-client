@@ -789,7 +789,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         intent.putExtra(FormRecyclerFormActivity.EXTRA_BUSINESS_STATUS_FIELD, "business_status");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_HEADER, "Structures");
         intent.putExtra(FormRecyclerFormActivity.EXTRA_COUNT_LABEL,
-            "14. How many separate structures are there in this household? "
+            "14.1. How many separate structures are there in this household? "
                 + "Do not include any livestock shelters or storage areas.");
 
         intent.putExtra(FormRecyclerFormActivity.EXTRA_EMPTY_MESSAGE,

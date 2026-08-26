@@ -430,6 +430,42 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
         showProgress("Saving…");
         appExecutors.diskIO().execute(() -> {
+            // Validate: all child tasks must be "Complete" before the parent form can be saved
+            if (recyclerVisible && parentTaskId != null) {
+                String planId = PreferencesUtil.getInstance().getCurrentPlanId();
+                Set<Task> childTasks = taskRepository.getTasksByParentId(parentTaskId, planId);
+
+                if (!childTasks.isEmpty()) {
+                    boolean allChildrenComplete = childTasks.stream()
+                            .allMatch(t -> Constants.BusinessStatus.COMPLETE
+                                    .equals(t.getBusinessStatus()));
+
+                    if (!allChildrenComplete) {
+                        long incompleteCount = childTasks.stream()
+                                .filter(t -> !Constants.BusinessStatus.COMPLETE
+                                        .equals(t.getBusinessStatus()))
+                                .count();
+                        Timber.tag("FormSaveInteractor").i(
+                                "onFormSaved: blocking save — %d child task(s) not complete",
+                                incompleteCount);
+                        appExecutors.mainThread().execute(() -> {
+                            hideProgress();
+                            if (taskListFragment != null) {
+                                taskListFragment.showError(
+                                        "Cannot save: all child tasks must be completed first ("
+                                                + incompleteCount + " remaining)");
+                            }
+                        });
+                        return;
+                    }
+                }
+            }
+
+            // Clear any previous error since validation passed
+            appExecutors.mainThread().execute(() -> {
+                if (taskListFragment != null) taskListFragment.hideError();
+            });
+
             Timber.tag("FormSaveInteractor").i("onFormSaved: diskIO - calling saveForm");
             saveForm(json);
             Timber.tag("FormSaveInteractor").i("onFormSaved: diskIO - saveForm complete");

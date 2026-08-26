@@ -72,6 +72,7 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
     private Button       btnGenerate;
     private Button       btnUnlock;
     private TextView     tvWarning;
+    private TextView     tvError;
     private RecyclerView recyclerView;
     private TextView     tvEmpty;
     private LinearLayout layoutSearch;
@@ -140,6 +141,7 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
         btnGenerate    = view.findViewById(R.id.btn_generate);
         btnUnlock      = view.findViewById(R.id.btn_unlock);
         tvWarning      = view.findViewById(R.id.tv_warning);
+        tvError        = view.findViewById(R.id.tv_error);
         recyclerView   = view.findViewById(R.id.recycler_tasks);
         tvEmpty        = view.findViewById(R.id.tv_empty);
         layoutSearch   = view.findViewById(R.id.layout_search);
@@ -310,6 +312,29 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
      */
     public State getCurrentState() {
         return currentState;
+    }
+
+    /* ------------------------------------------------------------------ error display */
+
+    /**
+     * Shows an error message in the fragment (red text below the task list).
+     * Call from the main thread.
+     */
+    public void showError(String message) {
+        if (tvError != null) {
+            tvError.setText(message);
+            tvError.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Hides the error message.
+     */
+    public void hideError() {
+        if (tvError != null) {
+            tvError.setVisibility(View.GONE);
+            tvError.setText("");
+        }
     }
 
     /* ------------------------------------------------------------------ TaskRowCallbacks */
