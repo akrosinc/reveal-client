@@ -72,7 +72,7 @@ public class LocationTagRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -94,7 +94,7 @@ public class LocationTagRepository extends BaseRepository {
                 locationsTags.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return locationsTags;
 
@@ -115,7 +115,7 @@ public class LocationTagRepository extends BaseRepository {
                 locationTags.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return locationTags;

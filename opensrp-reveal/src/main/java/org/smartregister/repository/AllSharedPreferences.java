@@ -15,7 +15,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AllSharedPreferences {
+public class AllSharedPreferences
+{
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
     public static final String ANM_IDENTIFIER_SET_PREFERENCE_KEY = "anmIdentifierSet";
     private static final String HOST = "HOST";
@@ -234,8 +235,27 @@ public class AllSharedPreferences {
         return preferences.getString(key, "");
     }
 
+    public long getLongPreference(String key){
+        return preferences.getLong(key,0L);
+    }
+    public void setLongPreference(String key, long value){
+        preferences.edit().putLong(key,value).commit();
+    }
+
     public boolean getBooleanPreference(String key) {
         return preferences.getBoolean(key, false);
+    }
+
+    public  void saveBooleanPreference(String key,boolean value){
+        preferences.edit().putBoolean(key,value).apply();
+    }
+
+    public int getIntPreference(String key) {
+        return preferences.getInt(key, 0);
+    }
+
+    public  void saveIntPreference(String key,int value){
+        preferences.edit().putInt(key,value).apply();
     }
 
     public void updateUrl(String baseUrl) {
@@ -392,8 +412,5 @@ public class AllSharedPreferences {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
 
-    public  void saveBooleanPreference(String key,boolean value){
-        preferences.edit().putBoolean(key,value).commit();
-    }
 }
 

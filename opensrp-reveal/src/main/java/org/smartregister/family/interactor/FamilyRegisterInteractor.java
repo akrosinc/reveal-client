@@ -181,7 +181,7 @@ public class FamilyRegisterInteractor implements FamilyRegisterContract.Interact
             getAllSharedPreferences().saveLastUpdatedAtDate(lastSyncDate.getTime());
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -190,7 +190,7 @@ public class FamilyRegisterInteractor implements FamilyRegisterContract.Interact
         try {
             getClientProcessorForJava().processClient(eventClientList);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

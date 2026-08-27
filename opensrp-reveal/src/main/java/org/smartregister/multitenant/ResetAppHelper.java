@@ -135,7 +135,7 @@ public class ResetAppHelper {
                                 });
 
                     } catch (PreResetAppOperationException | AppResetException e) {
-                        Timber.e(e);
+                        Timber.tag("Reveal Exception").w(e);
                     }
                 });
     }
@@ -184,7 +184,7 @@ public class ResetAppHelper {
                     keyStore.deleteEntry(keyStoreAlias);
                 }
             } catch (KeyStoreException ex) {
-                Timber.e(ex);
+                Timber.tag("Reveal Exception").w(ex);
                 throw new AppResetException(ex.getMessage(), ex);
             }
         }

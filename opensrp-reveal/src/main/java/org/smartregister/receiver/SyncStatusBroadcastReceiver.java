@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.smartregister.domain.FetchStatus;
@@ -78,6 +79,7 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("SYNC_TRACE_RVL", "BROADCAST_RECEIVED t=" + System.currentTimeMillis());
         Bundle data = intent.getExtras();
         if (data != null) {
             Serializable fetchStatusSerializable = data.getSerializable(EXTRA_FETCH_STATUS);
@@ -124,17 +126,33 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    private void complete(FetchStatus fetchStatus, Context context) {
-        if (fetchStatus.equals(FetchStatus.nothingFetched) || fetchStatus.equals(FetchStatus.fetchedFailed)) {
-            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.getApplicationContext()));
-            allSharedPreferences.saveIsSyncInitial(false);
-        }
-        isSyncing = false;
-        lastFetchedTimestamp = 0;
-        for (SyncStatusListener syncStatusListener : syncStatusListeners) {
-            syncStatusListener.onSyncComplete(fetchStatus);
-        }
+//    private void complete(FetchStatus fetchStatus, Context context) {
+//        if (fetchStatus.equals(FetchStatus.nothingFetched) || fetchStatus.equals(FetchStatus.fetchedFailed)) {
+//            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.getApplicationContext()));
+//            allSharedPreferences.saveIsSyncInitial(false);
+//        }
+//        isSyncing = false;
+//        lastFetchedTimestamp = 0;
+//        for (SyncStatusListener syncStatusListener : syncStatusListeners) {
+//            syncStatusListener.onSyncComplete(fetchStatus);
+//        }
+//    }
+private void complete(FetchStatus fetchStatus, Context context) {
+    AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.getApplicationContext()));
+
+    if (fetchStatus.equals(FetchStatus.nothingFetched) || fetchStatus.equals(FetchStatus.fetchedFailed)) {
+        allSharedPreferences.saveIsSyncInitial(false);
     }
+
+    allSharedPreferences.saveIsSyncInProgress(false); // 👈 clears the guard, every completion path
+    Log.d("SYNC_TRACE_RVL","SYNC_COMPLETE — flag cleared, status=" + fetchStatus);
+
+    isSyncing = false;
+    lastFetchedTimestamp = 0;
+    for (SyncStatusListener syncStatusListener : syncStatusListeners) {
+        syncStatusListener.onSyncComplete(fetchStatus);
+    }
+}
 
     protected void startExtendedSync() {
         ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);

@@ -71,7 +71,6 @@
         "openmrs_entity_id": "",
         "type": "spinner",
         "hint": "Select the Location ( ward or health facility)",
-        "text_size": "8sp",
         "v_required": {
           "value": "true",
           "err": "Required field"
@@ -246,7 +245,6 @@
         "type": "toaster_notes",
         "text": "tablets Returned to the CSREF Must equal received - used - lost",
         "text_color": "#CF0800",
-        "text_size": "8sp",
         "toaster_type": "problem",
         "v_required": {
           "value": "true"

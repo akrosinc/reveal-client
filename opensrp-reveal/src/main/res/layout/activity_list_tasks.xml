@@ -6,28 +6,35 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <include layout="@layout/toolbar_task_map_view" />
 
-        <FrameLayout
+        <android.widget.FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <org.smartregister.reveal.view.RevealMapView
-                android:id="@+id/kujakuMapView"
+<!--            <org.smartregister.reveal.view.RevealMapView-->
+<!--                android:id="@+id/kujakuMapView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                app:locationClient="google_location_client"-->
+<!--                app:mapbox_uiAttributionGravity="center_horizontal|bottom"-->
+<!--                app:mapbox_uiLogoGravity="center_horizontal|bottom"-->
+<!--                app:mapbox_uiLogoMarginRight="30dp"-->
+<!--                app:mapbox_uiRotateGestures="false" />-->
+            <com.mapbox.mapboxsdk.maps.MapView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:mapbox_uiAttributionGravity="center_horizontal|bottom"
-                app:mapbox_uiLogoGravity="center_horizontal|bottom"
-                app:mapbox_uiLogoMarginRight="30dp"
-                app:locationClient="android_gps_client"
-                app:mapbox_uiRotateGestures="false" />
+                app:mapbox_renderTextureMode="true" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/filter_tasks_fab"
@@ -40,7 +47,7 @@
                 app:elevation="6dp"
                 app:fabSize="mini" />
 
-            <FrameLayout
+            <android.widget.FrameLayout
                 android:id="@+id/filter_tasks_count_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +58,7 @@
                 android:visibility="gone"
                 app:elevation="6dp">
 
-                <TextView
+                <android.widget.TextView
                     android:id="@+id/filter_tasks_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,15 +69,15 @@
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
-            </FrameLayout>
+            </android.widget.FrameLayout>
 
-            <LinearLayout
+            <android.widget.LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|start"
                 android:orientation="vertical">
 
-                <ImageButton
+                <android.widget.ImageButton
                     android:id="@+id/btn_add_structure"
                     android:layout_width="@dimen/my_location_button_dimen"
                     android:layout_height="@dimen/my_location_button_dimen"
@@ -132,11 +139,11 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-            </LinearLayout>
+            </android.widget.LinearLayout>
 
-        </FrameLayout>
+        </android.widget.FrameLayout>
 
-    </LinearLayout>
+    </android.widget.LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

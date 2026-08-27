@@ -1,0 +1,5287 @@
+{
+  "count": "1",
+  "encounter_type": "structure_survey",
+  "form_version": "0.0.2",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Structure Survey",
+    "display_back_button": true,
+    "fields": [
+      {
+        "key": "identification_label",
+        "type": "label",
+        "text": "Identification / eligibility",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "eligible_structure",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Is this an eligible structure?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          },
+          {
+            "key": "no_already_visited",
+            "text": "No; this structure is part of a household that was already visited"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "household_id_label",
+        "type": "label",
+        "text": "1. Household ID: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "household_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "household_id_value",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter household id",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "editable": true,
+        "read_only": true,
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "date_label",
+        "type": "label",
+        "text": "2. Visit Date: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "date",
+        "type": "date_picker",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "hint": "enter date",
+        "default":"today",
+        "text_size": "6sp",
+        "max_date": "today",
+        "v_required": {
+          "value": true,
+          "err": "Please specify the date"
+        },
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "eligible_person",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "4. Field worker: Did you find someone at the household to answer questions?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes, someone is available to answer questions"
+          },
+          {
+            "key": "no",
+            "text": "No appropriate adult available"
+          },
+          {
+            "key": "none",
+            "text": "No-one home"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "explain_consent",
+        "type": "label",
+        "text": "5. Field worker: Please explain consent form",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "18sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "respondent_consent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "6. Did the respondent consent to the survey?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes, consent form completed"
+          },
+          {
+            "key": "no",
+            "text": "No, declined"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer1",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider1",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structure_label",
+        "type": "label",
+        "text": "Interviewer observation of household structures",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "roof_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "7. What is the main roof material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "no_roof",
+            "text": "No roof"
+          },
+          {
+            "key": "thatch_or_leaf",
+            "text": "Thatch or leaf"
+          },
+          {
+            "key": "sticks_and_mud",
+            "text": "Sticks and mud"
+          },
+          {
+            "key": "thatch_or_leaf",
+            "text": "Thatch or leaf"
+          },
+          {
+            "key": "plastic_sheet",
+            "text": "Plastic sheet"
+          },
+          {
+            "key": "wood_plank",
+            "text": "Wood plank"
+          },
+          {
+            "key": "iron_sheet",
+            "text": "Iron sheet"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_roof_material_label",
+        "type": "label",
+        "text": "7g. Other roof material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_roof_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other roof material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:roof_material": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "wall_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "8. What is the main wall material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "no_walls",
+            "text": "No walls"
+          },
+          {
+            "key": "cane_sticks_bamboo_reed",
+            "text": "Cane/sticks/bamboo/reed"
+          },
+          {
+            "key": "bamboo_wood_and_mud",
+            "text": "Bamboo/wood with mud"
+          },
+          {
+            "key": "stone_with_mud",
+            "text": "Stone with mud"
+          },
+          {
+            "key": "cement",
+            "text": "Cement"
+          },
+          {
+            "key": "stone_with_lime_cement",
+            "text": "Stone with lime/cement"
+          },
+          {
+            "key": "bricks",
+            "text": "Bricks"
+          },
+          {
+            "key": "blocks",
+            "text": "Blocks"
+          },
+          {
+            "key": "wood_planks_shingles",
+            "text": "Wood planks/shingles"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_wall_material_label",
+        "type": "label",
+        "text": "8j. Other wall material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:wall_material": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_wall_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other wall material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:wall_material": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "floor_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "9. What is the main floor material for this household’s residential structures?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "earth_sand",
+            "text": "Earth / sand"
+          },
+          {
+            "key": "dung",
+            "text": "Dung"
+          },
+          {
+            "key": "wood_plank",
+            "text": "Wood plank"
+          },
+          {
+            "key": "tiles",
+            "text": "Tiles"
+          },
+          {
+            "key": "cement",
+            "text": "Cement"
+          },
+          {
+            "key": "carpet",
+            "text": "Carpet"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "other_floor_material_label",
+        "type": "label",
+        "text": "9g. Other floor material: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:floor_material": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "other_floor_material",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other floor material",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:floor_material": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "eaves",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "10. Are the eaves of the residential structures open or closed?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "all_open",
+            "text": "All have open eaves"
+          },
+          {
+            "key": "mostly_open",
+            "text": "Mostly open eaves"
+          },
+          {
+            "key": "open_and_close_mix",
+            "text": "Mixture of open and closed eaves"
+          },
+          {
+            "key": "mostly_closed",
+            "text": "Mostly closed eaves"
+          },
+          {
+            "key": "all_closed",
+            "text": "All have closed eaves"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "any_windows",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "11. Do the residential structures have any windows?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "window_type",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "12. Do the windows have shutters, glass, or mesh screens to block mosquito entry?",
+        "text_size": "8sp",
+        "options": [
+
+          {
+            "key": "none",
+            "text": "No, none have shutters, glass or mesh screens"
+          },
+          {
+            "key": "some",
+            "text": "Some windows have shutters, glass or mesh screens"
+          },
+          {
+            "key": "all",
+            "text": "All windows have shutters, glass or mesh screens"
+          }
+
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:any_windows": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer2",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider2",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "household_members",
+        "type": "label",
+        "text": "Household members",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "label_text_style": "bold",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "calculated_total_people",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-calculation.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "children_under_5_label",
+        "type": "label",
+        "text": "14. How many children aged less than five years usually stay in your household? Click on tick after capturing number of children",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "children_under_5",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "Children under 5 (capture value and click on tick)",
+        "text_size": "6sp",
+        "repeating_group_label": "Child",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "child_name_label",
+            "type": "label",
+            "text": "17. What is the child's name?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "child_name",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Child's name",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": "true",
+              "err": "Field required"
+            }
+          },
+          {
+            "key": "know_dob",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "18. Do you know the child's date of birth",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "dob_label",
+            "type": "label",
+            "text": "19. What is child’s date of birth?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "dob",
+            "type": "date_picker",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "date of birth",
+            "text_size": "6sp",
+            "max_date": "today",
+            "v_required": {
+              "value": true,
+              "err": "Please specify the date"
+            },
+            "relevance": {
+              "step1:know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+
+          {
+            "key": "less_than_one_year",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "Is the child less than 1 year old?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes, less than 1 year"
+              },
+              {
+                "key": "no",
+                "text": "No, the child is 1 year or older"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "estimated_age_label",
+            "type": "label",
+            "text": "20. What is child’s estimated age in years?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:less_than_one_year": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "estimated_age",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "number of years",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "This field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "This field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "This field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "step1:less_than_one_year": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "estimated_age_months_label",
+            "type": "label",
+            "text": "21. What is the child’s estimated age in completed months?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:less_than_one_year": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "estimated_age_months",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "number of months",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "This field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "This field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "This field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "step1:less_than_one_year": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "child_present",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "22. Is the child present now?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "child_severely_ill",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "23. Is the child currently severely ill?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:child_present": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "prepared_rdt",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "25. Fieldworker: Did you prepare an RDT for the child?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes, RDT prepared"
+              },
+              {
+                "key": "no",
+                "text": "No, RDT refused"
+              },
+              {
+                "key": "ineligible",
+                "text": "Ineligible for RDT"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:child_severely_ill": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "sleep_under_net",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "26. Did the child sleep under a mosquito net last night?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              },
+              {
+                "key": "dont_know",
+                "text": "Don't know"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "received_malaria_vaccine",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "27. Has the child received the malaria vaccine?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              },
+              {
+                "key": "dont_know",
+                "text": "Don't know"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "malaria_vaccine_dose",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "28. How many doses of the malaria vaccine has the child received?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "one",
+                "text": "One"
+              },
+              {
+                "key": "two",
+                "text": "Two"
+              },
+              {
+                "key": "three",
+                "text": "Three"
+              },
+              {
+                "key": "four",
+                "text": "Four"
+              },
+              {
+                "key": "dont_know",
+                "text": "Don't know"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:received_malaria_vaccine": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "card_review",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "29. Fieldworker: Please ask to see the child's health card. Are you able to review the card?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No, child health card was not available"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "malaria_vaccine_in_card",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "30. Fieldworker: How many doses of the malaria vaccine (MAV) are recoded on the child's health card?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "none",
+                "text": "None, malaria vaccine not reported on child health card"
+              },
+              {
+                "key": "one",
+                "text": "One"
+              },
+              {
+                "key": "two",
+                "text": "Two"
+              },
+              {
+                "key": "three",
+                "text": "Three"
+              },
+              {
+                "key": "four",
+                "text": "Four"
+              },
+              {
+                "key": "more_than_four",
+                "text": "More than four"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:card_review": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer3",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider3",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "children_5_to_17_label",
+        "type": "label",
+        "text": "15. How many school aged children (5-17 years) usually stay in your household? ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "children_5_to_17",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of children",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "adults_label",
+        "type": "label",
+        "text": "16. How many adults usually stay in your household?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "adults",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of adults",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "total_people_label",
+        "type": "label",
+        "text": "13. How many people including children under 5 usually stay in your household? ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "total_people",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of people",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "is_mandatory": true,
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        },
+        "constraints": [
+          {
+            "type": "numeric",
+            "ex": "equalTo(.,step1:calculated_total_people)",
+            "err": "Value should be equal to sum of all people"
+          }
+        ]
+      },
+      {
+        "key": "any_men_or_women",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "16.a. Are there any adult men and/or women in the household? (SELECT ALL THAT APPLY)",
+        "label_text_size": "14sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "men",
+            "text": "Men",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "women",
+            "text": "Women",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "additional_people_label",
+        "type": "label",
+        "text": "Q31a. How many additional people excluding children under 5 are present who usually live in household?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "additional_people",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number of people",
+        "text_size": "6sp",
+        "repeating_group_label": "Person",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "additional_people_name_label",
+            "type": "label",
+            "text": "31. What is the person's name?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "additional_people_name",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "enter person's name",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": "true",
+              "err": "Field required"
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "additional_individual_label",
+        "type": "label",
+        "text": "Auto Selection",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "label_text_style": "bold",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "additional_people_autoselect",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "click on tick",
+        "text_size": "6sp",
+        "repeating_group_label": "Person",
+        "referred_repeating_group": "step1:additional_people",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "additional_individual_divider",
+            "type": "h_line",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "additional_individual_know_dob",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "32. Do you know the person's date of birth",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "additional_individual_dob_label",
+            "type": "label",
+            "text": "33. What is person’s date of birth?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "additional_individual_dob",
+            "type": "date_picker",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "hint": "select date",
+            "text_size": "6sp",
+            "max_date": "today",
+            "v_required": {
+              "value": true,
+              "err": "Please specify the date"
+            },
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"yes\")"
+              }
+            }
+          },
+          {
+            "key": "additional_individual_estimated_age_label",
+            "type": "label",
+            "text": "34. What is person’s estimated age in years?",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "additional_individual_estimated_age",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "enter age",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "v_numeric": {
+              "value": "true",
+              "err": "This field must be a number"
+            },
+            "v_numeric_integer": {
+              "value": "true",
+              "err": "This field must be a whole number"
+            },
+            "v_min": {
+              "value": "0",
+              "err": "This field must be greater than or equal to 0"
+            },
+            "relevance": {
+              "step1:additional_individual_know_dob": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+
+          {
+            "key": "additional_individual_child_severely_ill",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "35. Is the person currently severely ill?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "additional_individual_calculated_age",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "hidden"
+          },
+          {
+            "key": "additional_individual_prepared_rdt",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "36. Fieldworker: Did you prepare an RDT for the person?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes, RDT prepared"
+              },
+              {
+                "key": "no",
+                "text": "No, RDT refused"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:additional_individual_child_severely_ill": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer4",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider4",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "household_questionnaire_label",
+        "type": "label",
+        "text": "Household questionnaire",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "label_text_style": "bold",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "fieldworker_transition_one_label",
+        "type": "label",
+        "text": "37. Fieldworker transition statement: Now I would like to ask some questions about the household",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "label_text_style": "bold",
+        "text_size": "15sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_m_or_f",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "38. Is the head of household male or female?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "male",
+            "text": "Male"
+          },
+          {
+            "key": "female",
+            "text": "Female"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_age_label",
+        "type": "label",
+        "text": "39. What is the age in years of the head of household?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter age",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_attend_school",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "40. Did the head of household ever attend school?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          },
+          {
+            "key": "dont_know",
+            "text": "Don't know"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "hoh_highest_edu",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "41. What is the highest level of school attended by the head of household?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "primary",
+            "text": "Primary"
+          },
+          {
+            "key": "secondary",
+            "text": "Secondary"
+          },
+          {
+            "key": "higher",
+            "text": "Higher"
+          },
+          {
+            "key": "dont_know",
+            "text": "Don't know"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:hoh_attend_school": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structures_separate_label",
+        "type": "label",
+        "text": "42. How many separate structures are there in this household? Do not include any structures that are only used for livestock shelter or storage.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structures_separate",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of structures",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structures_sleeping_label",
+        "type": "label",
+        "text": "43. How many structures are used for sleeping?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structures_sleeping",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of structures",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_relative_max": {
+          "value": "structures_separate",
+          "err": "Cannot be more than number of separate structures"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "separate_rooms_sleeping_label",
+        "type": "label",
+        "text": "44. How many separate rooms are used for sleeping?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "separate_rooms_sleeping",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of rooms",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structure_room_no_sleep",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "45. Are there structures or rooms in this household where no one sleeps, but where people spend time in the evening or early morning?",
+        "text_size": "6sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "type_of_structure_room_no_sleep",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "46. What type of structures or rooms are not used for sleeping but are used to spend time in the evening or early morning? (SELECT ALL THAT APPLY)",
+        "label_text_size": "14sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "cooking",
+            "text": "Cooking shelter/Kitchen",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "meeting",
+            "text": "Meeting / socializing shed (e.g., roofed, but unwalled structure)",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "living_room",
+            "text": "Living room",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "porch",
+            "text": "Porch / veranda",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:structure_room_no_sleep": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "structure_room_no_sleep_other_label",
+        "type": "label",
+        "text": "46e. Other room type to spend time: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:type_of_structure_room_no_sleep": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "structure_room_no_sleep_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Other room type to spend time",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:type_of_structure_room_no_sleep": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spacer5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider5",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "vector_control_label",
+        "type": "label",
+        "text": "Vector control use",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "label_text_style": "bold",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sleeping_last_night_label",
+        "type": "label",
+        "text": "47. How many people slept at the household last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sleeping_last_night",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of people",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_relative_max": {
+          "value": "total_people",
+          "err": "Cannot be more than number of people in the house"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "anyone_sleep_outside",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "48. Did anyone from the household sleep outside last night?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sleeping_outside_last_label",
+        "type": "label",
+        "text": "49. How many people slept outside last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:anyone_sleep_outside": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sleeping_outside_last_night",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of people",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_relative_max": {
+          "value": "total_people",
+          "err": "Cannot be more than number of people in the house"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:anyone_sleep_outside": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sleep_outside_period",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "50. For how much of the night did the person/people sleep outside?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "less_than_one_hour",
+            "text": "Less than 1 hour"
+          },
+          {
+            "key": "one_two_hour",
+            "text": "Between 1-2 hours"
+          },
+          {
+            "key": "two_four_hour",
+            "text": "Between 2-4 hours"
+          },
+          {
+            "key": "four_eight_hour",
+            "text": "Between 4-8 hours"
+          },
+          {
+            "key": "more_than_eight_hour",
+            "text": "More than 8 hours"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:anyone_sleep_outside": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "outside_sleep_location_have_cover",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "51. When sleeping outside, did the sleeping location have any roof or cover?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:anyone_sleep_outside": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "outside_sleep_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "52. When sleeping outside, was the sleeping location",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "adjacent_to_structure",
+            "text": "Adjacent to household structure"
+          },
+          {
+            "key": "not_adjacent_to_structure",
+            "text": "In the household compound, but not adjacent to a structure"
+          },
+          {
+            "key": "beyond_compound",
+            "text": "Beyond the household compound"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:anyone_sleep_outside": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "have_any_mosquito_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "53.a Does this household have any mosquito nets?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "mosquito_nets_label",
+        "type": "label",
+        "text": "53. How many mosquito nets does the household have?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:have_any_mosquito_net": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_nets",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number",
+        "text_size": "6sp",
+        "repeating_group_label": "Mosquito Net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "mosquito_net_type",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "58a. What brand is net?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "permanet",
+                "text": "Permanet"
+              },
+              {
+                "key": "olyset",
+                "text": "Olyset"
+              },
+              {
+                "key": "duranet",
+                "text": "Duranet"
+              },
+              {
+                "key": "veeralin",
+                "text": "Veeralin"
+              },
+              {
+                "key": "other",
+                "text": "Other"
+              },
+              {
+                "key": "unknown",
+                "text": "Unknown / brand label not found"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "other_mosquito_net_type_label",
+            "type": "label",
+            "text": "58.a.v Other Net Brand",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:mosquito_net_type": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "other_mosquito_net_type",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "enter net brand",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "relevance": {
+              "step1:mosquito_net_type": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step1:have_any_mosquito_net": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "anyone_use_mosquito_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "54. Did anyone in this household sleep under a mosquito net last night?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:have_any_mosquito_net": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+
+      {
+        "key": "under_five_under_net_label",
+        "type": "label",
+        "text": "55. How many children less than five years slept under a net last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_five_under_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of children",
+        "edit_type": "number",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_relative_max": {
+          "value": "children_under_5_count",
+          "err": "Cannot be more than number of children under 5 in the house"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "school_age_under_net_label",
+        "type": "label",
+        "text": "56. How many school-aged children (aged 5-17 years) slept under a net last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "school_age_under_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of children",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_relative_max": {
+          "value": "children_5_to_17",
+          "err": "Cannot be more than number of school-aged children in the house"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "adults_under_net_label",
+        "type": "label",
+        "text": "57. How many adults slept under a net last night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "adults_under_net",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter number of adults",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_relative_max": {
+          "value": "adults",
+          "err": "Cannot be more than number of adults in the house"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "sprayed_walls",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "59. At any time in the last 12 months, has anyone sprayed the interior walls of your home against mosquitoes?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sprayed_months_ago_label",
+        "type": "label",
+        "text": "60. How many months ago was the house sprayed?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:sprayed_walls": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "sprayed_months_ago",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter months ago sprayed",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_numeric_integer": {
+          "value": "true",
+          "err": "This field must be a whole number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:sprayed_walls": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_coils",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "61.a. Have you ever used any mosquito coil, herbs or grasses (i.e., materials that you burn) in your living space for mosquito control?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "mosquito_coils_last_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "62. When did you or someone in your household last use mosquito coils?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "last_week",
+            "text": "In the last week"
+          },
+          {
+            "key": "last_month",
+            "text": "In the last month"
+          },
+          {
+            "key": "last_year",
+            "text": "In the last year"
+          },
+          {
+            "key": "more_than_a_year",
+            "text": "More than a year ago"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:mosquito_coils": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "topical_mosquito_repellent",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "61.b. Have you ever used any topical mosquito repellent (i.e., materials that you put on your skin or clothes, e.g. Peaceful sleep, Tabard) for mosquito control?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "topical_mosquito_repellent_last_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "63. When did you or someone in your household last use topical mosquito repellent?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "last_week",
+            "text": "In the last week"
+          },
+          {
+            "key": "last_month",
+            "text": "In the last month"
+          },
+          {
+            "key": "last_year",
+            "text": "In the last year"
+          },
+          {
+            "key": "more_than_a_year",
+            "text": "More than a year ago"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:topical_mosquito_repellent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "insecticide_spray",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "61.c. Have you ever used any insecticide spray (e.g. Doom, Mortein, Target, Raid , or other materials that you spray in or around household) in your living space for mosquito control?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "insecticide_spray_last_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "64. When did you or someone in your household last use insecticide spray?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "last_week",
+            "text": "In the last week"
+          },
+          {
+            "key": "last_month",
+            "text": "In the last month"
+          },
+          {
+            "key": "last_year",
+            "text": "In the last year"
+          },
+          {
+            "key": "more_than_a_year",
+            "text": "More than a year ago"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:insecticide_spray": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "money_used_label",
+        "type": "label",
+        "text": "65. How much money (Kwacha) would you estimate the household has spent on products to control mosquitoes and other household insects in the past month? If none, enter 0.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "money_used",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter value",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": "true",
+          "err": "This field must be a number"
+        },
+        "v_min": {
+          "value": "0",
+          "err": "This field must be greater than or equal to 0"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer6",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider6",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "evening_morning_schedule_label",
+        "type": "label",
+        "text": "Evening/morning schedule",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "label_text_style": "bold",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "fieldworker_transition_two_label",
+        "type": "label",
+        "text": "Fieldworker transition statement: Now I would like to ask about when household members were usually inside their sleeping place and under mosquito nets last night and this morning. Approximate answers are fine.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "label_text_style": "bold",
+        "text_size": "15sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider7",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time",
+        "type": "label",
+        "text": "66. Last night, at what time did the following members of the household go inside their sleeping building for the night?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#00A900",
+        "label_text_style": "bold",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_under_five_label",
+        "type": "label",
+        "text": "66.a. Children under five years",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_under_five",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_school_age_label",
+        "type": "label",
+        "text": "66.b. School-aged children",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_school_age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_adult_women_label",
+        "type": "label",
+        "text": "66.c. Adult women (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_adult_women",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "text_size": "13sp",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_adult_men_label",
+        "type": "label",
+        "text": "66.d. Adult men (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "building_sleep_time_adult_men",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "divider8",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_sleep_time",
+        "type": "label",
+        "text": "67. Last night, what time did the following household members go under their bed net?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#00A900",
+        "label_text_style": "bold",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:anyone_use_mosquito_net": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "under_net_time_under_five_label",
+        "type": "label",
+        "text": "67.a. Children under five years",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_under_five",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_school_age_label",
+        "type": "label",
+        "text": "67.b. School-aged children",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_school_age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_women_label",
+        "type": "label",
+        "text": "67.c. Adult women (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_women",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_men_label",
+        "type": "label",
+        "text": "67.d. Adult men (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_men",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "divider9",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "under_net_sleep_time_morning",
+        "type": "label",
+        "text": "68. This morning, what time did the following household members come out from their bed net?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#00A900",
+        "label_text_style": "bold",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:anyone_use_mosquito_net": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "under_net_time_under_five_morning_label",
+        "type": "label",
+        "text": "68.a. Children under five years",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_under_five_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_school_age_morning_label",
+        "type": "label",
+        "text": "68.b. School-aged children",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_school_age_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_women_morning_label",
+        "type": "label",
+        "text": "68.c. Adult women (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_women_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_men_morning_label",
+        "type": "label",
+        "text": "68.d. Adult men (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "under_net_time_adult_men_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "divider_nine",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "go_out_building_morning",
+        "type": "label",
+        "text": "69. What time did the following household members go outside their sleeping building this morning?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#00A900",
+        "label_text_style": "bold",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "go_out_building_under_five_morning_label",
+        "type": "label",
+        "text": "69.a. Children under five years",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_under_five_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_school_age_morning_label",
+        "type": "label",
+        "text": "69.b. School-aged children",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_school_age_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_adult_women_morning_label",
+        "type": "label",
+        "text": "69.c. Adult women (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_adult_women_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_adult_men_morning_label",
+        "type": "label",
+        "text": "69.d. Adult men (18+)",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "go_out_building_adult_men_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "enter time",
+        "expanded": false,
+        "duration": {
+          "label": "Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time"
+        },
+        "relevance": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-relevance-rules.yml"
+            }
+          }
+        }
+      },
+      {
+        "key": "spacer10",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider10",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "travel_biting_label",
+        "type": "label",
+        "text": "Travel / biting exposure beyond the household",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "70. Did any member of the household spend time at a location outside the household compound yesterday evening, before returning here to sleep?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_selection",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "71. In what type of location(s) did people spend time at yesterday evening? (SELECT ALL THAT APPLY)",
+        "label_text_size": "14sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "visiting_family",
+            "text": "Visiting family / friend / neighbor’s house",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "local_restaurant",
+            "text": "Local restaurant / bar",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "church_mosque",
+            "text": "Church / mosque",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "market",
+            "text": "Market",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "farmland",
+            "text": "Farmland",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "by_lake",
+            "text": "On or by the lake for fishing",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:spend_time_outside_compound": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_selection_other_label",
+        "type": "label",
+        "text": "71.g. Enter other type of location?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:spend_time_outside_compound_selection": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_selection_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter other type of location ",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:spend_time_outside_compound_selection": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_morning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "72. Did any member of the household who slept here last night spend time at a location outside the household compound early this morning (before/around dawn)?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_morning_selection",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "73. In what type of location(s) did people spend time at early this morning? (SELECT ALL THAT APPLY)",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "visiting_family",
+            "text": "Visiting family / friend / neighbor’s house",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "local_restaurant",
+            "text": "Local restaurant / bar",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "church_mosque",
+            "text": "Church / mosque",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "market",
+            "text": "Market",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "farmland",
+            "text": "Farmland",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "by_lake",
+            "text": "On or by the lake for fishing",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:spend_time_outside_compound_morning": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_morning_other_label",
+        "type": "label",
+        "text": "73.g. Enter other type of location?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:spend_time_outside_compound_morning_selection": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "spend_time_outside_compound_morning_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Enter other type of location ",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:spend_time_outside_compound_morning_selection": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "divider11",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "travel_to_another_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "74. Does any member of your household ever travel and stay overnight at another location for farming, fishing, or other livelihood activities?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "travel_to_another_location_frequency",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "75. How often does anyone from your household travel to the other location where they stay overnight?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "weekly_or_more",
+            "text": "Weekly or more often"
+          },
+          {
+            "key": "every_few_weeks",
+            "text": "Every few weeks"
+          },
+          {
+            "key": "every_few_months",
+            "text": "Every few months"
+          },
+          {
+            "key": "couple_times_a_year",
+            "text": "Only a couple of times a year"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:travel_to_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "stay_to_another_location_period",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "76. When members of your household are staying at the other location, how often do they usually stay before returning?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "few_days",
+            "text": "A few days"
+          },
+          {
+            "key": "week_or_two",
+            "text": "A week or two"
+          },
+          {
+            "key": "several_weeks",
+            "text": "Several weeks"
+          },
+          {
+            "key": "month_or_two",
+            "text": "A month or two"
+          },
+          {
+            "key": "several_months",
+            "text": "Several months"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:travel_to_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "adults_another_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "77. How many of the adults in your household usually travel to the other location at the same time?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "all_adults",
+            "text": "All adults"
+          },
+          {
+            "key": "some_adults",
+            "text": "Some adults"
+          },
+          {
+            "key": "no_adults",
+            "text": "None of the adults"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:travel_to_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "adults_another_location_other_label",
+        "type": "label",
+        "text": "77.d. Enter other group?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:adults_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "adults_another_location_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter other group ",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:adults_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "children_another_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "78. How many of the children in your household usually travel to the other location at the same time?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "all_children",
+            "text": "All children"
+          },
+          {
+            "key": "only_older_children",
+            "text": "Only older children"
+          },
+          {
+            "key": "only_younger_children",
+            "text": "Only younger children"
+          },
+          {
+            "key": "mix_age_of_children",
+            "text": "Some of the children, mix of ages"
+          },
+          {
+            "key": "no_children",
+            "text": "None of the children"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:travel_to_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "children_another_location_other_label",
+        "type": "label",
+        "text": "78.f. Other group of children?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:children_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "children_another_location_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Other ",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:children_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "another_location_mosquito_bite_prevention",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "79. When staying at the other location, do you or those you are traveling with use anything to avoid or prevent mosquito biting? (SELECT ALL MENTIONED)",
+        "label_text_size": "18sp",
+        "label_text_color": "#FF9800",
+        "hint": "(SELECT ALL THAT APPLY)",
+        "options": [
+          {
+            "key": "bed_net",
+            "text": "Bed net",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "topical_repellent",
+            "text": "Topical repellent (applied to skin)",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "mosquito_coil",
+            "text": "Mosquito coil, herbs or grasses (i.e., materials that you burn)",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "insecticide_spray",
+            "text": "Insecticide spray",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "Other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:travel_to_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "another_location_mosquito_bite_prevention_other_label",
+        "type": "label",
+        "text": "79e. Other ways of preventing mosquito bites: ",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:another_location_mosquito_bite_prevention": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "another_location_mosquito_bite_prevention_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Other room type to spend time",
+        "edit_type": "name",
+        "text_size": "6sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:another_location_mosquito_bite_prevention": {
+            "ex-checkbox": [
+              {
+                "or": ["Other"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "bed_nets_another_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "80. Are the bed net(s) used when staying at the other location either - ",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "taken_from_home",
+            "text": "Taken temporarily from the main home (where we are interviewing you now)"
+          },
+          {
+            "key": "kept_at_location_permanently",
+            "text": "Kept permanently at the other location"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:another_location_mosquito_bite_prevention": {
+            "ex-checkbox": [
+              {
+                "or": ["bed_net"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "who_uses_bed_nets_another_location",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "81. Who (of those who traveled) usually sleeps under the bed net(s) when staying at the other location?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "everyone",
+            "text": "Everyone"
+          },
+          {
+            "key": "some_children",
+            "text": "Some of the children"
+          },
+          {
+            "key": "all_children",
+            "text": "All of the children"
+          },
+          {
+            "key": "some_adults_and_children",
+            "text": "Some children and some adults"
+          },
+          {
+            "key": "all_adults",
+            "text": "All adults"
+          },
+          {
+            "key": "no_one",
+            "text": "No-one"
+          },
+          {
+            "key": "other",
+            "text": "Other"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:another_location_mosquito_bite_prevention": {
+            "ex-checkbox": [
+              {
+                "or": ["bed_net"]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "who_uses_bed_nets_another_location_other_label",
+        "type": "label",
+        "text": "81.g. Other",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:who_uses_bed_nets_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "who_uses_bed_nets_another_location_other",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "Other ",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:who_uses_bed_nets_another_location": {
+            "type": "string",
+            "ex": "equalTo(., \"other\")"
+          }
+        }
+      },
+      {
+        "key": "spacer12",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider12",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "rdt_results_label",
+        "type": "label",
+        "text": "RDT results",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "rdt_results_number_label",
+        "type": "label",
+        "text": "How many rdt tests performed?",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "rdt_results_number",
+        "type": "repeating_group",
+        "reference_edit_text_hint": "enter number and click tick",
+        "text_size": "8sp",
+        "repeating_group_label": "RDT Test",
+        "referred_repeating_group": "step1:children_under_5",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "v_numeric": {
+          "value": true,
+          "err": "This field must be a number"
+        },
+        "value": [
+          {
+            "key": "rdt_result",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "label": "82. RDT result",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "positive",
+                "text": "Positive"
+              },
+              {
+                "key": "negative",
+                "text": "Negative"
+              },
+              {
+                "key": "no_prepared",
+                "text": "RDT Test not prepared"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            }
+          },
+          {
+            "key": "is_al_eligible_label",
+            "type": "label",
+            "text": "83. Fieldworker: This person is eligible for treatment with AL",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#B90000",
+            "text_size": "18sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:rdt_result": {
+                "type": "string",
+                "ex": "equalTo(., \"positive\")"
+              }
+            }
+          },
+          {
+            "key": "al_given",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "text_color": "#B90000",
+            "label": "84. Fieldworker: Did you give AL for this person?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "yes",
+                "text": "Yes"
+              },
+              {
+                "key": "no",
+                "text": "No"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:rdt_result": {
+                "type": "string",
+                "ex": "equalTo(., \"positive\")"
+              }
+            }
+          },
+          {
+            "key": "al_not_given_reason",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "native_radio",
+            "text_color": "#B90000",
+            "label": "85. Fieldworker: Why did you not give this person a course of AL?",
+            "text_size": "8sp",
+            "options": [
+              {
+                "key": "parent_refused",
+                "text": "Parent/guardian refused"
+              },
+              {
+                "key": "child_refused",
+                "text": "Child refused"
+              },
+              {
+                "key": "currently_taking_antimalarial",
+                "text": "Currently taking an antimalarial"
+              },
+              {
+                "key": "completed_course_14_days_ago",
+                "text": "Completed AL course less than 14 days ago"
+              },
+              {
+                "key": "ran_out_of_al",
+                "text": "Ran out of AL"
+              },
+              {
+                "key": "other",
+                "text": "Other"
+              }
+            ],
+            "v_required": {
+              "value": true,
+              "err": "Required field"
+            },
+            "relevance": {
+              "step1:al_given": {
+                "type": "string",
+                "ex": "equalTo(., \"no\")"
+              }
+            }
+          },
+          {
+            "key": "al_not_given_reason_other_label",
+            "type": "label",
+            "text": "85.f. Other",
+            "read_only": false,
+            "hint_on_text": true,
+            "text_color": "#000000",
+            "text_size": "13sp",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "relevance": {
+              "step1:al_not_given_reason": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          },
+          {
+            "key": "al_not_given_reason_other",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "type": "edit_text",
+            "hint": "Other ",
+            "edit_type": "name",
+            "text_size": "6sp",
+            "v_required": {
+              "value": true,
+              "err": "Field required"
+            },
+            "relevance": {
+              "step1:al_not_given_reason": {
+                "type": "string",
+                "ex": "equalTo(., \"other\")"
+              }
+            }
+          }
+        ],
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "spacer13",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20sp",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "divider13",
+        "type": "h_line",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "end_of_interview_label",
+        "type": "label",
+        "text": "End of interview checks",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B9A000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:respondent_consent": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "have_comments",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "text_color": "#B90000",
+        "label": "86. Fieldworker: any comments on this visit to record?",
+        "text_size": "8sp",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "text": "No"
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Required field"
+        },
+        "relevance": {
+          "step1:eligible_structure": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "comments_label",
+        "type": "label",
+        "text": "Enter Comment",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#000000",
+        "text_size": "13sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:have_comments": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "comments",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "enter comment",
+        "edit_type": "name",
+        "text_size": "8sp",
+        "v_required": {
+          "value": true,
+          "err": "Field required"
+        },
+        "relevance": {
+          "step1:have_comments": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "thank_you_label",
+        "type": "label",
+        "text": "87. Fieldworker: Please thank the participant for their time, and ask if they have any additional questions before you move to the next house",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "relevance": {
+          "step1:eligible_person": {
+            "type": "string",
+            "ex": "equalTo(., \"yes\")"
+          }
+        }
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "calculation": {
+          "rules-engine": {
+            "ex-rules": {
+              "rules-file": "zambia-speed-calculation.yml"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,11 +1,20 @@
 package org.smartregister.util;
 
+import static org.smartregister.AllConstants.TASK_IDENTIFIER;
+import static org.smartregister.cloudant.models.Event.date_created_key;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.DETAILS;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_POP;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.EVENT_TYPE_FIELD;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.TOTAL_TREATED;
+import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.PASSIVE_CASE_DETECTION_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +28,9 @@ import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
+import org.smartregister.clientandeventmodel.InterventionAdditionalDetail;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import timber.log.Timber;
 
@@ -94,7 +104,7 @@ public class JsonFormUtils {
             try {
                 birthDateEstimated = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             birthdateApprox = birthDateEstimated > 0;
         }
@@ -105,7 +115,7 @@ public class JsonFormUtils {
             try {
                 deathDateEstimated = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             deathdateApprox = deathDateEstimated > 0;
         }
@@ -161,6 +171,7 @@ public class JsonFormUtils {
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
+
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
                 if (jsonObject.has(AllConstants.TYPE) &&
@@ -177,7 +188,7 @@ public class JsonFormUtils {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
             if (AllConstants.EXPANSION_PANEL.equals(jsonObject.optString(AllConstants.TYPE))) {
@@ -211,7 +222,7 @@ public class JsonFormUtils {
                 jsonObject.put(SAVE_OBS_AS_ARRAY, true);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -231,7 +242,7 @@ public class JsonFormUtils {
                         Collections.singletonList(humanReadableValues), "", formSubmissionField));
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -361,7 +372,7 @@ public class JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -414,7 +425,9 @@ public class JsonFormUtils {
                 List<Object> optionEntityIds = new ArrayList<>();
                 Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
+
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+
                     String fieldsOpenmrsEntityId = jsonObject.optString(OPENMRS_ENTITY_ID);
                     String fieldOpenmrsEntityParent = jsonObject.optString(OPENMRS_ENTITY_PARENT);
                     String fieldKey = jsonObject.optString(KEY);
@@ -422,7 +435,9 @@ public class JsonFormUtils {
                     String entity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
+
                         boolean optionValue = option.optBoolean(VALUE);
+
                         if (!optionValue) {
                             continue;
                         }
@@ -442,11 +457,14 @@ public class JsonFormUtils {
 
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
+
                             String optionText = option.optString(AllConstants.TEXT);
+
                             optionValues.add(optionText);
                             optionKeyVals.put(option.optString(KEY), optionText);
                         }
                     }
+
                     if (!optionValues.isEmpty()) {
                         if (CONCEPT.equals(entity) && shouldBeCombined) {
                             e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, fieldsOpenmrsEntityId, fieldOpenmrsEntityParent, optionEntityIds, optionValues, null,
@@ -458,7 +476,7 @@ public class JsonFormUtils {
                     }
                 }
             } catch (JSONException e1) {
-                Timber.e(e1);
+                Timber.tag("WriteValue").w(e1);
             }
         } else if (AllConstants.GPS.equals(type)) {
             createGpsObservation(e, jsonObject, value);
@@ -546,7 +564,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Timber.e(e1);
+                    Timber.tag("Reveal Exception").w(e1);
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -577,7 +595,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException jsonException) {
-                    Timber.e(jsonException);
+                    Timber.tag("Reveal Exception").w(jsonException);
                 }
 
                 if (!keyValPairs.isEmpty()) {
@@ -765,10 +783,128 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
+    @NonNull
+    public static List<InterventionAdditionalDetail> getInterventionAdditionalDetails(JSONObject details) {
+        Predicate<String> isEligiblePop = o -> o!=null && o.equals(ELIGIBLE_POP);
+        Predicate<String> isTotalTreated = o -> o!=null && o.equals(TOTAL_TREATED);
+        Predicate<String> isHohType = o -> o!=null && o.equals("hoh_typed");
+        Predicate<String> rdt = o->o!=null&&o.equals("rdt");
+        Predicate<String> consent = o->o!=null&&o.equals("consent");
+
+        JSONArray obs = getJSONArray(details, "obs");
+        String eventType = getString(details, EVENT_TYPE_FIELD);
+
+        List<InterventionAdditionalDetail> additionalDetails = new ArrayList<>();
+        if (obs != null) {
+            for (int i = 0; i < obs.length(); i++) {
+                try {
+                    JSONObject ob = obs.getJSONObject(i);
+                    String fieldCode = getString(ob, "fieldCode");
+                    JSONArray values = getJSONArray(ob, "values");
+                    String value = values!=null?values.getString(0):"";
+
+                    JSONObject detailsJson = getJSONObject(details, DETAILS);
+
+                    String dateCreated = details.getString(date_created_key);
+
+                    InterventionAdditionalDetail interventionAdditionalDetail = new InterventionAdditionalDetail();
+                    interventionAdditionalDetail.setEventDateTime(dateCreated);
+
+                    if (eventType != null && eventType.equals(MDA_ONCHO_EVENT)) {
+                        if (isEligiblePop.test(fieldCode)
+                                || isTotalTreated.test(fieldCode)
+                                || isHohType.test(fieldCode)) {
+
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                interventionAdditionalDetail.setValue(value);
+                                interventionAdditionalDetail.setKey(fieldCode);
+                                interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                interventionAdditionalDetail.setEventType(eventType);
+
+                                String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                interventionAdditionalDetail.setValueType("int");
+                                additionalDetails.add(interventionAdditionalDetail);
+                            }
+                        }
+                    }
+                    if (eventType != null && eventType.equals(RCD_EVENT)){
+                        if (rdt.test(fieldCode)) {
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                if (value.equals("positive")){
+                                    interventionAdditionalDetail.setValue("1");
+                                    interventionAdditionalDetail.setKey(fieldCode);
+                                    interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                    interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                    interventionAdditionalDetail.setEventType(eventType);
+
+                                    String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                    interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                    interventionAdditionalDetail.setValueType("int");
+                                    additionalDetails.add(interventionAdditionalDetail);
+                                }
+                            }
+                        }
+                        if (consent.test(fieldCode)){
+                            if (detailsJson != null) {
+                                String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+
+                                if (value.equals("yes")){
+                                    interventionAdditionalDetail.setValue("1");
+                                    interventionAdditionalDetail.setKey(fieldCode);
+                                    interventionAdditionalDetail.setTaskKeyId(
+                                        taskIdentifier.concat("-").concat(fieldCode));
+                                    interventionAdditionalDetail.setTaskId(taskIdentifier);
+                                    interventionAdditionalDetail.setEventType(eventType);
+
+                                    String planIdentifier = detailsJson.getString("planIdentifier");
+
+                                    interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+
+                                    interventionAdditionalDetail.setValueType("int");
+                                    additionalDetails.add(interventionAdditionalDetail);
+                                }
+                            }
+                        }
+                    }
+                    if (eventType != null && eventType.equals(PASSIVE_CASE_DETECTION_EVENT)){
+                        String taskIdentifier = detailsJson.getString(TASK_IDENTIFIER);
+                        String planIdentifier = detailsJson.getString("planIdentifier");
+
+                        interventionAdditionalDetail.setValue("1");
+                        interventionAdditionalDetail.setKey(fieldCode);
+                        interventionAdditionalDetail.setTaskKeyId(
+                            taskIdentifier.concat("-").concat(PASSIVE_CASE_DETECTION_EVENT));
+                        interventionAdditionalDetail.setTaskId(taskIdentifier);
+                        interventionAdditionalDetail.setEventType(eventType);
+                        interventionAdditionalDetail.setPlanIdentifier(planIdentifier);
+                        interventionAdditionalDetail.setValueType("int");
+                        additionalDetails.add(interventionAdditionalDetail);
+
+                    }
+                }
+                catch (JSONException  e){
+                    Timber.tag("Reveal Exception").w(e.toString());
+                }
+            }
+        }
+        return additionalDetails;
+    }
 
     public static Map<String, String> extractIdentifiers(JSONArray fields, String bindType) {
         Map<String, String> pids = new HashMap<>();
@@ -937,7 +1073,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1002,7 +1138,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return fields;
     }
@@ -1044,7 +1180,7 @@ public class JsonFormUtils {
             return result;
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
 
@@ -1055,7 +1191,7 @@ public class JsonFormUtils {
         try {
             jsonObject = jsonString == null ? null : new JSONObject(jsonString);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return jsonObject;
     }
@@ -1196,7 +1332,7 @@ public class JsonFormUtils {
             }
 
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -1214,7 +1350,7 @@ public class JsonFormUtils {
 
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1233,7 +1369,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return mergedJSON;
     }
@@ -1264,7 +1400,7 @@ public class JsonFormUtils {
                 return DateUtil.yyyyMMdd.format(date);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }

@@ -10,7 +10,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
-    <ImageView
+    <android.widget.ImageView
         android:id="@+id/drawerMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/sync_badge"
         android:layout_width="16dp"
         android:layout_height="16dp"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/menu_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@id/drawerMenu" />
 
 
-    <EditText
+    <android.widget.EditText
         android:id="@+id/edt_search"
         android:layout_width="0dp"
         android:layout_height="@dimen/ec_main_header_search_layout_height"
@@ -72,7 +72,7 @@
         app:layout_constraintStart_toEndOf="@id/menu_label"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <android.widget.ImageButton
         android:id="@+id/btn_search_cancel"
         android:layout_width="@dimen/ec_main_header_search_cancel_button_width"
         android:layout_height="match_parent"
@@ -86,7 +86,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/task_register"
         style="@style/CustomFontTextViewStyle.NavBar.Black"
         android:layout_width="wrap_content"

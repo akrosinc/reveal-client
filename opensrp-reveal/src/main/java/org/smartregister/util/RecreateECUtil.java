@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.smartregister.Context;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
@@ -38,7 +39,7 @@ import static org.smartregister.util.JsonFormUtils.gson;
  */
 public class RecreateECUtil {
 
-    private EventClientRepository eventClientRepository = new EventClientRepository();
+    private EventClientRepository eventClientRepository = new EventClientRepository(Context.getInstance().getInterventionAdditionalDetailsRepository());
 
     private ClientProcessorForJava clientProcessor = DrishtiApplication.getInstance().getClientProcessor();
 
@@ -64,7 +65,7 @@ public class RecreateECUtil {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -130,7 +131,7 @@ public class RecreateECUtil {
                 Timber.d("saving %d events, %s ", eventClients.first.size(), events);
                 eventClientRepository.batchInsertEvents(events, 0, sqLiteDatabase);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }
@@ -141,7 +142,7 @@ public class RecreateECUtil {
                 Timber.d("saving %d clients, %s", eventClients.second.size(), clients);
                 eventClientRepository.batchInsertClients(clients, sqLiteDatabase);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }

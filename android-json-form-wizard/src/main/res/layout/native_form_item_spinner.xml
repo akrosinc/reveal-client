@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <com.vijay.jsonwizard.customviews.MaterialSpinner
+        android:id="@+id/material_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/spinner_edit_button"
+        android:entries="@array/spinnerItems"
+        android:textSize="@dimen/default_text_size"
+        app:ms_alignLabels="false"
+        app:ms_arrowColor="@color/text_hint_color"
+        app:ms_arrowSize="@dimen/default_spinner_arrow_size"
+        app:ms_baseColor="@color/text_hint_color"
+        app:ms_dropDownHintView="@layout/native_form_simple_list_item_1"
+        app:ms_floatingLabelColor="@color/floating_label_color"
+        app:ms_hintView="@layout/spinner_prompt_text"
+        app:ms_multiline="true"
+        android:layout_toStartOf="@+id/spinner_edit_button" />
+    <ImageView
+        android:background="@null"
+        android:id="@+id/spinner_edit_button"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="4dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@+id/spinner_info_icon"
+        android:layout_toStartOf="@id/spinner_info_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/info_label"
+        app:srcCompat="@drawable/edit_button_bg"
+        android:visibility="gone" />
+    <ImageView
+        android:id="@+id/spinner_info_icon"
+        android:layout_width="@dimen/default_info_icon_size"
+        android:layout_height="@dimen/default_info_icon_size"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/info_label"
+        android:src="@drawable/ic_icon_info_filled"
+        android:visibility="gone" />
+
+</RelativeLayout>

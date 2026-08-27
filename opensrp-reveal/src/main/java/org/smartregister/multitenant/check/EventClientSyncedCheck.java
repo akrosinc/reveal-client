@@ -7,6 +7,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
+
 import org.smartregister.view.activity.DrishtiApplication;
 
 import timber.log.Timber;
@@ -33,7 +34,6 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
         EventClientSync syncIntentService = new EventClientSync(application);
         syncIntentService.performSync();
-
         syncStatusBroadcastReceiver.removeSyncStatusListener(this);
     }
 
@@ -49,20 +49,20 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     @Override
     public void onSyncStart() {
         // Do nothing for now
-        Timber.e("Sync is starting");
+        Timber.tag("Reveal Exception").w("Sync is starting");
     }
 
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
         if (fetchStatus == FetchStatus.fetchProgress) {
-            Timber.e("Sync progress is %s", fetchStatus.displayValue());
+            Timber.tag("Reveal Exception").w("Sync progress is %s", fetchStatus.displayValue());
         }
     }
 
     @Override
     public void onSyncComplete(FetchStatus fetchStatus) {
         // Do nothing for now
-        Timber.e("The sync is complete");
+        Timber.tag("Reveal Exception").w("The sync is complete");
     }
 
     @NonNull

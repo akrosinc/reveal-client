@@ -43,6 +43,9 @@ import static org.smartregister.reveal.util.Constants.MDA_DRUG_RECON_COMPLETE_CO
 import static org.smartregister.reveal.util.Constants.MDA_TASK_COUNT;
 import static org.smartregister.reveal.util.Constants.TILDE;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by samuelgithengi on 3/20/19.
  */
@@ -95,6 +98,23 @@ public class TaskDetails extends BaseTaskDetails implements Comparable<TaskDetai
     private boolean eligibleNonCompleted;
 
     private String groupedTaskCodes;
+
+    @Setter @Getter
+    private String compoundId;
+
+    @Setter @Getter
+    private String houseHoldId;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    private String groupId;
+
 
     public TaskDetails(@NonNull String taskId) {
         super(taskId);

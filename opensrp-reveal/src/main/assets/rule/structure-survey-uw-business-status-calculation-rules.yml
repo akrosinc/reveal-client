@@ -1,0 +1,7 @@
+---
+name: step1_business_status
+description: Business status calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_structure_type.equals('residential')? (step1_enrolled.equals('yes') ? ((helper.ifNull(step1_roundthree,'placeholder').equals('yes') || helper.ifNull(step1_roundthree,'placeholder').equals('notapplicable')) ? 'round_three':(helper.ifNull(step1_roundthree,'placeholder').equals('no') ? 'round_three_refused':	((helper.ifNull(step1_roundtwo,'placeholder').equals('yes') || helper.ifNull(step1_roundtwo,'placeholder').equals('notapplicable')) ?'round_two' : (helper.ifNull(step1_roundtwo,'placeholder').equals('no') ?'round_two_refused' :((helper.ifNull(step1_roundone,'placeholder').equals('yes') || helper.ifNull(step1_roundone,'placeholder').equals('notapplicable')) ?'round_one':(helper.ifNull(step1_roundone,'placeholder').equals('no') ? 'round_one_refused' : 'enrolled')))))) :'Refused'):'Not Eligible'"

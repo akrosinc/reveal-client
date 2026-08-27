@@ -74,7 +74,7 @@ public class InteractorUtils {
                     commonPersonObject = commonRepository.getCommonPersonObjectFromCursor(cursor);
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -99,7 +99,7 @@ public class InteractorUtils {
                     event.put("dateVoided", now);
                     event.put(EventClientRepository.event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
                 } catch (JSONException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }
@@ -126,7 +126,7 @@ public class InteractorUtils {
             saved = true;
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             saved = false;
         }
         return saved;
@@ -166,7 +166,7 @@ public class InteractorUtils {
 
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             archived = false;
         }
 

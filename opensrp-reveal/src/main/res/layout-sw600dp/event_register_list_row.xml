@@ -47,7 +47,8 @@
         android:paddingTop="@dimen/register_list_top_bottom_padding"
         android:text="SOP"
         android:textColor="@color/text_black"
-        android:textSize="@dimen/event_register_row_title_size" />
+        android:textSize="@dimen/event_register_row_title_size"
+        android:visibility="gone"/>
 
 
     <org.smartregister.view.customcontrols.CustomFontTextView

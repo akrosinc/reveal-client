@@ -1,7 +1,11 @@
 package org.smartregister.util;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Environment;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -19,13 +23,25 @@ public class PermissionUtils {
     public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 15144;
     public static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 15145;
 
-
     public static boolean isPermissionGranted(Activity context, String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(context, new String[]{permission}, requestCode);
             return false;
         } else {
             return true;
+        }
+    }
+
+    public static boolean checkStoragePermissions(Context context){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            //Android is 11 (R) or above
+            return Environment.isExternalStorageManager();
+        }else {
+            //Below android 11
+            int write = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            return read == PackageManager.PERMISSION_GRANTED && write == PackageManager.PERMISSION_GRANTED;
         }
     }
 

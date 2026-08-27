@@ -102,7 +102,7 @@ public class ManifestRepository extends BaseRepository {
         try {
             manifest.setCreatedAt(DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(CREATED_AT))));
         } catch (ParseException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return manifest;
@@ -121,7 +121,7 @@ public class ManifestRepository extends BaseRepository {
                 manifests.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return manifests;
 
@@ -141,7 +141,7 @@ public class ManifestRepository extends BaseRepository {
                 manifests.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return manifests;
 
@@ -160,7 +160,7 @@ public class ManifestRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
 

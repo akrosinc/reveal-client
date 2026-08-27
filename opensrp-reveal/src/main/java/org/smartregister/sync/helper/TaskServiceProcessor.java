@@ -51,7 +51,7 @@ public class TaskServiceProcessor {
         try {
             DrishtiApplication.getInstance().getClientProcessor().processClient(eventsToProcess);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

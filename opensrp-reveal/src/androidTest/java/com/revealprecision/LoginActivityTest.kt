@@ -29,7 +29,8 @@ class LoginActivityTest {
         onView(withId(R.id.login_user_name_edit_text)).perform(typeText(SampleData.VALID_USER_NAME), closeSoftKeyboard())
         onView(withId(R.id.login_password_edit_text)).perform(typeText(SampleData.VALID_PASSWORD), closeSoftKeyboard())
         clickLoginButton()
-        onView(withId(R.id.kujakuMapView)).check(matches(isDisplayed()))
+//        onView(withId(R.id.kujakuMapView)).check(matches(isDisplayed()))
+        onView(withId(R.id.mapView)).check(matches(isDisplayed()))
     }
 
     @Test

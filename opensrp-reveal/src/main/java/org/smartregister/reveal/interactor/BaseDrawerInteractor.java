@@ -81,7 +81,7 @@ public class BaseDrawerInteractor implements BaseDrawerContract.Interactor {
                 }
                 catch (Exception e)
                 {
-                    Timber.e(e, "EXCEPTION %s", e.toString());
+                    Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
                 }
                 finally
                 {

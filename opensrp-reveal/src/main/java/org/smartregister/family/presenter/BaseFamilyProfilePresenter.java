@@ -2,12 +2,10 @@ package org.smartregister.family.presenter;
 
 import android.content.Intent;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.reveal.R;
 import org.smartregister.family.activity.BaseFamilyProfileActivity;
 import org.smartregister.family.contract.FamilyProfileContract;
 import org.smartregister.family.domain.FamilyEventClient;
@@ -17,6 +15,7 @@ import org.smartregister.family.util.DBConstants;
 import org.smartregister.family.util.JsonFormUtils;
 import org.smartregister.family.util.Utils;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.reveal.R;
 
 import java.lang.ref.WeakReference;
 
@@ -86,7 +85,7 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
             String jsonString = data.getStringExtra(Constants.INTENT_KEY.JSON);
             Timber.d(jsonString);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -134,7 +133,7 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
             getView().startFormActivity(form);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -162,7 +161,7 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
         try {
             startForm(triple.getLeft(), entityId, triple.getMiddle(), triple.getRight());
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getView().displayToast(R.string.error_unable_to_start_form);
         }
     }
@@ -181,7 +180,7 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
             interactor.saveRegistration(familyEventClient, jsonString, false, this);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -199,7 +198,7 @@ public class BaseFamilyProfilePresenter implements FamilyProfileContract.Present
             interactor.saveRegistration(familyEventClient, jsonString, true, this);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

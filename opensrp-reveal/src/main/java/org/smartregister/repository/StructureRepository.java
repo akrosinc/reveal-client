@@ -81,7 +81,7 @@ public class StructureRepository extends LocationRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -151,7 +151,7 @@ public class StructureRepository extends LocationRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
             getWritableDatabase().endTransaction();
             return false;
         }
@@ -202,7 +202,7 @@ public class StructureRepository extends LocationRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -224,7 +224,7 @@ public class StructureRepository extends LocationRepository {
                 structuresCount = cursor.getInt(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

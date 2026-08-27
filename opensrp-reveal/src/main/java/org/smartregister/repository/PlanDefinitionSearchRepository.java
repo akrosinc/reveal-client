@@ -82,7 +82,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                 planIds.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -101,7 +101,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                 }
             }
         } catch (SQLiteException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return planDefinitionSearchList;
     }
@@ -117,7 +117,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                 }
             }
         } catch (SQLiteException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return planDefinitionSearchList;
     }
@@ -144,7 +144,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                     String.valueOf(LocalDate.now().toDate().getTime())});
             return cursor.moveToFirst();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

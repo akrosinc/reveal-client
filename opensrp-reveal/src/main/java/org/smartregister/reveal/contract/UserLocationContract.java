@@ -29,7 +29,7 @@ public interface UserLocationContract {
         Location getUserCurrentLocation();
 
         void showProgressDialog(@StringRes int title, @StringRes int message);
-
+        void updateProgressDialog(int percentage);
         void hideProgressDialog();
 
         void requestUserLocation();

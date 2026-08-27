@@ -51,7 +51,7 @@ public class P2PUtil {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (mCursor != null) {
                 mCursor.close();

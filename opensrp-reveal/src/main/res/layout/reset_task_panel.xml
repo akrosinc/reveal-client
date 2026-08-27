@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:background="#6200EE"
+        android:padding="5dp"> <!-- Set background color here (Purple) -->
+
+        <!-- Title Text -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset Task"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+        <!-- Close Button -->
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="@android:color/transparent"
+            android:contentDescription="Close" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <!-- Label for First Row -->
+
+
+        <!-- EditText for First Row -->
+    </LinearLayout>
+    <!-- First Row -->
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Are you sure you want to reset task?"
+      android:layout_gravity="start"
+      android:layout_marginEnd="8dp"
+      android:textSize="16sp"/>
+    <Button
+        android:id="@+id/resetTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yes, Reset!"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp" />
+
+</android.widget.LinearLayout>

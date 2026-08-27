@@ -97,7 +97,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -115,7 +115,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -136,7 +136,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -154,7 +154,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -165,6 +165,30 @@ public class LocationRepository extends BaseRepository {
 
     public List<Location> getLocationsByParentId(String parentId) {
         return getLocationsByParentId(parentId, getLocationTableName());
+    }
+
+    public List<Location> getLocationsByParentIdForGdrs(String parentId, String tableName) {
+        Cursor cursor = null;
+        List<Location> locations = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + tableName +
+                    " WHERE " + PARENT_ID + " =?", new String[]{parentId});
+            while (cursor.moveToNext()) {
+                String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
+                Location location1 = gson.fromJson(geoJson, Location.class);
+                LocationProperty locationProperty = new LocationProperty();
+                locationProperty.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+                location1.setProperties(locationProperty);
+                locations.add(location1);
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locations;
     }
 
     public List<Location> getLocationsByParentId(String parentId, String tableName) {
@@ -178,13 +202,37 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
         }
         return locations;
     }
+    public String getLocationsParentName(String locationId) {
+        Cursor cursor = null;
+        String parentName = null;
+        try {
+      cursor =
+          getReadableDatabase()
+              .rawQuery(
+                  "SELECT l.name from structure s "
+                      + "left join "+getLocationTableName()+" l on s.parent_id = l._id "
+                      + "WHERE s._id = ? limit 1",
+                  new String[] {locationId});
+            if (cursor.moveToNext()) {
+                parentName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return parentName;
+    }
+
 
     public Location getLocationByName(String name) {
         Cursor cursor = null;
@@ -196,7 +244,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -241,7 +289,28 @@ public class LocationRepository extends BaseRepository {
                 locations.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locations;
+    }
+
+    public List<Location> getHighestLocationsList() {
+        Cursor cursor = null;
+        List<Location> locations = new ArrayList<>();
+
+        String selectSql = "SELECT * FROM " + getLocationTableName() +
+                " WHERE " + PARENT_ID + " IS NULL  ";
+
+        try {
+            cursor = getReadableDatabase().rawQuery(selectSql, null);
+            while (cursor.moveToNext()) {
+                locations.add(readCursor(cursor));
+            }
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -264,7 +333,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();

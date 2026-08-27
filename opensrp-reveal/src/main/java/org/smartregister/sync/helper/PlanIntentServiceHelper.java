@@ -100,7 +100,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
             try {
                 serverVersion = Long.parseLong(allSharedPreferences.getPreference(PLAN_LAST_SYNC_DATE));
             } catch (NumberFormatException e) {
-                Timber.e(e, "EXCEPTION %s", e.toString());
+                Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
             }
             if (serverVersion > 0) {
                 serverVersion += 1;
@@ -122,7 +122,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
                 } catch (Exception e) {
-                    Timber.e(e, "EXCEPTION %s", e.toString());
+                    Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
                 }
             }
             // update most recent server version
@@ -137,7 +137,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
                 batchFetchPlansFromServer(false);
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
 
         return batchFetchCount;

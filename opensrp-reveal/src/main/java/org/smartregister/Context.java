@@ -37,13 +37,16 @@ import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ClientRelationshipRepository;
+import org.smartregister.repository.DBPullRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.ImageRepository;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.ManifestRepository;
@@ -104,6 +107,7 @@ import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
@@ -226,11 +230,28 @@ public class Context {
     private ClientRelationshipRepository clientRelationshipRepository;
     private EnvironmentRepository environmentRepository;
 
+    private DBPullRepository dbPullRepository;
+
+    private HdssRepository hdssRepository;
+    private boolean fetchedHdssDetails = false;
+
+    private InterventionAdditionalDetailsRepository interventionAdditionalDetailsRepository;
+
+    private HdssServiceHelper hdssServiceHelper;
+
     private static final String SHARED_PREFERENCES_FILENAME = "%s_preferences";
 
     /////////////////////////////////////////////////
 
     protected Context() {
+    }
+
+    public boolean hasFetchedHdssDetails(){
+        return fetchedHdssDetails;
+    }
+
+    public void setFetchedHdssDetails(boolean fetched){
+        this.fetchedHdssDetails = fetched;
     }
 
     public static Context getInstance() {
@@ -271,6 +292,13 @@ public class Context {
             beneficiaryService = new BeneficiaryService(allEligibleCouples(), allBeneficiaries());
         }
         return beneficiaryService;
+    }
+
+    public HdssServiceHelper hdssServiceHelper() {
+        if (hdssServiceHelper == null) {
+            hdssServiceHelper = new HdssServiceHelper(getHdssRepository());
+        }
+        return hdssServiceHelper;
     }
 
     public Context updateApplicationContext(android.content.Context applicationContext) {
@@ -620,7 +648,7 @@ public class Context {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Timber.e(e, "Error creating encrypted SharedPreferences");
+            Timber.tag("Reveal Exception").w(e, "Error creating encrypted SharedPreferences");
 
             // fall back to unencrypted SharedPreferences
             sharedPreferences = getDefaultSharedPreferences(context);
@@ -679,12 +707,34 @@ public class Context {
         return settingsRepository;
     }
 
-    protected EnvironmentRepository environmentRepository(){
-        if(environmentRepository == null){
+    protected EnvironmentRepository environmentRepository() {
+        if (environmentRepository == null) {
             environmentRepository = new EnvironmentRepository();
         }
         return environmentRepository;
     }
+
+    public DBPullRepository getDbPullRepository() {
+        if (dbPullRepository == null) {
+            dbPullRepository = new DBPullRepository();
+        }
+        return dbPullRepository;
+    }
+
+    public HdssRepository getHdssRepository() {
+        if (hdssRepository == null) {
+            hdssRepository = new HdssRepository();
+        }
+        return hdssRepository;
+    }
+
+    public InterventionAdditionalDetailsRepository getInterventionAdditionalDetailsRepository() {
+        if (interventionAdditionalDetailsRepository == null) {
+            interventionAdditionalDetailsRepository = new InterventionAdditionalDetailsRepository();
+        }
+        return interventionAdditionalDetailsRepository;
+    }
+
     private ChildRepository childRepository() {
         if (childRepository == null) {
             childRepository = new ChildRepository();
@@ -974,6 +1024,7 @@ public class Context {
         if (MapOfCommonRepository == null) {
             MapOfCommonRepository = new HashMap<String, CommonRepository>();
         }
+
         if (MapOfCommonRepository.get(tablename) == null) {
             for (CommonRepositoryInformationHolder bindType : bindtypes) {
                 if (bindType.getBindtypename().equalsIgnoreCase(tablename)) {
@@ -1029,7 +1080,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString(AllConstants.ClientProcessing.NAME));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -1070,7 +1121,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }
@@ -1090,7 +1141,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1103,7 +1154,7 @@ public class Context {
                     input.close();
                 }
             } catch (Exception e2) {
-                Timber.e(e2);
+                Timber.tag("Reveal Exception").w(e2);
             }
         }
         return returnString.toString();
@@ -1162,7 +1213,7 @@ public class Context {
 
     public EventClientRepository getEventClientRepository() {
         if (eventClientRepository == null) {
-            eventClientRepository = new EventClientRepository();
+            eventClientRepository = new EventClientRepository(getInterventionAdditionalDetailsRepository());
         }
         return eventClientRepository;
     }
@@ -1184,7 +1235,8 @@ public class Context {
 
     public EventClientRepository getForeignEventClientRepository() {
         if (foreignEventClientRepository == null) {
-            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
+            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient
+                    , EventClientRepository.Table.foreignEvent, getInterventionAdditionalDetailsRepository());
         }
         return foreignEventClientRepository;
     }

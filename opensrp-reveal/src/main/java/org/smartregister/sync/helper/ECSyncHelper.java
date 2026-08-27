@@ -59,7 +59,7 @@ public class ECSyncHelper {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -68,7 +68,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return new ArrayList<>();
     }
@@ -99,7 +99,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return new ArrayList<>();
     }
@@ -108,7 +108,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(formSubmissionIds);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return new ArrayList<>();
     }
@@ -117,7 +117,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.getClientByBaseEntityId(baseEntityId);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -126,7 +126,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addorUpdateClient(baseEntityId, jsonObject);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addEvent(baseEntityId, jsonObject);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addEvent(baseEntityId, jsonObject, syncStatus);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -150,7 +150,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return new ArrayList<>();
     }

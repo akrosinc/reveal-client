@@ -8,18 +8,32 @@ import static com.vijay.jsonwizard.constants.JsonFormConstants.VALUE;
 import static org.smartregister.domain.LocationProperty.PropertyStatus.INACTIVE;
 import static org.smartregister.reveal.contract.ListTaskContract.ListTaskView;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
 import static org.smartregister.reveal.util.Constants.BUILD_COUNTRY;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_COMPLETE_RCD_INCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYABLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_APPROPRIATE_ADULT_AVAILABLE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NO_ONE_HOME;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_COMPLETE_INDEX_INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_INCOMPLETE_INDEX_INCOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_INDEX_CASE_NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DateFormat.EVENT_DATE_FORMAT_XXX;
@@ -28,6 +42,8 @@ import static org.smartregister.reveal.util.Constants.EventType.HABITAT_SURVEY_E
 import static org.smartregister.reveal.util.Constants.EventType.LSM_HOUSEHOLD_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_ONCHO_EVENT;
 import static org.smartregister.reveal.util.Constants.EventType.MDA_SURVEY_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.RCD_EVENT;
+import static org.smartregister.reveal.util.Constants.EventType.STRUCTURE_SURVEY_EVENT;
 import static org.smartregister.reveal.util.Constants.GeoJSON.FEATURES;
 import static org.smartregister.reveal.util.Constants.GeoJSON.TYPE;
 import static org.smartregister.reveal.util.Constants.Intervention.CDD_SUPERVISION;
@@ -38,6 +54,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Intervention.SURVEY;
 import static org.smartregister.reveal.util.Constants.JsonForm.DISTRICT_NAME;
 import static org.smartregister.reveal.util.Constants.JsonForm.ENCOUNTER_TYPE;
 import static org.smartregister.reveal.util.Constants.JsonForm.HH_ID;
@@ -47,8 +64,10 @@ import static org.smartregister.reveal.util.Constants.JsonForm.VALID_OPERATIONAL
 import static org.smartregister.reveal.util.Constants.LARVAL_DIPPING_EVENT;
 import static org.smartregister.reveal.util.Constants.MOSQUITO_COLLECTION_EVENT;
 import static org.smartregister.reveal.util.Constants.Map.CLICK_SELECT_RADIUS;
+import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
+import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_BUSINESS_STATUS;
@@ -59,6 +78,7 @@ import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 import static org.smartregister.reveal.util.Constants.REGISTER_STRUCTURE_EVENT;
 import static org.smartregister.reveal.util.Constants.SPRAY_EVENT;
 import static org.smartregister.reveal.util.Constants.USER_NAME;
+import static org.smartregister.reveal.util.Country.GDRS;
 import static org.smartregister.reveal.util.Utils.buildCountryHasIndicators;
 import static org.smartregister.reveal.util.Utils.formatDate;
 import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
@@ -78,22 +98,21 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.location.Location;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import androidx.core.util.Pair;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
+
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+
+import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -101,9 +120,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
@@ -121,6 +140,7 @@ import org.smartregister.reveal.model.TaskDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.task.IndicatorsCalculatorTask;
+import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants;
@@ -128,6 +148,7 @@ import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Filter;
 import org.smartregister.reveal.util.Constants.Intervention;
 import org.smartregister.reveal.util.Constants.JsonForm;
+import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PasswordDialogUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
@@ -135,6 +156,16 @@ import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.view.EditFociBoundaryActivity;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import timber.log.Timber;
 
 
@@ -218,7 +249,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onDrawerClosed() {
         if (drawerPresenter.isChangedCurrentSelection()) {
             listTaskView.showProgressDialog(R.string.fetching_structures_title, R.string.fetching_structures_message);
-            listTaskInteractor.fetchLocations(prefsUtil.getCurrentPlanId(), prefsUtil.getCurrentOperationalArea());
+//            listTaskInteractor.fetchLocations(prefsUtil.getCurrentPlanId(), prefsUtil.getCurrentOperationalArea());
+            listTaskInteractor.fetchLocationsWithParents(prefsUtil.getCurrentPlanId(), prefsUtil.getCurrentOperationalArea());
         }
     }
 
@@ -229,24 +261,75 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             setChangeMapPosition(true);
         }
         listTaskView.showProgressDialog(R.string.fetching_structures_title, R.string.fetching_structures_message);
-        listTaskInteractor.fetchLocations(prefsUtil.getCurrentPlanId(), prefsUtil.getCurrentOperationalArea());
+        listTaskInteractor.fetchLocationsWithParents(prefsUtil.getCurrentPlanId(), prefsUtil.getCurrentOperationalArea());
     }
 
+//    @Override
+//    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive) {
+//        prefsUtil.setCurrentOperationalArea(operationalArea.getStringProperty(Constants.Properties.LOCATION_NAME));
+//        listTaskView.setOperationalArea(prefsUtil.getCurrentOperationalArea());
+//        onStructuresFetched(structuresGeoJson, operationalArea, adjacentOperationalAreas, taskDetailsList);
+//        onAddStructureClicked(locationComponentActive, point);
+//    }
+
     @Override
-    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea,List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive) {
+    public void onStructuresAndParentsFetched(JSONObject structuresGeoJson, Feature operationalArea, List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList, String point, Boolean locationComponentActive, List<Feature> parentLocations) {
         prefsUtil.setCurrentOperationalArea(operationalArea.getStringProperty(Constants.Properties.LOCATION_NAME));
         listTaskView.setOperationalArea(prefsUtil.getCurrentOperationalArea());
-        onStructuresFetched(structuresGeoJson, operationalArea, adjacentOperationalAreas, taskDetailsList);
+        onStructuresAndParentsFetched(structuresGeoJson, operationalArea, adjacentOperationalAreas, taskDetailsList, parentLocations);
         onAddStructureClicked(locationComponentActive, point);
     }
 
+//    @Override
+//    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList) {
+//        listTaskView.hideProgressDialog();
+//        setChangeMapPosition(drawerPresenter.isChangedCurrentSelection() || (drawerPresenter.isChangedCurrentSelection() && changeMapPosition));
+//        drawerPresenter.setChangedCurrentSelection(false);
+//        if (structuresGeoJson.has(FEATURES) && StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+//            featureCollection = FeatureCollection.fromJson(structuresGeoJson.toString());
+//            isTasksFiltered = false;
+//            if (filterParams != null && !filterParams.getCheckedFilters().isEmpty() && StringUtils.isBlank(searchPhrase)) {
+//                filterFeatureCollection = null;
+//                filterTasks(filterParams);
+//            } else if (filterParams != null && !filterParams.getCheckedFilters().isEmpty()) {
+//                searchFeatureCollection = null;
+//                searchTasks(searchPhrase);
+//            } else {
+//                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
+//            }
+//            this.operationalArea = operationalArea;
+//            this.adjacentOperationAreas = adjacentOperationalAreas;
+//            if (Utils.isEmptyCollection(getFeatureCollection().features())) {
+//                listTaskView.displayNotification(R.string.fetching_structures_title, R.string.no_structures_found);
+//            }
+//        } else {
+//            try {
+//                structuresGeoJson.put(FEATURES, new JSONArray());
+//                listTaskView.setGeoJsonSource(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
+//                listTaskView.clearSelectedFeature();
+//                listTaskView.closeCardView(R.id.btn_collapse_spray_card_view);
+//            } catch (JSONException e) {
+//                Timber.tag("Reveal Exception").w("error resetting structures");
+//            }
+//        }
+//
+//        if (taskDetailsList != null && buildCountryHasIndicators()) {
+//            new IndicatorsCalculatorTask(listTaskView.getActivity(), taskDetailsList).execute();
+//        }
+//    }
+
     @Override
-    public void onStructuresFetched(JSONObject structuresGeoJson, Feature operationalArea, List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList) {
+    public void onStructuresAndParentsFetched(JSONObject structuresGeoJson, Feature operationalArea, List<Feature> adjacentOperationalAreas, List<TaskDetails> taskDetailsList, List<Feature> parentLocations) {
         listTaskView.hideProgressDialog();
         setChangeMapPosition(drawerPresenter.isChangedCurrentSelection() || (drawerPresenter.isChangedCurrentSelection() && changeMapPosition));
         drawerPresenter.setChangedCurrentSelection(false);
         if (structuresGeoJson.has(FEATURES) && StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+            Timber.tag("WriteValue").i("fetchLocationsWithParents structuresGeoJson .has(FEATURES)");
+
             featureCollection = FeatureCollection.fromJson(structuresGeoJson.toString());
+            if (featureCollection !=null && featureCollection.features()!=null){
+                Timber.tag("WriteValue").i("fetchLocationsWithParents featureCollection %s",featureCollection.features().size());
+            }
             isTasksFiltered = false;
             if (filterParams != null && !filterParams.getCheckedFilters().isEmpty() && StringUtils.isBlank(searchPhrase)) {
                 filterFeatureCollection = null;
@@ -255,7 +338,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 searchFeatureCollection = null;
                 searchTasks(searchPhrase);
             } else {
-                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
+                listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), operationalArea, adjacentOperationalAreas, isChangeMapPosition(), parentLocations);
             }
             this.operationalArea = operationalArea;
             this.adjacentOperationAreas = adjacentOperationalAreas;
@@ -265,11 +348,11 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else {
             try {
                 structuresGeoJson.put(FEATURES, new JSONArray());
-                listTaskView.setGeoJsonSource(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, adjacentOperationalAreas, isChangeMapPosition());
+                listTaskView.setGeoJsonSourceWithParents(FeatureCollection.fromJson(structuresGeoJson.toString()), operationalArea, adjacentOperationalAreas, isChangeMapPosition(), parentLocations);
                 listTaskView.clearSelectedFeature();
                 listTaskView.closeCardView(R.id.btn_collapse_spray_card_view);
             } catch (JSONException e) {
-                Timber.e("error resetting structures");
+                Timber.tag("Reveal Exception").w("error resetting structures");
             }
         }
 
@@ -279,14 +362,13 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
 
-
     public void onMapReady() {
         String planId = PreferencesUtil.getInstance().getCurrentPlanId();
         String operationalArea = PreferencesUtil.getInstance().getCurrentOperationalArea();
 
         if (StringUtils.isNotBlank(planId) &&
                 StringUtils.isNotBlank(operationalArea)) {
-            listTaskInteractor.fetchLocations(planId, operationalArea);
+            listTaskInteractor.fetchLocationsWithParents(planId, operationalArea);
         } else {
             drawerPresenter.getView().lockNavigationDrawerForSelection();
         }
@@ -295,7 +377,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onMapClicked(MapboxMap mapboxMap, LatLng point, boolean isLongclick) {
         double currentZoom = mapboxMap.getCameraPosition().zoom;
         if (currentZoom < getMaxZoomLevel()) {
-            Timber.w("onMapClicked Current Zoom level" + currentZoom);
+            Timber.tag("Reveal Exception").w("onMapClicked Current Zoom level" + currentZoom);
             listTaskView.displayToast(R.string.zoom_in_to_select);
             return;
         }
@@ -385,7 +467,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(IRS_VERIFICATION, feature.id(), false);
-        } else if(Arrays.asList(MDA_SURVEY,LSM_HOUSEHOLD_SURVEY,HABITAT_SURVEY,MDA_ONCHOCERCIASIS_SURVEY).contains(code) &&  !NOT_VISITED.equals(businessStatus)){
+        } else if (Arrays.asList(MDA_SURVEY, STRUCTURE_SURVEY, LSM_HOUSEHOLD_SURVEY, HABITAT_SURVEY, MDA_ONCHOCERCIASIS_SURVEY, RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(code) && !NOT_VISITED.equals(businessStatus)) {
             listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
         }
 
@@ -394,7 +476,10 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private boolean interventionHasLocationValidation(final String businessStatus, final String taskCode) {
         return (Intervention.LOCATION_VALIDATION_TASK_CODES.contains(taskCode))
-                && (NOT_VISITED.equals(businessStatus) || businessStatus == null)
+                && (List.of(INDEX_CASE_NOT_VISITED, NOT_VISITED, INDEX_CASE_COMPLETE, INDEX_COMPLETE_RCD_INCOMPLETE
+                , RCD_PARTIALLY_COMPLETE, RCD_COMPLETE_INDEX_INCOMPLETE, RCD_INCOMPLETE_INDEX_INCOMPLETE, SECONDARY_INDEX_CASE_NOT_VISITED,
+                SECONDARY_INDEX_CASE_COMPLETE,NO_ONE_HOME,NO_APPROPRIATE_ADULT_AVAILABLE).contains(businessStatus) || businessStatus == null ||
+                (businessStatus.equals(COMPLETE) && List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(taskCode)))
                 || shouldOpenCDDSupervisionForm(businessStatus, taskCode)
                 || shouldOpenCellCoordinatorForm(businessStatus, taskCode);
     }
@@ -409,16 +494,90 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void onFeatureSelectedByLongClick(Feature feature) {
+        Timber.tag("WriteValue").i("ListTaskPresenter onFeatureSelectedByLongClick enter");
+
         String code = getPropertyValue(feature, TASK_CODE);
-       String taskBusinessStatus = getPropertyValue(feature,TASK_BUSINESS_STATUS);
+        String taskBusinessStatus = getPropertyValue(feature, TASK_BUSINESS_STATUS);
         selectedFeatureInterventionType = code;
         if (COMPLETE.equals(taskBusinessStatus) && (isKenyaMDALite() || isRwandaMDALite())) {
             listTaskView.displayEditCDDTaskCompleteDialog();
+        } else {
+            if (GDRS.equals(getBuildCountry())){
+
+                openCreateTaskForm(feature);
+            }
+
         }
     }
 
-    @Override
-    public void validateUserLocation() {
+  private void openCreateTaskForm(Feature feature) {
+    Timber.tag("WriteValue").i("ListTaskPresenter openCreateTaskForm enter");
+
+    String taskId = feature.getStringProperty(TASK_IDENTIFIER);
+    Timber.tag("WriteValue").i("ListTaskPresenter openCreateTaskForm taskId %s", taskId);
+    if (taskId == null) {
+      RevealApplication.getInstance().getAppExecutors().diskIO().execute(()->{
+        try {
+
+          String structureId = feature.id();
+          String structureUUID = getPropertyValue(feature, Properties.LOCATION_UUID);
+          String structureVersion = getPropertyValue(feature, Properties.LOCATION_VERSION);
+
+          String gdrsCreateIndexCase;
+
+          List<HdssCompoundHousehold> hdssHouseHoldBStructure =
+              listTaskInteractor.getHdssHouseHoldBStructure(structureId);
+          if (!hdssHouseHoldBStructure.isEmpty()) {
+            gdrsCreateIndexCase = JsonForm.GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD;
+          } else {
+            gdrsCreateIndexCase = JsonForm.GDRS_CREATE_INDEX_CASE;
+          }
+
+          JSONObject formJSON =
+              jsonFormUtils.getFormJSON(
+                  this.listTaskView.getContext(), gdrsCreateIndexCase, null, null);
+
+          jsonFormUtils.populateField(formJSON, "structure", feature.id(), JsonFormConstants.VALUE);
+
+          if (JsonForm.GDRS_CREATE_INDEX_CASE_WITHOUT_HOUSEHOLD.equals(gdrsCreateIndexCase)) {
+            try {
+              List<Pair<String, String>> householdPairs = new ArrayList<>();
+              for (HdssCompoundHousehold householdId : hdssHouseHoldBStructure) {
+                householdPairs.add(
+                    new Pair<>(householdId.getHouseholdId(), householdId.getHouseholdId()));
+              }
+
+              jsonFormUtils.populateSpinner(formJSON, HOUSEHOLD_ID, householdPairs);
+            } catch (JSONException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          formJSON =
+              jsonFormUtils.populateFormDetails(
+                  formJSON.toString(),
+                  feature.id(),
+                  structureId,
+                  null,
+                  null,
+                  null,
+                  structureUUID,
+                  structureVersion == null ? null : Integer.valueOf(structureVersion));
+
+          JSONObject finalFormJSON = formJSON;
+          RevealApplication.getInstance().getAppExecutors().mainThread().execute(()->
+            jsonFormUtils.startJsonForm(finalFormJSON, this.listTaskView.getActivity())
+          );
+        } catch (JSONException e) {
+          Timber.tag("WriteValue").e(e, "Error Writing Structure to Form");
+        }
+      });
+    }
+  }
+
+
+  @Override
+  public void validateUserLocation() {
         Location location = listTaskView.getUserCurrentLocation();
         if (location == null) {
             locationPresenter.requestUserLocation();
@@ -432,8 +591,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         Feature userFeature = getFeatureUserIsIn(location);
         if (validateFarStructures() && userFeature == null || !Objects.equals(userFeature.id(), selectedFeature.id())) {
             requestUserPassword();
-        }
-        else {
+        } else {
             onLocationValidated();
         }
     }
@@ -470,7 +628,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         revealApplication.setFeatureCollection(featureCollection);
         revealApplication.setOperationalArea(operationalArea);
 
-        if(getBuildCountry() != Country.NIGERIA){
+        if (getBuildCountry() != Country.NIGERIA) {
             Intent intent = new Intent(listTaskView.getContext(), EditFociBoundaryActivity.class);
             listTaskView.getActivity().startActivity(intent);
         }
@@ -520,7 +678,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (cardDetails instanceof FamilyCardDetails) {
             formatFamilyCardDetails((FamilyCardDetails) cardDetails);
             listTaskView.openCardView(cardDetails);
-        } else if(cardDetails instanceof SurveyCardDetails){
+        } else if (cardDetails instanceof SurveyCardDetails) {
             formatSurveyCardDetails((SurveyCardDetails) cardDetails);
             listTaskView.openCardView(cardDetails);
         }
@@ -532,14 +690,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_Z);
             cardDetails.setDateCreated(formattedDate);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             Timber.i("Date parsing failed, trying another date format");
             try {
                 // try another date format
                 String formattedDate = formatDate(cardDetails.getDateCreated(), EVENT_DATE_FORMAT_XXX);
                 cardDetails.setDateCreated(formattedDate);
             } catch (Exception exception) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }
@@ -550,14 +708,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             String formattedDate = formatDate(sprayCardDetails.getSprayDate(), EVENT_DATE_FORMAT_Z);
             sprayCardDetails.setSprayDate(formattedDate);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             Timber.i("Date parsing failed, trying another date format");
             try {
                 // try another date format
                 String formattedDate = formatDate(sprayCardDetails.getSprayDate(), EVENT_DATE_FORMAT_XXX);
                 sprayCardDetails.setSprayDate(formattedDate);
             } catch (Exception exception) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
 
@@ -587,53 +745,81 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void startForm(String formName, Feature feature, String sprayStatus, String familyHead, Event event) {
+//        Timber.tag("WriteValue").i("start form");
         JSONObject formJson = jsonFormUtils.getFormJSON(listTaskView.getContext()
                 , formName, feature, sprayStatus, familyHead);
         if (cardDetails instanceof MosquitoHarvestCardDetails && PAOT.equals(cardDetails.getInterventionType())) {
             jsonFormUtils.populatePAOTForm((MosquitoHarvestCardDetails) cardDetails, formJson);
-        } else if ( cardDetails instanceof MosquitoHarvestCardDetails) {
+        } else if (cardDetails instanceof MosquitoHarvestCardDetails) {
             jsonFormUtils.populateForm(event, formJson);
         } else if (cardDetails instanceof SprayCardDetails && Country.NAMIBIA.equals(getBuildCountry())) {
             jsonFormUtils.populateForm(event, formJson);
-        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
+        } else if (JsonForm.SPRAY_FORM_ZAMBIA.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
+        } else if (JsonForm.SPRAY_FORM_SENEGAL.equals(formName) || JsonForm.SPRAY_FORM_SENEGAL_EN.equals(formName)) {
             try {
                 jsonFormUtils.populateField(formJson, DISTRICT_NAME, prefsUtil.getCurrentDistrict().trim(), VALUE);
                 jsonFormUtils.populateField(formJson, PROVINCE_NAME, prefsUtil.getCurrentProvince().trim(), VALUE);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             Map<String, JSONObject> fields = jsonFormUtils.getFields(formJson);
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.HEALTH_FACILITIES, fields.get(JsonForm.HFC_SEEK), prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.HEALTH_FACILITIES, fields.get(JsonForm.HFC_BELONG), prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DISTRICTS, fields.get(JsonForm.DISTRICT), prefsUtil.getCurrentProvince());
             jsonFormUtils.populateForm(event, formJson);
-            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.VILLAGES,fields.get(JsonForm.VILLAGE),prefsUtil.getCurrentFacility());
-            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),CONFIGURATION.SUPERVISORS,fields.get(JsonForm.SUPERVISOR),prefsUtil.getCurrentDistrict());
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES, fields.get(JsonForm.VILLAGE), prefsUtil.getCurrentFacility());
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.SUPERVISORS, fields.get(JsonForm.SUPERVISOR), prefsUtil.getCurrentDistrict());
             jsonFormUtils.populateCompoundStructureOptions(formJson, org.smartregister.reveal.util.Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()));
-            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES,fields.get(JsonForm.LOCATION_ZONE),prefsUtil.getCurrentFacility());
+            jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.VILLAGES, fields.get(JsonForm.LOCATION_ZONE), prefsUtil.getCurrentFacility());
+
         } else if (JsonForm.SPRAY_FORM_REFAPP.equals(formName)) {
             jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), CONFIGURATION.DATA_COLLECTORS, jsonFormUtils.getFields(formJson).get(JsonForm.DATA_COLLECTOR), prefsUtil.getCurrentDistrict());
         } else if (cardDetails instanceof SprayCardDetails && isZambiaIRSLite()) {
             jsonFormUtils.populateForm(event, formJson);
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
-        } else if(isZambiaIRSLite()) {
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,null);
-        }else if(isKenyaMDALite() || isRwandaMDALite()){
-            jsonFormUtils.populateFormWithServerOptions(formName, formJson,feature);
-        } else if(JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM.equals(formName)){
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
+        } else if (isZambiaIRSLite()) {
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
+        } else if (isKenyaMDALite() || isRwandaMDALite()) {
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, feature);
+        } else if (JsonForm.MDA_HOUSEHOLD_STATUS_MOZ_FORM.equals(formName)) {
             try {
-                jsonFormUtils.populateField(formJson,HH_ID,feature.id(),VALUE);
+                jsonFormUtils.populateField(formJson, HH_ID, feature.id(), VALUE);
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             jsonFormUtils.populateForm(event, formJson);
-        } else  if(JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)){
-            jsonFormUtils.populateForm(event,formJson);
-        } else if(JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA.equals(formName)){
-            jsonFormUtils.populateForm(event,formJson);
-        } else if(JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)){
-            jsonFormUtils.populateForm(event,formJson);
+        } else if (JsonForm.LSM_HABITAT_SURVEY_FORM_ZAMBIA.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+        } else if (JsonForm.LSM_HOUSEHOLD_SURVEY_ZAMBIA.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+        } else if (JsonForm.MDA_ONCHO_SURVEY_FORM.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
+        } else if (JsonForm.STRUCTURE_SURVEY.equals(formName)) {
+//            Timber.tag("WriteValue").i("start form structure survey");
+            jsonFormUtils.populateForm(event, formJson);
+            try {
+                jsonFormUtils.populateField(
+                    formJson, "household_id", UUID.randomUUID().toString(), VALUE);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+//            if (Country.ZAMBIA.equals(getBuildCountry())) {
+//              try {
+//                jsonFormUtils.populateField(
+//                    formJson, "household_id", UUID.randomUUID().toString().replace("-",""), VALUE);
+//              } catch (JSONException e) {
+//                throw new RuntimeException(e);
+//              }
+//            }
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
+        } else if (JsonForm.STRUCTURE_SURVEY_UW.equals(formName)) {
+            jsonFormUtils.populateForm(event, formJson);
+            jsonFormUtils.populateFormWithServerOptions(formName, formJson, null);
         }
+
         listTaskView.startJsonForm(formJson);
     }
 
@@ -646,6 +832,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskView.showProgressDialog(R.string.fetching_larval_dipping_points_title, R.string.fetching_larval_dipping_points_message);
         } else if (PAOT.equals(interventionType)) {
             listTaskView.showProgressDialog(R.string.fetching_paot_title, R.string.fetching_paot_message);
+        } else if (STRUCTURE_SURVEY.equals(interventionType)) {
+            listTaskView.showProgressDialog(R.string.fetching_household_title, R.string.fetching_household_message);
         }
         listTaskInteractor.fetchInterventionDetails(interventionType, selectedFeature.id(), true);
     }
@@ -665,13 +853,13 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 listTaskView.showProgressDialog(R.string.opening_form_title, R.string.add_structure_form_redirecting, validOperationalArea);
                 Boolean locationComponentActive = Boolean.valueOf(JsonFormUtils.getFieldValue(fields, LOCATION_COMPONENT_ACTIVE));
                 String point = JsonFormUtils.getFieldValue(fields, JsonForm.STRUCTURE);
-                listTaskInteractor.fetchLocations(prefsUtil.getCurrentPlanId(), validOperationalArea, point, locationComponentActive);
+                listTaskInteractor.fetchLocationsWithParents(prefsUtil.getCurrentPlanId(), validOperationalArea, point, locationComponentActive);
             } else {
                 listTaskView.showProgressDialog(R.string.saving_title, R.string.saving_message);
                 listTaskInteractor.saveJsonForm(json);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             listTaskView.displayToast(R.string.error_occurred_saving_form);
         }
     }
@@ -687,10 +875,11 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
-       if(!isKenyaMDALite() && !isRwandaMDALite()){
-           listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
-       }
+
+        listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), null, null, isChangeMapPosition(), listTaskInteractor.getParentLocations());
+        if (!isKenyaMDALite() && !isRwandaMDALite()) {
+            listTaskInteractor.fetchInterventionDetails(interventionType, structureId, false);
+        }
     }
 
     @Override
@@ -707,22 +896,25 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
+        listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), null, null, isChangeMapPosition(), listTaskInteractor.getParentLocations());
     }
 
     @Override
     public void onStructureAdded(Feature feature, JSONArray featureCoordinates, double zoomlevel) {
         listTaskView.closeAllCardViews();
         listTaskView.hideProgressDialog();
-        getFeatureCollection().features().add(feature);
-        setChangeMapPosition(false);
-        listTaskView.setGeoJsonSource(getFeatureCollection(), null,null, isChangeMapPosition());
-        try {
-            clickedPoint = new LatLng(featureCoordinates.getDouble(1), featureCoordinates.getDouble(0));
-            listTaskView.displaySelectedFeature(feature, clickedPoint, zoomlevel);
+        FeatureCollection featureCollection1 = getFeatureCollection();
+        if (featureCollection1 != null && featureCollection1.features() != null) {
+            featureCollection1.features().add(feature);
+            setChangeMapPosition(false);
+            listTaskView.setGeoJsonSourceWithParents(featureCollection1, null, null, isChangeMapPosition(), listTaskInteractor.getParentLocations());
+            try {
+                clickedPoint = new LatLng(featureCoordinates.getDouble(1), featureCoordinates.getDouble(0));
+                listTaskView.displaySelectedFeature(feature, clickedPoint, zoomlevel);
 
-        } catch (JSONException e) {
-            Timber.e(e, "error extracting coordinates of added structure");
+            } catch (JSONException e) {
+                Timber.tag("Reveal Exception").w(e, "error extracting coordinates of added structure");
+            }
         }
     }
 
@@ -739,7 +931,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     public void onAddStructureClicked(boolean myLocationComponentActive, String point) {
-        String formName = jsonFormUtils.getFormName(REGISTER_STRUCTURE_EVENT);
+        String interventionTypeForPlan = prefsUtil.getInterventionTypeForPlan(prefsUtil.getCurrentPlanId());
+        String formName;
+        if (SURVEY.equals(interventionTypeForPlan)) {
+            formName = jsonFormUtils.getFormNameWithIntervention(REGISTER_STRUCTURE_EVENT, interventionTypeForPlan);
+        } else {
+            formName = jsonFormUtils.getFormName(REGISTER_STRUCTURE_EVENT);
+        }
+
         try {
             JSONObject formJson = new JSONObject(jsonFormUtils.getFormString(listTaskView.getContext(), formName, null));
             revealApplication.setFeatureCollection(featureCollection);
@@ -751,7 +950,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             formJson.put(LOCATION_COMPONENT_ACTIVE, myLocationComponentActive);
             listTaskView.startJsonForm(formJson);
         } catch (Exception e) {
-            Timber.e(e, "error launching add structure form");
+            Timber.tag("Reveal Exception").w(e, "error launching add structure form");
         }
 
     }
@@ -762,15 +961,17 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             onMarkStructureIneligibleConfirmed();
             markStructureIneligibleConfirmed = false;
         } else if (markStructureIneligibleSelected) {
-            listTaskView.registerFamily();
-        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
             displayMarkStructureIneligibleDialog();
             RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
+        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
+            listTaskView.registerFamily();
+        } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
+            listTaskView.openRCD();
         } else if (cardDetails == null || !changeInterventionStatus) {
             startForm(selectedFeature, null, selectedFeatureInterventionType);
         } else {
             if (IRS.equals(cardDetails.getInterventionType())) {
-                if(isZambiaIRSLite()) {
+                if (isZambiaIRSLite()) {
                     findLastEvent(selectedFeature.id(), Constants.EventType.IRS_LITE_VERIFICATION);
                 } else {
                     findLastEvent(selectedFeature.id(), SPRAY_EVENT);
@@ -779,14 +980,18 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 findLastEvent(selectedFeature.id(), MOSQUITO_COLLECTION_EVENT);
             } else if (LARVAL_DIPPING.equals(cardDetails.getInterventionType())) {
                 findLastEvent(selectedFeature.id(), LARVAL_DIPPING_EVENT);
-            } else if(MDA_SURVEY.equals(cardDetails.getInterventionType())){
-              findLastEvent(selectedFeature.id(),MDA_SURVEY_EVENT);
-            } else if(LSM_HOUSEHOLD_SURVEY.equals(cardDetails.getInterventionType())){
-                findLastEvent(selectedFeature.id(),LSM_HOUSEHOLD_SURVEY_EVENT);
-            } else if(HABITAT_SURVEY.equals(cardDetails.getInterventionType())){
-                findLastEvent(selectedFeature.id(),HABITAT_SURVEY_EVENT);
-            } else if(MDA_ONCHOCERCIASIS_SURVEY.equals(cardDetails.getInterventionType())){
-              findLastEvent(selectedFeature.id(),MDA_ONCHO_EVENT);
+            } else if (MDA_SURVEY.equals(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), MDA_SURVEY_EVENT);
+            } else if (LSM_HOUSEHOLD_SURVEY.equals(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), LSM_HOUSEHOLD_SURVEY_EVENT);
+            } else if (HABITAT_SURVEY.equals(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), HABITAT_SURVEY_EVENT);
+            } else if (MDA_ONCHOCERCIASIS_SURVEY.equals(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), MDA_ONCHO_EVENT);
+            } else if (STRUCTURE_SURVEY.equals(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), STRUCTURE_SURVEY_EVENT);
+            } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(cardDetails.getInterventionType())) {
+                findLastEvent(selectedFeature.id(), RCD_EVENT);
             } else {
                 startForm(selectedFeature, cardDetails, selectedFeatureInterventionType);
             }
@@ -797,8 +1002,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             locationPresenter.requestUserLocation();
             locationPresenter.waitForUserLocation();
         } else {
-            if(!validateFarStructures())
-                RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> logAdminPassRequiredEvent(location,false));
+            if (!validateFarStructures())
+                RevealApplication.getInstance().getAppExecutors().diskIO().execute(() -> logAdminPassRequiredEvent(location, false));
         }
     }
 
@@ -856,9 +1061,9 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 break;
             }
         }
-        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea,adjacentOperationAreas, false);
-        if(buildCountryHasIndicators()){
-            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
+        if (buildCountryHasIndicators()) {
+            new IndicatorsCalculatorTask(listTaskView.getActivity(), listTaskInteractor.getTaskDetails()).execute();
         }
     }
 
@@ -871,8 +1076,8 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void onStructureMarkedIneligible() {
         updateFeatureTaskBusinessStatus(NOT_ELIGIBLE);
         drawerPresenter.updateSyncStatusDisplay(false);
-        if(buildCountryHasIndicators()){
-            new IndicatorsCalculatorTask(listTaskView.getActivity(),listTaskInteractor.getTaskDetails()).execute();
+        if (buildCountryHasIndicators()) {
+            new IndicatorsCalculatorTask(listTaskView.getActivity(), listTaskInteractor.getTaskDetails()).execute();
         }
     }
 
@@ -901,7 +1106,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 || !listTaskView.isMyLocationComponentActive()) {
             listTaskView.focusOnUserLocation(false);
             if (!isTasksFiltered && StringUtils.isBlank(searchPhrase)) {
-                listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationAreas,false);
+                listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
             }
         }
     }
@@ -969,7 +1174,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
                 filterFeatureCollection.add(feature);
             }
         }
-        listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas,false);
+        listTaskView.setGeoJsonSourceWithParents(FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
         listTaskView.setNumberOfFilters(filterParams.getCheckedFilters().size());
         listTaskView.setSearchPhrase("");
         isTasksFiltered = true;
@@ -989,18 +1194,22 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     public void searchTasks(String searchPhrase) {
         if (searchPhrase.isEmpty()) {
             searchFeatureCollection = null;
-            listTaskView.setGeoJsonSource(filterFeatureCollection == null ? getFeatureCollection() : FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas, false);
+            listTaskView.setGeoJsonSourceWithParents(filterFeatureCollection == null ? getFeatureCollection() : FeatureCollection.fromFeatures(filterFeatureCollection), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
         } else {
             List<Feature> features = new ArrayList<>();
             for (Feature feature : !Utils.isEmptyCollection(searchFeatureCollection) && searchPhrase.length() > this.searchPhrase.length() ? searchFeatureCollection : Utils.isEmptyCollection(filterFeatureCollection) ? getFeatureCollection().features() : filterFeatureCollection) {
                 String structureName = feature.getStringProperty(STRUCTURE_NAME);
                 String familyMemberNames = feature.getStringProperty(FAMILY_MEMBER_NAMES);
+                String houseHoldId = feature.getStringProperty(HOUSEHOLD_ID);
+                String compoundId = feature.getStringProperty(COMPOUND_ID);
                 if (org.smartregister.reveal.util.Utils.matchesSearchPhrase(structureName, searchPhrase) ||
-                        org.smartregister.reveal.util.Utils.matchesSearchPhrase(familyMemberNames, searchPhrase))
+                        org.smartregister.reveal.util.Utils.matchesSearchPhrase(familyMemberNames, searchPhrase) ||
+                        org.smartregister.reveal.util.Utils.matchesSearchPhrase(houseHoldId, searchPhrase) ||
+                        org.smartregister.reveal.util.Utils.matchesSearchPhrase(compoundId, searchPhrase))
                     features.add(feature);
             }
             searchFeatureCollection = features;
-            listTaskView.setGeoJsonSource(FeatureCollection.fromFeatures(searchFeatureCollection), operationalArea, adjacentOperationAreas,false);
+            listTaskView.setGeoJsonSourceWithParents(FeatureCollection.fromFeatures(searchFeatureCollection), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
         }
         this.searchPhrase = searchPhrase;
     }
@@ -1017,7 +1226,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         List<Feature> features = mapboxMap.queryRenderedFeatures(pixel,
                 context.getString(R.string.reveal_layer_polygons), context.getString(R.string.reveal_layer_points));
 
-        if(!features.isEmpty()){
+        if (!features.isEmpty()) {
             return features.get(0);
         }
         return null;
@@ -1032,13 +1241,14 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             }
         }
 
-        listTaskView.setGeoJsonSource(getFeatureCollection(), operationalArea, adjacentOperationAreas,false);
+        listTaskView.setGeoJsonSourceWithParents(getFeatureCollection(), operationalArea, adjacentOperationAreas, false, listTaskInteractor.getParentLocations());
     }
-    private void logStructureInteractionEvent(Feature feature){
+
+    private void logStructureInteractionEvent(Feature feature) {
         Bundle bundle = new Bundle();
         bundle.putString(USER_NAME, RevealApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM());
         bundle.putString(BUILD_COUNTRY, getBuildCountry().name());
-        bundle.putString(STRUCTURE_ID,feature.id());
-        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(USER_INTERACTS_WITH_STRUCTURE,bundle);
+        bundle.putString(STRUCTURE_ID, feature.id());
+        FirebaseAnalytics.getInstance(RevealApplication.getInstance().getApplicationContext()).logEvent(USER_INTERACTS_WITH_STRUCTURE, bundle);
     }
 }

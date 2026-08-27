@@ -108,7 +108,7 @@ public class DocumentConfigurationService {
                 .allSharedPreferences()
                 .saveManifestVersion(manifestVersion);
         if (!manifestVersionSaved) {
-            Timber.e(new Exception("Saving manifest version failed"));
+            Timber.tag("Reveal Exception").w(new Exception("Saving manifest version failed"));
         }
     }
 
@@ -119,7 +119,7 @@ public class DocumentConfigurationService {
                 .allSharedPreferences()
                 .saveFormsVersion(formsVersion);
         if (!manifestVersionSaved) {
-            Timber.e(new Exception("Saving manifest version failed"));
+            Timber.tag("Reveal Exception").w(new Exception("Saving manifest version failed"));
         }
     }
 
@@ -132,7 +132,7 @@ public class DocumentConfigurationService {
                     fetchClientForm(identifier, activeManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }

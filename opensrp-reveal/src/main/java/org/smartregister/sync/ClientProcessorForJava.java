@@ -92,7 +92,7 @@ public class ClientProcessorForJava {
                         try {
                             processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
                         } catch (Exception ex) {
-                            Timber.e(ex);
+                            Timber.tag("Reveal Exception").w(ex);
                         }
                     } else {
                         processEvent(event, client, clientClassification);
@@ -157,12 +157,13 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
 
     public Boolean processClientClass(ClassificationRule clientClass, Event event, Client client) {
+
         try {
             if (clientClass == null) {
                 return false;
@@ -184,12 +185,13 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
 
     public Boolean processField(org.smartregister.domain.jsonmapping.Field field, Event event, Client client) {
+
         try {
             if (field == null) {
                 return false;
@@ -274,7 +276,7 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -294,7 +296,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return null;
         }
     }
@@ -334,7 +336,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
             return null;
         }
@@ -489,7 +491,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -544,7 +546,7 @@ public class ClientProcessorForJava {
                         Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.ENGLISH).parse(columnValue);
                         return new SimpleDateFormat(column.saveFormat, Locale.ENGLISH).format(sourceDate);
                     } catch (Exception e) {
-                        Timber.e(e);
+                        Timber.tag("Reveal Exception").w(e);
                     }
                 }
             case ColumnType.String:
@@ -577,7 +579,7 @@ public class ClientProcessorForJava {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -616,7 +618,7 @@ public class ClientProcessorForJava {
             Timber.d("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -645,7 +647,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return obsMap;
     }
@@ -663,7 +665,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (NullPointerException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return attributes;
@@ -678,7 +680,7 @@ public class ClientProcessorForJava {
                 map.put(GENDER, gender);
             }
         } catch (NullPointerException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return map;
@@ -742,7 +744,7 @@ public class ClientProcessorForJava {
             return humanReadableValues.size() == 1 ? humanReadableValues.get(0).toString()
                     : humanReadableValues.toString();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return value;
     }
@@ -777,7 +779,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return addressMap;
     }
@@ -813,7 +815,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -954,7 +956,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

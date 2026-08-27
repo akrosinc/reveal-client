@@ -108,7 +108,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

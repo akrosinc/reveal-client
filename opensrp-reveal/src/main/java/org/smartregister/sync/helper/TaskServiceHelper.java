@@ -32,6 +32,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,6 +51,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.Geometry;
+import org.smartregister.domain.HdssIndividual;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
@@ -58,6 +61,7 @@ import org.smartregister.domain.TaskUpdate;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
@@ -67,6 +71,7 @@ import org.smartregister.reveal.model.PersonName;
 import org.smartregister.reveal.model.PersonRequest;
 import org.smartregister.reveal.util.FamilyConstants.TABLE_NAME;
 import org.smartregister.reveal.util.FirebaseLogger;
+import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.LocalDateTypeConverter;
@@ -106,6 +111,8 @@ public class TaskServiceHelper extends BaseHelper {
 
     final private StructureRepository structureRepository;
 
+    final private HdssRepository hdssRepository;
+
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
      *
@@ -137,6 +144,7 @@ public class TaskServiceHelper extends BaseHelper {
         team = allSharedPreferences.fetchDefaultTeam(providerId);
         this.taskServiceProcessor = TaskServiceProcessor.getInstance();
         this.structureRepository = RevealApplication.getInstance().getStructureRepository();
+        this.hdssRepository = RevealApplication.getInstance().getHdssRepository();
     }
 
     public List<Task> syncTasks() {
@@ -178,7 +186,7 @@ public class TaskServiceHelper extends BaseHelper {
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) {
             serverVersion += 1;
@@ -199,7 +207,7 @@ public class TaskServiceHelper extends BaseHelper {
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
                     } catch (Exception e) {
-                        Timber.e(e, "Error saving task %s", task.getIdentifier());
+                        Timber.tag("Reveal Exception").w(e, "Error saving task %s", task.getIdentifier());
                     }
                 }
             }
@@ -212,7 +220,7 @@ public class TaskServiceHelper extends BaseHelper {
                 return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
             }
         } catch (Exception e) {
-            Timber.e(e, "Error fetching tasks from server");
+            Timber.tag("Reveal Exception").w(e, "Error fetching tasks from server");
         }
         return batchFetchedTasks;
     }
@@ -298,7 +306,7 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Timber.e("Update Status failed: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Update Status failed: %s", response.payload());
                 FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
@@ -313,7 +321,7 @@ public class TaskServiceHelper extends BaseHelper {
                         }
                     }
                 } catch (JSONException e) {
-                    Timber.e(e, "Error processing the tasks payload: %s", response.payload());
+                    Timber.tag("Reveal Exception").w(e, "Error processing the tasks payload: %s", response.payload());
                 }
             }
         }
@@ -322,7 +330,11 @@ public class TaskServiceHelper extends BaseHelper {
     public void syncCreatedTaskToServer() {
         HTTPAgent httpAgent = getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
-        appendCreatedPersonDataToRequest(tasks);
+        if (PreferencesUtil.getInstance().isGdrsPlan().equals("TRUE")){
+            appendCreatedHdssPersonDataToRequest(tasks);
+        } else {
+            appendCreatedPersonDataToRequest(tasks);
+        }
         appendCreatedLocationDataToRequest(tasks);
         if (!tasks.isEmpty()) {
             startTaskTrace(PUSH, tasks.size());
@@ -335,7 +347,7 @@ public class TaskServiceHelper extends BaseHelper {
                     jsonPayload);
             stopTrace(taskSyncTrace);
             if (response.isFailure()) {
-                Timber.e("Failed to create new tasks on server.: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Failed to create new tasks on server.: %s", response.payload());
                 FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }
@@ -397,13 +409,63 @@ public class TaskServiceHelper extends BaseHelper {
                             .systemDefault());
                     personRequest.setBirthDate(dateOfBirthAndTime.toLocalDate());
                 } catch (Exception e){
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
 
             personTasks.forEach(task -> task.setPersonRequest(personRequest));
         });
     }
+
+  private void appendCreatedHdssPersonDataToRequest(final List<Task> tasks) {
+    tasks.forEach(
+        task -> {
+          try {
+            HdssIndividual individualsByHdssId =
+                hdssRepository.getIndividualsByHdssId(task.getForEntity());
+            if (individualsByHdssId != null) {
+              PersonName personName =
+                  PersonName.builder()
+                      .use("OFFICIAL")
+                      .text(individualsByHdssId.getIndividualId())
+                      .family(individualsByHdssId.getIndividualId())
+                      .given(individualsByHdssId.getIndividualId())
+                      .prefix(individualsByHdssId.getIndividualId())
+                      .suffix(individualsByHdssId.getIndividualId())
+                      .build();
+
+              LocalDate dob = null;
+              try {
+                dob =
+                    LocalDate.parse(
+                        individualsByHdssId.getDob(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+              } catch (DateTimeParseException ep) {
+                try {
+                  dob =
+                      LocalDate.parse(
+                          individualsByHdssId.getDob(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                } catch (DateTimeParseException ep2) {
+                  Timber.tag("Reveal Exception")
+                      .e(
+                          "Cannot parse created persons dob %s",
+                          individualsByHdssId.getIndividualId());
+                }
+              }
+
+              PersonRequest personRequest =
+                  PersonRequest.builder()
+                      .identifier(UUID.fromString(individualsByHdssId.getIdentifier()))
+                      .name(personName)
+                      .gender(individualsByHdssId.getGender().toUpperCase())
+                      .birthDate(dob)
+                      .build();
+              task.setPersonRequest(personRequest);
+            }
+          } catch (IllegalArgumentException w) {
+            Timber.tag("Reveal Exception").e(w, "Error");
+          }
+        });
+  }
 
     private HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();

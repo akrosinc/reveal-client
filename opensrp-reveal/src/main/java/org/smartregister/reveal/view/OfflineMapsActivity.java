@@ -123,7 +123,7 @@ public class OfflineMapsActivity extends MultiLanguageActivity implements Offlin
 
             @Override
             public void onError(String error) {
-                Timber.e(TAG, "ERROR :: "  + error);
+                Timber.tag("Reveal Exception").w(TAG, "ERROR :: "  + error);
             }
         });
     }

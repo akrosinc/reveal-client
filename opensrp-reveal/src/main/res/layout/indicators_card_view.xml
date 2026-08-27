@@ -9,7 +9,8 @@
     android:layout_marginBottom="5dp"
     card_view:cardCornerRadius="10dp">
 
-    <LinearLayout
+
+    <android.widget.LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -264,7 +265,7 @@
                             android:text="@string/structure_total"
                             android:textStyle="normal"/>
                         <TextView
-                            android:id="@+id/total_structures_cell"
+                            android:id="@+id/total_structure_cell"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
@@ -298,7 +299,7 @@
                             android:text="@string/structure_not_visited"
                             android:textStyle="normal"/>
                         <TextView
-                            android:id="@+id/structures_not_visited_cell"
+                            android:id="@+id/structure_not_visited_cell"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
@@ -364,6 +365,24 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="2"
                             android:width="0dp"
+                            android:text="@string/structure_refused_or_absent"
+                            android:textStyle="normal"/>
+                        <TextView
+                            android:id="@+id/structure_refused_or_absent_cell"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textStyle="normal"/>
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:padding="5dp">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
                             android:text="@string/individual_total_number_of_children_eligible_3_to_49_mos"
                             android:textStyle="normal"/>
                         <TextView
@@ -394,9 +413,772 @@
                             android:text="0"
                             android:textStyle="normal"/>
                     </TableRow>
+
+                    <TableRow android:background="@color/white" android:padding="5dp">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
+                            android:text="@string/individual_total_number_of_eligible_people"
+                            android:textStyle="normal"/>
+                        <TextView
+                            android:id="@+id/individual_total_number_of_eligible_people_cell"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textStyle="normal"/>
+                    </TableRow>
+                    <TableRow android:background="@color/white" android:padding="5dp">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
+                            android:text="@string/individual_total_treated"
+                            android:textStyle="normal"/>
+                        <TextView
+                            android:id="@+id/individual_total_treated_cell"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:width="0dp"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textStyle="normal"/>
+                    </TableRow>
                 </TableLayout>
         </ScrollView>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+            <!--NG specific Table-->
+            <TableLayout
+                android:id="@+id/tempTableViewNGSurvey"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/indicator"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/value"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/structure_total_survey"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/total_structures_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/hdss_structures_visited_survey"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/total_structures_visited"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+<!--                <TableRow android:background="@color/white" android:padding="5dp">-->
+<!--                    <TextView-->
+<!--                        android:layout_width="fill_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:text="@string/structures_surveyed"-->
+<!--                        android:textStyle="normal"/>-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/structures_surveyed_cell"-->
+<!--                        android:layout_width="fill_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:width="0dp"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="0"-->
+<!--                        android:textStyle="normal"/>-->
+<!--                </TableRow>-->
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/structures_not_visited_survey"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/structure_notvisited_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+<!--                <TableRow android:background="@color/white" android:padding="5dp">-->
+<!--                    <TextView-->
+<!--                        android:layout_width="fill_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:width="0dp"-->
+<!--                        android:text="@string/structure_ineligible"-->
+<!--                        android:textStyle="normal"/>-->
+<!--                    <TextView-->
+<!--                        android:id="@+id/structure_ineligible_cell"-->
+<!--                        android:layout_width="fill_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="2"-->
+<!--                        android:width="0dp"-->
+<!--                        android:gravity="center"-->
+<!--                        android:text="0"-->
+<!--                        android:textStyle="normal"/>-->
+<!--                </TableRow>-->
+
+            </TableLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+            <!--NG specific Table-->
+            <TableLayout
+                android:id="@+id/tempTableViewMALI"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/indicator"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/value"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/coverage_of_structure_complete"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_coverage_of_structures_complete"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/structure_total"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_total_structures_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/structure_visited"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structures_visited_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/structure_not_visited"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structures_not_visited_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/structure_treated_total"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structure_complete_total_cell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/structure_complete_mda"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structure_complete_mda_cell"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/structure_partial_complete_mda"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structure_partial_complete_mda_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/structure_refused_or_absent"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_structure_refused_or_absent_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/individual_total_treated"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_individual_total_treated_cellOne"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white"
+                    android:padding="5dp"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/individual_total_number_of_eligible_people"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_individual_total_number_of_eligible_people_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white"
+                    android:padding="5dp"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/individual_total_treated"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/mali_individual_total_treated_cell"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp">
+            <!--NG specific Table-->
+            <TableLayout
+                android:id="@+id/tempTableViewGDRS"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/indicator"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/value"
+                        android:gravity="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/totalIndexCasesUnconfirmed"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/gdrs_total_index_cases_unconfirmed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/totalIndexCasesConfirmed"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/gdrs_total_index_cases_confirmed"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/totalIndividualsToBeTestedForRACD"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/gdrs_total_individuals_to_be_tested_for_RACD"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/totalHDSSIndividualsTestedForRACD"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/gdrs_total_HDSS_individuals_tested_for_RACD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:text="@string/totalRACDCasesDetected"
+                        android:textStyle="normal"/>
+                    <TextView
+                        android:id="@+id/gdrs_total_RACD_cases_detected"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:width="0dp"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textStyle="normal"/>
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+        <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="4dp">
+            <!--NG specific Table-->
+            <TableLayout
+              android:id="@+id/tempTableViewNIH"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/indicator"
+                      android:textAllCaps="true"
+                      android:textColor="@color/white"/>
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/value"
+                      android:gravity="center"
+                      android:textAllCaps="true"
+                      android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/total_structures"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_total_structures"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresCompleted"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_totalStructuresCompleted"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresInCompleted"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_totalStructuresInCompleted"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresVisited"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_totalStructuresVisited"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/totalStructuresNotVisited"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_totalStructuresNotVisited"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/totalStructuresNotEligible"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/nih_totalStructuresNotEligible"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
+        <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="4dp">
+            <!--NG specific Table-->
+            <TableLayout
+              android:id="@+id/tempTableViewZamSurvey"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+                <TableRow android:background="@color/alert_complete_green" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/indicator"
+                      android:textAllCaps="true"
+                      android:textColor="@color/white"/>
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/value"
+                      android:gravity="center"
+                      android:textAllCaps="true"
+                      android:textColor="@color/white"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/total_structures"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_total_structures"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresCompleted"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_totalStructuresCompleted"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresInCompleted"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_totalStructuresInCompleted"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:text="@string/totalStructuresVisited"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_totalStructuresVisited"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/totalStructuresNotVisited"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_totalStructuresNotVisited"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+                <TableRow android:background="@color/white" android:padding="5dp">
+                    <TextView
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:text="@string/totalStructuresNotEligible"
+                      android:textStyle="normal"/>
+                    <TextView
+                      android:id="@+id/zam_sur_totalStructuresNotEligible"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="2"
+                      android:width="0dp"
+                      android:gravity="center"
+                      android:text="0"
+                      android:textStyle="normal"/>
+                </TableRow>
+            </TableLayout>
+        </ScrollView>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -572,5 +1354,5 @@
         </ScrollView>
 
 
-    </LinearLayout>
+    </android.widget.LinearLayout>
 </androidx.cardview.widget.CardView>

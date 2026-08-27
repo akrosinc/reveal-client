@@ -30,7 +30,7 @@ public class ExtendedSyncIntentService extends BaseSyncIntentService {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

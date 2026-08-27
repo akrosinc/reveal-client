@@ -3,7 +3,6 @@ package org.smartregister.reveal.server;
 import android.content.Context;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.reveal.BuildConfig;
 import org.smartregister.util.Utils;
 
 import java.io.BufferedReader;
@@ -12,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import timber.log.Timber;
@@ -29,18 +29,39 @@ public class FileHTTPServer {
     private final FileHTTPServer.ServerThread server;
     private final ServerSocket socket;
 
-    public FileHTTPServer(Context context, String styleJsonFile, String  digitalGlobeIdPlaceHolder) throws IOException {
-        socket = createBoundSocket(PORT);
-        String dgIdPlaceHolder;
-        if (socket == null) {
-            throw new IOException("Could not find an available port");
-        }
-        server = new ServerThread(socket);
-
-        styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
-
-        styleJson = Utils.readAssetContents(context, styleJsonFile);
+//    public FileHTTPServer(Context context, String styleJsonFile, String  digitalGlobeIdPlaceHolder) throws IOException {
+//        socket = createBoundSocket(PORT);
+//        String dgIdPlaceHolder;
+//        if (socket == null) {
+//            throw new IOException("Could not find an available port");
+//        }
+//        server = new ServerThread(socket);
+//
+//        styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
+//
+//        styleJson = Utils.readAssetContents(context, styleJsonFile);
+//    }
+public FileHTTPServer(Context context, String styleJsonFile, String digitalGlobeIdPlaceHolder) throws IOException {
+    socket = createBoundSocket(PORT);
+    if (socket == null) {
+        throw new IOException("Could not find an available port");
     }
+    server = new ServerThread(socket);
+
+    styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
+    styleJson = Utils.readAssetContents(context, styleJson);
+
+    if (StringUtils.isNotBlank(digitalGlobeIdPlaceHolder) && StringUtils.isNotBlank(styleJson)) {
+        styleJson = styleJson.replace(DEFAULT_DG_ID_PLACEHOLDER, digitalGlobeIdPlaceHolder);
+    }
+
+    // --- DUMP EVERY LINE INDIVIDUALLY TO AVOID TRUNCATION ---
+    if (styleJson != null) {
+        for (String line : styleJson.split("\n")) {
+            Timber.d("StyleLine: %s", line);
+        }
+    }
+}
 
     public void start() {
         server.start();
@@ -71,7 +92,7 @@ public class FileHTTPServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Timber.e("Port %d not available", port);
+        Timber.tag("Reveal Exception").w("Port %d not available", port);
         return null;
     }
 
@@ -123,19 +144,27 @@ public class FileHTTPServer {
                 long finish = System.currentTimeMillis();
                 Timber.i("%s: Served %d bytes in %d ms", request, response.data.length, finish - start);
             } catch (IOException e) {
-                Timber.e(e, "Unable to read request from socket");
+                Timber.tag("Reveal Exception").w(e, "Unable to read request from socket");
             }
         }
-
         protected FileHTTPServer.Response getResponse(String request) {
             if (request.startsWith("GET /")) {
-                return new FileHTTPServer.Response(styleJson.getBytes(),  "text/plain");
+                // 2. Best Practice: Serve style JSON as application/json instead of text/plain
+                return new FileHTTPServer.Response(styleJson.getBytes(StandardCharsets.UTF_8), "application/json");
             } else {
                 Timber.w("Ignoring request: %s", request);
                 return null;
             }
-
         }
+//        protected FileHTTPServer.Response getResponse(String request) {
+//            if (request.startsWith("GET /")) {
+//                return new FileHTTPServer.Response(styleJson.getBytes(),  "text/plain");
+//            } else {
+//                Timber.w("Ignoring request: %s", request);
+//                return null;
+//            }
+//
+//        }
 
         protected void sendResponse(Socket connection, FileHTTPServer.Response response) {
             String headers = String.format(
@@ -153,7 +182,7 @@ public class FileHTTPServer {
                 output.write(response.data);
                 output.flush();
             } catch (IOException e) {
-                Timber.e(e, "Unable to write response to socket");
+                Timber.tag("Reveal Exception").w(e, "Unable to write response to socket");
             }
         }
     }

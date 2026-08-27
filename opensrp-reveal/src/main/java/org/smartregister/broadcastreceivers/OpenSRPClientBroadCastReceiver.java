@@ -57,7 +57,7 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
                     // Do nothing
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
     }

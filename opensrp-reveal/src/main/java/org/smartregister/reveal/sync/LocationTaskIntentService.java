@@ -2,6 +2,7 @@ package org.smartregister.reveal.sync;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -18,9 +19,12 @@ import org.smartregister.reveal.job.RevealSyncSettingsServiceJob;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
+import org.smartregister.sync.helper.DataIntentServiceHelper;
+import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.sync.helper.PlanIntentServiceHelper;
 import org.smartregister.sync.helper.TaskServiceHelper;
+import org.smartregister.sync.intent.HdssSyncIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
 
@@ -51,7 +55,7 @@ public class LocationTaskIntentService extends IntentService {
             try {
                 syncUtils.logoutUser();
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             return;
 
@@ -83,6 +87,7 @@ public class LocationTaskIntentService extends IntentService {
 
     @VisibleForTesting
     protected void doSync() {
+        Log.d("SYNC_TRACE_RVL", "LOCATION_TASK_DOSYNC_START t=" + System.currentTimeMillis());
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         LocationServiceHelper locationServiceHelper = new LocationServiceHelper(
                 RevealApplication.getInstance().getLocationRepository(),
@@ -92,9 +97,14 @@ public class LocationTaskIntentService extends IntentService {
 
 
         List<Location> syncedStructures = locationServiceHelper.fetchLocationsStructures();
-
+        Log.d("SYNC_TRACE_RVL", "LOCATIONS_FETCHED t=" + System.currentTimeMillis()
+                + " count=" + (syncedStructures == null ? 0 : syncedStructures.size()));
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         planServiceHelper.syncPlans();
+
+        DataIntentServiceHelper dataIntentServiceHelper = DataIntentServiceHelper.getInstance();
+        dataIntentServiceHelper.getDBUserConfig();
+        dataIntentServiceHelper.pushDBToServer();
 
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         List<Task> synchedTasks = taskServiceHelper.syncTasks();
@@ -114,9 +124,14 @@ public class LocationTaskIntentService extends IntentService {
             doSync();
         }
 
+        HdssServiceHelper hdssServiceHelper = HdssServiceHelper.getInstance();
+//        hdssServiceHelper.syncHdssDetails();
+
+
         new AppExecutors().mainThread().execute(new Runnable() {
             @Override
             public void run() {
+
                 SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
             }
         });

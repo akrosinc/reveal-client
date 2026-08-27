@@ -142,6 +142,10 @@ public class Task implements Serializable {
 
     private Restriction restriction;
 
+    private String householdId;
+
+    private String compoundId;
+
     public Long getServerVersion() {
         return serverVersion;
     }

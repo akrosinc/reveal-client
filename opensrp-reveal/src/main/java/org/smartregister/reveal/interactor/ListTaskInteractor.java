@@ -17,8 +17,10 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.CODE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ELIGIBLE_STRUCTURE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FIRST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.FOR;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.ID_;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.JSON;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.LAST_UPDATED_DATE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.NAME;
@@ -37,6 +39,7 @@ import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_ID;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TASK_TABLE;
 import static org.smartregister.reveal.util.Constants.DatabaseKeys.TRUE_STRUCTURE;
+import static org.smartregister.reveal.util.Constants.DatabaseKeys.UPDATED_AT;
 import static org.smartregister.reveal.util.Constants.Intervention.CASE_CONFIRMATION;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS;
 import static org.smartregister.reveal.util.Constants.Intervention.IRS_VERIFICATION;
@@ -44,6 +47,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LARVAL_DIPPIN
 import static org.smartregister.reveal.util.Constants.Intervention.MOSQUITO_COLLECTION;
 import static org.smartregister.reveal.util.Constants.Intervention.PAOT;
 import static org.smartregister.reveal.util.Constants.Intervention.REGISTER_FAMILY;
+import static org.smartregister.reveal.util.Constants.Preferences.IS_GDRS_PLAN;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.Tables.IRS_VERIFICATION_TABLE;
@@ -54,16 +58,22 @@ import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY;
 import static org.smartregister.reveal.util.FamilyConstants.TABLE_NAME.FAMILY_MEMBER;
 import static org.smartregister.reveal.util.Utils.getInterventionLabel;
 import static org.smartregister.reveal.util.Utils.getPropertyValue;
+import static org.smartregister.util.JsonFormUtils.getJSONArray;
+import static org.smartregister.util.JsonFormUtils.getString;
 
 import com.mapbox.geojson.Feature;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import net.sqlcipher.Cursor;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -74,8 +84,11 @@ import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.HdssCompoundHousehold;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Task;
+import org.smartregister.repository.HdssRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
@@ -105,6 +118,9 @@ import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.InteractorUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
+import org.smartregister.util.JsonFormUtils;
+
+import lombok.Getter;
 import timber.log.Timber;
 
 /**
@@ -118,11 +134,18 @@ public class ListTaskInteractor extends BaseInteractor {
 
     private StructureRepository structureRepository;
 
+    private LocationRepository locationRepository;
+
     private TaskRepository taskRepository;
+
+    private HdssRepository hdssRepository;
 
     private RevealApplication revealApplication;
 
     private List<TaskDetails> taskDetails;
+
+    @Getter
+    private List<Feature> parentLocations;
 
 
     public ListTaskInteractor(ListTaskContract.Presenter presenter) {
@@ -133,6 +156,8 @@ public class ListTaskInteractor extends BaseInteractor {
         interactorUtils = new InteractorUtils(taskRepository, eventClientRepository, clientProcessor);
         revealApplication = RevealApplication.getInstance();
         taskDetails = new ArrayList<>();
+        locationRepository = RevealApplication.getInstance().getLocationRepository();
+        hdssRepository = RevealApplication.getInstance().getHdssRepository();
     }
 
     public void fetchInterventionDetails(String interventionType, String featureId, boolean isForForm) {
@@ -154,8 +179,18 @@ public class ListTaskInteractor extends BaseInteractor {
         } else if (REGISTER_FAMILY.equals(interventionType)) {
             sql = String.format("SELECT %s, %s, %s FROM %s WHERE %s = ?",
                     BUSINESS_STATUS, AUTHORED_ON, OWNER, TASK_TABLE, FOR);
-        } else if (Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
-            sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE,BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
+        } else if (Arrays.asList(Action.MDA_SURVEY, Action.HABITAT_SURVEY, Action.LSM_HOUSEHOLD_SURVEY, Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)) {
+            sql = String.format("SELECT %s, %s, %s , %s from %s WHERE id = ?", SPRAY_STATUS, SPRAY_DATE, BASE_ENTITY_ID, Constants.SPRAY_OPERATOR, SPRAYED_STRUCTURES);
+        } else if (Action.STRUCTURE_SURVEY.equals(interventionType)) {
+            sql = String.format("SELECT t.%s, ss.%s, ss.%s, ss.%s from task t left join sprayed_structures ss on t.structure_id = ss.id where id = ?", BUSINESS_STATUS, SPRAY_DATE, BASE_ENTITY_ID, Constants.SPRAY_OPERATOR);
+        } else if (List.of(Action.SECONDARY_INDEX_CASE, Action.INDEX_CASE, Action.RCD).contains(interventionType)) {
+            sql = "SELECT  t.business_status,e.updatedAt,t.for,e.json,hhi.household_id  from task t \n" +
+                    "left join hdss_household_structure hhs on hhs.structure_id = t.for\n" +
+                    "left join hdss_household_individual hhi on hhi.household_id = hhs.household_id\n" +
+                    "left join hdss_individual hi on hi.individual_id = hhi.individual_id\n" +
+                    "left join event e on e.baseEntityId = hi.identifier\n" +
+                    "WHERE t.for  = ? and e.baseEntityId is not null\n" +
+                    "order by e.updatedAt desc LIMIT 1";
         }
 
         final String SQL = sql;
@@ -164,7 +199,7 @@ public class ListTaskInteractor extends BaseInteractor {
             public void run() {
                 Cursor cursor = getDatabase().rawQuery(SQL, new String[]{featureId});
                 Location structure = null;
-                if(Action.MDA_SURVEY.equals(interventionType)){
+                if (Action.MDA_SURVEY.equals(interventionType)) {
                     structure = structureRepository.getLocationById(featureId);
                 }
                 CardDetails cardDetails = null;
@@ -174,7 +209,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         cardDetails.setInterventionType(interventionType);
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("WriteValue").w(e);
                 } finally {
                     if (cursor != null) {
                         cursor.close();
@@ -183,9 +218,12 @@ public class ListTaskInteractor extends BaseInteractor {
 
                 // run on ui thread
                 final CardDetails CARD_DETAILS = cardDetails;
+                Timber.tag("WriteValue").i("ListTaskInteractor fetchInterventionDetails cardDetails %s",cardDetails);
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Timber.tag("WriteValue").i("ListTaskInteractor fetchInterventionDetails isForForm %s",isForForm);
+
                         if (isForForm) {
                             getSprayDetails(interventionType, featureId, CARD_DETAILS);
                             ((ListTaskPresenter) presenterCallBack).onInterventionFormDetailsFetched(CARD_DETAILS);
@@ -198,6 +236,11 @@ public class ListTaskInteractor extends BaseInteractor {
         };
 
         appExecutors.diskIO().execute(runnable);
+    }
+
+    public List<HdssCompoundHousehold> getHdssHouseHoldBStructure(String structureId){
+      return hdssRepository.getCompoundAndHouseholdListByStructureId(
+            structureId);
     }
 
     private void getSprayDetails(String interventionType, String structureId, CardDetails cardDetails) {
@@ -219,26 +262,80 @@ public class ListTaskInteractor extends BaseInteractor {
             cardDetails = createPaotCardDetails(cursor, interventionType);
         } else if (IRS_VERIFICATION.equals(interventionType)) {
             cardDetails = createIRSverificationCardDetails(cursor);
-        } else if (REGISTER_FAMILY.equals(interventionType) ) {
+        } else if (REGISTER_FAMILY.equals(interventionType)) {
             cardDetails = createFamilyCardDetails(cursor);
-        } else if(Arrays.asList(Action.MDA_SURVEY,Action.HABITAT_SURVEY,Action.LSM_HOUSEHOLD_SURVEY,Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)){
-            cardDetails = createSurveyCardDetails(cursor, interventionType,location);
+        } else if (Arrays.asList(Action.MDA_SURVEY, Action.HABITAT_SURVEY, Action.LSM_HOUSEHOLD_SURVEY, Action.MDA_ONCHOCERCIASIS_SURVEY).contains(interventionType)) {
+            cardDetails = createSurveyCardDetailsWithSprayDetails(cursor, interventionType, location);
+        } else if (Action.STRUCTURE_SURVEY.equals(interventionType)) {
+            cardDetails = createSurveyCardDetails(cursor, interventionType, location);
+        } else if (List.of(Action.SECONDARY_INDEX_CASE, Action.INDEX_CASE, Action.RCD).contains(interventionType)) {
+            cardDetails = createGdrsCardDetails(cursor, interventionType, location);
         }
 
         return cardDetails;
     }
 
-    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType,Location location) {
+    private CardDetails createSurveyCardDetailsWithSprayDetails(final Cursor cursor, final String interventionType, Location location) {
         String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
         String structureNumber = null;
-        if (Action.MDA_SURVEY.equals(interventionType)){
-            structureNumber  = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
+        if (Action.MDA_SURVEY.equals(interventionType)) {
+            structureNumber = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
         }
         return new SurveyCardDetails(
                 CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("spray_status"))),
                 cursor.getString(cursor.getColumnIndex("spray_date")),
                 cursor.getString(cursor.getColumnIndex("spray_operator")),
                 structureNumber);
+    }
+
+    private CardDetails createSurveyCardDetails(final Cursor cursor, final String interventionType, Location location) {
+        String structureId = cursor.getString(cursor.getColumnIndex("base_entity_id"));
+        String structureNumber = null;
+        if (Action.MDA_SURVEY.equals(interventionType)) {
+            structureNumber = location.getProperties().getStructureNumber() != null ? location.getProperties().getStructureNumber() : structureId.substring(structureId.length() - 4);
+        }
+        String businessStatus = CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndex("business_status")));
+        String date = cursor.getString(cursor.getColumnIndex("spray_date"));
+        String operator = cursor.getString(cursor.getColumnIndex("spray_operator"));
+        return new SurveyCardDetails(
+                businessStatus,
+                date,
+                operator,
+                structureNumber);
+    }
+
+
+
+    private CardDetails createGdrsCardDetails(final Cursor cursor, final String interventionType, Location location) {
+        String businessStatus = CardDetailsUtil.getTranslatedBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow(BUSINESS_STATUS)));
+        String date = cursor.getString(cursor.getColumnIndexOrThrow(UPDATED_AT));
+        String json = cursor.getString(cursor.getColumnIndexOrThrow(JSON));
+        String householdid = cursor.getString(cursor.getColumnIndexOrThrow(HOUSEHOLD_ID));
+
+        String operator = null;
+        try {
+            JSONObject jsonForm = new JSONObject(json);
+            JSONArray obs = getJSONArray(jsonForm, "obs");
+            if (obs != null) {
+                for (int i = 0; i < obs.length(); i++) {
+                    JSONObject ob = obs.getJSONObject(i);
+                    String fieldCode = getString(ob, "fieldCode");
+                    JSONArray values = getJSONArray(ob, "values");
+                    if (fieldCode != null && fieldCode.equals(JsonForm.HEALTH_WORKER_SUPERVISOR)) {
+                        operator = values != null ? values.getString(0) : null;
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            operator = null;
+        }
+
+        return new SurveyCardDetails(
+                businessStatus,
+                date,
+                operator,
+                householdid);
     }
 
     private SprayCardDetails createSprayCardDetails(Cursor cursor) {
@@ -302,11 +399,108 @@ public class ListTaskInteractor extends BaseInteractor {
         );
     }
 
-    public void fetchLocations(String plan, String operationalArea) {
-        fetchLocations(plan, operationalArea, null, null);
+//    public void fetchLocations(String plan, String operationalArea) {
+//        fetchLocations(plan, operationalArea, null, null);
+//    }
+
+    public void fetchLocationsWithParents(String plan, String operationalArea) {
+        fetchLocationsWithParents(plan, operationalArea, null, null);
     }
 
-    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
+
+//    public void fetchLocations(String plan, String operationalArea, String point, Boolean locationComponentActive) {
+//        Runnable runnable = new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                JSONObject featureCollection = null;
+//
+//                Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+//                List<TaskDetails> taskDetailsList = null;
+//                List<Location> adjacentOperationalAreaLocations  = null;
+//
+//
+//
+//                try {
+//                    featureCollection = createFeatureCollection();
+//                    if (operationalAreaLocation != null) {
+//                        Map<String, Set<Task>> tasks;
+//                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
+//                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
+//                        } else {
+//                            tasks = taskRepository
+//                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+//                        }
+//                        List<Location> structures ;
+//                        if(Utils.isCurrentTargetLevelStructure()){
+//                            structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
+//                        } else {
+//                            structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
+//                        }
+//                        Map<String, StructureDetails> structureNames = getStructureName(
+//                                operationalAreaLocation.getId());
+//                        taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
+//                        String indexCase = null;
+//                        if (getInterventionLabel() == R.string.focus_investigation) {
+//                            indexCase = getIndexCaseStructure(plan);
+//                        }
+//                        String features = GeoJsonUtils
+//                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+//                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+//
+//                        adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
+//                    }
+//                } catch (Exception e) {
+//                    Timber.tag("Reveal Exception").w(e);
+//                }
+//                JSONObject finalFeatureCollection = featureCollection;
+//                List<TaskDetails> finalTaskDetailsList = taskDetailsList;
+//                final List<Location> finalAdjacentOperationalAreaLocations = adjacentOperationalAreaLocations;
+//                appExecutors.mainThread().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (operationalAreaLocation != null) {
+//                            operationalAreaId = operationalAreaLocation.getId();
+//                            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
+//                           List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
+//                                   gson.toJson(location))).collect(Collectors.toList());
+//                            if (locationComponentActive != null) {
+//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+//                                        finalTaskDetailsList, point, locationComponentActive);
+//                            } else  {
+//                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+//                                        finalTaskDetailsList);
+//                            }
+//                        } else {
+//                            getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
+//                        }
+//                    }
+//                });
+//
+//            }
+//
+//        };
+//
+//        appExecutors.diskIO().execute(runnable);
+//    }
+
+    private void getParentLocations(List<Feature> locations, Location location) {
+        if (location != null && location.getProperties() != null) {
+            if (location.getProperties().getParentId() != null) {
+                Location parentlocation = Utils.getLocationById(location.getProperties().getParentId());
+                if (parentlocation != null) {
+                    Feature parentFeature = Feature.fromJson(gson.toJson(parentlocation));
+                    locations.add(parentFeature);
+                    getParentLocations(locations, parentlocation);
+                }
+            }
+        }
+    }
+
+
+    public void fetchLocationsWithParents(String plan, String operationalArea,
+                                          String point, Boolean locationComponentActive) {
+
         Runnable runnable = new Runnable() {
 
             @Override
@@ -314,20 +508,46 @@ public class ListTaskInteractor extends BaseInteractor {
                 JSONObject featureCollection = null;
 
                 Location operationalAreaLocation = Utils.getOperationalAreaLocation(operationalArea);
+//                Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation  %s", operationalAreaLocation.getId());
+
+                parentLocations = new ArrayList<>();
+
+                if (operationalAreaLocation != null && operationalAreaLocation.getProperties() != null) {
+                    Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation getId %s", operationalAreaLocation.getId());
+                    if (operationalAreaLocation.getProperties().getParentId() != null) {
+                        getParentLocations(parentLocations, operationalAreaLocation);
+                    }
+                }
+
                 List<TaskDetails> taskDetailsList = null;
-                List<Location> adjacentOperationalAreaLocations  = null;
+                List<Location> adjacentOperationalAreaLocations = null;
 
                 try {
                     featureCollection = createFeatureCollection();
                     if (operationalAreaLocation != null) {
-                        Map<String, Set<Task>> tasks = taskRepository
-                                .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
-                        List<Location> structures ;
-                        if(Utils.isCurrentTargetLevelStructure()){
+                        Map<String, Set<Task>> tasks;
+                        Map<String, TaskRepository.TaskCount> taskCounts = null;
+
+                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))) {
+                            tasks = taskRepository.getTasksByPlanAndGroupForGdrs(plan, operationalAreaLocation.getId());
+
+                            List<String> structureIds = tasks.values().stream().flatMap(Collection::stream).map(Task::getForEntity).collect(Collectors.toList());
+                             taskCounts = taskRepository.getGdrsMemberTaskCounts(structureIds, List.of(COMPLETE), List.of("CANCELLED"));
+
+
+                        } else {
+                            tasks = taskRepository
+                                    .getTasksByPlanAndGroup(plan, operationalAreaLocation.getId());
+                        }
+                        Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation structures size %s", tasks.size());
+                        List<Location> structures;
+                        if (Utils.isCurrentTargetLevelStructure()) {
                             structures = structureRepository.getLocationsByParentId(operationalAreaLocation.getId());
                         } else {
                             structures = revealApplication.getLocationRepository().getLocationsByParentId(operationalAreaLocation.getId());
                         }
+                        Timber.tag("WriteValue").i("fetchLocationsWithParents operationalAreaLocation structures size %s", structures.size());
+                        Map<String, Boolean> isAHouseholdByStructureList =  hdssRepository.getIsAHouseholdByStructureList(structures.stream().map(PhysicalLocation::getId).collect(Collectors.toList()));
                         Map<String, StructureDetails> structureNames = getStructureName(
                                 operationalAreaLocation.getId());
                         taskDetailsList = IndicatorUtils.processTaskDetails(tasks);
@@ -335,14 +555,23 @@ public class ListTaskInteractor extends BaseInteractor {
                         if (getInterventionLabel() == R.string.focus_investigation) {
                             indexCase = getIndexCaseStructure(plan);
                         }
-                        String features = GeoJsonUtils
-                                .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
-                        featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+                        String features;
+                        if ("TRUE".equals(sharedPreferences.getPreference(IS_GDRS_PLAN))){
+                            features = GeoJsonUtils
+                                    .getGeoJsonFromStructuresAndTasksForGdrs(structures, tasks, indexCase, structureNames,taskCounts, isAHouseholdByStructureList);
+                            featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+                        } else {
+                           features = GeoJsonUtils
+                                    .getGeoJsonFromStructuresAndTasks(structures, tasks, indexCase, structureNames);
+                            featureCollection.put(GeoJSON.FEATURES, new JSONArray(features));
+                        }
+
+                        Timber.tag("WriteValue").i("operationalAreaLocation structures size %s", structures.size());
 
                         adjacentOperationalAreaLocations = RevealApplication.getInstance().getLocationRepository().getLocationsByParentId(operationalAreaLocation.getProperties().getParentId());
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
                 JSONObject finalFeatureCollection = featureCollection;
                 List<TaskDetails> finalTaskDetailsList = taskDetailsList;
@@ -350,20 +579,20 @@ public class ListTaskInteractor extends BaseInteractor {
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (operationalAreaLocation != null) {
+                        if (operationalAreaLocation != null && finalAdjacentOperationalAreaLocations!=null) {
                             operationalAreaId = operationalAreaLocation.getId();
                             Feature operationalAreaFeature = Feature.fromJson(gson.toJson(operationalAreaLocation));
-                           List<Feature> adjacentOperationalAreaFeatures =  finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
-                                   gson.toJson(location))).collect(Collectors.toList());
+                            List<Feature> adjacentOperationalAreaFeatures = finalAdjacentOperationalAreaLocations.stream().map(location -> Feature.fromJson(
+                                    gson.toJson(location))).collect(Collectors.toList());
                             if (locationComponentActive != null) {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
-                                        finalTaskDetailsList, point, locationComponentActive);
-                            } else  {
-                                getPresenter().onStructuresFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
-                                        finalTaskDetailsList);
+                                getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+                                        finalTaskDetailsList, point, locationComponentActive, parentLocations);
+                            } else {
+                                getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, operationalAreaFeature, adjacentOperationalAreaFeatures,
+                                        finalTaskDetailsList, parentLocations);
                             }
                         } else {
-                            getPresenter().onStructuresFetched(finalFeatureCollection, null,null, null);
+                            getPresenter().onStructuresAndParentsFetched(finalFeatureCollection, null, null, null, parentLocations);
                         }
                     }
                 });
@@ -405,7 +634,7 @@ public class ListTaskInteractor extends BaseInteractor {
                         .put(cursor.getString(0), new StructureDetails(cursor.getString(1), cursor.getString(2)));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -426,7 +655,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 structureId = cursor.getString(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -457,7 +686,7 @@ public class ListTaskInteractor extends BaseInteractor {
 
             revealApplication.setSynced(false);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         LocationRepository locationRepository = RevealApplication.getInstance().getLocationRepository();
         Location currentOperationalArea = locationRepository
@@ -511,7 +740,7 @@ public class ListTaskInteractor extends BaseInteractor {
             try {
                 eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             revealApplication.setSynced(false);
         }
@@ -558,7 +787,7 @@ public class ListTaskInteractor extends BaseInteractor {
                 }
 
             } catch (Exception e) {
-                Timber.e(e, "Error querying tasks details for %s", featureId);
+                Timber.tag("Reveal Exception").w(e, "Error querying tasks details for %s", featureId);
             } finally {
                 if (cursor != null) {
                     cursor.close();

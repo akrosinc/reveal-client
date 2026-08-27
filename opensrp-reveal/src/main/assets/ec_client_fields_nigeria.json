@@ -1,6 +1,136 @@
 {
   "bindobjects": [
     {
+      "name": "ec_events",
+      "columns": [
+        {
+          "column_name": "base_entity_id",
+          "type": "Event",
+          "json_mapping": {
+            "field": "formSubmissionId"
+          }
+        },
+        {
+          "column_name": "formSubmissionId",
+          "type": "Event",
+          "json_mapping": {
+            "field": "details.formSubmissionId"
+          }
+        },
+        {
+          "column_name": "event_date",
+          "type": "Event",
+          "json_mapping": {
+            "field": "eventDate"
+          }
+        },
+        {
+          "column_name": "entity_status",
+          "type": "Event",
+          "json_mapping": {
+            "field": "details.entity_status"
+          }
+        },
+        {
+          "column_name": "event_type",
+          "type": "Event",
+          "json_mapping": {
+            "field": "eventType"
+          }
+        },
+        {
+          "column_name": "provider_id",
+          "type": "Event",
+          "json_mapping": {
+            "field": "providerId"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_id"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "barcode"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "household"
+          }
+        },
+
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_household_compound"
+          }
+        },
+
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_household_compound"
+          }
+        },
+
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_household_compound_search"
+          }
+        },
+        {
+          "column_name": "entity",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "individual_id"
+          }
+        },
+        {
+          "column_name": "status",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "business_status"
+          }
+        },
+        {
+          "column_name": "sprayed",
+          "type": "Event",
+          "json_mapping": {
+            "field": "obs.fieldCode",
+            "concept": "sprayed"
+          }
+        }
+      ]
+    },
+    {
       "name": "sprayed_structures",
       "columns": [
         {

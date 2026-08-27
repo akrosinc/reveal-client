@@ -103,7 +103,7 @@ public class AllFormVersionSyncService {
                         }
                     }
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }
@@ -193,7 +193,7 @@ public class AllFormVersionSyncService {
                     FormDefinitionVersion form = getFormDefinitionFromFile(f);
                     formsVersionRepository.addFormVersionFromObject(form);
                 } catch (Exception ex) {
-                    Timber.e(ex);
+                    Timber.tag("Reveal Exception").w(ex);
                 }
             }
         }
@@ -216,7 +216,7 @@ public class AllFormVersionSyncService {
             JSONObject jsonObject = new JSONObject(jsonString);
             version = (String) jsonObject.get(FORM_DEF_VERSION_FIELD);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return new FormDefinitionVersion(f.getName(), f.getName(), version)

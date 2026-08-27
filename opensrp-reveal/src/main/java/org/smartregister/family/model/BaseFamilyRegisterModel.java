@@ -92,7 +92,7 @@ public class BaseFamilyRegisterModel implements FamilyRegisterContract.Model {
             try {
                 formUtils = FormUtils.getInstance(Utils.context().applicationContext());
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return formUtils;

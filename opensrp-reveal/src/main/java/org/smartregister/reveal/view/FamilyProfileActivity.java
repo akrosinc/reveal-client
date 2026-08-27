@@ -116,7 +116,7 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == io.ona.kujaku.utils.Constants.RequestCode.LOCATION_SETTINGS ||
+        if (requestCode == org.smartregister.util.Constants.RequestCode.LOCATION_SETTINGS ||
                 requestCode == REQUEST_CODE_GET_JSON_FRAGMENT) {
             structureTasksFragment.onActivityResult(requestCode, resultCode, data);
         } else {
@@ -186,7 +186,7 @@ public class FamilyProfileActivity extends BaseFamilyProfileActivity implements 
                         compoundStructureField.put(VALUE,multiSelectValue);
                     }
                 }catch (Exception e){
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
             String oldFamilyName = JsonFormUtils.getFieldValue(jsonForm.toString(), "family_name");

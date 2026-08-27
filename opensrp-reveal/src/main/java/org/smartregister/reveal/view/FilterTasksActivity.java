@@ -257,7 +257,7 @@ public class FilterTasksActivity extends MultiLanguageActivity implements Filter
             try {
                 return dateFormat.parse(date.toString());
             } catch (ParseException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return null;

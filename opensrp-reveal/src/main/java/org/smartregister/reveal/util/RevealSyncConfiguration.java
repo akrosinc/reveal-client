@@ -1,8 +1,10 @@
 package org.smartregister.reveal.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
 import org.smartregister.repository.AllSharedPreferences;
@@ -47,10 +49,12 @@ public class RevealSyncConfiguration extends SyncConfiguration {
         if (locationRepository == null) {
             locationRepository = RevealApplication.getInstance().getLocationRepository();
         }
-        return TextUtils.join(",", locationRepository.getAllLocationIds());
-
+        String value = TextUtils.join(",", locationRepository.getAllLocationIds());
+      Log.d("SYNC_TRACE_RVL", "GET_SYNC_FILTER_VALUE t=" + System.currentTimeMillis()
+                + " locationCount=" + locationRepository.getAllLocationIds().size()
+                + " isBlank=" + StringUtils.isBlank(value));
+        return value;
     }
-
     @Override
     public int getUniqueIdSource() {
         return BuildConfig.OPENMRS_UNIQUE_ID_SOURCE;

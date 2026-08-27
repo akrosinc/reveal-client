@@ -111,7 +111,7 @@ public class LocationServiceHelper extends BaseHelper {
         try {
             serverVersion = (StringUtils.isEmpty(currentServerVersion) ? 0 : Long.parseLong(currentServerVersion));
         } catch (NumberFormatException e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
@@ -140,7 +140,7 @@ public class LocationServiceHelper extends BaseHelper {
                     }
                     location.setGeometry(null);
                 } catch (Exception e) {
-                    Timber.e(e, "EXCEPTION %s", e.toString());
+                    Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {
@@ -155,7 +155,7 @@ public class LocationServiceHelper extends BaseHelper {
 
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         }
         return batchLocationStructures;
     }
@@ -238,7 +238,7 @@ public class LocationServiceHelper extends BaseHelper {
                             CREATE_STRUCTURE_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Timber.e("Failed to create new locations on server: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Failed to create new locations on server: %s", response.payload());
                 return;
             }
             stopTrace(locationSyncTrace);
@@ -279,7 +279,7 @@ public class LocationServiceHelper extends BaseHelper {
                             isJurisdictionParam),
                     jsonPayload);
             if (response.isFailure()) {
-                Timber.e("Failed to create new locations on server: %s", response.payload());
+                Timber.tag("Reveal Exception").w("Failed to create new locations on server: %s", response.payload());
                 FirebaseLogger.logApiFailures(jsonPayload,response);
                 return;
             }

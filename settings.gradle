@@ -1,1 +1,5 @@
 include ':opensrp-reveal'
+//include ':opensrp-configurable-views'
+include ':opensrp-app'
+include ':android-json-form-wizard'
+include ':library'

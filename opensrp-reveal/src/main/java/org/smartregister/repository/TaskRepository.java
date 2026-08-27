@@ -37,7 +37,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.DataTypes.INTEGER;
@@ -49,35 +53,37 @@ import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
  */
 public class TaskRepository extends BaseRepository {
 
-    private static final String ID = "_id";
-    private static final String PLAN_ID = "plan_id";
-    private static final String GROUP_ID = "group_id";
-    private static final String STATUS = "status";
-    private static final String BUSINESS_STATUS = "business_status";
+    public static final String ID = "_id";
+    public static final String PLAN_ID = "plan_id";
+    public static final String GROUP_ID = "group_id";
+    public static final String STATUS = "status";
+    public static final String BUSINESS_STATUS = "business_status";
 
-    private static final String PRIORITY = "priority";
-    private static final String CODE = "code";
-    private static final String DESCRIPTION = "description";
-    private static final String FOCUS = "focus";
-    private static final String FOR = "for";
+    public static final String PRIORITY = "priority";
+    public static final String CODE = "code";
+    public static final String DESCRIPTION = "description";
+    public static final String FOCUS = "focus";
+    public static final String FOR = "for";
 
-    private static final String START = "start";
-    private static final String END = "end";
+    public static final String START = "start";
+    public static final String END = "end";
 
-    private static final String AUTHORED_ON = "authored_on";
-    private static final String LAST_MODIFIED = "last_modified";
-    private static final String OWNER = "owner";
-    private static final String SYNC_STATUS = "sync_status";
-    private static final String SERVER_VERSION = "server_version";
-    private static final String STRUCTURE_ID = "structure_id";
-    private static final String REASON_REFERENCE = "reason_reference";
-    private static final String LOCATION = "location";
-    private static final String REQUESTER = "requester";
-    private static final String RESTRICTION_REPEAT = "restriction_repeat";
-    private static final String RESTRICTION_START = "restriction_start";
-    private static final String RESTRICTION_END = "restriction_end";
+    public static final String AUTHORED_ON = "authored_on";
+    public static final String LAST_MODIFIED = "last_modified";
+    public static final String OWNER = "owner";
+    public static final String SYNC_STATUS = "sync_status";
+    public static final String SERVER_VERSION = "server_version";
+    public static final String STRUCTURE_ID = "structure_id";
+    public static final String REASON_REFERENCE = "reason_reference";
+    public static final String LOCATION = "location";
+    public static final String REQUESTER = "requester";
+    public static final String RESTRICTION_REPEAT = "restriction_repeat";
+    public static final String RESTRICTION_START = "restriction_start";
+    public static final String RESTRICTION_END = "restriction_end";
+    public static final String HOUSEHOLD_ID = "household_id";
+    public static final String COMPOUND_ID = "compound_id";
 
-    private final TaskNotesRepository taskNotesRepository;
+    public final TaskNotesRepository taskNotesRepository;
 
     protected static final String[] COLUMNS = {ROWID, ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER, RESTRICTION_REPEAT, RESTRICTION_START, RESTRICTION_END};
 
@@ -150,8 +156,8 @@ public class TaskRepository extends BaseRepository {
             if (existingTask.getLastModified().isAfter(task.getLastModified())) {
                 return task;
             }
-            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
-            contentValues.put(ROWID, ++maxRowId);
+//            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+//            contentValues.put(ROWID, ++maxRowId);
         }
 
         contentValues.put(ID, task.getIdentifier());
@@ -194,7 +200,8 @@ public class TaskRepository extends BaseRepository {
         if (updateOnly) {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
         } else {
-            getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+            long replace = getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+//            Timber.tag("Database").i("After task replace %s", String.valueOf(replace));
         }
 
         if (task.getNotes() != null) {
@@ -211,8 +218,8 @@ public class TaskRepository extends BaseRepository {
         try {
             String[] params = new String[]{planId, groupId};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                            TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
@@ -225,12 +232,124 @@ public class TaskRepository extends BaseRepository {
                 tasks.put(task.getStructureId(), taskSet);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
         }
         return tasks;
+    }
+
+    public Map<String, Set<Task>> getTasksByPlanAndGroupForGdrs(String planId, String groupId) {
+        Cursor cursor = null;
+        Map<String, Set<Task>> tasks = new HashMap<>();
+        try {
+            String[] params = new String[]{planId, groupId};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT t.*,hch.compound_id,hch.household_id  from task t " +
+                                    "INNER JOIN hdss_household_structure hhs on hhs.structure_id = t.for " +
+                                    "INNER join hdss_compound_household hch on hch.household_id = hhs.household_id " +
+                                    "WHERE t.%s=? AND t.%s =? AND t.%s NOT IN (%s)",
+                            PLAN_ID, GROUP_ID, STATUS,
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
+            while (cursor.moveToNext()) {
+                Set<Task> taskSet;
+                Task task = readCursorGdrs(cursor);
+                if (tasks.containsKey(task.getStructureId()))
+                    taskSet = tasks.get(task.getStructureId());
+                else
+                    taskSet = new HashSet<>();
+                taskSet.add(task);
+                tasks.put(task.getStructureId(), taskSet);
+            }
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return tasks;
+    }
+
+    public Map<String, TaskCount> getGdrsMemberTaskCounts(List<String> structureIds
+            , List<String> businessStatuses, List<String> taskStates) {
+        Cursor cursor = null;
+
+
+        StringBuilder inClause = new StringBuilder();
+        for (int i = 0; i < structureIds.size(); i++) {
+            inClause.append("?");
+            if (i < structureIds.size() - 1) {
+                inClause.append(", ");
+            }
+        }
+
+        StringBuilder statesInClause = new StringBuilder();
+        for (int i = 0; i < taskStates.size(); i++) {
+            statesInClause.append("?");
+            if (i < taskStates.size() - 1) {
+                statesInClause.append(", ");
+            }
+        }
+
+        StringBuilder businessStatesInClause = new StringBuilder();
+        for (int i = 0; i < businessStatuses.size(); i++) {
+            businessStatesInClause.append("?");
+            if (i < taskStates.size() - 1) {
+                businessStatesInClause.append(", ");
+            }
+        }
+
+
+        String sql = "SELECT " +
+                " hs.structure_id as structureId, t.code as code,t.business_status as businessStatus, count(*) as count \n" +
+                " from task t\n" +
+                " inner join hdss_individual i on t.for = i.identifier\n" +
+                " left join hdss_household_individual hi on hi.individual_id = i.individual_id\n" +
+                " left join hdss_household_structure hs on hs.household_id = hi.household_id\n" +
+                " WHERE t.status not in (" + statesInClause + ") and t.business_status not in (" + businessStatesInClause + ")\n" +
+                " and hs.structure_id in (" + inClause + ")\n" +
+                " group by hs.structure_id, t.code,t.business_status";
+
+
+        List<String> parameters = new ArrayList<>();
+        parameters.addAll(taskStates); // Example status to exclude (replace with your actual value)
+        parameters.addAll(businessStatuses); // Example business status to exclude (replace with your actual value)
+        parameters.addAll(structureIds);
+
+        cursor = getReadableDatabase().rawQuery(sql, parameters.toArray(new String[0]));
+
+        List<TaskCount> taskCounts = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            TaskCount taskCount = new TaskCount();
+            taskCount.setCount(cursor.getInt(cursor.getColumnIndexOrThrow("count")));
+            taskCount.setBusinessStatus(cursor.getString(cursor.getColumnIndexOrThrow("businessStatus")));
+            taskCount.setStructureId(cursor.getString(cursor.getColumnIndexOrThrow("structureId")));
+            taskCount.setCode(cursor.getString(cursor.getColumnIndexOrThrow("code")));
+
+            taskCounts.add(taskCount);
+        }
+        Map<String, TaskCount> collect = taskCounts.stream()
+                .collect(Collectors.toMap(
+                        taskCount -> taskCount.getStructureId().concat("-").concat(taskCount.getCode())
+                        , taskCount -> taskCount, (a, b) -> a));
+
+        return collect;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class TaskCount {
+
+        private String structureId;
+
+        private String code;
+
+        private String businessStatus;
+
+        private int count;
     }
 
     /**
@@ -245,21 +364,20 @@ public class TaskRepository extends BaseRepository {
         try {
             String[] params = new String[]{planId, groupId, code};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                            TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                            TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
                     ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);
                 consumer.accept(task);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
         }
     }
-
 
 
     public Task getTaskByIdentifier(String identifier) {
@@ -269,7 +387,7 @@ public class TaskRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -284,7 +402,7 @@ public class TaskRepository extends BaseRepository {
                 taskSet.add(task);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -294,22 +412,22 @@ public class TaskRepository extends BaseRepository {
 
     public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
     }
 
     public Set<Task> getTasksByPlanAndEntity(String planId, String forEntity) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, PLAN_ID, FOR, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, PLAN_ID, FOR, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{planId, forEntity}, INACTIVE_TASK_STATUS));
     }
 
     public Set<Task> getTasksByEntity(String forEntity) {
         return getTasks(String.format("SELECT * FROM %s WHERE %s =? AND %s  NOT IN (%s)",
-                TASK_TABLE, FOR, STATUS,
-                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                        TASK_TABLE, FOR, STATUS,
+                        TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                 , ArrayUtils.addAll(new String[]{forEntity}, INACTIVE_TASK_STATUS));
     }
 
@@ -365,6 +483,21 @@ public class TaskRepository extends BaseRepository {
         return task;
     }
 
+    public Task readCursorGdrs(Cursor cursor) {
+        Task task = readCursor(cursor);
+        String householdId = cursor.getString(cursor.getColumnIndex(HOUSEHOLD_ID));
+        if (householdId != null) {
+            task.setHouseholdId(householdId);
+        }
+
+        String compoundId = cursor.getString(cursor.getColumnIndex(COMPOUND_ID));
+        if (householdId != null) {
+            task.setCompoundId(compoundId);
+        }
+
+        return task;
+    }
+
     public List<TaskUpdate> getUnSyncedTaskStatus() {
         Cursor cursor = null;
         List<TaskUpdate> taskUpdates = new ArrayList<>();
@@ -374,7 +507,7 @@ public class TaskRepository extends BaseRepository {
                 taskUpdates.add(readUpdateCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -392,7 +525,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TaskRepository.TASK_TABLE, values, TaskRepository.ID + " = ?",
                     new String[]{taskID});
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -456,7 +589,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getWritableDatabase().endTransaction();
             return false;
         } finally {
@@ -498,7 +631,7 @@ public class TaskRepository extends BaseRepository {
             return true;
 
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getWritableDatabase().endTransaction();
             return false;
         } finally {
@@ -524,7 +657,7 @@ public class TaskRepository extends BaseRepository {
                     TASK_TABLE, STRUCTURE_ID, ID, ID, FOR, STRUCTURE_ID));
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -546,7 +679,7 @@ public class TaskRepository extends BaseRepository {
                     TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, clientTable, FOR, STRUCTURE_ID));
             return true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             return false;
         }
     }
@@ -569,7 +702,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
             getWritableDatabase().endTransaction();
             return false;
         }
@@ -621,7 +754,7 @@ public class TaskRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e, "EXCEPTION %s", e.toString());
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -672,6 +805,22 @@ public class TaskRepository extends BaseRepository {
         addOrUpdate(task, true);
     }
 
+    public void cancelCompletedTaskByIdentifier(@NonNull String identifier) {
+        if (StringUtils.isBlank(identifier))
+            return;
+        Task task = getTaskByIdentifier(identifier);
+        if (task == null )
+            return;
+        task.setStatus(TaskStatus.CANCELLED);
+        // update task sync status to unsynced if it was already synced,
+        // ignore if task status is created so that it will be created on server
+        if (!BaseRepository.TYPE_Created.equals(task.getSyncStatus())) {
+            task.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        }
+        task.setLastModified(DateTime.now());
+        addOrUpdate(task, true);
+    }
+
 
     /**
      * Archive tasks for an entity
@@ -693,13 +842,13 @@ public class TaskRepository extends BaseRepository {
         int unsyncedRecordsCount = 0;
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s =? OR %s IS NULL OR %s = ?"
-                    , TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SYNC_STATUS)
+                            , TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SYNC_STATUS)
                     , new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced});
             if (cursor.moveToNext()) {
                 unsyncedRecordsCount = cursor.getInt(0);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -742,7 +891,7 @@ public class TaskRepository extends BaseRepository {
                 entityIds.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

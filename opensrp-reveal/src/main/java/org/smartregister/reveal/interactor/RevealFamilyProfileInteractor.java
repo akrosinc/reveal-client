@@ -119,7 +119,7 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
                         formSubmissionIds.add(updateEvent.getFormSubmissionId());
 
                     } catch (Exception e) {
-                        Timber.e(e, "Error updating Family Surname");
+                        Timber.tag("Reveal Exception").w(e, "Error updating Family Surname");
                     }
                 }
             }
@@ -161,7 +161,7 @@ public class RevealFamilyProfileInteractor extends FamilyProfileInteractor imple
                 db.setTransactionSuccessful();
                 saved = true;
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 db.endTransaction();
             }

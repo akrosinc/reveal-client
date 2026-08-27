@@ -89,7 +89,7 @@ public class Utils extends org.smartregister.util.Utils {
             return DateUtil.getDuration(timeDiff);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return "";
     }
@@ -99,7 +99,7 @@ public class Utils extends org.smartregister.util.Utils {
             try {
                 return new DateTime(date);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return null;

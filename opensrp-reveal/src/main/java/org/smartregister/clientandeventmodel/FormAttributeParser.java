@@ -851,7 +851,7 @@ public class FormAttributeParser {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Timber.e(  ex);
+            Timber.tag("Reveal Exception").w(  ex);
             return null;
         }
         //Log.d("File", fileContents);

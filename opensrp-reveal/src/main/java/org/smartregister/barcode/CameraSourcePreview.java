@@ -90,9 +90,9 @@ public class CameraSourcePreview extends ViewGroup {
             try {
                 startIfReady();
             } catch (SecurityException se) {
-                Timber.e(se, "Do not have permission to start the camera");
+                Timber.tag("Reveal Exception").w(se, "Do not have permission to start the camera");
             } catch (IOException e) {
-                Timber.e(e, "Could not start camera source.");
+                Timber.tag("Reveal Exception").w(e, "Could not start camera source.");
             }
         }
 
@@ -117,9 +117,9 @@ public class CameraSourcePreview extends ViewGroup {
         try {
             startIfReady();
         } catch (SecurityException se) {
-            Timber.e(se, "Do not have permission to start the camera");
+            Timber.tag("Reveal Exception").w(se, "Do not have permission to start the camera");
         } catch (IOException e) {
-            Timber.e(e, "Could not start camera source.");
+            Timber.tag("Reveal Exception").w(e, "Could not start camera source.");
         }
     }
 }

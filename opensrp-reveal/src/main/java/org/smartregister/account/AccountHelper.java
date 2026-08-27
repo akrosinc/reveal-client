@@ -110,7 +110,7 @@ public class AccountHelper {
         try {
             return accountManager.blockingGetAuthToken(account, authTokenType, true);
         } catch (Exception ex) {
-            Timber.e(ex, "EXCEPTION: %s", ex.toString());
+            Timber.tag("Reveal Exception").w(ex, "EXCEPTION: %s", ex.toString());
             return null;
         }
     }

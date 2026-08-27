@@ -31,7 +31,7 @@ public class SettingsSyncedCheck implements PreResetAppCheck {
         try {
             syncSettingsServiceHelper.processIntent();
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

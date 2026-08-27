@@ -65,28 +65,47 @@
           ],
           "hsl(46, 88%, 62%)",
           [
+            "enrolled"
+          ],
+          "hsl(303, 86%, 57%)",
+          [
             "Not Sprayed",
             "Incomplete",
             "In Progress",
             "None Received",
             "Refused or Permanently Absent",
             "Refused",
+            "notenrolled",
             "Permanently Absent",
-            "MDA refused or absent"
+            "MDA refused or absent",
+            "No Eligible People"
           ],
           "hsl(3, 71%, 54%)",
           [
             "Sprayed",
             "Complete",
             "Fully Received",
-            "MDA complete"
+            "MDA complete",
+            "round_three",
+            "round_three_skip",
+            "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
+          [
+            "Structure part of HOH"
+          ],
+          "hsl(117, 52%, 29%)",
           [
             "Partially complete or Temporarily Absent",
             "Partially complete",
             "Temporarily Absent",
-            "MDA partially complete"
+            "MDA partially complete",
+            "round_one_refused",
+            "round_two_refused",
+            "round_three_refused",
+            "enrollednotcomplete",
+            "RCD Partially complete",
+            "No appropriate adult available"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -100,9 +119,10 @@
           "hsl(335, 100%, 79%)",
           [
             "Bednet Distributed",
-            "Adherence Visit Done"
+            "Adherence Visit Done",
+            "Secondary Index Case Not Visited"
           ],
-          "hsl(199, 68%, 55%)",
+          "hsl(199, 68%, 40%)",
           [
             "Blood Screening Complete"
           ],
@@ -112,6 +132,34 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
+          [
+            "round_one",
+            "round_one_skip",
+            "Index Case Not Visited",
+            "monththreecomplete",
+            "Require Revisit",
+            "No one home"
+          ],
+          "hsl(191, 89%, 61%)",
+          [
+            "round_two",
+            "round_two_skip"
+          ],
+          "hsl(227, 66%, 55%)",
+          [
+            "Index complete RCD Incomplete",
+            "Index Case Complete"
+          ],
+          "hsl(272, 100%, 43%)",
+          [
+            "Secondary Index Case Complete"
+          ],
+          "hsl(272, 40%, 43%)",
+          [
+            "RCD Incomplete Index Incomplete",
+            "RCD complete Index Incomplete"
+          ],
+          "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],
         "fill-opacity": [
@@ -178,28 +226,47 @@
           ],
           "hsl(46, 88%, 62%)",
           [
+            "enrolled"
+          ],
+          "hsl(303, 86%, 57%)",
+          [
             "Not Sprayed",
             "Incomplete",
             "In Progress",
             "None Received",
             "Refused or Permanently Absent",
             "Refused",
+            "notenrolled",
             "Permanently Absent",
-            "MDA refused or absent"
+            "MDA refused or absent",
+            "No Eligible People"
           ],
           "hsl(3, 71%, 54%)",
           [
             "Sprayed",
             "Complete",
             "Fully Received",
-            "MDA complete"
+            "MDA complete",
+            "round_three",
+            "round_three_skip",
+            "monthsixcomplete"
           ],
           "hsl(89, 52%, 48%)",
           [
+            "Structure part of HOH"
+          ],
+          "hsl(117, 52%, 29%)",
+          [
             "Partially complete or Temporarily Absent",
-            "MDA partially complete",
             "Partially complete",
-            "Temporarily Absent"
+            "Temporarily Absent",
+            "MDA partially complete",
+            "round_one_refused",
+            "round_two_refused",
+            "round_three_refused",
+            "enrollednotcomplete",
+            "RCD Partially complete",
+            "No appropriate adult available"
           ],
           "hsl(33, 100%, 50%)",
           [
@@ -213,9 +280,10 @@
           "hsl(335, 100%, 79%)",
           [
             "Bednet Distributed",
-            "Adherence Visit Done"
+            "Adherence Visit Done",
+            "Secondary Index Case Not Visited"
           ],
-          "hsl(199, 68%, 55%)",
+          "hsl(199, 68%, 40%)",
           [
             "Blood Screening Complete"
           ],
@@ -225,6 +293,34 @@
             "Partially Received"
           ],
           "hsl(26, 84%, 56%)",
+          [
+            "round_one",
+            "round_one_skip",
+            "Index Case Not Visited",
+            "monththreecomplete",
+            "Require Revisit",
+            "No one home"
+          ],
+          "hsl(191, 89%, 61%)",
+          [
+            "round_two",
+            "round_two_skip"
+          ],
+          "hsl(227, 66%, 55%)",
+          [
+            "Index complete RCD Incomplete",
+            "Index Case Complete"
+          ],
+          "hsl(272, 100%, 43%)",
+          [
+            "Secondary Index Case Complete"
+          ],
+          "hsl(272, 40%, 43%)",
+          [
+            "RCD Incomplete Index Incomplete",
+            "RCD complete Index Incomplete"
+          ],
+          "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
         ],
         "circle-stroke-width": 1,

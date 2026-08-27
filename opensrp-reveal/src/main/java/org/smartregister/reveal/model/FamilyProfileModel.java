@@ -151,7 +151,7 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
                         break;
                     }
                 } catch (JSONException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
             if (familyRegistrationEvent != null) {
@@ -162,7 +162,7 @@ public class FamilyProfileModel extends BaseFamilyProfileModel {
                     setPlanIdentifier(planIdentifier);
                     setTaskIdentifier(taskIdentifier);
                 } catch (JSONException e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
     }

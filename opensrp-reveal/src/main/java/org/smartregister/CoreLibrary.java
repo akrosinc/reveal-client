@@ -109,7 +109,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 copySharedPreferences(entries, newPrefs);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -131,7 +131,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e, "Failed to save SharedPreference");
+            Timber.tag("Reveal Exception").w(e, "Failed to save SharedPreference");
         }
     }
 
@@ -294,7 +294,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                     }
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
     }

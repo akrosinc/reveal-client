@@ -3,12 +3,27 @@ package org.smartregister.reveal.view;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import static org.smartregister.reveal.util.Constants.ANIMATE_TO_LOCATION_DURATION;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.LSM_HOUSEHOLD_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_ONCHOCERCIASIS_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.MDA_SURVEY;
+import static org.smartregister.reveal.util.Constants.Action.RCD;
+import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_SURVEY;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.ENROLLED_NOT_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.STRUCTURE_PART_OF_HOH;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_PARTIALLY_COMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MDA_REFUSED_OR_ABSENT;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_ELIGIBLE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_SPRAYED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.PARTIALLY_SPRAYED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.NOTENROLLED;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHTHREECOMPLETE;
+import static org.smartregister.reveal.util.Constants.BusinessStatus.MONTHSIXCOMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.SPRAYED;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.LOCAL_SYNC_DONE;
 import static org.smartregister.reveal.util.Constants.CONFIGURATION.UPDATE_LOCATION_BUFFER_RADIUS;
@@ -32,19 +47,19 @@ import static org.smartregister.reveal.util.FamilyConstants.Intent.START_REGISTR
 import static org.smartregister.reveal.util.Utils.displayDistanceScale;
 import static org.smartregister.reveal.util.Utils.getDrawOperationalAreaBoundaryAndLabel;
 import static org.smartregister.reveal.util.Utils.getLocationBuffer;
-import static org.smartregister.reveal.util.Utils.getMaxZoomLevel;
-import static org.smartregister.reveal.util.Utils.getPixelsPerDPI;
 import static org.smartregister.reveal.util.Utils.getSatelliteStyle;
 import static org.smartregister.reveal.util.Utils.getSyncEntityString;
 import static org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure;
 import static org.smartregister.reveal.util.Utils.isZambiaIRSLite;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
@@ -52,6 +67,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -62,18 +78,30 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.MultiPolygon;
+import com.mapbox.geojson.Point;
+import com.mapbox.geojson.Polygon;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -83,15 +111,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
-import io.ona.kujaku.listeners.OnFeatureLongClickListener;
-import io.ona.kujaku.utils.Constants;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,6 +134,7 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.contract.BaseDrawerContract;
 import org.smartregister.reveal.contract.ListTaskContract;
 import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
+import org.smartregister.reveal.layer.LabelLayer;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.FamilyCardDetails;
 import org.smartregister.reveal.model.FilterConfiguration;
@@ -124,6 +145,7 @@ import org.smartregister.reveal.model.SurveyCardDetails;
 import org.smartregister.reveal.model.TaskFilterParams;
 import org.smartregister.reveal.presenter.ListTaskPresenter;
 import org.smartregister.reveal.repository.RevealMappingHelper;
+import org.smartregister.reveal.test.GDRSActivity;
 import org.smartregister.reveal.util.AlertDialogUtils;
 import org.smartregister.reveal.util.CardDetailsUtil;
 import org.smartregister.reveal.util.Constants.Action;
@@ -133,16 +155,35 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.RevealMapHelper;
+import org.smartregister.util.Constants;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+
 import timber.log.Timber;
+
+import com.mapbox.mapboxsdk.style.layers.FillLayer;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.turf.TurfTransformation;
+
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.*;
 
 /**
  * Created by samuelgithengi on 11/20/18.
  */
+//public class ListTasksActivity extends BaseMapActivity implements ListTaskContract.ListTaskView,
+//        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener, OnMapReadyCallback {
 public class ListTasksActivity extends BaseMapActivity implements ListTaskContract.ListTaskView,
-        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener {
-
+        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView,
+        SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener {
     private ListTaskPresenter listTaskPresenter;
 
     private GeoJsonSource geoJsonSource;
@@ -150,12 +191,15 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private GeoJsonSource selectedGeoJsonSource;
 
     private ProgressDialog progressDialog;
-
+    public static final int REQUEST_CODE_LOCATION_PERMISSION = 1001;
+    public static final int REQUEST_CODE_STORAGE_PERMISSION = 1002;
     private MapboxMap mMapboxMap;
 
     private CardView sprayCardView;
 
     private TextView tvReason;
+
+    private PreferencesUtil preferencesUtil;
 
     private CardView mosquitoCollectionCardView;
     private CardView larvalBreedingCardView;
@@ -177,9 +221,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     private RevealJsonFormUtils jsonFormUtils;
 
-    private BoundaryLayer boundaryLayer;
+    private LabelLayer rcdLabelLayer;
 
-    private BoundaryLayer adjacentOperationalBoundaryLayer;
+    private LabelLayer indexCaseLabelLayer;
+
+    private LabelLayer secondaryIndexCaseLabelLayer;
+
+    private LabelLayer householdLabelLayer;
 
     private RevealMapHelper revealMapHelper;
 
@@ -202,12 +250,17 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private Bundle savedInstanceState = new Bundle();
 
     private ImageButton addStructureButton;
-
-
-
+    private static final String TAG = "MapInitDebug";
+    private FeatureCollection pendingFeatureCollection;
+    private Feature pendingOperationalArea;
+    private List<Feature> pendingAdjacentAreas;
+    private boolean pendingIsChangeMapPosition;
+    private List<Feature> pendingParentLocations;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, (BuildConfig.MAPBOX_SDK_ACCESS_TOKEN));
+        this.preferencesUtil = PreferencesUtil.getInstance();
         this.savedInstanceState = savedInstanceState;
         if (getCountry() == Country.THAILAND || getCountry() == Country.THAILAND_EN) {
             setContentView(R.layout.thailand_activity_list_tasks);
@@ -224,14 +277,20 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         initializeProgressIndicatorViews();
 
-        kujakuMapView = findViewById(R.id.kujakuMapView);
-
+//        kujakuMapView = findViewById(R.id.kujakuMapView);
+        mapView = findViewById(R.id.mapView);
         myLocationButton = findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
 
         layerSwitcherFab = findViewById(R.id.fab_mapview_layerSwitcher);
 
-        if(StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())){
+//        if (StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+//            initializeMapView(savedInstanceState);
+//        }
+        if (StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+            Log.d(TAG, "Target level valid. Calling initializeMapView.");
             initializeMapView(savedInstanceState);
+        } else {
+            Log.d(TAG, "Target level is BLANK. MapView NOT initialized.");
         }
 
         drawerView.initializeDrawerLayout();
@@ -244,7 +303,6 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         initializeCardViews();
 
         initializeToolbar();
-
     }
 
     @NonNull
@@ -281,8 +339,13 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         findViewById(R.id.change_habitat_status).setOnClickListener(this);
         findViewById(R.id.change_spray_status).setOnClickListener(this);
         findViewById(R.id.change_oncho_status).setOnClickListener(this);
+        findViewById(R.id.change_structure_survey_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_index_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_secondary_index_status).setOnClickListener(this);
+        findViewById(R.id.change_gdrs_rcd_status).setOnClickListener(this);
 
         findViewById(R.id.btn_undo_spray).setOnClickListener(this);
+        findViewById(R.id.btn_undo_structure_status).setOnClickListener(this);
 
         findViewById(R.id.register_family).setOnClickListener(this);
 
@@ -315,10 +378,10 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
         findViewById(R.id.register_family).setOnClickListener(this);
 
-        if(!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
+        if (!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
             findViewById(R.id.btn_add_structure).setVisibility(View.GONE);
         }
-        if(Country.SENEGAL.equals(getCountry()) || Country.SENEGAL.equals(getCountry())){
+        if (Country.SENEGAL.equals(getCountry()) || Country.SENEGAL.equals(getCountry())) {
             sprayCardView.findViewById(R.id.btn_undo_spray).setVisibility(View.GONE);
         }
     }
@@ -354,78 +417,127 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         view.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
-    private void initializeMapView(Bundle savedInstanceState) {
-        kujakuMapView.getMapboxLocationComponentWrapper().setOnLocationComponentInitializedCallback(this);
+private void initializeMapView(Bundle savedInstanceState) {
+    Log.d("MapboxDebug", "--- Initializing Native MapView ---");
 
-        kujakuMapView.onCreate(savedInstanceState);
-
-        kujakuMapView.showCurrentLocationBtn(true);
-
-        kujakuMapView.setDisableMyLocationOnMapMove(true);
-
-        Float locationBufferRadius = getLocationBuffer(isCurrentTargetLevelStructure());
-
-        kujakuMapView.setLocationBufferRadius(locationBufferRadius / getPixelsPerDPI(getResources()));
-
-        kujakuMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                 String satelliteStyle = getSatelliteStyle(getContext());
-                    Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
-                    mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
-                        @Override
-                        public void onStyleLoaded(@NonNull Style style) {
-
-                            enableCompass(mapboxMap);
-
-                            geoJsonSource = style.getSourceAs(getString(R.string.reveal_datasource_name));
-
-                            selectedGeoJsonSource = style.getSourceAs(getString(R.string.selected_datasource_name));
-                            RevealMapHelper.addCustomLayers(style, ListTasksActivity.this);
-
-                            RevealMapHelper.addBaseLayers(kujakuMapView, style, ListTasksActivity.this);
-
-                            if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.NIGERIA) {
-                                layerSwitcherFab.setVisibility(View.GONE);
-                            }
-
-                            initializeScaleBarPlugin(mapboxMap);
-
-                        }
-                    });
-
-                mMapboxMap = mapboxMap;
-                mapboxMap.setMinZoomPreference(10);
-                mapboxMap.setMaxZoomPreference(21);
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .zoom(16)
-                        .build();
-                mapboxMap.setCameraPosition(cameraPosition);
-
-
-                listTaskPresenter.onMapReady();
-                mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
-                    @Override
-                    public boolean onMapClick(@NonNull LatLng point) {
-                        listTaskPresenter.onMapClicked(mapboxMap, point, false);
-                        return false;
-                    }
-                });
-
-                mapboxMap.addOnMapLongClickListener(new MapboxMap.OnMapLongClickListener() {
-                    @Override
-                    public boolean onMapLongClick(@NonNull LatLng point) {
-                        listTaskPresenter.onMapClicked(mapboxMap, point, true);
-                        return false;
-                    }
-                });
-
-                positionMyLocationAndLayerSwitcher();
-            }
-        });
-
+    if (mapView == null) {
+        Log.d("MapboxDebug", "mapView is NULL!");
+        return;
     }
+
+    try {
+        mapView.onCreate(savedInstanceState);
+        Log.d("MapboxDebug", "mapView.onCreate executed successfully");
+    } catch (Exception e) {
+        Log.e("MapboxDebug", "CRITICAL: Error in mapView.onCreate", e);
+    }
+
+    // Single OnMapReadyCallback registered here
+    mapView.getMapAsync(new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(@NonNull MapboxMap mapboxMap) {
+            Log.d("MapboxDebug", "MapboxMap instance is ready!");
+            mMapboxMap = mapboxMap;
+
+            String satelliteStyle = getSatelliteStyle(getContext());
+            Log.d("MapboxDebug", "Attempting to load Satellite Style URI: " + satelliteStyle);
+
+            if (StringUtils.isBlank(satelliteStyle)) {
+                Log.e("MapboxDebug", "ERROR: Satellite Style URI is NULL or EMPTY!");
+                return;
+            }
+
+            Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
+            mapboxMap.setStyle(builder, new Style.OnStyleLoaded() {
+                @Override
+                public void onStyleLoaded(@NonNull Style style) {
+                    Log.d("MapboxDebug", "SUCCESS: Mapbox Style fully loaded!");
+
+                    // 1. UI & Controls
+                    enableCompass(mapboxMap);
+
+                    // 2. Resolve Data Sources
+                    geoJsonSource = style.getSourceAs(getString(R.string.reveal_datasource_name));
+                    selectedGeoJsonSource = style.getSourceAs(getString(R.string.selected_datasource_name));
+
+                    // 3. Custom Map Layers & Satellite Basemap (Using your refactored helper)
+                    RevealMapHelper.addCustomLayers(style, ListTasksActivity.this);
+                    RevealMapHelper.addBaseLayers(mapView, style, ListTasksActivity.this); // 👈 This injects satellite tiles
+
+                    // 4. Country UI Configs
+                    if (getBuildCountry() != Country.ZAMBIA
+                            && getBuildCountry() != Country.SENEGAL
+                            && getBuildCountry() != Country.SENEGAL_EN
+                            && getBuildCountry() != Country.NIGERIA) {
+                        if (layerSwitcherFab != null) {
+                            layerSwitcherFab.setVisibility(View.GONE);
+                        }
+                    }
+
+                    // 5. Plugins & Location Component
+                    initializeScaleBarPlugin(mapboxMap);
+                    enableLocationComponent(style);
+
+                    if (pendingFeatureCollection != null) {
+                        FeatureCollection fc = pendingFeatureCollection;
+                        Feature oa = pendingOperationalArea;
+                        List<Feature> adj = pendingAdjacentAreas;
+                        boolean isChangePos = pendingIsChangeMapPosition;
+                        List<Feature> parents = pendingParentLocations;
+
+                        pendingFeatureCollection = null;
+                        pendingOperationalArea = null;
+                        pendingAdjacentAreas = null;
+                        pendingParentLocations = null;
+
+                        setGeoJsonSourceWithParents(fc, oa, adj, isChangePos, parents);
+                    } else {
+                        listTaskPresenter.onMapReady();
+                    }
+                }
+            });
+
+
+            // Zoom Preferences
+            mapboxMap.setMinZoomPreference(3);
+            mapboxMap.setMaxZoomPreference(21);
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .zoom(16)
+                    .build();
+            mapboxMap.setCameraPosition(cameraPosition);
+
+            // Gesture Listeners
+            mapboxMap.addOnMapClickListener(point -> {
+                listTaskPresenter.onMapClicked(mapboxMap, point, false);
+                return false;
+            });
+
+            mapboxMap.addOnMapLongClickListener(point -> {
+                listTaskPresenter.onMapClicked(mapboxMap, point, true);
+                return false;
+            });
+
+            positionMyLocationAndLayerSwitcher();
+        }
+    });
+}
+    @SuppressWarnings({"MissingPermission"})
+    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+        if (PermissionsManager.areLocationPermissionsGranted(this) && mMapboxMap != null) {
+            LocationComponent locationComponent = mMapboxMap.getLocationComponent();
+
+            // Activate LocationComponent with default options
+            LocationComponentActivationOptions options = LocationComponentActivationOptions
+                    .builder(this, loadedMapStyle)
+                    .build();
+
+            locationComponent.activateLocationComponent(options);
+            locationComponent.setLocationComponentEnabled(true);
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+        }
+    }
+
 
     protected void enableCompass(MapboxMap mapboxMap) {
         UiSettings uiSettings = mapboxMap.getUiSettings();
@@ -437,18 +549,18 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         uiSettings.setCompassEnabled(true);
     }
 
-    protected void initializeScaleBarPlugin(MapboxMap mapboxMap) {
-        if (displayDistanceScale()) {
-            ScaleBarPlugin scaleBarPlugin = new ScaleBarPlugin(kujakuMapView, mapboxMap);
-            // Create a ScaleBarOptions object to use custom styling
-            ScaleBarOptions scaleBarOptions = new ScaleBarOptions(getContext());
-            scaleBarOptions.setTextColor(R.color.distance_scale_text);
-            scaleBarOptions.setTextSize(R.dimen.distance_scale_text_size);
 
-            scaleBarPlugin.create(scaleBarOptions);
-        }
+protected void initializeScaleBarPlugin(MapboxMap mapboxMap) {
+    if (displayDistanceScale() && mapView != null) {
+        ScaleBarPlugin scaleBarPlugin = new ScaleBarPlugin(mapView, mapboxMap);
+        // Create a ScaleBarOptions object to use custom styling
+        ScaleBarOptions scaleBarOptions = new ScaleBarOptions(getContext());
+        scaleBarOptions.setTextColor(R.color.distance_scale_text);
+        scaleBarOptions.setTextSize(R.dimen.distance_scale_text_size);
+
+        scaleBarPlugin.create(scaleBarOptions);
     }
-
+}
     private void positionMyLocationAndLayerSwitcher(FrameLayout.LayoutParams myLocationButtonParams, int bottomMargin) {
 
         if (myLocationButton != null) {
@@ -460,33 +572,70 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     }
 
-    public void positionMyLocationAndLayerSwitcher() {
-        FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
-        if (getBuildCountry() != Country.ZAMBIA && getBuildCountry() != Country.NAMIBIA
-                && getBuildCountry() != Country.SENEGAL && getBuildCountry() != Country.RWANDA && getBuildCountry() != Country.SENEGAL_EN && getBuildCountry() != Country.RWANDA_EN && getBuildCountry() != Country.NIGERIA) {
-            positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
-        } else {
-            int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
-
-            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda ) ? progressHeight + 40 : 40;
-            positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
-
-            if (layerSwitcherFab != null) {
-                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layerSwitcherFab.getLayoutParams();
-                //position the layer selector above location button and with similar bottom margin
-                if (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs)
-                    params.bottomMargin = myLocationButton.getMeasuredHeight() + progressHeight + 80;
-                else
-                    params.bottomMargin = myLocationButton.getMeasuredHeight() + bottomMargin + 40;
-                //Make the layer selector is same size as my location button
-                params.height = myLocationButton.getMeasuredHeight();
-                params.width = myLocationButton.getMeasuredWidth();
-                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.my_location_btn_margin);
-                layerSwitcherFab.setScaleType(FloatingActionButton.ScaleType.CENTER);
-                layerSwitcherFab.setLayoutParams(params);
-            }
+//    public void positionMyLocationAndLayerSwitcher() {
+//        FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
+//        if (!List.of(Country.MALI, Country.ZAMBIA, Country.NAMIBIA, Country.SENEGAL, Country.RWANDA,
+//                        Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS, Country.NIH)
+//                .contains(getBuildCountry())) {
+//            positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
+//        } else {
+//            int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
+//
+//            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.survey_coverage) ? progressHeight + 40 : 40;
+//            positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
+//
+//            if (layerSwitcherFab != null) {
+//                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layerSwitcherFab.getLayoutParams();
+//                //position the layer selector above location button and with similar bottom margin
+//                if (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs)
+//                    params.bottomMargin = myLocationButton.getMeasuredHeight() + progressHeight + 80;
+//                else
+//                    params.bottomMargin = myLocationButton.getMeasuredHeight() + bottomMargin + 40;
+//                //Make the layer selector is same size as my location button
+//                params.height = myLocationButton.getMeasuredHeight();
+//                params.width = myLocationButton.getMeasuredWidth();
+//                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.my_location_btn_margin);
+//                layerSwitcherFab.setScaleType(FloatingActionButton.ScaleType.CENTER);
+//                layerSwitcherFab.setLayoutParams(params);
+//            }
+//        }
+//    }
+public void positionMyLocationAndLayerSwitcher() {
+    // Guard against null reference if the view hasn't been inflated yet
+    if (myLocationButton == null) {
+        myLocationButton = findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+        if (myLocationButton == null || myLocationButton.getLayoutParams() == null) {
+            return;
         }
     }
+
+    FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
+    if (!List.of(Country.MALI, Country.ZAMBIA, Country.NAMIBIA, Country.SENEGAL, Country.RWANDA,
+                    Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS, Country.NIH)
+            .contains(getBuildCountry())) {
+        positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
+    } else {
+        int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
+
+        int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.survey_coverage) ? progressHeight + 40 : 40;
+        positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
+
+        if (layerSwitcherFab != null && layerSwitcherFab.getLayoutParams() != null) {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layerSwitcherFab.getLayoutParams();
+            //position the layer selector above location button and with similar bottom margin
+            if (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs)
+                params.bottomMargin = myLocationButton.getMeasuredHeight() + progressHeight + 80;
+            else
+                params.bottomMargin = myLocationButton.getMeasuredHeight() + bottomMargin + 40;
+            //Make the layer selector is same size as my location button
+            params.height = myLocationButton.getMeasuredHeight();
+            params.width = myLocationButton.getMeasuredWidth();
+            params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.my_location_btn_margin);
+            layerSwitcherFab.setScaleType(FloatingActionButton.ScaleType.CENTER);
+            layerSwitcherFab.setLayoutParams(params);
+        }
+    }
+}
 
     private void initializeProgressIndicatorViews() {
         LinearLayout progressIndicatorsGroupView = findViewById(R.id.progressIndicatorsGroupView);
@@ -525,20 +674,30 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
             listTaskPresenter.onAddStructureClicked(revealMapHelper.isMyLocationComponentActive(this, myLocationButton));
         } else if (v.getId() == R.id.change_spray_status) {
             listTaskPresenter.onChangeInterventionStatus(IRS);
-        } else if(v.getId() == R.id.change_household_status){
+        } else if (v.getId() == R.id.change_structure_survey_status) {
+            listTaskPresenter.onChangeInterventionStatus(STRUCTURE_SURVEY);
+        } else if (v.getId() == R.id.change_household_status) {
             listTaskPresenter.onChangeInterventionStatus(MDA_SURVEY);
-        } else if(v.getId() == R.id.change_habitat_status){
+        } else if (v.getId() == R.id.change_gdrs_rcd_status) {
+            listTaskPresenter.onChangeInterventionStatus(RCD);
+        } else if (v.getId() == R.id.change_gdrs_index_status) {
+            listTaskPresenter.onChangeInterventionStatus(INDEX_CASE);
+        } else if (v.getId() == R.id.change_gdrs_secondary_index_status) {
+            listTaskPresenter.onChangeInterventionStatus(SECONDARY_INDEX_CASE);
+        } else if (v.getId() == R.id.change_habitat_status) {
             listTaskPresenter.onChangeInterventionStatus(HABITAT_SURVEY);
-        } else if(v.getId() == R.id.change_lsm_household_status) {
+        } else if (v.getId() == R.id.change_lsm_household_status) {
             listTaskPresenter.onChangeInterventionStatus(LSM_HOUSEHOLD_SURVEY);
-        } else if(v.getId() == R.id.change_oncho_status){
-          listTaskPresenter.onChangeInterventionStatus(MDA_ONCHOCERCIASIS_SURVEY);
+        } else if (v.getId() == R.id.change_oncho_status) {
+            listTaskPresenter.onChangeInterventionStatus(MDA_ONCHOCERCIASIS_SURVEY);
         } else if (v.getId() == R.id.btn_undo_spray) {
-            if(isZambiaIRSLite()) {
+            if (isZambiaIRSLite()) {
                 displayResetInterventionTaskDialog(IRS_VERIFICATION);
             } else {
                 displayResetInterventionTaskDialog(IRS);
             }
+        } else if (v.getId() == R.id.btn_undo_structure_status) {
+            displayResetInterventionTaskDialog(STRUCTURE_SURVEY);
         } else if (v.getId() == R.id.btn_record_mosquito_collection) {
             listTaskPresenter.onChangeInterventionStatus(MOSQUITO_COLLECTION);
         } else if (v.getId() == R.id.btn_undo_mosquito_collection) {
@@ -584,6 +743,22 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     .interventionTypeLayoutEnabled(false)
                     .businessStatusList(Arrays.asList(NOT_VISITED, NOT_SPRAYED, PARTIALLY_SPRAYED, SPRAYED))
                     .sortOptions(R.array.task_sort_options_namibia);
+        } else if (getCountry().equals(Country.UW)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, MONTHTHREECOMPLETE
+                            , MONTHSIXCOMPLETE, ENROLLED, NOT_ELIGIBLE, ENROLLED_NOT_COMPLETE, NOTENROLLED))
+                    .sortOptions(R.array.task_sort_options_uw);
+        } else if (getCountry().equals(Country.VL_ZM)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_ELIGIBLE, COMPLETE))
+                    .sortOptions(R.array.task_sort_options_uw);
+        } else if (getCountry().equals(Country.MALI)) {
+            builder.taskCodeLayoutEnabled(false)
+                    .interventionTypeLayoutEnabled(false)
+                    .businessStatusList(Arrays.asList(NOT_VISITED, NOT_ELIGIBLE, COMPLETE, STRUCTURE_PART_OF_HOH, MDA_REFUSED_OR_ABSENT, MDA_PARTIALLY_COMPLETE, MDA_COMPLETE))
+                    .sortOptions(R.array.task_sort_options_mali);
         }
         intent.putExtra(FILTER_CONFIGURATION, builder.build());
         startActivityForResult(intent, REQUEST_CODE_FILTER_TASKS);
@@ -647,27 +822,54 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     }
 
     @Override
-    public void onLocationComponentInitialized() {
-        if (PermissionsManager.areLocationPermissionsGranted(this)) {
-            LocationComponent locationComponent = kujakuMapView.getMapboxLocationComponentWrapper()
-                    .getLocationComponent();
-            locationComponent.applyStyle(getApplicationContext(), R.style.LocationComponentStyling);
-        }
+    public void openRCD() {
+        clearSelectedFeature();
+        Intent intent = new Intent(this, GDRSActivity.class);
+        Feature feature = listTaskPresenter.getSelectedFeature();
+
+        intent.putExtra(Properties.LOCATION_UUID, feature.id());
+        intent.putExtra(Properties.TASK_IDENTIFIER, feature.getStringProperty(Properties.TASK_IDENTIFIER));
+        intent.putExtra(Properties.TASK_BUSINESS_STATUS, feature.getStringProperty(Properties.TASK_BUSINESS_STATUS));
+        intent.putExtra(Properties.TASK_CODE, feature.getStringProperty(Properties.TASK_CODE));
+        startActivity(intent);
     }
 
+
+
     @Override
-    public void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean isChangeMapPosition) {
-        if(StringUtils.isNotBlank((PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) && isChangeMapPosition){
-            initializeMapView(savedInstanceState);
-            if (org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
-                addStructureButton.setVisibility(View.VISIBLE);
-            } else {
-                addStructureButton.setVisibility(View.GONE);
+    public void setGeoJsonSourceWithParents(@NonNull FeatureCollection featureCollection,
+                                            Feature operationalArea,
+                                            List<Feature> adjacentOperationalAreas,
+                                            boolean isChangeMapPosition,
+                                            List<Feature> parentLocations) {
+
+        // 1. Toggle button visibility
+        if (StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel()) && isChangeMapPosition) {
+            if (addStructureButton != null) {
+                addStructureButton.setVisibility(org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ? View.VISIBLE : View.GONE);
             }
         }
 
-        if (geoJsonSource != null) {
-            geoJsonSource.setGeoJson(featureCollection);
+        // 2. GUARD: If map or source is null, cache for post-style initialization
+        if (geoJsonSource == null || mMapboxMap == null) {
+            Log.w("MapboxDebug", "Map or GeoJsonSource not ready yet! Caching data for flush after style load...");
+            this.pendingFeatureCollection = featureCollection;
+            this.pendingOperationalArea = operationalArea;
+            this.pendingAdjacentAreas = adjacentOperationalAreas;
+            this.pendingIsChangeMapPosition = isChangeMapPosition;
+            this.pendingParentLocations = parentLocations;
+            return;
+        }
+
+        // Clear pending cache when actively rendering
+        this.pendingFeatureCollection = null;
+
+        // 3. Update GeoJSON Source
+        geoJsonSource.setGeoJson(featureCollection);
+
+        // 4. Update style layers inside getStyle callback
+        mMapboxMap.getStyle(style -> {
+            if (!style.isFullyLoaded()) return;
 
             if (operationalArea != null) {
                 CameraPosition cameraPosition = mMapboxMap.getCameraForGeometry(operationalArea.geometry());
@@ -677,107 +879,162 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                         Location center = new RevealMappingHelper().getCenter(indexCase.geometry().toJson());
                         double currentZoom = mMapboxMap.getCameraPosition().zoom;
                         cameraPosition = new CameraPosition.Builder()
-                                .target(new LatLng(center.getLatitude(), center.getLongitude())).zoom(currentZoom).build();
+                                .target(new LatLng(center.getLatitude(), center.getLongitude()))
+                                .zoom(currentZoom)
+                                .build();
                     }
                 }
 
-                if (cameraPosition != null && (boundaryLayer == null || isChangeMapPosition)) {
+                boolean isInitialLoad = style.getLayer("operational-area-layer-fill") == null;
+                if (cameraPosition != null && (isInitialLoad || isChangeMapPosition)) {
                     mMapboxMap.setCameraPosition(cameraPosition);
                 }
 
-                Boolean drawOperationalAreaBoundaryAndLabel = getDrawOperationalAreaBoundaryAndLabel();
-                if (drawOperationalAreaBoundaryAndLabel) {
-                    if (boundaryLayer == null || isChangeMapPosition) {
-                        boundaryLayer = createBoundaryLayer(operationalArea);
-                        kujakuMapView.addLayer(boundaryLayer);
+                // GDRS Plan Label Layers
+                if ("TRUE".equals(this.preferencesUtil.isGdrsPlan())) {
+                    if (rcdLabelLayer != null) rcdLabelLayer.removeLayerOnMap(mMapboxMap);
+                    rcdLabelLayer = createRcdLabelLayer(featureCollection);
+                    if (rcdLabelLayer != null) rcdLabelLayer.addLayerToMap(mMapboxMap);
 
+                    if (indexCaseLabelLayer != null) indexCaseLabelLayer.removeLayerOnMap(mMapboxMap);
+                    indexCaseLabelLayer = createIndexCaseLabelLayer(featureCollection);
+                    if (indexCaseLabelLayer != null) indexCaseLabelLayer.addLayerToMap(mMapboxMap);
 
-                        kujakuMapView.setOnFeatureLongClickListener(new OnFeatureLongClickListener() {
-                            @Override
-                            public void onFeatureLongClick(List<Feature> features) {
-                                listTaskPresenter.onFociBoundaryLongClicked();
-                            }
-                        }, boundaryLayer.getLayerIds());
+                    if (secondaryIndexCaseLabelLayer != null) secondaryIndexCaseLabelLayer.removeLayerOnMap(mMapboxMap);
+                    secondaryIndexCaseLabelLayer = createSecondaryIndexCaseLabelLayer(featureCollection);
+                    if (secondaryIndexCaseLabelLayer != null) secondaryIndexCaseLabelLayer.addLayerToMap(mMapboxMap);
 
-                        adjacentOperationalBoundaryLayer = createNeighbouringBoundaryLayer(adjacentOperationalAreas);
-                        kujakuMapView.addLayer(adjacentOperationalBoundaryLayer);
+                    if (householdLabelLayer != null) householdLabelLayer.removeLayerOnMap(mMapboxMap);
+                    householdLabelLayer = createHouseholdLabelLayer(featureCollection);
+                    if (householdLabelLayer != null) householdLabelLayer.addLayerToMap(mMapboxMap);
+                }
 
+                // Operational Area Boundaries
+                if (getDrawOperationalAreaBoundaryAndLabel()) {
+                    if (operationalArea.geometry() instanceof MultiPolygon) {
+                        FeatureCollection featureCollectionOperationalArea = revealMapHelper.splitMultiPolygonsToSingleFeatureCollection(operationalArea);
+                        drawBoundaryFromFeatureCollection(style, featureCollectionOperationalArea);
                     } else {
-                        boundaryLayer.updateFeatures(FeatureCollection.fromFeature(operationalArea));
+                        drawBoundary(style, operationalArea);
+                    }
 
-                        adjacentOperationalBoundaryLayer.updateFeatures(FeatureCollection.fromFeatures(adjacentOperationalAreas));
+                    if (parentLocations != null && !parentLocations.isEmpty()) {
+                        Map<String, List<Feature>> featureCollectionMapFromMultiPolygonList = revealMapHelper.getFeatureCollectionMapFromMultiPolygonList(parentLocations);
+                        Set<String> levels = featureCollectionMapFromMultiPolygonList.keySet();
+
+                        int[] colorResIds = {
+                                R.color.parent_boundary_grey_1,
+                                R.color.parent_boundary_grey_2,
+                                R.color.parent_boundary_grey_3,
+                                R.color.parent_boundary_grey_4,
+                                R.color.parent_boundary_grey_5,
+                                R.color.parent_boundary_grey_6
+                        };
+
+                        int counter = 0;
+                        for (String level : levels) {
+                            String layerBelow = style.getLayer("operational-area-layer-fill") != null ? "operational-area-layer-fill" : null;
+                            List<Feature> parentLevelFeatures = featureCollectionMapFromMultiPolygonList.get(level);
+                            boolean showLabel = true;
+
+                            if (parentLevelFeatures != null && !parentLevelFeatures.isEmpty()) {
+                                FeatureCollection parentLevelFeatureCollection = FeatureCollection.fromFeatures(parentLevelFeatures);
+
+                                if (operationalArea.properties() != null && operationalArea.properties().has("geographicLevel")) {
+                                    String geographicLevelOperationalArea = operationalArea.properties().get("geographicLevel").getAsString();
+
+                                    if (parentLevelFeatures.get(0) != null && parentLevelFeatures.get(0).properties() != null
+                                            && parentLevelFeatures.get(0).properties().has("geographicLevel")) {
+
+                                        String geographicLevelParent = parentLevelFeatures.get(0).properties().get("geographicLevel").getAsString();
+                                        if (geographicLevelParent.equals(geographicLevelOperationalArea) || "village".equals(geographicLevelParent)) {
+                                            showLabel = false;
+                                        }
+                                    }
+                                }
+
+                                drawParentBoundaryFromFeatureCollectionWithColor(
+                                        style,
+                                        parentLevelFeatureCollection,
+                                        "parent-source-" + level,
+                                        "parent-layer-" + level,
+                                        layerBelow,
+                                        colorResIds[counter % colorResIds.length],
+                                        showLabel
+                                );
+                            }
+                            counter++;
+                        }
+                    }
+
+                    if (adjacentOperationalAreas != null && !adjacentOperationalAreas.isEmpty()) {
+                        drawNeighbouringBoundary(style, adjacentOperationalAreas);
                     }
                 }
 
-                Map<String, String> featureToLayerMapping = new HashMap<>();
-
+                // IRS Lite OA Boundaries
                 if (!org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
-                    RevealApplication.getInstance().getAppExecutors().mainThread().execute(() -> {
-                        for (Feature feature : featureCollection.features()) {
-                            BoundaryLayer boundaryLayer = createIRSLiteOABoundaryLayer(feature);
-                            kujakuMapView.addLayer(boundaryLayer);
-                            featureToLayerMapping.put(boundaryLayer.getLayerIds()[0],feature.id());
+                    Map<String, String> featureToLayerMapping = new HashMap<>();
+                    for (Feature feature : featureCollection.features()) {
+                        drawIRSLiteOABoundaryLayer(style, feature);
+                        if (feature.id() != null) {
+                            featureToLayerMapping.put("irs-lite-layer-" + feature.id(), feature.id());
                         }
-                    });
+                    }
                 }
 
+                // Focus investigation layers
                 if (listTaskPresenter.getInterventionLabel() == R.string.focus_investigation && revealMapHelper.getIndexCaseLineLayer() == null) {
                     revealMapHelper.addIndexCaseLayers(mMapboxMap, getContext(), featureCollection);
                 } else {
                     revealMapHelper.updateIndexCaseLayers(mMapboxMap, featureCollection, this);
                 }
-                mMapboxMap.addOnCameraMoveListener(new MapboxMap.OnCameraMoveListener() {
-                    @Override
-                    public void onCameraMove() {
-                        final FeatureCollection lambdaFeatureCollection = featureCollection;
-                        final Map<String,String> lambdaFeatureToLayersMapping = featureToLayerMapping;
-                        if(mMapboxMap.getStyle()!= null) {
-                            if (mMapboxMap.getCameraPosition().zoom > getMaxZoomLevel()) {
-                                mMapboxMap.getStyle().getLayers().stream().forEach(layer -> {
 
-                                    Optional<Feature> feature = lambdaFeatureCollection.features().stream()
-                                            .filter(f -> f.id()
-                                                    .equals(lambdaFeatureToLayersMapping.get(layer.getId())))
-                                            .findAny();
-                                    if (feature.isPresent()) {
-                                        layer.setProperties(
-                                                PropertyFactory.textField(feature.get().getStringProperty("name")));
-                                    }
-                                });
-                            } else {
-                                mMapboxMap.getStyle().getLayers().stream()
-                                        .filter(layer -> lambdaFeatureToLayersMapping.containsKey(layer.getId()))
-                                        .forEach(layer -> layer.setProperties(PropertyFactory.textField("")));
-                            }
-                        }
-                    }
-                });
+                mMapboxMap.addOnCameraIdleListener(this::logZoomLevel);
             }
-        }
+        });
     }
 
-    private BoundaryLayer createBoundaryLayer(Feature operationalArea) {
-        return new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
-                                .setLabelColorInt(Color.WHITE)
-                                .setBoundaryColor(Color.YELLOW)
-                                .setBoundaryWidth(getResources().getDimension(R.dimen.operational_area_boundary_width)).build();
+private void logZoomLevel() {
+        double currentZoom = mMapboxMap.getCameraPosition().zoom;
+//        Timber.tag("batching").d("Current zoom level: %f", currentZoom);
     }
 
-    private BoundaryLayer createNeighbouringBoundaryLayer(List<Feature> operationalArea) {
-        return new BoundaryLayer.Builder(FeatureCollection.fromFeatures(operationalArea))
-                                .setLabelProperty(org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY)
-                                .setLabelColorInt(Color.WHITE)
-                                .setBoundaryColor(Color.WHITE)
-                                .setBoundaryWidth(getResources().getDimension(R.dimen.adjacent_operational_area_boundary_width)).build();
+
+
+    private LabelLayer createRcdLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("rcdCountKey")
+                .setLabelColorInt(Color.YELLOW)
+                .setTextOffSetTuple(new Float[]{0.5f,0f})
+                .build();
     }
 
-    private BoundaryLayer createIRSLiteOABoundaryLayer(Feature operationalArea) {
-         return   new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-                    .setLabelTextSize(getResources().getDimension(R.dimen.operational_area_boundary_text_size))
-                    .setLabelColorInt(Color.WHITE)
-                    .setBoundaryWidth(getResources().getDimension(R.dimen.irs_lite_operational_area_boundary_width)).build();
+    private LabelLayer createIndexCaseLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("indexCaseCountKey")
+                .setLabelColorInt(Color.CYAN)
+                .setTextOffSetTuple(new Float[]{-0.5f,0f})
+                .build();
     }
+
+    private LabelLayer createSecondaryIndexCaseLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("secondaryIndexCaseCountKey")
+                .setLabelColorInt(Color.BLUE)
+                .setTextOffSetTuple(new Float[]{-0.5f,1.0f})
+                .build();
+    }
+
+
+    private LabelLayer createHouseholdLabelLayer(FeatureCollection structures) {
+        return new LabelLayer.Builder(structures)
+                .setLabelProperty("isAHousehold")
+                .setLabelColorInt(Color.BLACK)
+                .build();
+    }
+
+
 
     @Override
     public void displayNotification(int title, int message, Object... formatArgs) {
@@ -801,8 +1058,8 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         } else if (cardDetails instanceof FamilyCardDetails) {
             cardDetailsUtil.populateFamilyCard((FamilyCardDetails) cardDetails, this);
             sprayCardView.setVisibility(View.VISIBLE);
-        } else if(cardDetails instanceof SurveyCardDetails){
-            cardDetailsUtil.populateSurveyCard((SurveyCardDetails) cardDetails,this);
+        } else if (cardDetails instanceof SurveyCardDetails) {
+            cardDetailsUtil.populateSurveyCard((SurveyCardDetails) cardDetails, this);
             sprayCardView.setVisibility(View.VISIBLE);
         }
     }
@@ -820,14 +1077,22 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         displaySelectedFeature(feature, point, mMapboxMap.getCameraPosition().zoom);
     }
 
-    @Override
-    public void displaySelectedFeature(Feature feature, LatLng clickedPoint, double zoomlevel) {
-        adjustFocusPoint(clickedPoint);
-        kujakuMapView.centerMap(clickedPoint, ANIMATE_TO_LOCATION_DURATION, zoomlevel);
-        if (selectedGeoJsonSource != null && org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure() ) {
-            selectedGeoJsonSource.setGeoJson(FeatureCollection.fromFeature(feature));
-        }
+
+@Override
+public void displaySelectedFeature(Feature feature, LatLng clickedPoint, double zoomlevel) {
+    adjustFocusPoint(clickedPoint);
+
+    if (mMapboxMap != null) {
+        mMapboxMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(clickedPoint, zoomlevel),
+                ANIMATE_TO_LOCATION_DURATION
+        );
     }
+
+    if (selectedGeoJsonSource != null && org.smartregister.reveal.util.Utils.isCurrentTargetLevelStructure()) {
+        selectedGeoJsonSource.setGeoJson(FeatureCollection.fromFeature(feature));
+    }
+}
 
     private void adjustFocusPoint(LatLng point) {
         int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
@@ -836,16 +1101,25 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         }
     }
 
-    @Override
-    public void clearSelectedFeature() {
-        if (selectedGeoJsonSource != null) {
-            try {
-                selectedGeoJsonSource.setGeoJson(new com.cocoahero.android.geojson.FeatureCollection().toJSON().toString());
-            } catch (JSONException e) {
-                Timber.e(e, "Error clearing selected feature");
-            }
-        }
+//    @Override
+//    public void clearSelectedFeature() {
+//        if (selectedGeoJsonSource != null) {
+//            try {
+//                selectedGeoJsonSource.setGeoJson(new com.cocoahero.android.geojson.FeatureCollection().toJSON().toString());
+//            } catch (JSONException e) {
+//                Timber.tag("Reveal Exception").w(e, "Error clearing selected feature");
+//            }
+//        }
+//    }
+@Override
+public void clearSelectedFeature() {
+    if (selectedGeoJsonSource != null) {
+        // Fixed: Use native Mapbox FeatureCollection with an empty list instead of Cocoahero
+        selectedGeoJsonSource.setGeoJson(
+                com.mapbox.geojson.FeatureCollection.fromFeatures(new java.util.ArrayList<>()).toJson()
+        );
     }
+}
 
     @Override
     public void displayToast(@StringRes int resourceId) {
@@ -854,11 +1128,16 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult requestCode=" + requestCode + " resultCode=" + resultCode + " hasRequestedLocation=" + hasRequestedLocation);
+
         if (requestCode == REQUEST_CODE_GET_JSON && resultCode == RESULT_OK && data.hasExtra(JSON_FORM_PARAM_JSON)) {
             String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
-            Timber.d(json);
+            Timber.tag("WriteValue").d("ListTasksActivity onActivityResult json %s",json);
             listTaskPresenter.saveJsonForm(json);
         } else if (requestCode == Constants.RequestCode.LOCATION_SETTINGS && hasRequestedLocation) {
+            Log.d(TAG, "LOCATION_SETTINGS branch reached, resultCode=" + resultCode);
+
             if (resultCode == RESULT_OK) {
                 listTaskPresenter.getLocationPresenter().waitForUserLocation();
             } else if (resultCode == RESULT_CANCELED) {
@@ -878,14 +1157,28 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         }
     }
 
+//    private void initializeProgressDialog() {
+//        progressDialog = new ProgressDialog(this);
+//        progressDialog.setCancelable(false);
+//        progressDialog.setTitle(R.string.fetching_structures_title);
+//        progressDialog.setMessage(getString(R.string.fetching_structures_message));
+//    }
+
     private void initializeProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setTitle(R.string.fetching_structures_title);
         progressDialog.setMessage(getString(R.string.fetching_structures_message));
+        progressDialog.setMax(100);
+        progressDialog.setProgress(0);
     }
-
-
+    @Override
+    public void updateProgressDialog(int percentage) {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.setProgress(percentage);
+        }
+    }
     @Override
     public void showProgressDialog(@StringRes int title, @StringRes int message) {
         showProgressDialog(title, message, new Object[0]);
@@ -911,17 +1204,60 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         }
     }
 
-    @Override
-    public Location getUserCurrentLocation() {
-        return kujakuMapView.getLocationClient() == null ? null : kujakuMapView.getLocationClient().getLastLocation();
+
+public Location getUserCurrentLocation() {
+    if (mMapboxMap == null) {
+        return null;
     }
+    LocationComponent locationComponent = mMapboxMap.getLocationComponent();
+    if (locationComponent != null && locationComponent.isLocationComponentActivated()) {
+        return locationComponent.getLastKnownLocation();
+    }
+    return null;
+}
+
 
     @Override
     public void requestUserLocation() {
-        kujakuMapView.setWarmGps(true, getString(R.string.location_service_disabled), getString(R.string.location_services_disabled_spray));
         hasRequestedLocation = true;
-    }
+        Log.d(TAG, "requestUserLocation called, alreadyGranted=" + PermissionsManager.areLocationPermissionsGranted(this));
 
+        if (!PermissionsManager.areLocationPermissionsGranted(this)) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    },
+                    REQUEST_CODE_LOCATION_PERMISSION
+            );
+            return;
+        }
+
+        // 2. Enable location component if permissions are granted
+        if (mMapboxMap != null) {
+            mMapboxMap.getStyle(style -> {
+                LocationComponent locationComponent = mMapboxMap.getLocationComponent();
+                if (locationComponent != null) {
+                    if (!locationComponent.isLocationComponentActivated()) {
+                        LocationComponentActivationOptions options = LocationComponentActivationOptions
+                                .builder(this, style)
+                                .useDefaultLocationEngine(true)
+                                .build();
+                        locationComponent.activateLocationComponent(options);
+                    }
+
+                    try {
+                        locationComponent.setLocationComponentEnabled(true);
+                        locationComponent.setCameraMode(CameraMode.TRACKING);
+                        locationComponent.setRenderMode(RenderMode.COMPASS);
+                    } catch (SecurityException e) {
+                        Log.e(TAG, "SecurityException enabling location component", e);
+                    }
+                }
+            });
+        }
+    }
     @Override
     public Context getContext() {
         return this;
@@ -942,7 +1278,28 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         }
         toggleProgressBarView(true);
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Location permission granted by user.");
+                requestUserLocation();
+            } else {
+                Log.w(TAG, "Location permission denied by user.");
+                Toast.makeText(this, R.string.location_service_disabled, Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CODE_STORAGE_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Storage permission granted by user.");
+                // whatever storage-dependent action was waiting, run it here
+            } else {
+                Log.w(TAG, "Storage permission denied by user.");
+                Toast.makeText(this, "Storage permission is required", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
         if (FetchStatus.fetched.equals(fetchStatus)) {
@@ -975,9 +1332,15 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void onResume() {
+
         super.onResume();
+        if (mapView != null) {
+            mapView.onResume(); // 👈 Resumes Mapbox OpenGL rendering surface
+        }
         formOpening = false;
+
         SyncStatusBroadcastReceiver.getInstance().addSyncStatusListener(this);
+        Log.d("SYNC_TRACE_RVL", "LISTENER_REGISTERED t=" + System.currentTimeMillis());
         ValidateAssignmentReceiver.getInstance().addListener(this);
         IntentFilter filter = new IntentFilter(Action.STRUCTURE_TASK_SYNCED);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(refreshGeowidgetReceiver, filter);
@@ -993,6 +1356,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void onPause() {
+        if (mapView != null) {
+            mapView.onPause(); // 👈 Pauses rendering safely
+        }
         SyncStatusBroadcastReceiver.getInstance().removeSyncStatusListener(this);
         ValidateAssignmentReceiver.getInstance().removeLister(this);
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(refreshGeowidgetReceiver);
@@ -1016,10 +1382,26 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         return jsonFormUtils;
     }
 
-    @Override
-    public void focusOnUserLocation(boolean focusOnUserLocation) {
-        kujakuMapView.focusOnUserLocation(focusOnUserLocation, RenderMode.COMPASS);
+//    @Override
+//    public void focusOnUserLocation(boolean focusOnUserLocation) {
+//        kujakuMapView.focusOnUserLocation(focusOnUserLocation, RenderMode.COMPASS);
+//    }
+@Override
+public void focusOnUserLocation(boolean focusOnUserLocation) {
+    if (mMapboxMap != null) {
+        mMapboxMap.getStyle(style -> {
+            LocationComponent locationComponent = mMapboxMap.getLocationComponent();
+            if (locationComponent.isLocationComponentActivated()) {
+                if (focusOnUserLocation) {
+                    locationComponent.setCameraMode(CameraMode.TRACKING_COMPASS);
+                    locationComponent.setRenderMode(RenderMode.COMPASS);
+                } else {
+                    locationComponent.setCameraMode(CameraMode.NONE);
+                }
+            }
+        });
     }
+}
 
     @Override
     public boolean isMyLocationComponentActive() {
@@ -1047,7 +1429,7 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == BUTTON_POSITIVE) {
                             listTaskPresenter.onEditCDDTaskCompleteStatusConfirmed(true);
-                        } else  {
+                        } else {
                             listTaskPresenter.onEditCDDTaskCompleteStatusConfirmed(false);
                         }
                         dialog.dismiss();
@@ -1085,52 +1467,101 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
 
     @Override
     public void onSyncProgress(SyncProgress syncProgress) {
+
         int progress = syncProgress.getPercentageSynced();
         String entity = getSyncEntityString(syncProgress.getSyncEntity());
-        if(syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)){
+
+        Timber.tag("SecureStore").i("entity %s progress %s",entity,progress);
+//        if (syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)) {
+//            ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
+//            TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
+//            String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
+//            syncProgressBar.setProgress(progress);
+//            syncProgressBarLabel.setText(labelText);
+//            if (progress == 100) {
+//                PreferencesUtil.getInstance().setAllLocationsSynced(true);
+//            } else {
+//                PreferencesUtil.getInstance().setAllLocationsSynced(false);
+//            }
+//
+//        }
+        if (syncProgress.getSyncEntity().equals(SyncEntity.LOCATIONS)) {
             ProgressBar syncProgressBar = findViewById(R.id.location_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.location_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
-            if(progress == 100){
-                 PreferencesUtil.getInstance().setAllLocationsSynced(true);
-            } else  {
+
+            updateProgressDialog(progress); // 👈 add this line
+
+            if (progress == 100) {
+                PreferencesUtil.getInstance().setAllLocationsSynced(true);
+            } else {
                 PreferencesUtil.getInstance().setAllLocationsSynced(false);
             }
-
-        } else if(syncProgress.getSyncEntity().equals(SyncEntity.TASKS)){
+        }
+        else if (syncProgress.getSyncEntity().equals(SyncEntity.TASKS)) {
             ProgressBar syncProgressBar = findViewById(R.id.task_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.task_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
-            if(progress == 100){
+            if (progress == 100) {
                 PreferencesUtil.getInstance().setAllTasksSynced(true);
             } else {
                 PreferencesUtil.getInstance().setAllTasksSynced(false);
             }
-        } else if(syncProgress.getSyncEntity().equals(SyncEntity.PLANS)){
+        } else if (syncProgress.getSyncEntity().equals(SyncEntity.PLANS)) {
             ProgressBar syncProgressBar = findViewById(R.id.plan_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.plan_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
-            if(progress == 100){
+            if (progress == 100) {
                 PreferencesUtil.getInstance().setAllPlansSynced(true);
-            }else {
+            } else {
                 PreferencesUtil.getInstance().setAllPlansSynced(false);
             }
-        } else if(syncProgress.getSyncEntity().equals(SyncEntity.EVENTS)){
+        } else if (syncProgress.getSyncEntity().equals(SyncEntity.EVENTS)) {
             ProgressBar syncProgressBar = findViewById(R.id.event_sync_progress_bar);
             TextView syncProgressBarLabel = findViewById(R.id.event_sync_progress_bar_label);
             String labelText = String.format(getResources().getString(R.string.progressBarLabel), entity, progress);
             syncProgressBar.setProgress(progress);
             syncProgressBarLabel.setText(labelText);
-            if(progress == 100){
+            if (progress == 100) {
                 PreferencesUtil.getInstance().setAllEventsSynced(true);
             } else {
                 PreferencesUtil.getInstance().setAllEventsSynced(false);
+            }
+        } else if(syncProgress.getSyncEntity().equals(SyncEntity.HDSS)
+            || syncProgress.getSyncEntity().equals(SyncEntity.HDSS_OFFLINE)
+            || syncProgress.getSyncEntity().equals(SyncEntity.HDSS_FILE)){
+            ProgressBar syncProgressBar = findViewById(R.id.hdss_sync_progress_bar);
+            TextView syncProgressBarLabel = findViewById(R.id.hdss_sync_progress_bar_label);
+
+            String prefix = "";
+            switch (syncProgress.getSyncEntity()){
+                case HDSS:
+                    prefix = "";
+                    break;
+                case HDSS_OFFLINE:
+                    prefix = "Processing Data Offline: ";
+                    break;
+                case HDSS_FILE:
+                    prefix = "Fetching Bulk Data: ";
+                    break;
+                default:
+                    prefix = "";
+            }
+            String labelText =
+                prefix.concat(String.format(getResources().getString(R.string.progressBarLabel), entity, progress));
+
+            syncProgressBar.setProgress(progress);
+            syncProgressBarLabel.setText(labelText);
+            if (progress == 100) {
+                PreferencesUtil.getInstance().setAllHdssSynced(true);
+            } else {
+                PreferencesUtil.getInstance().setAllHdssSynced(false);
             }
         }
 
@@ -1143,17 +1574,67 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         drawerView.onResume();
     }
 
-    private class RefreshGeowidgetReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-            boolean localSyncDone;
-            if (extras != null && extras.getBoolean(UPDATE_LOCATION_BUFFER_RADIUS)) {
-                float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure()) / getPixelsPerDPI(getResources());
-                kujakuMapView.setLocationBufferRadius(bufferRadius);
+
+private class RefreshGeowidgetReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Bundle extras = intent.getExtras();
+        boolean localSyncDone;
+        if (extras != null && extras.getBoolean(UPDATE_LOCATION_BUFFER_RADIUS)) {
+            float bufferRadius = getLocationBuffer(isCurrentTargetLevelStructure());
+
+            Location currentLocation = getLastKnownLocation();
+            if (mMapboxMap != null && currentLocation != null) {
+                mMapboxMap.getStyle(style -> {
+                    LatLng userLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    updateLocationBufferCircle(style, userLatLng, bufferRadius);
+                });
             }
-            localSyncDone = extras != null && extras.getBoolean(LOCAL_SYNC_DONE);
-            listTaskPresenter.refreshStructures(localSyncDone);
+        }
+        localSyncDone = extras != null && extras.getBoolean(LOCAL_SYNC_DONE);
+        listTaskPresenter.refreshStructures(localSyncDone);
+    }
+}
+    @Nullable
+    private Location getLastKnownLocation() {
+        if (mMapboxMap != null) {
+            LocationComponent locationComponent = mMapboxMap.getLocationComponent();
+            if (locationComponent != null && locationComponent.isLocationComponentActivated()) {
+                return locationComponent.getLastKnownLocation();
+            }
+        }
+        return null;
+    }
+    private void updateLocationBufferCircle(@NonNull Style style, LatLng center, float radiusInMeters) {
+        // 1. Generate a circular polygon using Mapbox Turf
+        Point centerPoint = Point.fromLngLat(center.getLongitude(), center.getLatitude());
+        Polygon circlePolygon = TurfTransformation.circle(centerPoint, radiusInMeters, "meters");
+
+        FeatureCollection featureCollection = FeatureCollection.fromFeature(Feature.fromGeometry(circlePolygon));
+
+        // 2. Add or update GeoJsonSource
+        GeoJsonSource source = style.getSourceAs("location-buffer-source");
+        if (source == null) {
+            source = new GeoJsonSource("location-buffer-source", featureCollection);
+            style.addSource(source);
+
+            // Fill Layer for buffer
+            FillLayer fillLayer = new FillLayer("location-buffer-fill", "location-buffer-source");
+            fillLayer.setProperties(
+                    PropertyFactory.fillColor(ContextCompat.getColor(getContext(), R.color.colorAccent)),
+                    PropertyFactory.fillOpacity(0.2f)
+            );
+            style.addLayer(fillLayer);
+
+            // Line Layer for buffer boundary
+            LineLayer lineLayer = new LineLayer("location-buffer-line", "location-buffer-source");
+            lineLayer.setProperties(
+                    PropertyFactory.lineColor(ContextCompat.getColor(getContext(), R.color.colorAccent)),
+                    PropertyFactory.lineWidth(1.5f)
+            );
+            style.addLayer(lineLayer);
+        } else {
+            source.setGeoJson(featureCollection);
         }
     }
 
@@ -1180,4 +1661,181 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         overallSyncProgressView.setProgress(totalSyncProgress);
         PreferencesUtil.getInstance().setCurrentTotalSyncProgress(String.valueOf(totalSyncProgress));
     }
+
+    //methods added by moid
+    private void addOrUpdateBoundaryLayers(
+            @NonNull Style style,
+            @NonNull FeatureCollection featureCollection,
+            @NonNull String sourceId,
+            @NonNull String layerIdPrefix,
+            int boundaryColor,
+            float boundaryWidth,
+            String labelProperty,
+            String layerBelow
+    ) {
+        // 1. Source creation or update
+        GeoJsonSource source = style.getSourceAs(sourceId);
+        if (source == null) {
+            source = new GeoJsonSource(sourceId, featureCollection);
+            style.addSource(source);
+        } else {
+            source.setGeoJson(featureCollection);
+        }
+
+        String fillLayerId = layerIdPrefix + "-fill";
+        String lineLayerId = layerIdPrefix + "-line";
+        String symbolLayerId = layerIdPrefix + "-symbol";
+
+        // 2. Fill Layer (Semi-transparent background for polygon interaction)
+        if (style.getLayer(fillLayerId) == null) {
+            FillLayer fillLayer = new FillLayer(fillLayerId, sourceId);
+            fillLayer.setProperties(
+                    fillColor(boundaryColor),
+                    fillOpacity(0.15f)
+            );
+            if (layerBelow != null && style.getLayer(layerBelow) != null) {
+                style.addLayerBelow(fillLayer, layerBelow);
+            } else {
+                style.addLayer(fillLayer);
+            }
+        }
+
+        // 3. Line Layer (Boundary outline)
+        if (style.getLayer(lineLayerId) == null) {
+            LineLayer lineLayer = new LineLayer(lineLayerId, sourceId);
+            lineLayer.setProperties(
+                    lineColor(boundaryColor),
+                    lineWidth(boundaryWidth)
+            );
+            if (layerBelow != null && style.getLayer(layerBelow) != null) {
+                style.addLayerBelow(lineLayer, layerBelow);
+            } else {
+                style.addLayer(lineLayer);
+            }
+        }
+
+        // 4. Symbol Layer (Optional text label)
+        if (labelProperty != null && style.getLayer(symbolLayerId) == null) {
+            SymbolLayer symbolLayer = new SymbolLayer(symbolLayerId, sourceId);
+            symbolLayer.setProperties(
+                    textField("{" + labelProperty + "}"),
+                    textColor(Color.WHITE),
+                    textSize(12f),
+                    textIgnorePlacement(true),
+                    textAllowOverlap(true)
+            );
+            style.addLayer(symbolLayer);
+        }
+    }
+    private void drawBoundaryFromFeatureCollection(Style style, FeatureCollection operationalArea) {
+        addOrUpdateBoundaryLayers(
+                style,
+                operationalArea,
+                "operational-area-source",
+                "operational-area-layer",
+                Color.YELLOW,
+                getResources().getDimension(R.dimen.operational_area_boundary_width_thick),
+                org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY,
+                null
+        );
+    }
+
+    private void drawBoundary(Style style, Feature operationalArea) {
+        drawBoundaryFromFeatureCollection(style, FeatureCollection.fromFeature(operationalArea));
+    }
+
+
+
+    private void drawParentBoundaryFromFeatureCollectionWithColor(Style style, FeatureCollection operationalArea, String sourceId, String layerIdPrefix, String layerBelow, int boundaryColorRes, boolean showLabel) {
+        addOrUpdateBoundaryLayers(
+                style,
+                operationalArea,
+                sourceId,
+                layerIdPrefix,
+                getResources().getColor(boundaryColorRes, null),
+                getResources().getDimension(R.dimen.operational_area_boundary_width),
+                showLabel ? org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY : null,
+                layerBelow
+        );
+    }
+
+    private void drawNeighbouringBoundary(Style style, List<Feature> operationalArea) {
+        addOrUpdateBoundaryLayers(
+                style,
+                FeatureCollection.fromFeatures(operationalArea),
+                "neighbouring-area-source",
+                "neighbouring-area-layer",
+                Color.WHITE,
+                getResources().getDimension(R.dimen.adjacent_operational_area_boundary_width),
+                org.smartregister.reveal.util.Constants.Map.NAME_PROPERTY,
+                null
+        );
+    }
+
+    private void drawIRSLiteOABoundaryLayer(Style style, Feature operationalArea) {
+        addOrUpdateBoundaryLayers(
+                style,
+                FeatureCollection.fromFeature(operationalArea),
+                "irs-lite-source-" + operationalArea.id(),
+                "irs-lite-layer-" + operationalArea.id(),
+                Color.WHITE,
+                getResources().getDimension(R.dimen.irs_lite_operational_area_boundary_width),
+                null,
+                null
+        );
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mapView != null) mapView.onStart();
+        if (!PermissionsManager.areLocationPermissionsGranted(this)) {
+            Log.d(TAG, "onStart: location permission not granted, requesting.");
+            listTaskPresenter.getLocationPresenter().requestUserLocation();
+        }
+    }
+
+
+    private void requestStoragePermission() {
+        boolean granted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+
+        Log.d(TAG, "requestStoragePermission called, alreadyGranted=" + granted);
+
+        if (!granted) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    REQUEST_CODE_STORAGE_PERMISSION
+            );
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mapView != null) mapView.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mapView != null) mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null) mapView.onLowMemory();
+    }
+
+
+
 }

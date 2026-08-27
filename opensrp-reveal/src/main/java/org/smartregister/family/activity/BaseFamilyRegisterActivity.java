@@ -38,7 +38,7 @@ public abstract class BaseFamilyRegisterActivity extends BaseRegisterActivity im
                 presenter().startForm(formName, entityId, metaData, locationId);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             displayToast(getString(R.string.error_unable_to_start_form));
         }
     }
@@ -71,7 +71,7 @@ public abstract class BaseFamilyRegisterActivity extends BaseRegisterActivity im
                     presenter().saveForm(jsonString, false);
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
 
         }
@@ -115,7 +115,7 @@ public abstract class BaseFamilyRegisterActivity extends BaseRegisterActivity im
         try {
             super.onDestroy();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 }

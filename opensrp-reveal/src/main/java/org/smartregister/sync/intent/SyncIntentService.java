@@ -17,6 +17,7 @@ import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.util.Pair;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -39,10 +40,13 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.job.HdssServiceJob;
+import org.smartregister.job.SyncServiceJob;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.sync.helper.ValidateAssignmentHelper;
@@ -103,6 +107,13 @@ public class SyncIntentService extends BaseSyncIntentService {
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
 
         doSync();
+
+        (new AppExecutors()).mainThread().execute(new Runnable() {
+            @Override
+            public void run() {
+                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+            }
+        });
     }
 
     private void doSync() {
@@ -128,9 +139,12 @@ public class SyncIntentService extends BaseSyncIntentService {
                 }
             } else {
                 pullECFromServer();
+
+
+
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             complete(FetchStatus.fetchedFailed);
         }
     }
@@ -140,9 +154,11 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     private synchronized void fetchRetry(final int count, boolean returnCount) {
+        Log.d("SYNC_TRACE_RVL", "FETCH_RETRY_START t=" + System.currentTimeMillis() + " count=" + count);
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
+                Log.w("SYNC_TRACE_RVL", "FETCH_RETRY_BLANK_FILTER_FAIL t=" + System.currentTimeMillis());
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -199,7 +215,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             processFetchedEvents(resp, ecSyncUpdater, count);
 
         } catch (Exception e) {
-            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
+            Timber.tag("Reveal Exception").w(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
@@ -262,7 +278,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
-            Timber.e(e, "Process Client Exception: %s", e.getMessage());
+            Timber.tag("Reveal Exception").w(e, "Process Client Exception: %s", e.getMessage());
         }
     }
 
@@ -306,7 +322,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
             String jsonPayload = request.toString();
             startEventTrace(PUSH, eventsUploadedCount);
@@ -316,7 +332,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                             EVENT_ADD_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Timber.e("Events sync failed.");
+                Timber.tag("Reveal Exception").w("Events sync failed.");
                 isSuccessfulPushSync = false;
             } else {
                 db.markEventsAsSynced(pendingEvents);
@@ -402,7 +418,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -415,7 +431,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 count = jsonObject.getInt(NO_OF_EVENTS);
             }
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return count;
     }

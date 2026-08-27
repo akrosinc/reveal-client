@@ -121,7 +121,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
                     incompleteIndexCase = readTaskDetails(cursor);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error querying tasks for " + structureId);
+                Timber.tag("Reveal Exception").w(e, "Error querying tasks for " + structureId);
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -196,7 +196,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
                 });
 
             } catch (SQLException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -226,7 +226,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
                 return eventClientRepository.convert(eventJSON, Event.class);
             }
         } catch (SQLException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -264,7 +264,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
                     summary.setChildrenTreated(cursor.getInt(0));
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error find Number of members ");
+                Timber.tag("Reveal Exception").w(e, "Error find Number of members ");
             }
 
             // Get the total number of doses administered
@@ -282,7 +282,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
 
                                 summary.setAdditionalDosesAdministered(summary.getAdditionalDosesAdministered() + number);
                             } catch (Exception e) {
-                                Timber.e(e, "Error find Number of members ");
+                                Timber.tag("Reveal Exception").w(e, "Error find Number of members ");
                             }
                         }
                     }
@@ -321,7 +321,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
             }
 
         } catch (Exception e) {
-            Timber.e(e, "Error querying events counts ");
+            Timber.tag("Reveal Exception").w(e, "Error querying events counts ");
         } finally {
             if (eventsPerTask != null) {
                 eventsPerTask.close();
@@ -353,7 +353,7 @@ public class StructureTasksInteractor extends BaseInteractor implements Structur
                 task.setPersonTested(personTested.simpleQueryForString());
             }
         } catch (SQLException e) {
-            Timber.e(e, "Error querying person tested values ");
+            Timber.tag("Reveal Exception").w(e, "Error querying person tested values ");
         } finally {
             if (personTestWithEdits != null) {
                 personTestWithEdits.close();

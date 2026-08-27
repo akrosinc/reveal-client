@@ -46,7 +46,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
             DocumentConfigurationService documentConfigurationService = getDocumentConfigurationService();
             documentConfigurationService.fetchManifest();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

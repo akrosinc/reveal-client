@@ -59,6 +59,8 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
 
+
+
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.black)));

@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
 import com.vijay.jsonwizard.activities.JsonWizardFormActivity;
-
 import org.json.JSONObject;
 import org.smartregister.reveal.R;
 import org.smartregister.family.util.Constants;
@@ -41,7 +40,7 @@ public class FamilyWizardFormActivity extends JsonWizardFormActivity {
                 this.setConfirmCloseMessage(this.getString(R.string.any_changes_you_make));
             }
         } catch (Exception e) {
-            Timber.e(e.toString());
+            Timber.tag("Reveal Exception").w(e.toString());
         }
     }
 

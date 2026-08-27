@@ -173,7 +173,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_base_url_missing_error));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
         }
     }
@@ -260,7 +260,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 }
 
             } catch (JSONException e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
 
             }
         }

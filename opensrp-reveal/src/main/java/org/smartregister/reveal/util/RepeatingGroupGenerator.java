@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import timber.log.Timber;
 
 /**
  * Generates a repeating group fields and loads then to form
@@ -66,17 +67,27 @@ public class RepeatingGroupGenerator {
             if (key.equals(repeatingGroupKey)) {
                 pos = i;
                 repeatingGrpValues = field.optJSONArray(JsonFormConstants.VALUE);
+//                Timber.tag("WriteValue").i("repeatingGrpValues = %s", repeatingGrpValues);
                 break;
             }
         }
 
         updateGroupValue(repeatingGrpValues, stepFields, pos);
+//        Timber.tag("WriteValue").i("storedValues = %s", storedValues);
+
     }
 
     private void updateGroupValue(JSONArray repeatingGrpValues, JSONArray stepFields, int pos) throws JSONException {
+//        Timber.tag("WriteValue").i("updateGroupValue called. repeatingGrpValues=%s stepFields=%s pos=%s",
+//            repeatingGrpValues.length(),
+//            stepFields.length(),
+//            pos);
+
         int mPos = pos;
         for (Map<String, String> entryMap : storedValues) {
             baseEntityId = entryMap.get(uniqueKeyField);
+
+//            Timber.tag("WriteValue").i("baseEntityId=%s", baseEntityId);
             if (baseEntityId != null) {
                 String baseEntityIdModified = baseEntityId.replaceAll("-", "");
                 for (int i = 0; i < repeatingGrpValues.length(); i++) {
@@ -101,10 +112,26 @@ public class RepeatingGroupGenerator {
 
                     updateField(repeatingGrpField, entryMap);
                     repeatingGrpField.put(JsonFormConstants.KEY, repeatingGrpFieldKey + "_" + baseEntityIdModified);
+
+//                    Timber.tag("WriteValue").i(
+//                        "generated key=%s relevance=%s",
+//                        repeatingGrpField.optString(JsonFormConstants.KEY),
+//                        repeatingGrpField.optJSONObject(JsonFormConstants.RELEVANCE)
+//                    );
+
                     stepFields.put(++mPos, repeatingGrpField);
+
+                    Timber.tag("WriteValue").i(
+                        "field=%s contains=%s value=%s",
+                        repeatingGrpFieldKey,
+                        entryMap.containsKey(repeatingGrpFieldKey),
+                        entryMap.get(repeatingGrpFieldKey)
+                    );
                 }
             }
         }
+//        Timber.tag("WriteValue").i("stepFields length after generation=%s",
+//            stepFields.length());
     }
 
     /**
@@ -157,7 +184,7 @@ public class RepeatingGroupGenerator {
 //                relativeMaxValidator.put(JsonFormConstants.VALUE, newRelativeMaxValidatorValue);
 //            }
 //        } catch (JSONException e) {
-//            Timber.e(e);
+//            Timber.tag("Reveal Exception").w(e);
 //        }
 //    }
 

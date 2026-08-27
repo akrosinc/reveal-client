@@ -8,10 +8,12 @@ import com.evernote.android.job.JobCreator;
 
 import org.smartregister.job.DocumentConfigurationServiceJob;
 import org.smartregister.job.ExtendedSyncServiceJob;
+import org.smartregister.job.HdssServiceJob;
 import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.ValidateSyncDataServiceJob;
 import org.smartregister.reveal.sync.RevealSyncIntentService;
+import org.smartregister.sync.helper.HdssServiceHelper;
 import org.smartregister.sync.intent.DocumentConfigurationIntentService;
 
 import timber.log.Timber;
@@ -38,6 +40,8 @@ public class RevealJobCreator implements JobCreator {
                 return new DocumentConfigurationServiceJob(DocumentConfigurationIntentService.class);
             case P2pServiceJob.TAG:
                 return new P2pServiceJob();
+            case HdssServiceJob.TAG:
+                return new HdssServiceJob();
             default:
                 Timber.w(tag + " is not declared in RevealJobCreator Job Creator");
                 return null;

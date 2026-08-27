@@ -237,7 +237,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
      * TasksModel takes care of calling this on the main thread.
      */
     public void replicationError() {
-        Timber.e(LOG_TAG, "error()");
+        Timber.tag("Reveal Exception").w(LOG_TAG, "error()");
         //Toast.makeText(getApplicationContext(), "Replication Error", Toast.LENGTH_LONG).show();
     }
 
@@ -324,7 +324,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
                 unregisterReceiver(openSRPClientBroadCastReceiver);
                 openSRPClientBroadCastReceiver = null;
             } catch (IllegalArgumentException e) {
-                Timber.e(e, "EXCEPTION %s", e.toString());
+                Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
             }
         }
 

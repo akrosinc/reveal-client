@@ -10,7 +10,7 @@
     android:paddingTop="8dp"
     android:paddingBottom="8dp">
 
-    <ImageView
+    <android.widget.ImageView
         android:id="@+id/drawerMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/sync_badge"
         android:layout_width="16dp"
         android:layout_height="16dp"
@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/menu_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/drawerMenu" />
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/intervention_type"
         style="@style/CustomFontTextViewStyle.NavBar.Black"
         android:layout_width="0dip"

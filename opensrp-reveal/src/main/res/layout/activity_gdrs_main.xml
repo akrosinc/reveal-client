@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <com.google.android.material.appbar.MaterialToolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/accent"
+      app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+      app:title="My Actions List">
+
+        <android.widget.RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+            <!-- Existing Left TextView -->
+            <android.widget.TextView
+              android:id="@+id/textViewLeft"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Left Text"
+              android:textSize="20dp"
+              android:textColor="@android:color/white"
+              android:layout_alignParentStart="true"
+              android:layout_alignParentTop="true"
+              />
+
+            <!-- Center TextView aligned on the same horizontal axis -->
+            <android.widget.TextView
+              android:id="@+id/textViewCenter"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Center Text"
+              android:textColor="@android:color/white"
+              android:layout_alignParentTop="true"
+              android:layout_centerInParent="true"
+              android:layout_alignBaseline="@id/textViewLeft"/>
+
+            <!-- New TextView below existing ones, spanning the entire width -->
+
+
+        </android.widget.RelativeLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <android.widget.LinearLayout
+      android:id="@+id/householdsLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/toolbar"
+      android:orientation="horizontal"
+      android:layout_marginTop="0dp">
+
+    <!-- Label for Households -->
+    <android.widget.TextView
+      android:id="@+id/householdsLabel"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:text="Households"
+      android:textColor="@android:color/white"
+      android:textSize="14sp"
+      android:layout_alignParentStart="true"
+      android:paddingEnd="8dp"
+      android:paddingLeft="6dp"
+      android:background="@color/accent"
+      android:gravity="start|center_vertical" />
+    <android.widget.TextView
+      android:id="@+id/textViewBottom"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="This is a new text view below the toolbar content"
+      android:textColor="@android:color/white"
+      android:textSize="14sp"
+      android:gravity="center"
+      android:layout_marginTop="0dp"
+      android:lineSpacingExtra="4dp"
+      android:scrollHorizontally="false"
+      android:breakStrategy="simple"
+      android:ellipsize="end"
+      android:background="@color/accent"
+    />
+    </android.widget.LinearLayout>
+    <android.widget.RelativeLayout
+      android:id="@+id/searchLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/householdsLayout"
+      android:layout_marginTop="8dp">
+
+        <!-- EditText for search input -->
+        <include layout="@layout/recyclerview_search_filter" />
+
+
+    </android.widget.RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchLayout"
+        android:layout_marginTop="16dp"/>
+    <android.widget.LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+        android:layout_centerInParent="true"
+
+      android:gravity="center"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+      android:background="#66000000">
+        <android.widget.TextView
+            android:id="@+id/loadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Loading Tasks..."
+            android:textColor="@android:color/black"
+            android:visibility="visible"/>
+    <ProgressBar
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible"/>
+
+
+    </android.widget.LinearLayout>
+</android.widget.RelativeLayout>

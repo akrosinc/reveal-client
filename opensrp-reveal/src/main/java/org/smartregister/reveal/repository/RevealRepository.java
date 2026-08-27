@@ -40,9 +40,11 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ClientRelationshipRepository;
+import org.smartregister.repository.DBPullRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.EventClientRepository.client_column;
 import org.smartregister.repository.EventClientRepository.event_column;
+import org.smartregister.repository.InterventionAdditionalDetailsRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -84,6 +86,8 @@ public class RevealRepository extends Repository {
         TaskRepository.createTable(database);
         LocationRepository.createTable(database);
         StructureRepository.createTable(database);
+        DBPullRepository.createTable(database);
+        InterventionAdditionalDetailsRepository.createTable(database);
 
         onUpgrade(database, 1, BuildConfig.DATABASE_VERSION);
     }
@@ -283,7 +287,7 @@ public class RevealRepository extends Repository {
             }
             return readableDatabase;
         } catch (Exception e) {
-            Timber.e(e, "Database Error. ");
+            Timber.tag("Reveal Exception").w(e, "Database Error. ");
             return null;
         }
 

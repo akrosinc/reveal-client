@@ -82,7 +82,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || StringUtils.isBlank(response.payload())) {
-                Timber.e("Validation sync failed.");
+                Timber.tag("Reveal Exception").w("Validation sync failed.");
                 return;
             }
 
@@ -115,7 +115,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
             }
 
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -171,7 +171,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }

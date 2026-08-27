@@ -61,7 +61,7 @@ public class TaskNotesRepository extends BaseRepository {
                 notes.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null)
                 cursor.close();

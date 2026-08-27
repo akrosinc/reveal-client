@@ -96,9 +96,9 @@ public class TaskUtils {
         PlanDefinition currentPlan = planRepository.findPlanDefinitionById(prefsUtil.getCurrentPlanId());
         if (currentPlan != null && currentPlan.getActions() != null) {
             for (Action action : currentPlan.getActions()) {
-                if (intervention.equals(action.getCode())) {
+                if (intervention.equals(action.getTitle())) {
                     task.setFocus(action.getIdentifier());
-                    continue;
+                    break;
                 }
             }
         }
@@ -113,6 +113,41 @@ public class TaskUtils {
         task.setSyncStatus(BaseRepository.TYPE_Created);
         taskRepository.addOrUpdate(task);
         revealApplication.setSynced(false);
+        return task;
+    }
+
+    public Task generateTaskWithGroupName(Context context, String entityId, String structureId, String businessStatus, String intervention, @StringRes int description, String groupName) {
+        Task task = new Task();
+        DateTime now = new DateTime();
+        task.setIdentifier(UUID.randomUUID().toString());
+        task.setPlanIdentifier(prefsUtil.getCurrentPlanId());
+        task.setGroupIdentifier(Utils.getOperationalAreaLocation(groupName).getId());
+        task.setStatus(READY);
+        task.setBusinessStatus(businessStatus);
+        task.setPriority(Task.TaskPriority.ROUTINE);
+        task.setCode(intervention);
+        task.setDescription(context.getString(description));
+        PlanDefinition currentPlan = planRepository.findPlanDefinitionById(prefsUtil.getCurrentPlanId());
+        if (currentPlan != null && currentPlan.getActions() != null) {
+            for (Action action : currentPlan.getActions()) {
+                if (intervention.equals(action.getTitle())) {
+                    task.setFocus(action.getIdentifier());
+                    break;
+                }
+            }
+        }
+        task.setForEntity(entityId);
+        task.setStructureId(structureId);
+        Period period= new Period();
+        period.setStart(now);
+        task.setExecutionPeriod(period);
+        task.setAuthoredOn(now);
+        task.setLastModified(now);
+        task.setOwner(sharedPreferences.fetchRegisteredANM());
+        task.setSyncStatus(BaseRepository.TYPE_Created);
+        taskRepository.addOrUpdate(task);
+        revealApplication.setSynced(false);
+
         return task;
     }
 
@@ -202,7 +237,7 @@ public class TaskUtils {
 
             taskResetSuccessful = true;
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return taskResetSuccessful;

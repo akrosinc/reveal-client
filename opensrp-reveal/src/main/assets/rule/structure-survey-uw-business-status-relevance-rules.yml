@@ -1,0 +1,21 @@
+---
+name: step1_roundone
+description: step1_roundone
+priority: 1
+condition: '(step1_business_status.equals("enrolled") && revealhelper.getTodaysDateInMillis() >= revealhelper.getDateInMillis(step1_round_one_threshold)) || (step1_business_status.equals("round_one") || step1_business_status.equals("round_two") || step1_business_status.equals("round_three") || step1_business_status.equals("round_one_refused") || step1_business_status.equals("round_two_refused") || step1_business_status.equals("round_three_refused"))'
+actions:
+ - "isRelevant = true"
+---
+name: step1_roundtwo
+description: step1_roundtwo
+priority: 1
+condition: '(step1_business_status.equals("round_one") &&  revealhelper.getTodaysDateInMillis() >= revealhelper.getDateInMillis(step1_round_two_threshold)) || (step1_business_status.equals("round_two") || step1_business_status.equals("round_three") || step1_business_status.equals("round_two_refused") || step1_business_status.equals("round_three_refused"))'
+actions:
+ - "isRelevant = true"
+---
+name: step1_roundthree
+description: step1_roundthree
+priority: 1
+condition: '(step1_business_status.equals("round_two") && revealhelper.getTodaysDateInMillis() >= revealhelper.getDateInMillis(step1_round_three_threshold)) || step1_business_status.equals("round_three") || step1_business_status.equals("round_three_refused")'
+actions:
+ - "isRelevant = true"

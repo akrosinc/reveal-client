@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/search_box_text"
+    android:orientation="vertical">
+
+    <android.widget.LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <android.widget.TextView
+            android:id="@+id/header_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Header" />
+        <org.smartregister.reveal.view.RevealMapView
+            android:id="@+id/geoWidgetMapView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:mapbox_uiRotateGestures="false" />
+
+<!--    <org.smartregister.reveal.view.RevealMapView-->
+<!--        xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--        android:id="@+id/geoWidgetMapView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:paddingBottom="3dp"-->
+<!--        app:locationClient="android_gps_client"-->
+<!--        app:mapbox_uiRotateGestures="false" />-->
+    </android.widget.LinearLayout>
+</android.widget.LinearLayout>

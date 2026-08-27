@@ -146,10 +146,15 @@ public class EventViewHolder implements RecyclerViewProvider<EventViewHolder.Reg
             super(itemView);
             eventDateTextView = itemView.findViewById(R.id.event_date);
             eventTypeTextView = itemView.findViewById(R.id.event_type);
+
             sopTextView = itemView.findViewById(R.id.sop);
             householdTextView = itemView.findViewById(R.id.entity);
             statusTextView = itemView.findViewById(R.id.status);
             dataCollectionDateTextView = itemView.findViewById(R.id.data_collection_date);
+
+            if (Country.GDRS.equals(getBuildCountry()) || Country.UW.equals(getBuildCountry()) || Country.VL_ZM.equals(getBuildCountry())){
+                sopTextView.setVisibility(View.GONE);
+            }
 
             if(!Country.KENYA.equals(getBuildCountry()) && !Country.RWANDA.equals(getBuildCountry()) && !Country.RWANDA_EN.equals(getBuildCountry()) ){
                 dataCollectionDateTextView.setVisibility(View.GONE);

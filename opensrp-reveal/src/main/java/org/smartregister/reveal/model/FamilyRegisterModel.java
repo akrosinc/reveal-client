@@ -129,9 +129,9 @@ public class FamilyRegisterModel extends BaseFamilyRegisterModel {
             JSONObject compoundStructureField = JsonFormUtils.getFieldJSONObject(JsonFormUtils.fields(form), FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
             compoundStructureField.put(AllConstants.OPTIONS, options);
         }catch (JSONException e) {
-                Timber.e(e, "Error populating %s Options",FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
+                Timber.tag("Reveal Exception").w(e, "Error populating %s Options",FamilyConstants.FormKeys.COMPOUND_STRUCTURE);
         } catch (Exception e) {
-            Timber.e(e, "Error find Families ");
+            Timber.tag("Reveal Exception").w(e, "Error find Families ");
         }
 
     }
@@ -153,7 +153,7 @@ public class FamilyRegisterModel extends BaseFamilyRegisterModel {
           }
 
       }catch (JSONException e){
-         Timber.e(e);
+         Timber.tag("Reveal Exception").w(e);
       }
 
     }

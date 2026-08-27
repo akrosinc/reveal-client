@@ -40,7 +40,7 @@ public class ValidateAssignmentReceiver extends BroadcastReceiver {
                 instance = null;
             }
         } catch (IllegalArgumentException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

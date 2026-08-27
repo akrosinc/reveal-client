@@ -1,0 +1,15 @@
+---
+name: step1_business_status
+description: Business status calculation
+priority: 1
+condition: "true"
+actions:
+ - "calculation = step1_structure_hoh == 'No' ? 'Structure part of HOH' : step1_structure_type == 'nonResidential' ? 'Not Eligible' : (
+ 		step1_received =='No'?(
+ 			step1_eligible_missing == 'Yes' ? 'Require Revisit' :(
+ 				Integer.valueOf(helper.ifNull(step1_untreated_total,0)) > 0 ? 'MDA refused or absent' : 'No Eligible People'
+ 			)
+ 		):(
+ 			step1_eligible_missing == 'Yes' ? 'MDA partially complete' : 'MDA complete'
+ 		)
+ 	)"

@@ -137,7 +137,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                             loginResponse.setRawData(prefSettingsData);
 
                         } catch (JSONException e) {
-                            Timber.e(e);
+                            Timber.tag("Reveal Exception").w(e);
                         }
 
                     }
@@ -157,7 +157,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
             loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(getOpenSRPContext().applicationContext().getResources().getString(R.string.unknown_response));
 
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return loginResponse;
@@ -190,7 +190,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         try {
             settings = syncSettingsServiceHelper.pullSettingsFromServer(accessToken);
         } catch (JSONException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return settings;

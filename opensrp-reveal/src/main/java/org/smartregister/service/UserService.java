@@ -121,7 +121,7 @@ public class UserService {
                     return timeZone;
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
 
@@ -136,7 +136,7 @@ public class UserService {
                     return DATE_FORMAT.parse(time.getTime());
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
 
@@ -149,7 +149,7 @@ public class UserService {
             this.keyStore.load(null);
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException |
                 CertificateException e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 
@@ -168,7 +168,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         if (!result.equals(TimeStatus.OK)) {
@@ -234,7 +234,7 @@ public class UserService {
                     return isValidDBPassword(getDBAuthenticationCredentials(userName));
                 }
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
                 SecurityHelper.clearArray(password);
                 SecurityHelper.clearArray(passwordHash);
@@ -252,7 +252,7 @@ public class UserService {
             passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
             return SecurityHelper.hashPassword(password, passwordSalt);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             SecurityHelper.clearArray(passwordSalt);
         }
@@ -282,7 +282,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return getDecryptedAccountValue(userName, privateKeyEntry, key);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return null;
@@ -297,7 +297,7 @@ public class UserService {
                 try {
                     return decryptString(privateKeyEntry, encryptedSecretKey);
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }
@@ -310,7 +310,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name(), userName));
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return null;
@@ -371,7 +371,7 @@ public class UserService {
                 return false;
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
             loginSuccessful = false;
         }
 
@@ -413,7 +413,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -424,7 +424,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -435,7 +435,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -452,7 +452,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -469,7 +469,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         return null;
@@ -487,7 +487,7 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -502,7 +502,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
         return null;
     }
@@ -563,7 +563,7 @@ public class UserService {
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
@@ -620,8 +620,8 @@ public class UserService {
                                 DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase), username);
 
                             } catch (Exception e) {
-                                Timber.e("Database encryption migration to version %s failed!!! ", BuildConfig.DB_ENCRYPTION_VERSION);
-                                Timber.e(e);
+                                Timber.tag("Reveal Exception").w("Database encryption migration to version %s failed!!! ", BuildConfig.DB_ENCRYPTION_VERSION);
+                                Timber.tag("Reveal Exception").w(e);
                             }
 
                         } else {
@@ -638,7 +638,7 @@ public class UserService {
                 }
 
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             } finally {
 
                 SecurityHelper.clearArray(password);
@@ -817,7 +817,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return getGroupId(userName, privateKeyEntry);
             } catch (Exception e) {
-                Timber.e(e);
+                Timber.tag("Reveal Exception").w(e);
             }
         }
         return null;
@@ -831,7 +831,7 @@ public class UserService {
                 try {
                     return decryptString(privateKeyEntry, encryptedGroupId);
                 } catch (Exception e) {
-                    Timber.e(e);
+                    Timber.tag("Reveal Exception").w(e);
                 }
             }
         }

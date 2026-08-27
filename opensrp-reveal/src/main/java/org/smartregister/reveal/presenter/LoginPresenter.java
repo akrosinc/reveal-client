@@ -75,7 +75,7 @@ public class LoginPresenter extends BaseLoginPresenter implements BaseLoginContr
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         }
     }
 

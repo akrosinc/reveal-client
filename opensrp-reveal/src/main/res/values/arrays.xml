@@ -4,4 +4,10 @@
     </string-array>
     <string-array name="reveal_instance_keys">
     </string-array>
+
+    <string-array name="reveal_languages">
+    </string-array>
+
+    <string-array name="reveal_language_keys">
+    </string-array>
 </resources>

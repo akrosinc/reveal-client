@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+    android:id="@+id/action_add_rcd_member"
+    android:orderInCategory="100"
+    android:title="Add RCD Member"
+    android:visible="false"
+    app:showAsAction="never" />
+
+  <item
+    android:id="@+id/action_add_manual_rcd_member"
+    android:orderInCategory="100"
+    android:title="Add RCD Member Manually"
+    android:visible="false"
+    app:showAsAction="never" />
+  <item
+    android:id="@+id/gdrs_close"
+    android:orderInCategory="100"
+    android:title="Close"
+    app:showAsAction="never" />
+</menu>

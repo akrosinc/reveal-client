@@ -1,80 +1,50 @@
 package org.smartregister.view.activity;
 
-import android.content.res.Configuration;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
 import com.google.gson.Gson;
-import java.util.Arrays;
-import java.util.List;
+
+import org.smartregister.family.FamilyLibrary;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.activity.LoginActivity;
+import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.model.EnvironmentDetails;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.LangUtils;
 
-public class SettingsActivity extends PreferenceActivity
-        implements OnPreferenceChangeListener {
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 
-    private static android.preference.ListPreference listPreference;
+public class SettingsActivity extends MultiLanguageActivity {
 
     private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
 
-    private static Gson gson = new Gson();
-    @Override
-    protected void attachBaseContext(android.content.Context base) {
-        // get language from prefs
 
-        String lang = LangUtils.getLanguage(base.getApplicationContext());
-        Configuration newConfiguration = LangUtils.setAppLocale(base, lang);
-
-        super.attachBaseContext(base);
-
-        applyOverrideConfiguration(newConfiguration);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(android.R.id.content,new MyPreferenceFragment()).commit();
     }
 
     @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (newValue != null) {
-            EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
-            preferenceUtil.setBaseURL(details.getRevealServerUrl());
-            preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
-            LangUtils.setLanguage(getBaseContext());
-        }
-        return true;
+    protected void attachBaseContext(Context base) {
+        LangUtils.setLanguage(base);
+        super.attachBaseContext(base);
     }
 
-    public static class MyPreferenceFragment extends PreferenceFragment {
-
-        @Override
-        public void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preferences);
-            Preference baseUrlPreference = findPreference("reveal_instance_key");
-            if (baseUrlPreference != null) {
-                listPreference = (ListPreference) baseUrlPreference;
-                setPreferenceData(listPreference);
-                EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(((ListPreference) baseUrlPreference).getValue()),EnvironmentDetails.class);
-                if(details != null){
-                    preferenceUtil.setBaseURL(details.getRevealServerUrl());
-                    preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
-                }
-
-                listPreference.setOnPreferenceChangeListener((SettingsActivity) getActivity());
-            }
-        }
-
-    }
 
     protected static void setPreferenceData(ListPreference preference) {
         List<String> options = Arrays.asList(preferenceUtil.getStringPreference("env_keys").split(","));
@@ -83,4 +53,90 @@ public class SettingsActivity extends PreferenceActivity
 
     }
 
+    protected static void setLanguageData(ListPreference preference) {
+        List<String> langNames = new LinkedList<>();
+        langNames.add("English");
+        langNames.add("French");
+        langNames.add("Portuguese");
+
+        List<String> langValues = new LinkedList<>();
+        langValues.add("en");
+        langValues.add("fr");
+        langValues.add("pt-rMZ");
+
+        preference.setEntries(langNames.toArray(new String[]{}));
+        preference.setEntryValues(langValues.toArray(new String[]{}));
+
+    }
+
+
+    public static class MyPreferenceFragment extends PreferenceFragmentCompat {
+
+        private static final RevealApplication revealApplication = RevealApplication.getInstance();
+
+
+        private static PreferencesUtil preferenceUtil = PreferencesUtil.getInstance();
+        Context context;
+
+        private static final Gson gson = new Gson();
+
+        private static final org.smartregister.Context openSRPcontext = org.smartregister.Context.getInstance();
+
+
+
+        @Override
+        public void onStart(){
+            super.onStart();
+            this.context = getContext();
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences, rootKey);
+
+            Preference baseUrlPreference = findPreference("reveal_instance_key");
+            if (baseUrlPreference != null) {
+                ListPreference envPreference = (ListPreference) baseUrlPreference;
+                setPreferenceData(envPreference);
+
+                envPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (newValue != null) {
+
+                        EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
+                        preferenceUtil.setBaseURL(details.getRevealServerUrl());
+                        preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
+                        RevealApplication.getInstance().getAppExecutors().diskIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                FamilyLibrary.init(openSRPcontext,revealApplication.getMetadata() , BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
+                            }
+                        });
+                    }
+
+                    return true;
+                });
+
+            }
+
+            Preference languagePreference = findPreference("reveal_language_key");
+            if (languagePreference != null) {
+                ListPreference languagePreferenceList = (ListPreference) languagePreference;
+                setLanguageData(languagePreferenceList);
+                languagePreferenceList.setOnPreferenceChangeListener((preference, newValue) -> {
+                    LangUtils.setAppLocale(context,newValue.toString());
+
+                    SharedPreferences languagepref =  context.getSharedPreferences("language",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = languagepref.edit();
+                    editor.putString("languageToLoad",newValue.toString() );
+                    editor.commit();
+
+                    Intent refresh = new Intent(context, LoginActivity.class);
+                    startActivity(refresh);
+                    return true;
+                });
+            }
+
+        }
+
+    }
 }

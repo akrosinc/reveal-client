@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.event.Listener;
@@ -27,6 +28,8 @@ public class DrishtiSyncScheduler {
     }
 
     public static void start(final Context context) {
+        Log.d("SYNC_TRACE_RVL", "DRISHTI_SCHEDULER_START t=" + System.currentTimeMillis());
+
         if (CoreLibrary.getInstance().context().IsUserLoggedOut()) {
             return;
         }
@@ -36,7 +39,7 @@ public class DrishtiSyncScheduler {
         }
 
         PendingIntent syncBroadcastReceiverIntent = PendingIntent
-                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
+                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + SYNC_START_DELAY,

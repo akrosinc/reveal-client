@@ -9,6 +9,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.Objects;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.model.CardDetails;
 import org.smartregister.reveal.model.TaskDetails;
@@ -16,6 +17,8 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
+
+import java.util.List;
 
 
 /**
@@ -26,6 +29,8 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
     private Context context;
 
     private ImageView iconView;
+
+    private TextView codeView;
 
     private TextView nameView;
 
@@ -44,6 +49,7 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
         context = itemView.getContext();
         iconView = itemView.findViewById(R.id.task_icon);
         nameView = itemView.findViewById(R.id.task_name);
+        codeView = itemView.findViewById(R.id.code);
         distanceView = itemView.findViewById(R.id.distance_from_structure);
         taskDetailsView = itemView.findViewById(R.id.task_details);
         actionView = itemView.findViewById(R.id.task_action);
@@ -58,6 +64,14 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
 
     public void setTaskName(String taskName) {
         nameView.setText(taskName);
+    }
+
+    public void setCode(String code){
+        codeView.setText(code);
+    }
+
+    public void showCode(){
+        codeView.setVisibility(View.VISIBLE);
     }
 
     public void setDistanceFromStructure(float distance, boolean distanceFromCenter) {
@@ -104,14 +118,46 @@ public class TaskRegisterViewHolder extends RecyclerView.ViewHolder {
                     actionView.setTextColor(context.getResources().getColor(R.color.text_black));
                     actionView.setBackground(actionViewPair.first);
                     actionView.setText(actionViewPair.second);
-                } else if (task.getTaskCount() == task.getCompleteTaskCount()) {
+                } else if (Objects.equals(task.getTaskCount(), task.getCompleteTaskCount())) {
                     showTasksCompleteActionView();
                 }
             }
 
         } else if (cardDetails != null && cardDetails.getStatusColor() != null) {
-            actionView.setBackground(context.getResources().getDrawable(R.drawable.no_task_complete_bg));
-            actionView.setTextColor(context.getResources().getColor(R.color.text_black));
+            if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())||Constants.Action.SECONDARY_INDEX_CASE.equals(task.getTaskCode())){
+
+                if (Constants.Action.INDEX_CASE.equals(task.getTaskCode())) {
+                    if (Constants.BusinessStatus.INDEX_CASE_COMPLETE.equals(task.getBusinessStatus())) {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.purple, null));
+                    } else if (Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));
+                    } else {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.cyan, null));
+                    }
+                } else {
+                    if (Constants.BusinessStatus.SECONDARY_INDEX_CASE_COMPLETE.equals(task.getBusinessStatus())) {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.purple, null));
+                        actionView.setTextColor(context.getResources().getColor(R.color.alert_complete_green, null));
+                    } else if (Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())) {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));
+                    } else {
+                        actionView.setBackgroundColor(context.getResources().getColor(R.color.orange, null));
+                    }
+                }
+            } else if (Constants.Action.RCD.equals(task.getTaskCode())){
+                if (Constants.BusinessStatus.RCD_PARTIALLY_COMPLETE.equals(task.getBusinessStatus())){
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.orange,null));
+                } else if (Constants.BusinessStatus.COMPLETE.contains(task.getBusinessStatus())) {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.alert_complete_green, null));
+                } else {
+                    actionView.setBackgroundColor(context.getResources().getColor(R.color.not_visited_yellow,null));
+                }
+            } else {
+                actionView.setBackground(context.getResources().getDrawable(R.drawable.baseline_keyboard_arrow_right));
+                actionView.setTextColor(context.getResources().getColor(R.color.text_black));
+            }
+
+
         } else {
             actionView.setBackground(context.getResources().getDrawable(R.drawable.family_no_task_registered_bg));
             actionView.setTextColor(context.getResources().getColor(R.color.text_black));

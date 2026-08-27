@@ -85,7 +85,7 @@ public class ImageRepository extends DrishtiRepository {
                 return details;
             }
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
 
         } finally {
             if (cursor != null) {
@@ -148,7 +148,7 @@ public class ImageRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

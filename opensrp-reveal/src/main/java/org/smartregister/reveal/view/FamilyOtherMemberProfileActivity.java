@@ -166,7 +166,7 @@ public class FamilyOtherMemberProfileActivity extends BaseFamilyOtherMemberProfi
                     presenter().updateFamilyMember(jsonString);
                 }
             } catch (Exception e) {
-                Timber.e(e, "Error processing form submission");
+                Timber.tag("Reveal Exception").w(e, "Error processing form submission");
             }
 
         }

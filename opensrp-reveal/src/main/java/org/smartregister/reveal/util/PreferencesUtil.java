@@ -10,6 +10,11 @@ import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_I
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PLAN_TARGET_LEVEL;
 import static org.smartregister.reveal.util.Constants.Preferences.CURRENT_PROVINCE;
 import static org.smartregister.reveal.util.Constants.Preferences.FACILITY_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.HDSS_MAX_SERVER_VERSION;
+import static org.smartregister.reveal.util.Constants.Preferences.HIGHEST_LEVEL;
+import static org.smartregister.reveal.util.Constants.Preferences.IS_GDRS_PLAN;
+import static org.smartregister.reveal.util.Constants.Preferences.SELECTED_COMPOUND_ID;
+import static org.smartregister.reveal.util.Constants.Preferences.SELECTED_HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Preferences.TOTAL_SYNC_PROGRESS;
 import static org.smartregister.reveal.util.Constants.TILDE;
 
@@ -20,6 +25,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.account.AccountHelper;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.application.RevealApplication;
 
@@ -93,6 +99,13 @@ public class PreferencesUtil {
         return allSharedPreferences.getPreference(CURRENT_PROVINCE);
     }
 
+    public void setHighestLevel(String location){
+        allSharedPreferences.savePreference(HIGHEST_LEVEL, location);
+    }
+
+    public String getHighestLevel(){
+        return allSharedPreferences.getPreference(HIGHEST_LEVEL);
+    }
     public void setCurrentPlan(String campaign) {
         allSharedPreferences.savePreference(CURRENT_PLAN, campaign);
     }
@@ -120,6 +133,14 @@ public class PreferencesUtil {
 
     public String getCurrentFacilityLevel() {
         return allSharedPreferences.getPreference(FACILITY_LEVEL);
+    }
+
+    public String isGdrsPlan(){
+        return allSharedPreferences.getPreference(IS_GDRS_PLAN);
+    }
+
+    public void setIsGdrsPlan(String isGdrsPlan){
+        allSharedPreferences.savePreference(IS_GDRS_PLAN,isGdrsPlan);
     }
 
     public void setInterventionTypeForPlan(String planId, String interventionType) {
@@ -172,6 +193,14 @@ public class PreferencesUtil {
         return allSharedPreferences.getBooleanPreference(ALL_EVENTS_SYNCED);
     }
 
+    public void setAllHdssSynced(boolean isAllHdssSynced){
+        allSharedPreferences.saveBooleanPreference("all_hdss_synced",isAllHdssSynced);
+    }
+
+    public boolean isAllHdssSynced(){
+        return allSharedPreferences.getBooleanPreference("all_hdss_synced");
+    }
+
     public void setAllPlansSynced(boolean isAllPlansSynced){
         allSharedPreferences.saveBooleanPreference(ALL_PLANS_SYNCED,isAllPlansSynced);
     }
@@ -211,7 +240,63 @@ public class PreferencesUtil {
 
     public Country getBuildCountry(){
       String buildCountry =   allSharedPreferences.getPreference(AllConstants.BUILD_COUNTRY);
-      return StringUtils.isBlank(buildCountry) ? Country.ZAMBIA : Country.valueOf(buildCountry);
+      return StringUtils.isBlank(buildCountry) ? Country.NIGERIA : Country.valueOf(buildCountry);
+    }
+
+    public void setSelectedCompoundID(String compoundID) {
+        allSharedPreferences.savePreference(SELECTED_COMPOUND_ID,compoundID);
+    }
+
+    public String getSelectedCompoundID() {
+        return allSharedPreferences.getPreference(SELECTED_COMPOUND_ID);
+    }
+//
+//    public void setSelectedHouseholdID(String selectedHouseholdID) {
+//        allSharedPreferences.savePreference(SELECTED_HOUSEHOLD_ID,selectedHouseholdID);
+//    }
+//
+//    public String getSelectedHouseholdID() {
+//        return allSharedPreferences.getPreference(SELECTED_HOUSEHOLD_ID);
+//    }
+
+    public void setHdssMaxServerVersion(long hdssMaxServerVersion) {
+        allSharedPreferences.setLongPreference(HDSS_MAX_SERVER_VERSION,hdssMaxServerVersion);
+    }
+
+    public long getHdssMaxServerVersion(){
+        return allSharedPreferences.getLongPreference(HDSS_MAX_SERVER_VERSION);
+    }
+
+    public boolean getHdssFileFetched(){
+        return  allSharedPreferences.getBooleanPreference("hdss_file_fetched");
+    }
+
+    public void setHdssFileFetched(boolean fileFetched){
+        allSharedPreferences.saveBooleanPreference("hdss_file_fetched",fileFetched);
+    }
+
+    public boolean getHdssFileProcessed(){
+        return  allSharedPreferences.getBooleanPreference("hdss_file_processed");
+    }
+
+    public void setHdssFileProcessed(boolean fileFetched){
+        allSharedPreferences.saveBooleanPreference("hdss_file_processed",fileFetched);
+    }
+
+    public int getHdssFileProcessingLineNumber(){
+        return  allSharedPreferences.getIntPreference("hdss_line_number");
+    }
+
+    public void setHdssFileProcessingLineNumber(int fileFetched){
+        allSharedPreferences.saveIntPreference("hdss_line_number",fileFetched);
+    }
+
+    public int getHdssFileTotalRecordCount(){
+        return  allSharedPreferences.getIntPreference("hdss_total_record_count");
+    }
+
+    public void setHdssFileTotalRecordCount(int fileFetched){
+        allSharedPreferences.saveIntPreference("hdss_total_record_count",fileFetched);
     }
 
 }

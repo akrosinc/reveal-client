@@ -334,7 +334,7 @@ public class FormDataRepository extends DrishtiRepository {
             cursor = database.rawQuery(sql, selectionArgs);
             map = sqliteRowToMap(cursor);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.tag("Reveal Exception").w(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

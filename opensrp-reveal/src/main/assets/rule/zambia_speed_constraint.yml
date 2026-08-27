@@ -1,0 +1,7 @@
+---
+name: step1_dob
+description: Number Selectors
+priority: 1
+condition: "true"
+actions:
+  - 'constraint = ["min_date" : helper.minDate("today-5y"), "max_date" : helper.maxDate("today")]'
