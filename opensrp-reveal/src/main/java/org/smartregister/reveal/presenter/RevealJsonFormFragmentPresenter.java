@@ -15,13 +15,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.util.Pair;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-//import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rey.material.widget.Button;
 import com.vijay.jsonwizard.activities.JsonFormActivity;
@@ -43,7 +46,6 @@ import com.vijay.jsonwizard.widgets.NativeRadioButtonFactory;
 import com.vijay.jsonwizard.widgets.NumberSelectorFactory;
 import com.vijay.jsonwizard.widgets.SpinnerFactory;
 
-import io.ona.kujaku.listeners.BaseLocationListener;
 import timber.log.Timber;
 
 import java.util.List;
@@ -91,7 +93,8 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
 
     private Location lastLocation;
 
-    private BaseLocationListener locationListener;
+//    private BaseLocationListener locationListener;
+private LocationEngineCallback<LocationEngineResult> locationCallback;
 
     private RevealJsonFormUtils jsonFormUtils;
 
@@ -108,13 +111,29 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         jsonFormView = (RevealJsonFormActivity) formFragment.getActivity();
         locationPresenter = new ValidateUserLocationPresenter(jsonFormView, this);
         locationUtils = new LocationUtils(jsonFormView);
-        locationListener = new BaseLocationListener() {
+//        locationListener = new BaseLocationListener() {
+//            @Override
+//            public void onLocationChanged(Location location) {
+//                lastLocation = location;
+//            }
+//        };
+//        locationUtils.requestLocationUpdates(locationListener);
+        locationCallback = new LocationEngineCallback<LocationEngineResult>() {
             @Override
-            public void onLocationChanged(Location location) {
-                lastLocation = location;
+            public void onSuccess(LocationEngineResult result) {
+                if (result != null && result.getLastLocation() != null) {
+                    lastLocation = result.getLastLocation();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Timber.tag("Reveal Exception").e(exception, "Failed to get location update");
             }
         };
-        locationUtils.requestLocationUpdates(locationListener);
+
+// 3. Request location updates
+        locationUtils.requestLocationUpdates(locationCallback);
         jsonFormUtils = new RevealJsonFormUtils();
 
 
@@ -509,10 +528,12 @@ public class RevealJsonFormFragmentPresenter extends JsonFormFragmentPresenter i
         return lastLocation;
     }
 
-    public BaseLocationListener getLocationListener() {
-        return locationListener;
-    }
-
+//    public BaseLocationListener getLocationListener() {
+//        return locationListener;
+//    }
+public LocationEngineCallback<LocationEngineResult> getLocationCallback() {
+    return locationCallback;
+}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

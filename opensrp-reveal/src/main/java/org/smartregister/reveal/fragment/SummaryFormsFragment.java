@@ -265,6 +265,11 @@ public class SummaryFormsFragment extends Fragment implements OtherFormsfragment
     }
 
     @Override
+    public void updateProgressDialog(int percentage) {
+
+    }
+
+    @Override
     public void hideProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();

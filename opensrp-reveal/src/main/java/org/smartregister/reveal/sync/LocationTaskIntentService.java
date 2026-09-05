@@ -2,6 +2,7 @@ package org.smartregister.reveal.sync;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -85,6 +86,7 @@ public class LocationTaskIntentService extends IntentService {
 
     @VisibleForTesting
     protected void doSync() {
+        Log.d("SYNC_TRACE_RVL", "LOCATION_TASK_DOSYNC_START t=" + System.currentTimeMillis());
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         LocationServiceHelper locationServiceHelper = new LocationServiceHelper(
                 RevealApplication.getInstance().getLocationRepository(),
@@ -94,7 +96,8 @@ public class LocationTaskIntentService extends IntentService {
 
 
         List<Location> syncedStructures = locationServiceHelper.fetchLocationsStructures();
-
+        Log.d("SYNC_TRACE_RVL", "LOCATIONS_FETCHED t=" + System.currentTimeMillis()
+                + " count=" + (syncedStructures == null ? 0 : syncedStructures.size()));
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
         planServiceHelper.syncPlans();
 

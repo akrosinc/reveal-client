@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import timber.log.Timber;
@@ -28,18 +29,39 @@ public class FileHTTPServer {
     private final FileHTTPServer.ServerThread server;
     private final ServerSocket socket;
 
-    public FileHTTPServer(Context context, String styleJsonFile, String  digitalGlobeIdPlaceHolder) throws IOException {
-        socket = createBoundSocket(PORT);
-        String dgIdPlaceHolder;
-        if (socket == null) {
-            throw new IOException("Could not find an available port");
-        }
-        server = new ServerThread(socket);
-
-        styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
-
-        styleJson = Utils.readAssetContents(context, styleJsonFile);
+//    public FileHTTPServer(Context context, String styleJsonFile, String  digitalGlobeIdPlaceHolder) throws IOException {
+//        socket = createBoundSocket(PORT);
+//        String dgIdPlaceHolder;
+//        if (socket == null) {
+//            throw new IOException("Could not find an available port");
+//        }
+//        server = new ServerThread(socket);
+//
+//        styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
+//
+//        styleJson = Utils.readAssetContents(context, styleJsonFile);
+//    }
+public FileHTTPServer(Context context, String styleJsonFile, String digitalGlobeIdPlaceHolder) throws IOException {
+    socket = createBoundSocket(PORT);
+    if (socket == null) {
+        throw new IOException("Could not find an available port");
     }
+    server = new ServerThread(socket);
+
+    styleJson = StringUtils.isNotBlank(styleJsonFile) ? styleJsonFile : DEFAULT_STYLE_JSON_FILE;
+    styleJson = Utils.readAssetContents(context, styleJson);
+
+    if (StringUtils.isNotBlank(digitalGlobeIdPlaceHolder) && StringUtils.isNotBlank(styleJson)) {
+        styleJson = styleJson.replace(DEFAULT_DG_ID_PLACEHOLDER, digitalGlobeIdPlaceHolder);
+    }
+
+    // --- DUMP EVERY LINE INDIVIDUALLY TO AVOID TRUNCATION ---
+    if (styleJson != null) {
+        for (String line : styleJson.split("\n")) {
+            Timber.d("StyleLine: %s", line);
+        }
+    }
+}
 
     public void start() {
         server.start();
@@ -125,16 +147,24 @@ public class FileHTTPServer {
                 Timber.tag("Reveal Exception").w(e, "Unable to read request from socket");
             }
         }
-
         protected FileHTTPServer.Response getResponse(String request) {
             if (request.startsWith("GET /")) {
-                return new FileHTTPServer.Response(styleJson.getBytes(),  "text/plain");
+                // 2. Best Practice: Serve style JSON as application/json instead of text/plain
+                return new FileHTTPServer.Response(styleJson.getBytes(StandardCharsets.UTF_8), "application/json");
             } else {
                 Timber.w("Ignoring request: %s", request);
                 return null;
             }
-
         }
+//        protected FileHTTPServer.Response getResponse(String request) {
+//            if (request.startsWith("GET /")) {
+//                return new FileHTTPServer.Response(styleJson.getBytes(),  "text/plain");
+//            } else {
+//                Timber.w("Ignoring request: %s", request);
+//                return null;
+//            }
+//
+//        }
 
         protected void sendResponse(Socket connection, FileHTTPServer.Response response) {
             String headers = String.format(

@@ -24,8 +24,9 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.tabs.TabLayout;
-import io.ona.kujaku.listeners.BaseLocationListener;
-import io.ona.kujaku.utils.Constants;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineResult;
+
 import java.util.List;
 import java.util.Set;
 import org.json.JSONObject;
@@ -41,6 +42,7 @@ import org.smartregister.reveal.util.LocationUtils;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.reveal.util.Utils;
+
 import timber.log.Timber;
 
 /**
@@ -62,7 +64,21 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
     private TabLayout tabLayout;
 
     private Button detectCaseButton;
+    private LocationEngineCallback<LocationEngineResult> locationCallback = new LocationEngineCallback<LocationEngineResult>() {
+        @Override
+        public void onSuccess(LocationEngineResult result) {
+            if (result != null && result.getLastLocation() != null) {
+                if (locationUtils != null) {
+                    locationUtils.setLastKnownLocation(result.getLastLocation());
+                }
+            }
+        }
 
+        @Override
+        public void onFailure(@NonNull Exception exception) {
+            Timber.tag("Reveal Exception").e(exception, "Failed to receive location updates in StructureTasksFragment");
+        }
+    };
     private List<StructureTaskDetails> taskDetailsList;
 
     public static StructureTasksFragment newInstance(Bundle bundle, Context context) {
@@ -85,12 +101,16 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
         }
         initDependencies();
     }
-
     protected void initDependencies() {
         jsonFormUtils = new RevealJsonFormUtils();
         locationUtils = new LocationUtils(getActivity());
-        locationUtils.requestLocationUpdates(new BaseLocationListener());
+        locationUtils.requestLocationUpdates(locationCallback);
     }
+//    protected void initDependencies() {
+//        jsonFormUtils = new RevealJsonFormUtils();
+//        locationUtils = new LocationUtils(getActivity());
+//        locationUtils.requestLocationUpdates(new BaseLocationListener());
+//    }
 
     @Nullable
     @Override
@@ -164,18 +184,27 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
     }
 
     @Override
+    public void updateProgressDialog(int percentage) {
+
+    }
+
+    @Override
     public void hideProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
 
-    @Override
-    public void requestUserLocation() {
-        hasRequestedLocation = true;
-        locationUtils.checkLocationSettingsAndStartLocationServices(getActivity(), new BaseLocationListener());
-    }
-
+//    @Override
+//    public void requestUserLocation() {
+//        hasRequestedLocation = true;
+//        locationUtils.checkLocationSettingsAndStartLocationServices(getActivity(), new BaseLocationListener());
+//    }
+@Override
+public void requestUserLocation() {
+    hasRequestedLocation = true;
+    locationUtils.checkLocationSettingsAndStartLocationServices(getActivity(), locationCallback);
+}
 
     @Override
     public Location getUserCurrentLocation() {
@@ -257,22 +286,38 @@ public class StructureTasksFragment extends Fragment implements StructureTasksCo
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.RequestCode.LOCATION_SETTINGS && hasRequestedLocation) {
-            if (resultCode == RESULT_OK) {
-                locationUtils.requestLocationUpdates(new BaseLocationListener());
-                presenter.getLocationPresenter().waitForUserLocation();
-            } else if (resultCode == RESULT_CANCELED) {
-                presenter.getLocationPresenter().onGetUserLocationFailed();
-            }
-            hasRequestedLocation = false;
-        } else if (requestCode == REQUEST_CODE_GET_JSON_FRAGMENT && resultCode == RESULT_OK && data.hasExtra(JSON_FORM_PARAM_JSON)) {
-            String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
-            Timber.d(json);
-            presenter.saveJsonForm(json);
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == Constants.RequestCode.LOCATION_SETTINGS && hasRequestedLocation) {
+//            if (resultCode == RESULT_OK) {
+//                locationUtils.requestLocationUpdates(new BaseLocationListener());
+//                presenter.getLocationPresenter().waitForUserLocation();
+//            } else if (resultCode == RESULT_CANCELED) {
+//                presenter.getLocationPresenter().onGetUserLocationFailed();
+//            }
+//            hasRequestedLocation = false;
+//        } else if (requestCode == REQUEST_CODE_GET_JSON_FRAGMENT && resultCode == RESULT_OK && data.hasExtra(JSON_FORM_PARAM_JSON)) {
+//            String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
+//            Timber.d(json);
+//            presenter.saveJsonForm(json);
+//        }
+//    }
+@Override
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == LocationUtils.LOCATION_SETTINGS_REQUEST_CODE && hasRequestedLocation) {
+        if (resultCode == RESULT_OK) {
+            locationUtils.requestLocationUpdates(locationCallback);
+            presenter.getLocationPresenter().waitForUserLocation();
+        } else if (resultCode == RESULT_CANCELED) {
+            presenter.getLocationPresenter().onGetUserLocationFailed();
         }
+        hasRequestedLocation = false;
+    } else if (requestCode == REQUEST_CODE_GET_JSON_FRAGMENT && resultCode == RESULT_OK && data != null && data.hasExtra(JSON_FORM_PARAM_JSON)) {
+        String json = data.getStringExtra(JSON_FORM_PARAM_JSON);
+        Timber.d(json);
+        presenter.saveJsonForm(json);
     }
+}
 
     public void refreshTasks(String structureId) {
         presenter.findTasks(structureId);

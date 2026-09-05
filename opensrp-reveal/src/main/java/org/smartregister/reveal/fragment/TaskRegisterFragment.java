@@ -48,7 +48,6 @@ import androidx.annotation.StringRes;
 import androidx.cardview.widget.CardView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import io.ona.kujaku.utils.Constants;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -84,6 +83,7 @@ import org.smartregister.reveal.view.DrawerMenuView;
 import org.smartregister.reveal.view.FilterTasksActivity;
 import org.smartregister.reveal.view.ListTasksActivity;
 import org.smartregister.reveal.view.TaskRegisterActivity;
+import org.smartregister.util.Constants;
 import org.smartregister.view.activity.BaseRegisterActivity;
 
 /**
@@ -366,6 +366,11 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
             progressDialog.setMessage(getString(message));
             progressDialog.show();
         }
+    }
+
+    @Override
+    public void updateProgressDialog(int percentage) {
+
     }
 
     @Override

@@ -510,8 +510,11 @@ public interface Constants {
          public static int SELECT_JURISDICTION_MAX_SELECT_ZOOM_LEVEL = 14;
          public static int CLICK_SELECT_RADIUS = 24;
         public static String NAME_PROPERTY = "name";
-         public static double DOWNLOAD_MAX_ZOOM = 21.0;
-         public static double DOWNLOAD_MIN_ZOOM = 13.5;
+//         public static double DOWNLOAD_MAX_ZOOM = 21.0;
+//         public static double DOWNLOAD_MIN_ZOOM = 13.5;
+//
+         public static double DOWNLOAD_MAX_ZOOM = 12.0;
+         public static double DOWNLOAD_MIN_ZOOM = 10.5;
     }
 
     public interface JsonForm {

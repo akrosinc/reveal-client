@@ -17,6 +17,7 @@ import static org.smartregister.util.PerformanceMonitoringUtils.stopTrace;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.util.Pair;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -153,9 +154,11 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     private synchronized void fetchRetry(final int count, boolean returnCount) {
+        Log.d("SYNC_TRACE_RVL", "FETCH_RETRY_START t=" + System.currentTimeMillis() + " count=" + count);
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
+                Log.w("SYNC_TRACE_RVL", "FETCH_RETRY_BLANK_FILTER_FAIL t=" + System.currentTimeMillis());
                 complete(FetchStatus.fetchedFailed);
                 return;
             }

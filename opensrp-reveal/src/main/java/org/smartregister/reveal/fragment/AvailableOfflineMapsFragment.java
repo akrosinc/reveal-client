@@ -72,7 +72,7 @@ public class AvailableOfflineMapsFragment extends BaseOfflineMapsFragment implem
         }
         btnDownloadMap = null;
 
-        new FileHttpServerTask(getContext()).execute();
+//        new FileHttpServerTask(getContext()).execute();
 
 
     }
@@ -191,7 +191,6 @@ public class AvailableOfflineMapsFragment extends BaseOfflineMapsFragment implem
         this.operationalAreasToDownload.removeAll(toRemove);
 
     }
-
     public void initiateMapDownload() {
 
         if (this.operationalAreasToDownload == null || this.operationalAreasToDownload.isEmpty()) {
@@ -199,13 +198,36 @@ public class AvailableOfflineMapsFragment extends BaseOfflineMapsFragment implem
             return;
         }
 
-        for (Location location: this.operationalAreasToDownload ) {
-            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(location));
-            String mapName = location.getId();
-            currentMapDownload = mapName;
-            OfflineMapHelper.downloadMap(operationalAreaFeature, mapName, getActivity());
-        }
+        // Start the server and wait for the callback before triggering Mapbox
+        new FileHttpServerTask(getContext(), new FileHttpServerTask.OnServerStartedListener() {
+            @Override
+            public void onServerStarted() {
+
+                // The server is now running safely. Loop through and start downloads.
+                for (Location location: operationalAreasToDownload ) {
+                    Feature operationalAreaFeature = Feature.fromJson(gson.toJson(location));
+                    String mapName = location.getId();
+                    currentMapDownload = mapName;
+                    OfflineMapHelper.downloadMap(operationalAreaFeature, mapName, getActivity());
+                }
+
+            }
+        }).execute();
     }
+//    public void initiateMapDownload() {
+//
+//        if (this.operationalAreasToDownload == null || this.operationalAreasToDownload.isEmpty()) {
+//            displayToast(getString(R.string.select_offline_map_to_download));
+//            return;
+//        }
+//
+//        for (Location location: this.operationalAreasToDownload ) {
+//            Feature operationalAreaFeature = Feature.fromJson(gson.toJson(location));
+//            String mapName = location.getId();
+//            currentMapDownload = mapName;
+//            OfflineMapHelper.downloadMap(operationalAreaFeature, mapName, getActivity());
+//        }
+//    }
 
     public void setOfflineMapDownloadCallback(OfflineMapDownloadCallback callBack) {
         this.callback = callBack;

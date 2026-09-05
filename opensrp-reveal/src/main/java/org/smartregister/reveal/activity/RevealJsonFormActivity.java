@@ -5,8 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 
-import android.util.Log;
-import android.view.View;
+
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
@@ -19,8 +18,7 @@ import org.smartregister.reveal.contract.UserLocationContract.UserLocationView;
 import org.smartregister.reveal.fragment.RevealJsonFormFragment;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.rule.RevealRuleEngineFactory;
-import io.ona.kujaku.utils.Constants;
-import timber.log.Timber;
+import org.smartregister.util.Constants;
 
 
 public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity implements UserLocationView {
@@ -59,7 +57,8 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
 
         if (requestCode == Constants.RequestCode.LOCATION_SETTINGS && requestedLocation) {
             if (resultCode == RESULT_OK) {
-                formFragment.getPresenter().getLocationUtils().requestLocationUpdates(formFragment.getPresenter().getLocationListener());
+                formFragment.getPresenter().getLocationUtils().requestLocationUpdates(formFragment.getPresenter().getLocationCallback());
+//                formFragment.getPresenter().getLocationUtils().requestLocationUpdates(formFragment.getPresenter().getLocationListener());
                 formFragment.getPresenter().getLocationPresenter().waitForUserLocation();
             } else if (resultCode == RESULT_CANCELED) {
                 formFragment.getPresenter().getLocationPresenter().onGetUserLocationFailed();
@@ -93,6 +92,11 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
     }
 
     @Override
+    public void updateProgressDialog(int percentage) {
+
+    }
+
+    @Override
     public void hideProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();
@@ -101,21 +105,37 @@ public class RevealJsonFormActivity extends FormConfigurationJsonFormActivity im
 
     @Override
     public void requestUserLocation() {
-        formFragment.getPresenter().getLocationUtils().checkLocationSettingsAndStartLocationServices(this, formFragment.getPresenter().getLocationListener());
+//        formFragment.getPresenter().getLocationUtils().checkLocationSettingsAndStartLocationServices(this, formFragment.getPresenter().getLocationListener());
+        formFragment.getPresenter().getLocationUtils().checkLocationSettingsAndStartLocationServices(this, formFragment.getPresenter().getLocationCallback());
         requestedLocation = true;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        formFragment.getPresenter().getLocationUtils().stopLocationClient();
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        formFragment.getPresenter().getLocationUtils().stopLocationClient();
+//    }
+@Override
+protected void onStop() {
+    super.onStop();
+    if (formFragment != null && formFragment.getPresenter() != null) {
+        formFragment.getPresenter().getLocationUtils()
+                .stopLocationClient(formFragment.getPresenter().getLocationCallback());
     }
-
+}
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        formFragment.getPresenter().getLocationUtils().destroy();
+        if (formFragment != null && formFragment.getPresenter() != null) {
+            formFragment.getPresenter().getLocationUtils()
+                    .stopLocationClient(formFragment.getPresenter().getLocationCallback());
+        }
     }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        formFragment.getPresenter().getLocationUtils().destroy();
+//    }
 
     @Override
     protected void widgetsWriteValue(String stepName, String key, String value, String openMrsEntityParent,

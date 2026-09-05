@@ -19,15 +19,22 @@
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <org.smartregister.reveal.view.RevealMapView
-                android:id="@+id/kujakuMapView"
+<!--            <org.smartregister.reveal.view.RevealMapView-->
+<!--                android:id="@+id/kujakuMapView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                app:locationClient="google_location_client"-->
+<!--                app:mapbox_uiAttributionGravity="center_horizontal|bottom"-->
+<!--                app:mapbox_uiLogoGravity="center_horizontal|bottom"-->
+<!--                app:mapbox_uiLogoMarginRight="30dp"-->
+<!--                app:mapbox_uiRotateGestures="false" />-->
+            <com.mapbox.mapboxsdk.maps.MapView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/mapView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:locationClient="google_location_client"
-                app:mapbox_uiAttributionGravity="center_horizontal|bottom"
-                app:mapbox_uiLogoGravity="center_horizontal|bottom"
-                app:mapbox_uiLogoMarginRight="30dp"
-                app:mapbox_uiRotateGestures="false" />
+                app:mapbox_renderTextureMode="true" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/filter_tasks_fab"

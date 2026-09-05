@@ -5,6 +5,9 @@ import android.content.Context;
 import android.location.Location;
 import androidx.annotation.StringRes;
 
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineResult;
+
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Event;
@@ -20,9 +23,14 @@ import java.util.Set;
 
 
 public interface TaskRegisterFragmentContract {
+    interface Presenter extends BaseRegisterFragmentContract.Presenter,
+            BaseFormFragmentContract.Presenter,
+            BaseContract.BasePresenter,
+            LocationEngineCallback<LocationEngineResult> {
 
-    interface Presenter extends BaseRegisterFragmentContract.Presenter, BaseFormFragmentContract.Presenter, BaseContract.BasePresenter {
         void onTasksFound(List<TaskDetails> tasks, int structuresWithinBuffer);
+
+        void onLocationChanged(Location location);
 
         void onDestroy();
 
@@ -51,6 +59,37 @@ public interface TaskRegisterFragmentContract {
 
         void onEventFound(Event event);
     }
+//
+//    interface Presenter extends BaseRegisterFragmentContract.Presenter, BaseFormFragmentContract.Presenter, BaseContract.BasePresenter {
+//        void onTasksFound(List<TaskDetails> tasks, int structuresWithinBuffer);
+//
+//        void onDestroy();
+//
+//        void onDrawerClosed();
+//
+//        void onTaskSelected(TaskDetails details, boolean isActionClicked);
+//
+//        @StringRes
+//        int getInterventionLabel();
+//
+//        void onIndexCaseFound(JSONObject indexCase, boolean isLinkedToJurisdiction);
+//
+//        void searchTasks(String searchText);
+//
+//        void filterTasks(TaskFilterParams filterParams);
+//
+//        void onFilterTasksClicked();
+//
+//        void setTaskFilterParams(TaskFilterParams filterParams);
+//
+//        void onOpenMapClicked();
+//
+//        void resetTaskInfo(TaskDetails taskDetails);
+//
+//        void onTaskInfoReset();
+//
+//        void onEventFound(Event event);
+//    }
 
     interface View extends BaseRegisterFragmentContract.View, BaseFormFragmentContract.View {
 

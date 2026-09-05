@@ -1,6 +1,6 @@
 package org.smartregister.reveal.interactor;
 
-import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
+//import static com.cocoahero.android.geojson.Geometry.JSON_COORDINATES;
 import static org.smartregister.AllConstants.MULTI_SELECT_LIST;
 import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
@@ -461,241 +461,485 @@ public class BaseInteractor implements BaseContract.BaseInteractor {
     appExecutors.diskIO().execute(runnable);
   }
 
-  private void saveRegisterStructureForm(JSONObject jsonForm) {
-    Runnable runnable =
-        new Runnable() {
-          @Override
-          public void run() {
-            try {
-              jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
-              JSONObject eventDetails = new JSONObject();
-              eventDetails.put(Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-              eventDetails.put(Properties.LOCATION_PARENT, operationalAreaId);
-              String planIdentifier = PreferencesUtil.getInstance().getCurrentPlanId();
-              eventDetails.put(Properties.PLAN_IDENTIFIER, planIdentifier);
-              jsonForm.put(DETAILS, eventDetails);
-              org.smartregister.domain.Event event =
-                  saveEvent(jsonForm, REGISTER_STRUCTURE_EVENT, STRUCTURE);
-              com.cocoahero.android.geojson.Feature feature =
-                  new com.cocoahero.android.geojson.Feature(
-                      new JSONObject(
-                          event.findObs(null, false, "structure").getValue().toString()));
-              Location structure = new Location();
-              structure.setId(event.getBaseEntityId());
-              structure.setType(feature.getType());
-              org.smartregister.domain.Geometry geometry = new org.smartregister.domain.Geometry();
-              geometry.setType(
-                  org.smartregister.domain.Geometry.GeometryType.valueOf(
-                      feature.getGeometry().getType().toUpperCase()));
-              JsonArray coordinates = new JsonArray();
-              JSONArray featureCoordinates =
-                  feature.getGeometry().toJSON().getJSONArray(JSON_COORDINATES);
-              coordinates.add(Double.parseDouble(featureCoordinates.get(0).toString()));
-              coordinates.add(Double.parseDouble(featureCoordinates.get(1).toString()));
-              geometry.setCoordinates(coordinates);
-              structure.setGeometry(geometry);
-              LocationProperty properties = new LocationProperty();
-              Obs structureTypeObs = event.findObs(null, false, STRUCTURE_TYPE);
-              String structureType = null;
-              if (structureTypeObs != null) structureType = structureTypeObs.getValue().toString();
-              properties.setType(structureType);
-              properties.setParentId(operationalAreaId);
-              properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
-              properties.setUid(UUID.randomUUID().toString());
-              properties.setGeographicLevel("structure");
-              if (getCountry() == Country.MOZAMBIQUE) {
-                properties.setStructureNumber(
-                    event.getBaseEntityId().substring(event.getBaseEntityId().length() - 4));
-              }
-              Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
-              if (structureNameObs != null && structureNameObs.getValue() != null) {
-                properties.setName(structureNameObs.getValue().toString());
-              } else {
-                properties.setName(structure.getId());
-              }
-              Obs physicalTypeObs = event.findObs(null, false, PHYSICAL_TYPE);
-              if (physicalTypeObs != null && physicalTypeObs.getValue() != null) {
-                Map<String, String> customProperties = new HashMap<>();
-                customProperties.put(PHYSICAL_TYPE, physicalTypeObs.getValue().toString());
-                properties.setCustomProperties(customProperties);
-              }
-              structure.setProperties(properties);
-              structure.setSyncStatus(BaseRepository.TYPE_Created);
-              structureRepository.addOrUpdate(structure);
-              revealApplication.setSynced(false);
-              Context applicationContext = revealApplication.getApplicationContext();
-              Task task = null;
-              String currentPlanId = PreferencesUtil.getInstance().getCurrentPlanId();
-              String interventionType =
-                  PreferencesUtil.getInstance().getInterventionTypeForPlan(currentPlanId);
-              if (StructureType.RESIDENTIAL.equals(structureType)
-                  && Utils.isFocusInvestigationOrMDA()) {
-                task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
-              } else if (getCountry() == Country.ZAMBIA && SURVEY.equals(interventionType)) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        STRUCTURE_SURVEY,
-                        R.string.structure_survey);
-              } else if (getCountry() == Country.MOZAMBIQUE) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        MDA_SURVEY,
-                        R.string.mda_survey);
-              } else if (getCountry() == Country.MALI) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        MDA_ONCHOCERCIASIS_SURVEY,
-                        R.string.mda_onco_survey);
-              } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        HABITAT_SURVEY,
-                        R.string.habitat_survey);
-              } else if (StructureType.RESIDENTIAL.equals(structureType)
-                  && Constants.Intervention.LSM.equals(interventionType)) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        LSM_HOUSEHOLD_SURVEY,
-                        R.string.lsm_household_survey);
-              } else if (SURVEY.equals(interventionType)
-                  && (getCountry() == Country.NIGERIA
-                      || getCountry() == Country.UW
-                      || getCountry() == Country.VL_ZM)) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        STRUCTURE_SURVEY,
-                        R.string.structure_survey);
-              } else if (SURVEY.equals(interventionType) && (getCountry() == Country.GDRS)) {
-                task =
-                    taskUtils.generateTask(
-                        applicationContext,
-                        structure.getId(),
-                        structure.getId(),
-                        BusinessStatus.NOT_VISITED,
-                        RCD,
-                        R.string.rcd);
-              } else {
-                if (getCountry() == Country.ZAMBIA
-                    || getCountry() == Country.SENEGAL
-                    || getCountry() == Country.SENEGAL_EN
-                    || StructureType.RESIDENTIAL.equals(structureType)) {
-                  task =
-                      taskUtils.generateTask(
-                          applicationContext,
-                          structure.getId(),
-                          structure.getId(),
-                          BusinessStatus.NOT_VISITED,
-                          Intervention.IRS,
-                          R.string.irs_task_description);
-                } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {
-                  task =
-                      taskUtils.generateTask(
-                          applicationContext,
-                          structure.getId(),
-                          structure.getId(),
-                          BusinessStatus.NOT_VISITED,
-                          Intervention.MOSQUITO_COLLECTION,
-                          R.string.mosquito_collection_task_description);
-                } else if (StructureType.LARVAL_BREEDING_SITE.equals(structureType)) {
-                  task =
-                      taskUtils.generateTask(
-                          applicationContext,
-                          structure.getId(),
-                          structure.getId(),
-                          BusinessStatus.NOT_VISITED,
-                          Intervention.LARVAL_DIPPING,
-                          R.string.larval_dipping_task_description);
-                } else if (StructureType.POTENTIAL_AREA_OF_TRANSMISSION.equals(structureType)) {
-                  task =
-                      taskUtils.generateTask(
-                          applicationContext,
-                          structure.getId(),
-                          structure.getId(),
-                          BusinessStatus.NOT_VISITED,
-                          PAOT,
-                          R.string.poat_task_description);
+//  private void saveRegisterStructureForm(JSONObject jsonForm) {
+//    Runnable runnable =
+//        new Runnable() {
+//          @Override
+//          public void run() {
+//            try {
+//              jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
+//              JSONObject eventDetails = new JSONObject();
+//              eventDetails.put(Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+//              eventDetails.put(Properties.LOCATION_PARENT, operationalAreaId);
+//              String planIdentifier = PreferencesUtil.getInstance().getCurrentPlanId();
+//              eventDetails.put(Properties.PLAN_IDENTIFIER, planIdentifier);
+//              jsonForm.put(DETAILS, eventDetails);
+//              org.smartregister.domain.Event event =
+//                  saveEvent(jsonForm, REGISTER_STRUCTURE_EVENT, STRUCTURE);
+//              com.cocoahero.android.geojson.Feature feature =
+//                  new com.cocoahero.android.geojson.Feature(
+//                      new JSONObject(
+//                          event.findObs(null, false, "structure").getValue().toString()));
+//              Location structure = new Location();
+//              structure.setId(event.getBaseEntityId());
+//              structure.setType(feature.getType());
+//              org.smartregister.domain.Geometry geometry = new org.smartregister.domain.Geometry();
+//              geometry.setType(
+//                  org.smartregister.domain.Geometry.GeometryType.valueOf(
+//                      feature.getGeometry().getType().toUpperCase()));
+//              JsonArray coordinates = new JsonArray();
+//              JSONArray featureCoordinates =
+//                  feature.getGeometry().toJSON().getJSONArray(JSON_COORDINATES);
+//              coordinates.add(Double.parseDouble(featureCoordinates.get(0).toString()));
+//              coordinates.add(Double.parseDouble(featureCoordinates.get(1).toString()));
+//              geometry.setCoordinates(coordinates);
+//              structure.setGeometry(geometry);
+//              LocationProperty properties = new LocationProperty();
+//              Obs structureTypeObs = event.findObs(null, false, STRUCTURE_TYPE);
+//              String structureType = null;
+//              if (structureTypeObs != null) structureType = structureTypeObs.getValue().toString();
+//              properties.setType(structureType);
+//              properties.setParentId(operationalAreaId);
+//              properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
+//              properties.setUid(UUID.randomUUID().toString());
+//              properties.setGeographicLevel("structure");
+//              if (getCountry() == Country.MOZAMBIQUE) {
+//                properties.setStructureNumber(
+//                    event.getBaseEntityId().substring(event.getBaseEntityId().length() - 4));
+//              }
+//              Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
+//              if (structureNameObs != null && structureNameObs.getValue() != null) {
+//                properties.setName(structureNameObs.getValue().toString());
+//              } else {
+//                properties.setName(structure.getId());
+//              }
+//              Obs physicalTypeObs = event.findObs(null, false, PHYSICAL_TYPE);
+//              if (physicalTypeObs != null && physicalTypeObs.getValue() != null) {
+//                Map<String, String> customProperties = new HashMap<>();
+//                customProperties.put(PHYSICAL_TYPE, physicalTypeObs.getValue().toString());
+//                properties.setCustomProperties(customProperties);
+//              }
+//              structure.setProperties(properties);
+//              structure.setSyncStatus(BaseRepository.TYPE_Created);
+//              structureRepository.addOrUpdate(structure);
+//              revealApplication.setSynced(false);
+//              Context applicationContext = revealApplication.getApplicationContext();
+//              Task task = null;
+//              String currentPlanId = PreferencesUtil.getInstance().getCurrentPlanId();
+//              String interventionType =
+//                  PreferencesUtil.getInstance().getInterventionTypeForPlan(currentPlanId);
+//              if (StructureType.RESIDENTIAL.equals(structureType)
+//                  && Utils.isFocusInvestigationOrMDA()) {
+//                task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
+//              } else if (getCountry() == Country.ZAMBIA && SURVEY.equals(interventionType)) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        STRUCTURE_SURVEY,
+//                        R.string.structure_survey);
+//              } else if (getCountry() == Country.MOZAMBIQUE) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        MDA_SURVEY,
+//                        R.string.mda_survey);
+//              } else if (getCountry() == Country.MALI) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        MDA_ONCHOCERCIASIS_SURVEY,
+//                        R.string.mda_onco_survey);
+//              } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        HABITAT_SURVEY,
+//                        R.string.habitat_survey);
+//              } else if (StructureType.RESIDENTIAL.equals(structureType)
+//                  && Constants.Intervention.LSM.equals(interventionType)) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        LSM_HOUSEHOLD_SURVEY,
+//                        R.string.lsm_household_survey);
+//              } else if (SURVEY.equals(interventionType)
+//                  && (getCountry() == Country.NIGERIA
+//                      || getCountry() == Country.UW
+//                      || getCountry() == Country.VL_ZM)) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        STRUCTURE_SURVEY,
+//                        R.string.structure_survey);
+//              } else if (SURVEY.equals(interventionType) && (getCountry() == Country.GDRS)) {
+//                task =
+//                    taskUtils.generateTask(
+//                        applicationContext,
+//                        structure.getId(),
+//                        structure.getId(),
+//                        BusinessStatus.NOT_VISITED,
+//                        RCD,
+//                        R.string.rcd);
+//              } else {
+//                if (getCountry() == Country.ZAMBIA
+//                    || getCountry() == Country.SENEGAL
+//                    || getCountry() == Country.SENEGAL_EN
+//                    || StructureType.RESIDENTIAL.equals(structureType)) {
+//                  task =
+//                      taskUtils.generateTask(
+//                          applicationContext,
+//                          structure.getId(),
+//                          structure.getId(),
+//                          BusinessStatus.NOT_VISITED,
+//                          Intervention.IRS,
+//                          R.string.irs_task_description);
+//                } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {
+//                  task =
+//                      taskUtils.generateTask(
+//                          applicationContext,
+//                          structure.getId(),
+//                          structure.getId(),
+//                          BusinessStatus.NOT_VISITED,
+//                          Intervention.MOSQUITO_COLLECTION,
+//                          R.string.mosquito_collection_task_description);
+//                } else if (StructureType.LARVAL_BREEDING_SITE.equals(structureType)) {
+//                  task =
+//                      taskUtils.generateTask(
+//                          applicationContext,
+//                          structure.getId(),
+//                          structure.getId(),
+//                          BusinessStatus.NOT_VISITED,
+//                          Intervention.LARVAL_DIPPING,
+//                          R.string.larval_dipping_task_description);
+//                } else if (StructureType.POTENTIAL_AREA_OF_TRANSMISSION.equals(structureType)) {
+//                  task =
+//                      taskUtils.generateTask(
+//                          applicationContext,
+//                          structure.getId(),
+//                          structure.getId(),
+//                          BusinessStatus.NOT_VISITED,
+//                          PAOT,
+//                          R.string.poat_task_description);
+//                }
+//              }
+//              clientProcessor.processClient(
+//                  Collections.singletonList(new EventClient(event, null)), true);
+//              Task finalTask = task;
+//              appExecutors
+//                  .mainThread()
+//                  .execute(
+//                      new Runnable() {
+//                        @Override
+//                        public void run() {
+//                          Map<String, String> taskProperties = new HashMap<>();
+//                          if (finalTask != null) {
+//
+//                            taskProperties.put(
+//                                Properties.TASK_IDENTIFIER, finalTask.getIdentifier());
+//                            taskProperties.put(
+//                                Properties.TASK_BUSINESS_STATUS, finalTask.getBusinessStatus());
+//                            taskProperties.put(
+//                                Properties.TASK_STATUS, finalTask.getStatus().name());
+//                            taskProperties.put(Properties.TASK_CODE, finalTask.getCode());
+//                          }
+//                          taskProperties.put(
+//                              Properties.LOCATION_UUID, structure.getProperties().getUid());
+//                          taskProperties.put(
+//                              Properties.LOCATION_VERSION,
+//                              structure.getProperties().getVersion() + "");
+//                          taskProperties.put(
+//                              Properties.LOCATION_TYPE, structure.getProperties().getType());
+//                          structure.getProperties().setCustomProperties(taskProperties);
+//
+//                          Obs myLocationActiveObs =
+//                              event.findObs(null, false, LOCATION_COMPONENT_ACTIVE);
+//
+//                          boolean myLocationActive =
+//                              myLocationActiveObs != null
+//                                  && Boolean.valueOf(myLocationActiveObs.getValue().toString());
+//                          revealApplication.setMyLocationComponentEnabled(myLocationActive);
+//
+//                          Obs zoomObs = event.findObs(null, false, GeoWidgetFactory.ZOOM_LEVEL);
+//                          double zoomLevel = Double.parseDouble(zoomObs.getValue().toString());
+//
+//                          presenterCallBack.onStructureAdded(
+//                              Feature.fromJson(gson.toJson(structure)),
+//                              featureCoordinates,
+//                              zoomLevel);
+//                        }
+//                      });
+//            } catch (JSONException e) {
+//              Timber.tag("Reveal Exception").w(e, "Error saving new Structure");
+//              presenterCallBack.onFormSaveFailure(REGISTER_STRUCTURE_EVENT);
+//            }
+//          }
+//        };
+//
+//    appExecutors.diskIO().execute(runnable);
+//  }
+private void saveRegisterStructureForm(JSONObject jsonForm) {
+  Runnable runnable =
+          new Runnable() {
+            @Override
+            public void run() {
+              try {
+                jsonForm.put(ENTITY_ID, UUID.randomUUID().toString());
+                JSONObject eventDetails = new JSONObject();
+                eventDetails.put(Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
+                eventDetails.put(Properties.LOCATION_PARENT, operationalAreaId);
+                String planIdentifier = PreferencesUtil.getInstance().getCurrentPlanId();
+                eventDetails.put(Properties.PLAN_IDENTIFIER, planIdentifier);
+                jsonForm.put(DETAILS, eventDetails);
+                org.smartregister.domain.Event event =
+                        saveEvent(jsonForm, REGISTER_STRUCTURE_EVENT, STRUCTURE);
+
+                // Replaced cocoahero Feature with Mapbox GeoJSON Feature
+                String structureJson = event.findObs(null, false, "structure").getValue().toString();
+                com.mapbox.geojson.Feature feature = com.mapbox.geojson.Feature.fromJson(structureJson);
+
+                Location structure = new Location();
+                structure.setId(event.getBaseEntityId());
+                structure.setType(feature.type());
+
+                org.smartregister.domain.Geometry geometry = new org.smartregister.domain.Geometry();
+                if (feature.geometry() != null) {
+                  geometry.setType(
+                          org.smartregister.domain.Geometry.GeometryType.valueOf(
+                                  feature.geometry().type().toUpperCase()));
                 }
+
+                JsonArray coordinates = new JsonArray();
+                JSONArray featureCoordinates = new JSONArray();
+
+                if (feature.geometry() instanceof com.mapbox.geojson.Point) {
+                  com.mapbox.geojson.Point point = (com.mapbox.geojson.Point) feature.geometry();
+                  coordinates.add(point.longitude());
+                  coordinates.add(point.latitude());
+                  featureCoordinates.put(point.longitude());
+                  featureCoordinates.put(point.latitude());
+                }
+
+                geometry.setCoordinates(coordinates);
+                structure.setGeometry(geometry);
+
+                LocationProperty properties = new LocationProperty();
+                Obs structureTypeObs = event.findObs(null, false, STRUCTURE_TYPE);
+                String structureType = null;
+                if (structureTypeObs != null) structureType = structureTypeObs.getValue().toString();
+                properties.setType(structureType);
+                properties.setParentId(operationalAreaId);
+                properties.setStatus(LocationProperty.PropertyStatus.PENDING_REVIEW);
+                properties.setUid(UUID.randomUUID().toString());
+                properties.setGeographicLevel("structure");
+                if (getCountry() == Country.MOZAMBIQUE) {
+                  properties.setStructureNumber(
+                          event.getBaseEntityId().substring(event.getBaseEntityId().length() - 4));
+                }
+                Obs structureNameObs = event.findObs(null, false, STRUCTURE_NAME);
+                if (structureNameObs != null && structureNameObs.getValue() != null) {
+                  properties.setName(structureNameObs.getValue().toString());
+                } else {
+                  properties.setName(structure.getId());
+                }
+                Obs physicalTypeObs = event.findObs(null, false, PHYSICAL_TYPE);
+                if (physicalTypeObs != null && physicalTypeObs.getValue() != null) {
+                  Map<String, String> customProperties = new HashMap<>();
+                  customProperties.put(PHYSICAL_TYPE, physicalTypeObs.getValue().toString());
+                  properties.setCustomProperties(customProperties);
+                }
+                structure.setProperties(properties);
+                structure.setSyncStatus(BaseRepository.TYPE_Created);
+                structureRepository.addOrUpdate(structure);
+                revealApplication.setSynced(false);
+                Context applicationContext = revealApplication.getApplicationContext();
+                Task task = null;
+                String currentPlanId = PreferencesUtil.getInstance().getCurrentPlanId();
+                String interventionType =
+                        PreferencesUtil.getInstance().getInterventionTypeForPlan(currentPlanId);
+                if (StructureType.RESIDENTIAL.equals(structureType)
+                        && Utils.isFocusInvestigationOrMDA()) {
+                  task = taskUtils.generateRegisterFamilyTask(applicationContext, structure.getId());
+                } else if (getCountry() == Country.ZAMBIA && SURVEY.equals(interventionType)) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  STRUCTURE_SURVEY,
+                                  R.string.structure_survey);
+                } else if (getCountry() == Country.MOZAMBIQUE) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  MDA_SURVEY,
+                                  R.string.mda_survey);
+                } else if (getCountry() == Country.MALI) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  MDA_ONCHOCERCIASIS_SURVEY,
+                                  R.string.mda_onco_survey);
+                } else if (StructureType.BODY_OF_WATER.equals(structureType)) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  HABITAT_SURVEY,
+                                  R.string.habitat_survey);
+                } else if (StructureType.RESIDENTIAL.equals(structureType)
+                        && Constants.Intervention.LSM.equals(interventionType)) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  LSM_HOUSEHOLD_SURVEY,
+                                  R.string.lsm_household_survey);
+                } else if (SURVEY.equals(interventionType)
+                        && (getCountry() == Country.NIGERIA
+                        || getCountry() == Country.UW
+                        || getCountry() == Country.VL_ZM)) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  STRUCTURE_SURVEY,
+                                  R.string.structure_survey);
+                } else if (SURVEY.equals(interventionType) && (getCountry() == Country.GDRS)) {
+                  task =
+                          taskUtils.generateTask(
+                                  applicationContext,
+                                  structure.getId(),
+                                  structure.getId(),
+                                  BusinessStatus.NOT_VISITED,
+                                  RCD,
+                                  R.string.rcd);
+                } else {
+                  if (getCountry() == Country.ZAMBIA
+                          || getCountry() == Country.SENEGAL
+                          || getCountry() == Country.SENEGAL_EN
+                          || StructureType.RESIDENTIAL.equals(structureType)) {
+                    task =
+                            taskUtils.generateTask(
+                                    applicationContext,
+                                    structure.getId(),
+                                    structure.getId(),
+                                    BusinessStatus.NOT_VISITED,
+                                    Intervention.IRS,
+                                    R.string.irs_task_description);
+                  } else if (StructureType.MOSQUITO_COLLECTION_POINT.equals(structureType)) {
+                    task =
+                            taskUtils.generateTask(
+                                    applicationContext,
+                                    structure.getId(),
+                                    structure.getId(),
+                                    BusinessStatus.NOT_VISITED,
+                                    Intervention.MOSQUITO_COLLECTION,
+                                    R.string.mosquito_collection_task_description);
+                  } else if (StructureType.LARVAL_BREEDING_SITE.equals(structureType)) {
+                    task =
+                            taskUtils.generateTask(
+                                    applicationContext,
+                                    structure.getId(),
+                                    structure.getId(),
+                                    BusinessStatus.NOT_VISITED,
+                                    Intervention.LARVAL_DIPPING,
+                                    R.string.larval_dipping_task_description);
+                  } else if (StructureType.POTENTIAL_AREA_OF_TRANSMISSION.equals(structureType)) {
+                    task =
+                            taskUtils.generateTask(
+                                    applicationContext,
+                                    structure.getId(),
+                                    structure.getId(),
+                                    BusinessStatus.NOT_VISITED,
+                                    PAOT,
+                                    R.string.poat_task_description);
+                  }
+                }
+                clientProcessor.processClient(
+                        Collections.singletonList(new EventClient(event, null)), true);
+                Task finalTask = task;
+                appExecutors
+                        .mainThread()
+                        .execute(
+                                new Runnable() {
+                                  @Override
+                                  public void run() {
+                                    Map<String, String> taskProperties = new HashMap<>();
+                                    if (finalTask != null) {
+                                      taskProperties.put(
+                                              Properties.TASK_IDENTIFIER, finalTask.getIdentifier());
+                                      taskProperties.put(
+                                              Properties.TASK_BUSINESS_STATUS, finalTask.getBusinessStatus());
+                                      taskProperties.put(
+                                              Properties.TASK_STATUS, finalTask.getStatus().name());
+                                      taskProperties.put(Properties.TASK_CODE, finalTask.getCode());
+                                    }
+                                    taskProperties.put(
+                                            Properties.LOCATION_UUID, structure.getProperties().getUid());
+                                    taskProperties.put(
+                                            Properties.LOCATION_VERSION,
+                                            structure.getProperties().getVersion() + "");
+                                    taskProperties.put(
+                                            Properties.LOCATION_TYPE, structure.getProperties().getType());
+                                    structure.getProperties().setCustomProperties(taskProperties);
+
+                                    Obs myLocationActiveObs =
+                                            event.findObs(null, false, LOCATION_COMPONENT_ACTIVE);
+
+                                    boolean myLocationActive =
+                                            myLocationActiveObs != null
+                                                    && Boolean.valueOf(myLocationActiveObs.getValue().toString());
+                                    revealApplication.setMyLocationComponentEnabled(myLocationActive);
+
+                                    Obs zoomObs = event.findObs(null, false, GeoWidgetFactory.ZOOM_LEVEL);
+                                    double zoomLevel = Double.parseDouble(zoomObs.getValue().toString());
+
+                                    presenterCallBack.onStructureAdded(
+                                            com.mapbox.geojson.Feature.fromJson(gson.toJson(structure)),
+                                            featureCoordinates,
+                                            zoomLevel);
+                                  }
+                                });
+              } catch (JSONException e) {
+                Timber.tag("Reveal Exception").w(e, "Error saving new Structure");
+                presenterCallBack.onFormSaveFailure(REGISTER_STRUCTURE_EVENT);
               }
-              clientProcessor.processClient(
-                  Collections.singletonList(new EventClient(event, null)), true);
-              Task finalTask = task;
-              appExecutors
-                  .mainThread()
-                  .execute(
-                      new Runnable() {
-                        @Override
-                        public void run() {
-                          Map<String, String> taskProperties = new HashMap<>();
-                          if (finalTask != null) {
-
-                            taskProperties.put(
-                                Properties.TASK_IDENTIFIER, finalTask.getIdentifier());
-                            taskProperties.put(
-                                Properties.TASK_BUSINESS_STATUS, finalTask.getBusinessStatus());
-                            taskProperties.put(
-                                Properties.TASK_STATUS, finalTask.getStatus().name());
-                            taskProperties.put(Properties.TASK_CODE, finalTask.getCode());
-                          }
-                          taskProperties.put(
-                              Properties.LOCATION_UUID, structure.getProperties().getUid());
-                          taskProperties.put(
-                              Properties.LOCATION_VERSION,
-                              structure.getProperties().getVersion() + "");
-                          taskProperties.put(
-                              Properties.LOCATION_TYPE, structure.getProperties().getType());
-                          structure.getProperties().setCustomProperties(taskProperties);
-
-                          Obs myLocationActiveObs =
-                              event.findObs(null, false, LOCATION_COMPONENT_ACTIVE);
-
-                          boolean myLocationActive =
-                              myLocationActiveObs != null
-                                  && Boolean.valueOf(myLocationActiveObs.getValue().toString());
-                          revealApplication.setMyLocationComponentEnabled(myLocationActive);
-
-                          Obs zoomObs = event.findObs(null, false, GeoWidgetFactory.ZOOM_LEVEL);
-                          double zoomLevel = Double.parseDouble(zoomObs.getValue().toString());
-
-                          presenterCallBack.onStructureAdded(
-                              Feature.fromJson(gson.toJson(structure)),
-                              featureCoordinates,
-                              zoomLevel);
-                        }
-                      });
-            } catch (JSONException e) {
-              Timber.tag("Reveal Exception").w(e, "Error saving new Structure");
-              presenterCallBack.onFormSaveFailure(REGISTER_STRUCTURE_EVENT);
             }
-          }
-        };
+          };
 
-    appExecutors.diskIO().execute(runnable);
-  }
-
+  appExecutors.diskIO().execute(runnable);
+}
   private void saveMemberForm(JSONObject jsonForm, String eventType, String intervention) {
     Runnable runnable =
         new Runnable() {

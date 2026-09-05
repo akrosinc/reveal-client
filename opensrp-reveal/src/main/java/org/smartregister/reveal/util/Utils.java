@@ -64,6 +64,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.Location;
@@ -146,9 +147,19 @@ public class Utils {
     return featureProperty == null ? null : featureProperty.getAsString();
   }
 
-  public static void startImmediateSync() {
-    LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
+//  public static void startImmediateSync() {
+//    LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
+//  }
+public static void startImmediateSync() {
+  AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+  if (allSharedPreferences.fetchIsSyncInProgress()) {
+    Timber.tag("SYNC_TRACE_RVL").w("startImmediateSync() skipped — sync already in progress");
+    return;
   }
+  allSharedPreferences.saveIsSyncInProgress(true);
+  Timber.tag("SYNC_TRACE_RVL").d("startImmediateSync() proceeding — flag set true");
+  LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
+}
 
   public static Location getOperationalAreaLocation(String operationalArea) {
     return cache.get(

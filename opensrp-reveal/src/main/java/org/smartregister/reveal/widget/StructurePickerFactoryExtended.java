@@ -35,17 +35,26 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.cocoahero.android.geojson.Feature;
-import com.cocoahero.android.geojson.Point;
+
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.expressions.Expression;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.rey.material.util.ViewUtil;
@@ -85,12 +94,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.ona.kujaku.callbacks.OnLocationComponentInitializedCallback;
-import io.ona.kujaku.layers.BoundaryLayer;
+
 import timber.log.Timber;
 
+//public class StructurePickerFactoryExtended
+//    implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback
 public class StructurePickerFactoryExtended
-    implements FormWidgetFactory, LifeCycleListener, OnLocationComponentInitializedCallback {
+    implements FormWidgetFactory, LifeCycleListener {
 
   public static final String STRUCTURE_PICKER_FACTORY_EXTENDED = "structure_picker_extended";
 
@@ -358,58 +368,109 @@ public class StructurePickerFactoryExtended
 
     return new ValidationStatus(true, null, null, null);
   }
-
   private static void writeValues(RevealMapView mapView, JsonFormFragmentView formFragmentView) {
     //        Timber.d("writeValues: %s ", mapView.getCameraPosition().target);
-    ImageButton myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
     String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
     String key = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.key));
     String openMrsEntityParent =
-        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
+            String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
     String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
     String openMrsEntityId =
-        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
+            String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
     String structureId = String.valueOf(mapView.getTag(R.id.structure_id));
 
     Object compoundTag = mapView.getTag(R.string.capture_compound);
     Object householdTag = mapView.getTag(R.string.capture_household);
 
     if (mapView != null && mapView.getCameraPosition() != null) {
+      // Use RevealApplication state instead of looking up the missing Kujaku button view ID
+      boolean isMyLocationActive = RevealApplication.getInstance().isMyLocationComponentEnabled();
+
       writeValues(
-          formFragmentView,
-          stepName,
-          structureId,
-          key,
-          openMrsEntityParent,
-          openMrsEntity,
-          openMrsEntityId,
-          mapView.getMapboxMapZoom(),
-          new RevealMapHelper()
-              .isMyLocationComponentActive(formFragmentView.getContext(), myLocationButton));
+              formFragmentView,
+              stepName,
+              structureId,
+              key,
+              openMrsEntityParent,
+              openMrsEntity,
+              openMrsEntityId,
+              mapView.getMapboxMapZoom(),
+              isMyLocationActive);
 
       if (compoundTag != null) {
         formFragmentView.writeValue(
-            stepName,
-            "captured_compound",
-            String.valueOf(compoundTag),
-            openMrsEntityParent,
-            openMrsEntity,
-            openMrsEntityId,
-            false);
+                stepName,
+                "captured_compound",
+                String.valueOf(compoundTag),
+                openMrsEntityParent,
+                openMrsEntity,
+                openMrsEntityId,
+                false);
       }
 
       if (householdTag != null) {
         formFragmentView.writeValue(
-            stepName,
-            "captured_household",
-            String.valueOf(householdTag),
-            openMrsEntityParent,
-            openMrsEntity,
-            openMrsEntityId,
-            false);
+                stepName,
+                "captured_household",
+                String.valueOf(householdTag),
+                openMrsEntityParent,
+                openMrsEntity,
+                openMrsEntityId,
+                false);
       }
     }
   }
+//  private static void writeValues(RevealMapView mapView, JsonFormFragmentView formFragmentView) {
+//    //        Timber.d("writeValues: %s ", mapView.getCameraPosition().target);
+//    ImageButton myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+//    String stepName = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.step_title));
+//    String key = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.key));
+//    String openMrsEntityParent =
+//        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_parent));
+//    String openMrsEntity = String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity));
+//    String openMrsEntityId =
+//        String.valueOf(mapView.getTag(com.vijay.jsonwizard.R.id.openmrs_entity_id));
+//    String structureId = String.valueOf(mapView.getTag(R.id.structure_id));
+//
+//    Object compoundTag = mapView.getTag(R.string.capture_compound);
+//    Object householdTag = mapView.getTag(R.string.capture_household);
+//
+//    if (mapView != null && mapView.getCameraPosition() != null) {
+//      writeValues(
+//          formFragmentView,
+//          stepName,
+//          structureId,
+//          key,
+//          openMrsEntityParent,
+//          openMrsEntity,
+//          openMrsEntityId,
+//          mapView.getMapboxMapZoom(),
+//          new RevealMapHelper()
+//              .isMyLocationComponentActive(formFragmentView.getContext(), myLocationButton));
+//
+//      if (compoundTag != null) {
+//        formFragmentView.writeValue(
+//            stepName,
+//            "captured_compound",
+//            String.valueOf(compoundTag),
+//            openMrsEntityParent,
+//            openMrsEntity,
+//            openMrsEntityId,
+//            false);
+//      }
+//
+//      if (householdTag != null) {
+//        formFragmentView.writeValue(
+//            stepName,
+//            "captured_household",
+//            String.valueOf(householdTag),
+//            openMrsEntityParent,
+//            openMrsEntity,
+//            openMrsEntityId,
+//            false);
+//      }
+//    }
+//  }
 
   @Override
   public List<View> getViewsFromJson(
@@ -443,7 +504,8 @@ public class StructurePickerFactoryExtended
       JSONObject jsonObject,
       CommonListener listener,
       boolean popup)
-      throws Exception {
+      throws Exception
+  {
     jsonApi = ((JsonApi) context);
     jsonApi.registerLifecycleListener(this);
     String openMrsEntityParent = jsonObject.optString(JsonFormConstants.OPENMRS_ENTITY_PARENT);
@@ -462,7 +524,7 @@ public class StructurePickerFactoryExtended
     final int canvasId = ViewUtil.generateViewId();
 
     LinearLayout linearLayout =
-        (LinearLayout) LayoutInflater.from(context).inflate(R.layout.structure_picker, null);
+            (LinearLayout) LayoutInflater.from(context).inflate(R.layout.structure_picker, null);
 
     mapView = linearLayout.findViewById(R.id.geoWidgetMapView);
 
@@ -477,7 +539,7 @@ public class StructurePickerFactoryExtended
 
     try {
       com.mapbox.geojson.Feature operationalArea1 =
-          RevealApplication.getInstance().getOperationalArea();
+              RevealApplication.getInstance().getOperationalArea();
       operationalArea = operationalArea1.toJson();
       FeatureCollection featureCollection1 = RevealApplication.getInstance().getFeatureCollection();
 
@@ -492,174 +554,174 @@ public class StructurePickerFactoryExtended
       }
       featureCollection = featureCollection1.toJson();
       locationComponentActive =
-          new JSONObject(formFragment.getCurrentJsonState()).optBoolean(LOCATION_COMPONENT_ACTIVE);
+              new JSONObject(formFragment.getCurrentJsonState()).optBoolean(LOCATION_COMPONENT_ACTIVE);
 
     } catch (JSONException e) {
       Timber.tag("Reveal Exception").w(e, "error extracting geojson form jsonform");
     } catch (Exception e) {
       Timber.tag("RevealMap").i("StructurePickerFactoryExtended: this is causing the failure");
     }
+
     mapView.setId(canvasId);
     mapView.onCreate(null);
-    mapView.setDisableMyLocationOnMapMove(true);
-    mapView.getMapboxLocationComponentWrapper().setOnLocationComponentInitializedCallback(this);
 
+// Location button extraction
     myLocationButton = mapView.findViewById(R.id.ib_mapview_focusOnMyLocationIcon);
+
     com.mapbox.geojson.Feature operationalAreaFeature =
-        com.mapbox.geojson.Feature.fromJson(operationalArea);
+            com.mapbox.geojson.Feature.fromJson(operationalArea);
     this.operationalArea = operationalAreaFeature;
 
     createBoundaryLayer(operationalAreaFeature, context);
-    String finalFeatureCollection = featureCollection;
 
+    String finalFeatureCollection = featureCollection;
     boolean finalLocationComponentActive = locationComponentActive;
     com.mapbox.geojson.Feature finalSelectedFeature = selectedFeature;
+
     mapView.getMapAsync(
-        new OnMapReadyCallback() {
-          @Override
-          public void onMapReady(@NonNull MapboxMap mapboxMap) {
+            new OnMapReadyCallback() {
+              @Override
+              public void onMapReady(@NonNull MapboxMap mapboxMap) {
 
-            String satelliteStyle = getSatelliteStyle(context);
-            Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
+                String satelliteStyle = getSatelliteStyle(context);
+                Style.Builder builder = new Style.Builder().fromUri(satelliteStyle);
 
-            mapboxMap.setStyle(
-                builder,
-                new Style.OnStyleLoaded() {
-                  @Override
-                  public void onStyleLoaded(@NonNull Style style) {
-                    geoJsonSource =
-                        style.getSourceAs(context.getString(R.string.reveal_datasource_name));
-                    geoJsonSourceLine =
-                        style.getSourceAs(context.getString(R.string.selected_datasource_name));
-                    if (geoJsonSourceLine == null) {
-                      Timber.tag("RevealMap").i("geoJsonSourceLine is null");
-                    } else {
-                      if (finalSelectedFeature != null) {
-                        FeatureCollection selectedFeatureCollection =
-                            FeatureCollection.fromFeature(finalSelectedFeature);
-                        geoJsonSourceLine.setGeoJson(selectedFeatureCollection);
-                      }
-                    }
-                    if (geoJsonSource != null) {
-                      Timber.tag("RevealMap").i("geoJsonSource is not null");
-                    }
+                mapboxMap.setStyle(
+                        builder,
+                        new Style.OnStyleLoaded() {
+                          @Override
+                          public void onStyleLoaded(@NonNull Style style) {
+                            // 1. Initialize Native Location Component with custom XML styling
+                            enableNativeLocationComponent(mapboxMap, style);
 
-                    if (geoJsonSource != null && StringUtils.isNotBlank(finalFeatureCollection)) {
-                      geoJsonSource.setGeoJson(FeatureCollection.fromJson(finalFeatureCollection));
+                            geoJsonSource =
+                                    style.getSourceAs(context.getString(R.string.reveal_datasource_name));
+                            geoJsonSourceLine =
+                                    style.getSourceAs(context.getString(R.string.selected_datasource_name));
+                            if (geoJsonSourceLine == null) {
+                              Timber.tag("RevealMap").i("geoJsonSourceLine is null");
+                            } else {
+                              if (finalSelectedFeature != null) {
+                                FeatureCollection selectedFeatureCollection =
+                                        FeatureCollection.fromFeature(finalSelectedFeature);
+                                geoJsonSourceLine.setGeoJson(selectedFeatureCollection);
+                              }
+                            }
 
-                      if (householdLabelLayer != null) {
-                        householdLabelLayer.removeLayerOnMap(mapView.getMapboxMap());
-                      }
+                            if (geoJsonSource != null && StringUtils.isNotBlank(finalFeatureCollection)) {
+                              geoJsonSource.setGeoJson(FeatureCollection.fromJson(finalFeatureCollection));
 
-                      householdLabelLayer =
-                          createHouseholdLabelLayer(
-                              FeatureCollection.fromJson(finalFeatureCollection));
-                      mapView.addLayer(householdLabelLayer);
-                    }
+                              if (householdLabelLayer != null) {
+                                householdLabelLayer.removeLayerOnMap(mapboxMap);
+                              }
 
-                    String baseMapFeatureString =
-                        AssetHandler.readFileFromAssetsFolder(
-                            context.getString(R.string.base_map_feature_json), context);
+                              householdLabelLayer =
+                                      createHouseholdLabelLayer(
+                                              FeatureCollection.fromJson(finalFeatureCollection));
+                              householdLabelLayer.addLayerToMap(mapboxMap);
+                            }
 
-                    if (BuildConfig.DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK) {
-                      RevealMapHelper.addOutOfBoundaryMask(
-                          style,
-                          operationalAreaFeature,
-                          com.mapbox.geojson.Feature.fromJson(baseMapFeatureString),
-                          context);
-                    }
+                            String baseMapFeatureString =
+                                    AssetHandler.readFileFromAssetsFolder(
+                                            context.getString(R.string.base_map_feature_json), context);
 
-                    RevealMapHelper.addCustomLayers(style, context);
+                            if (BuildConfig.DISPLAY_OUTSIDE_OPERATIONAL_AREA_MASK) {
+                              RevealMapHelper.addOutOfBoundaryMask(
+                                      style,
+                                      operationalAreaFeature,
+                                      com.mapbox.geojson.Feature.fromJson(baseMapFeatureString),
+                                      context);
+                            }
 
-                    mapView.setMapboxMap(mapboxMap);
+                            RevealMapHelper.addCustomLayers(style, context);
 
-                    RevealMapHelper.addBaseLayers(mapView, style, context);
-                  }
-                });
+                            // Set wrapper instance single point of entry
+                            mapView.setMapboxMap(mapboxMap);
 
-            mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
+                            RevealMapHelper.addBaseLayers(mapView, style, context);
 
-            mapView.setMapboxMap(mapboxMap);
-            float bufferRadius =
-                getLocationBuffer(isCurrentTargetLevelStructure())
-                    / getPixelsPerDPI(context.getResources());
-            mapView.setLocationBufferRadius(bufferRadius);
+                            // Camera Positioning
+                            if (finalSelectedFeature != null
+                                    || (operationalAreaFeature != null && !finalLocationComponentActive)) {
+                              CameraPosition cameraPosition;
+                              if (finalSelectedFeature != null) {
+                                cameraPosition = mapboxMap.getCameraForGeometry(finalSelectedFeature.geometry());
+                                if (cameraPosition != null) {
+                                  mapboxMap.setCameraPosition(
+                                          new CameraPosition.Builder().target(cameraPosition.target).zoom(19.1).build());
+                                }
+                              } else if (operationalAreaFeature != null) {
+                                cameraPosition = mapboxMap.getCameraForGeometry(operationalAreaFeature.geometry());
+                                if (cameraPosition != null) {
+                                  mapboxMap.setCameraPosition(cameraPosition);
+                                }
+                              }
+                            } else {
+                              focusOnUserLocationNative(mapboxMap);
+                            }
+                          }
+                        });
 
-            if (finalSelectedFeature != null
-                || (operationalAreaFeature != null && !finalLocationComponentActive)) {
-              CameraPosition cameraPosition;
-              if (finalSelectedFeature != null) {
-                cameraPosition = mapboxMap.getCameraForGeometry(finalSelectedFeature.geometry());
-                mapboxMap.setCameraPosition(
-                    new CameraPosition.Builder().target(cameraPosition.target).zoom(19.1).build());
+                mapboxMap.getUiSettings().setRotateGesturesEnabled(false);
 
-              } else {
-                cameraPosition = mapboxMap.getCameraForGeometry(operationalAreaFeature.geometry());
-                mapboxMap.setCameraPosition(cameraPosition);
+                mapboxMap.addOnMapClickListener(
+                        new MapboxMap.OnMapClickListener() {
+                          @Override
+                          public boolean onMapClick(@NonNull LatLng point) {
+                            Timber.tag("RevealMap")
+                                    .i("clicked on point %s", String.valueOf(point.getLatitude()));
+                            final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
+                            List<com.mapbox.geojson.Feature> features =
+                                    mapboxMap.queryRenderedFeatures(
+                                            pixel,
+                                            context.getString(R.string.reveal_layer_polygons),
+                                            context.getString(R.string.reveal_layer_points));
+                            if (features.isEmpty()) {
+                              RectF clickArea =
+                                      new RectF(
+                                              pixel.x - CLICK_SELECT_RADIUS,
+                                              pixel.y + CLICK_SELECT_RADIUS,
+                                              pixel.x + CLICK_SELECT_RADIUS,
+                                              pixel.y - CLICK_SELECT_RADIUS);
+                              features =
+                                      mapboxMap.queryRenderedFeatures(
+                                              clickArea,
+                                              context.getString(R.string.reveal_layer_polygons),
+                                              context.getString(R.string.reveal_layer_points));
+                              Timber.d(
+                                      "Selected structure after increasing click area: " + features.size());
+                              if (features.size() == 1) {
+                                onFeatureSelected(
+                                        features.get(0),
+                                        formFragment,
+                                        stepName,
+                                        openMrsEntityParent,
+                                        openMrsEntity,
+                                        openMrsEntityId,
+                                        key);
+                              } else {
+                                Timber.d(
+                                        "Not Selected structure after increasing click area: "
+                                                + features.size());
+                              }
+                            } else {
+                              onFeatureSelected(
+                                      features.get(0),
+                                      formFragment,
+                                      stepName,
+                                      openMrsEntityParent,
+                                      openMrsEntity,
+                                      openMrsEntityId,
+                                      key);
+                              if (features.size() > 1) {
+                                Timber.w("Selected more than 1 structure: " + features.size());
+                              }
+                            }
+                            return false;
+                          }
+                        });
               }
-            } else {
-              mapView.focusOnUserLocation(true, bufferRadius, RenderMode.COMPASS);
-            }
-
-            mapboxMap.addOnMapClickListener(
-                new MapboxMap.OnMapClickListener() {
-                  @Override
-                  public boolean onMapClick(@NonNull LatLng point) {
-                    Timber.tag("RevealMap")
-                        .i("clicked on point %s", String.valueOf(point.getLatitude()));
-                    final PointF pixel = mapboxMap.getProjection().toScreenLocation(point);
-                    List<com.mapbox.geojson.Feature> features =
-                        mapboxMap.queryRenderedFeatures(
-                            pixel,
-                            context.getString(R.string.reveal_layer_polygons),
-                            context.getString(R.string.reveal_layer_points));
-                    if (features.isEmpty()) { // try to increase the click area
-                      RectF clickArea =
-                          new RectF(
-                              pixel.x - CLICK_SELECT_RADIUS,
-                              pixel.y + CLICK_SELECT_RADIUS,
-                              pixel.x + CLICK_SELECT_RADIUS,
-                              pixel.y - CLICK_SELECT_RADIUS);
-                      features =
-                          mapboxMap.queryRenderedFeatures(
-                              clickArea,
-                              context.getString(R.string.reveal_layer_polygons),
-                              context.getString(R.string.reveal_layer_points));
-                      Timber.d(
-                          "Selected structure after increasing click area: " + features.size());
-                      if (features.size() == 1) {
-
-                        onFeatureSelected(
-                            features.get(0),
-                            formFragment,
-                            stepName,
-                            openMrsEntityParent,
-                            openMrsEntity,
-                            openMrsEntityId,
-                            key);
-                      } else {
-                        Timber.d(
-                            "Not Selected structure after increasing click area: "
-                                + features.size());
-                      }
-                    } else {
-                      onFeatureSelected(
-                          features.get(0),
-                          formFragment,
-                          stepName,
-                          openMrsEntityParent,
-                          openMrsEntity,
-                          openMrsEntityId,
-                          key);
-                      if (features.size() > 1) {
-                        Timber.w("Selected more than 1 structure: " + features.size());
-                      }
-                    }
-                    return false;
-                  }
-                });
-          }
-        });
+            });
     JSONArray canvasIdsArray = new JSONArray();
     canvasIdsArray.put(canvasId);
     mapView.setTag(com.vijay.jsonwizard.R.id.canvas_ids, canvasIdsArray.toString());
@@ -744,8 +806,11 @@ public class StructurePickerFactoryExtended
 
     views.add(mapView);
     mapView.onStart();
-    mapView.showCurrentLocationBtn(true);
-    mapView.enableAddPoint(false);
+//    mapView.showCurrentLocationBtn(true);
+    if (myLocationButton != null) {
+      myLocationButton.setVisibility(View.VISIBLE);
+    }
+//    mapView.enableAddPoint(false);
     disableParentScroll((Activity) context, mapView);
 
     return views;
@@ -807,22 +872,72 @@ public class StructurePickerFactoryExtended
     return null;
   }
 
-  private void createBoundaryLayer(com.mapbox.geojson.Feature operationalArea, Context context) {
-    if (operationalArea != null) {
+//  private void createBoundaryLayer(com.mapbox.geojson.Feature operationalArea, Context context) {
+//    if (operationalArea != null) {
+//
+//      BoundaryLayer.Builder boundaryBuilder =
+//          new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
+//              .setLabelProperty(Map.NAME_PROPERTY)
+//              .setLabelTextSize(
+//                  context.getResources().getDimension(R.dimen.operational_area_boundary_text_size))
+//              .setLabelColorInt(Color.WHITE)
+//              .setBoundaryColor(Color.WHITE)
+//              .setBoundaryWidth(
+//                  context.getResources().getDimension(R.dimen.operational_area_boundary_width));
+//      mapView.addLayer(boundaryBuilder.build());
+//    }
+//  }
+private void createBoundaryLayer(com.mapbox.geojson.Feature operationalArea, Context context) {
+  if (operationalArea == null || mapView == null) return;
 
-      BoundaryLayer.Builder boundaryBuilder =
-          new BoundaryLayer.Builder(FeatureCollection.fromFeature(operationalArea))
-              .setLabelProperty(Map.NAME_PROPERTY)
-              .setLabelTextSize(
-                  context.getResources().getDimension(R.dimen.operational_area_boundary_text_size))
-              .setLabelColorInt(Color.WHITE)
-              .setBoundaryColor(Color.WHITE)
-              .setBoundaryWidth(
-                  context.getResources().getDimension(R.dimen.operational_area_boundary_width));
-      mapView.addLayer(boundaryBuilder.build());
-    }
-  }
+  mapView.getMapAsync(mapboxMap -> {
+    mapboxMap.getStyle(style -> {
+      if (!style.isFullyLoaded()) return;
 
+      String sourceId = "operational-area-boundary-source";
+      String lineLayerId = "operational-area-boundary-line-layer";
+      String labelLayerId = "operational-area-boundary-label-layer";
+
+      FeatureCollection featureCollection = FeatureCollection.fromFeature(operationalArea);
+
+      // 1. Create or Update GeoJsonSource
+      GeoJsonSource boundarySource = (GeoJsonSource) style.getSource(sourceId);
+      if (boundarySource == null) {
+        boundarySource = new GeoJsonSource(sourceId, featureCollection);
+        style.addSource(boundarySource);
+      } else {
+        boundarySource.setGeoJson(featureCollection);
+      }
+
+      // 2. Add Boundary Line Layer (White outline)
+      if (style.getLayer(lineLayerId) == null) {
+        float borderWidth = context.getResources().getDimension(R.dimen.operational_area_boundary_width);
+
+        LineLayer boundaryLineLayer = new LineLayer(lineLayerId, sourceId)
+                .withProperties(
+                        PropertyFactory.lineColor(Color.WHITE),
+                        PropertyFactory.lineWidth(borderWidth)
+                );
+        style.addLayer(boundaryLineLayer);
+      }
+
+      // 3. Add Boundary Text Label Layer (White text centered/placed on the feature)
+      if (style.getLayer(labelLayerId) == null) {
+        float textSize = context.getResources().getDimension(R.dimen.operational_area_boundary_text_size);
+
+        SymbolLayer boundaryLabelLayer = new SymbolLayer(labelLayerId, sourceId)
+                .withProperties(
+                        PropertyFactory.textField(Expression.toString(Expression.get(Map.NAME_PROPERTY))),
+                        PropertyFactory.textColor(Color.WHITE),
+                        PropertyFactory.textSize(textSize),
+                        PropertyFactory.textAllowOverlap(true),
+                        PropertyFactory.textIgnorePlacement(true)
+                );
+        style.addLayer(boundaryLabelLayer);
+      }
+    });
+  });
+}
   private void disableParentScroll(Activity context, View mapView) {
     ViewGroup mainScroll = context.findViewById(R.id.scroll_view);
     mapView.setOnTouchListener(
@@ -962,12 +1077,24 @@ public class StructurePickerFactoryExtended
     }
   }
 
-  private static Feature getCenterPointFeature(CameraPosition cameraPosition) {
-    LatLng latLng = cameraPosition.target;
-    Feature feature = new Feature();
-    feature.setGeometry(new Point(latLng.getLatitude(), latLng.getLongitude()));
-    return feature;
+//  private static Feature getCenterPointFeature(CameraPosition cameraPosition) {
+//    LatLng latLng = cameraPosition.target;
+//    Feature feature = new Feature();
+//    feature.setGeometry(new Point(latLng.getLatitude(), latLng.getLongitude()));
+//    return feature;
+//  }
+private static Feature getCenterPointFeature(CameraPosition cameraPosition) {
+  if (cameraPosition == null || cameraPosition.target == null) {
+    return null;
   }
+
+  LatLng latLng = cameraPosition.target;
+
+  // Note: Mapbox Point.fromLngLat requires Longitude first, then Latitude
+  Point point = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
+
+  return Feature.fromGeometry(point);
+}
 
   private void addMaximumZoomLevel(JSONObject jsonObject, RevealMapView mapView) {
 
@@ -993,15 +1120,34 @@ public class StructurePickerFactoryExtended
     mapView.addValidator(geoFencingValidator);
   }
 
-  @Override
-  public void onLocationComponentInitialized() {
-    if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
-      LocationComponent locationComponent =
-          mapView.getMapboxLocationComponentWrapper().getLocationComponent();
-      locationComponent.applyStyle(mapView.getContext(), R.style.LocationComponentStyling);
-    }
-  }
+//  @Override
+//  public void onLocationComponentInitialized() {
+//    if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
+//      LocationComponent locationComponent =
+//          mapView.getMapboxLocationComponentWrapper().getLocationComponent();
+//      locationComponent.applyStyle(mapView.getContext(), R.style.LocationComponentStyling);
+//    }
+//  }
+@SuppressWarnings("MissingPermission")
+private void setupLocationComponent(@NonNull MapboxMap mapboxMap, @NonNull Style style) {
+  if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
+    LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
+    LocationComponentOptions customOptions = LocationComponentOptions.createFromAttributes(
+            mapView.getContext(),
+            R.style.LocationComponentStyling
+    );
+
+    LocationComponentActivationOptions activationOptions = LocationComponentActivationOptions
+            .builder(mapView.getContext(), style)
+            .locationComponentOptions(customOptions)
+            .useDefaultLocationEngine(true)
+            .build();
+
+    locationComponent.activateLocationComponent(activationOptions);
+    locationComponent.setLocationComponentEnabled(true);
+  }
+}
   @Override
   public void onCreate(Bundle bundle) {
     if (mapView != null) {
@@ -1048,5 +1194,49 @@ public class StructurePickerFactoryExtended
   @Override
   public void onDestroy() {
     jsonApi.unregisterLifecycleListener(this);
+  }
+  @SuppressWarnings("MissingPermission")
+  private void enableNativeLocationComponent(@NonNull MapboxMap mapboxMap, @NonNull Style style) {
+    try {
+      if (PermissionsManager.areLocationPermissionsGranted(mapView.getContext())) {
+        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
+        // Native Mapbox style loading for XML resources
+        LocationComponentOptions customOptions = LocationComponentOptions.createFromAttributes(
+                mapView.getContext(),
+                R.style.LocationComponentStyling
+        );
+
+        LocationComponentActivationOptions options =
+                LocationComponentActivationOptions.builder(mapView.getContext(), style)
+                        .locationComponentOptions(customOptions)
+                        .useDefaultLocationEngine(true)
+                        .build();
+
+        locationComponent.activateLocationComponent(options);
+        locationComponent.setLocationComponentEnabled(true);
+        locationComponent.setCameraMode(CameraMode.NONE);
+        locationComponent.setRenderMode(RenderMode.COMPASS);
+      }
+    } catch (Exception e) {
+      Timber.tag("RevealMap").e(e, "Error activating native location component");
+    }
+  }
+
+  @SuppressWarnings("MissingPermission")
+  private void focusOnUserLocationNative(@NonNull MapboxMap mapboxMap) {
+    try {
+      LocationComponent locationComponent = mapboxMap.getLocationComponent();
+      if (locationComponent.isLocationComponentActivated() && locationComponent.getLastKnownLocation() != null) {
+        android.location.Location lastLocation = locationComponent.getLastKnownLocation();
+        LatLng userLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 18.0));
+      } else {
+        // Fallback to tracking camera mode if location isn't instantly acquired
+        locationComponent.setCameraMode(CameraMode.TRACKING);
+      }
+    } catch (Exception e) {
+      Timber.tag("RevealMap").e(e, "Error focusing on user location");
+    }
   }
 }

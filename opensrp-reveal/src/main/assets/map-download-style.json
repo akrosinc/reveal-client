@@ -29,8 +29,7 @@
       "type": "raster",
       "scheme": "tms",
       "tiles": [
-        "mapbox://mapbox.satellite"
-      ],
+        "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg90?access_token=${BuildConfig.MAPBOX_SDK_ACCESS_TOKEN}"      ],
       "tileSize": 256
     },
     "select-data": {
@@ -41,7 +40,7 @@
       }
     }
   },
-  "sprite": "mapbox://sprites/ona/cjp461odq3oq22sp60oxq1qwz",
+  "sprite": "",
   "glyphs": "mapbox://fonts/ona/{fontstack}/{range}.pbf",
   "layers": [
     {
