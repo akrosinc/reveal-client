@@ -87,7 +87,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 31
         versionCode 85
-        versionName "10.6.94"
+        versionName "10.6.95"
         multiDexEnabled true
         buildConfigField "long", "MAX_SERVER_TIME_DIFFERENCE", "1800000L"
         buildConfigField "boolean", "TIME_CHECK", "false"

@@ -159,3 +159,17 @@ priority: 1
 condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
 actions:
  - "isRelevant = true"
+---
+name: step2_deploye_emanators_destruction_label
+description: step2_deploye_emanators_destruction_label
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
+---
+name: step2_deploye_emanators_destruction
+description: step2_deploye_emanators_destruction
+priority: 1
+condition: "( step1_respondent_consent_destruction.equals('yes') &&  step1_is_destruction.equals('yes') ) || step2_household_participating_in_destruct_enrolment.equals('yes') "
+actions:
+ - "isRelevant = true"
