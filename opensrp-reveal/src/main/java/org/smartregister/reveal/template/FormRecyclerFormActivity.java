@@ -1262,9 +1262,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     Timber.tag("FormSaveInteractor").e("Save failure: %s", et);
                 }
 
-                @Override
-                public void onFamilyFound(
-                        org.smartregister.commonregistry.CommonPersonObjectClient c) {}
+
             });
         }
     }

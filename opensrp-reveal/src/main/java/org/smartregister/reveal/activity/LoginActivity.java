@@ -54,7 +54,7 @@ public class LoginActivity extends BaseLoginActivity implements BaseLoginContrac
     @Override
     protected void onResume() {
         super.onResume();
-        mLoginPresenter.processViewCustomizations();
+
         if (!mLoginPresenter.isUserLoggedOut()) {
             goToHome(false);
         }

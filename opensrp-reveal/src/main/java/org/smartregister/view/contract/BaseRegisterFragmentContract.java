@@ -31,7 +31,6 @@ public interface BaseRegisterFragmentContract {
 
     interface Presenter {
 
-        void processViewConfigurations();
 
         void initializeQueries(String mainCondition);
 

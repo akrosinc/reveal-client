@@ -12,7 +12,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.google.gson.Gson;
 
-import org.smartregister.family.FamilyLibrary;
+
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.activity.LoginActivity;
@@ -105,12 +105,7 @@ public class SettingsActivity extends MultiLanguageActivity {
                         EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
                         preferenceUtil.setBaseURL(details.getRevealServerUrl());
                         preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
-                        RevealApplication.getInstance().getAppExecutors().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                FamilyLibrary.init(openSRPcontext,revealApplication.getMetadata() , BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
-                            }
-                        });
+
                     }
 
                     return true;

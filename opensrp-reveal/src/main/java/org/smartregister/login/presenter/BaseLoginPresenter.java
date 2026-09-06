@@ -122,8 +122,8 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
         canvasRL.setMinimumHeight(windowHeight);
     }
 
-    @Override
-    public abstract void processViewCustomizations();
+//    @Override
+//    public abstract void processViewCustomizations();
 
     @Override
     public void setLanguage() {

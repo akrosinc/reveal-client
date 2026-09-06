@@ -438,11 +438,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
     private void onFeatureSelectedByNormalClick(Feature feature) {
         if (!feature.hasProperty(TASK_IDENTIFIER)) {
-            if (isFocusInvestigation() && getPropertyValue(feature, TYPE).equals(Constants.StructureType.RESIDENTIAL)) {
-                listTaskInteractor.fetchFamilyDetails(selectedFeature.id()); // check if family registered in other plan
-            } else {
-                listTaskView.displayNotification(listTaskView.getContext().getString(R.string.task_not_found, prefsUtil.getCurrentOperationalArea()));
-            }
+          listTaskView.displayNotification(listTaskView.getContext().getString(R.string.task_not_found, prefsUtil.getCurrentOperationalArea()));
             return;
         }
 
@@ -477,8 +473,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
             listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
         } else if (PAOT.equals(code)) {
             listTaskInteractor.fetchInterventionDetails(code, feature.id(), false);
-        } else if (isFocusInvestigationOrMDA()) {
-            listTaskInteractor.fetchFamilyDetails(selectedFeature.id());
         } else if (IRS_VERIFICATION.equals(code) && isZambiaIRSLite()) {
             listTaskInteractor.fetchInterventionDetails(IRS, feature.id(), false);
         } else if (IRS_VERIFICATION.equals(code) && COMPLETE.equals(businessStatus)) {
@@ -990,8 +984,6 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (markStructureIneligibleSelected) {
             displayMarkStructureIneligibleDialog();
             RevealApplication.getInstance().setRefreshMapOnEventSaved(true);
-        } else if (REGISTER_FAMILY.equals(selectedFeatureInterventionType)) {
-            listTaskView.registerFamily();
         } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
             listTaskView.openRCD();
 //            listTaskView.openFormByTemplate("test");
@@ -1117,13 +1109,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         }
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {
-        if (finalFamily == null)
-            listTaskView.displayNotification(R.string.fetch_family_failed, R.string.failed_to_find_family);
-        else
-            listTaskView.openStructureProfile(finalFamily);
-    }
+
 
 
     public void onResume() {

@@ -164,8 +164,6 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
     Toast.makeText(gdrsActivity, "Failure to save form data", Toast.LENGTH_LONG).show();
   }
 
-  @Override
-  public void onFamilyFound(CommonPersonObjectClient finalFamily) {}
 
   public void findLastEvent(String baseEntityId, String eventType) {
     gdrsInteractor.findLastEvent(baseEntityId, eventType);

@@ -121,36 +121,35 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
-        <activity
-            android:name=".view.FamilyRegisterActivity"
-            android:exported="false"
-            android:parentActivityName=".view.ListTasksActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.ListTasksActivity" />
-        </activity>
-        <activity
-            android:name=".view.FamilyProfileActivity"
-            android:exported="false"
-            android:parentActivityName=".view.FamilyRegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.FamilyRegisterActivity" />
-        </activity>
-        <activity android:name="org.smartregister.family.activity.FamilyWizardFormActivity" android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".view.FamilyRegisterActivity"-->
+<!--            android:exported="false"-->
+<!--            android:parentActivityName=".view.ListTasksActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value=".view.ListTasksActivity" />-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name=".view.FamilyProfileActivity"-->
+<!--            android:exported="false"-->
+<!--            android:parentActivityName=".view.FamilyRegisterActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar" >-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value=".view.FamilyRegisterActivity" />-->
+<!--        </activity>-->
         <activity android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity" android:exported="false" />
         <activity android:name="org.smartregister.reveal.activity.ReadableJsonWizardFormActivity" android:exported="false" />
-        <activity
-            android:name=".view.FamilyOtherMemberProfileActivity"
-            android:exported="false"
-            android:parentActivityName=".view.FamilyProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.FamilyProfileActivity" />
-        </activity>
+<!--        <activity-->
+<!--            android:name=".view.FamilyOtherMemberProfileActivity"-->
+<!--            android:exported="false"-->
+<!--            android:parentActivityName=".view.FamilyProfileActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value=".view.FamilyProfileActivity" />-->
+<!--        </activity>-->
         <activity
             android:name=".view.FilterTasksActivity"
             android:exported="false"
@@ -308,10 +307,7 @@
 
         <service android:name="org.smartregister.configurableviews.service.PullConfigurableViewsIntentService" android:exported="false" />
 
-<!--        <activity android:name="org.smartregister.simprint.SimPrintsRegisterActivity"  android:exported="false"/>-->
-<!--        <activity android:name="org.smartregister.simprint.SimPrintsVerifyActivity" android:exported="false"/>-->
-<!--        <activity android:name="org.smartregister.simprint.SimPrintsIdentifyActivity" android:exported="false"/>-->
-        <activity
+       <activity
             android:name="com.karumi.dexter.DexterActivity"
             android:theme="@style/Dexter.Internal.Theme.Transparent"  android:exported="false"/>
 

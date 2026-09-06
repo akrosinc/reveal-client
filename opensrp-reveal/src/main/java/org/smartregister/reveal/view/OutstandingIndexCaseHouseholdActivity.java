@@ -560,8 +560,6 @@ public class OutstandingIndexCaseHouseholdActivity extends MultiLanguageActivity
           .show();
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {}
 
     public void findLastEvent(String baseEntityId, String eventType) {
       outstandingHouseholdIndexCaseInteractor.findLastEvent(baseEntityId, eventType);

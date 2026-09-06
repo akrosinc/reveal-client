@@ -17,7 +17,7 @@ public interface EventRegisterContract {
 
         void initializeQueryParams(String tableName, String countSelect, String mainSelect);
 
-        void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns);
+        void initializeAdapter();
 
         void countExecute();
 

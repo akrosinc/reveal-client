@@ -56,9 +56,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.simprint.SimPrintsLibrary;
-//import org.smartregister.simprint.SimPrintsRegisterActivity;
-import org.smartregister.simprint.SimPrintsVerifyActivity;
+
 
 import java.util.HashMap;
 import java.util.List;

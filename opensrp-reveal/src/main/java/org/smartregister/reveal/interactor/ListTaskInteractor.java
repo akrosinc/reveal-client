@@ -113,8 +113,6 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.Constants.Action;
 import org.smartregister.reveal.util.Constants.GeoJSON;
 import org.smartregister.reveal.util.Constants.JsonForm;
-import org.smartregister.reveal.util.FamilyConstants;
-import org.smartregister.reveal.util.FamilyJsonFormUtils;
 import org.smartregister.reveal.util.GeoJsonUtils;
 import org.smartregister.reveal.util.IndicatorUtils;
 import org.smartregister.reveal.util.InteractorUtils;
@@ -718,41 +716,6 @@ public class ListTaskInteractor extends BaseInteractor {
 
     public void markStructureAsIneligible(Feature feature, String reasonUnligible) {
 
-        String taskIdentifier = getPropertyValue(feature, TASK_IDENTIFIER);
-        String code = getPropertyValue(feature, TASK_CODE);
-
-        if (REGISTER_FAMILY.equals(code)) {
-
-            Task task = taskRepository.getTaskByIdentifier(taskIdentifier);
-            Map<String, String> details = new HashMap<>();
-            details.put(TASK_IDENTIFIER, taskIdentifier);
-            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
-            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
-            details.put(Constants.Properties.LOCATION_ID, feature.id());
-            details.put(Constants.Properties.APP_VERSION_NAME, BuildConfig.VERSION_NAME);
-            details.put(Constants.Properties.PLAN_IDENTIFIER, task.getPlanIdentifier());
-            task.setBusinessStatus(NOT_ELIGIBLE);
-            task.setStatus(Task.TaskStatus.COMPLETED);
-            task.setLastModified(new DateTime());
-            details.put(Constants.Properties.TASK_BUSINESS_STATUS, task.getBusinessStatus());
-            details.put(Constants.Properties.TASK_STATUS, task.getStatus().name());
-            task.setSyncStatus(TYPE_Unsynced);
-            taskRepository.add(task);
-            Event event = FamilyJsonFormUtils.createFamilyEvent(task.getForEntity(), feature.id(), details,
-                    FamilyConstants.EventType.FAMILY_REGISTRATION_INELIGIBLE);
-            event.addObs(new Obs().withValue(reasonUnligible).withFieldCode("eligible")
-                    .withFieldType("formsubmissionField"));
-            event.addObs(new Obs().withValue(task.getBusinessStatus()).withFieldCode("whyNotEligible")
-                    .withFieldType("formsubmissionField"));
-            event.addObs(new Obs().withValue(NOT_ELIGIBLE).withFieldCode(JsonForm.BUSINESS_STATUS)
-                    .withFieldType(JsonForm.BUSINESS_STATUS));
-            try {
-                eventClientRepository.addEvent(feature.id(), new JSONObject(gson.toJson(event)));
-            } catch (JSONException e) {
-                Timber.tag("Reveal Exception").w(e);
-            }
-            revealApplication.setSynced(false);
-        }
 
         appExecutors.mainThread().execute(new Runnable() {
             @Override

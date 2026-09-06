@@ -119,13 +119,7 @@ public class BaseFormFragmentPresenter implements BaseFormFragmentContract.Prese
                 getView().displayError(R.string.opening_form_title, R.string.form_not_found);
             } else {
                 JSONObject formJSON = getView().getJsonFormUtils().getFormJSON(context, formName, taskDetails, structure);
-                if (Intervention.BEDNET_DISTRIBUTION.equals(taskDetails.getTaskCode())) {
-                    interactor.findNumberOfMembers(taskDetails.getTaskEntity(), formJSON);
-                    return;
-                } else if (CASE_CONFIRMATION.equals(taskDetails.getTaskCode())) {
-                    interactor.findMemberDetails(taskDetails.getStructureId(), formJSON);
-                    return;
-                } else if (MDA_DISPENSE.equals(taskDetails.getTaskCode()) || MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
+                  if (MDA_DISPENSE.equals(taskDetails.getTaskCode()) || MDA_ADHERENCE.equals(taskDetails.getTaskCode())) {
                     jsonFormUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(), Constants.CONFIGURATION.MDA_CATCHMENT_AREAS, jsonFormUtils.getFields(formJSON).get(JsonForm.CATCHMENT_AREA), prefsUtil.getCurrentDistrict());
                     getView().startForm(formJSON);
                 } else {

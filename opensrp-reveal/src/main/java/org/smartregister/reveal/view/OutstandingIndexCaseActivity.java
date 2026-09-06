@@ -755,8 +755,6 @@ public class OutstandingIndexCaseActivity extends MultiLanguageActivity {
           .show();
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {}
 
     public void findLastEvent(String baseEntityId, String eventType) {
       outstandingIndexCaseInteractor.findLastEvent(baseEntityId, eventType);

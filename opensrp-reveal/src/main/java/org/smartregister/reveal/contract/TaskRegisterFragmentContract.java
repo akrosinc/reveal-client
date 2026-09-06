@@ -41,7 +41,6 @@ public interface TaskRegisterFragmentContract {
         @StringRes
         int getInterventionLabel();
 
-        void onIndexCaseFound(JSONObject indexCase, boolean isLinkedToJurisdiction);
 
         void searchTasks(String searchText);
 
@@ -95,7 +94,7 @@ public interface TaskRegisterFragmentContract {
 
         Location getLastLocation();
 
-        void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns);
+        void initializeAdapter();
 
         void setTotalTasks(int structuresWithinBuffer);
 
@@ -111,11 +110,8 @@ public interface TaskRegisterFragmentContract {
 
         void setInventionType(int interventionLabel);
 
-        void registerFamily(BaseTaskDetails taskDetails);
 
-        void openFamilyProfile(CommonPersonObjectClient family, BaseTaskDetails taskDetails);
 
-        void displayIndexCaseDetails(JSONObject indexCase);
 
         void setNumberOfFilters(int numberOfFilters);
 

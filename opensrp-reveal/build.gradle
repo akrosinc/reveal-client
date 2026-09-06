@@ -373,12 +373,12 @@ dependencies {
 
     //*****End temp fix*****
 
-    implementation('org.smartregister:opensrp-client-configurable-views:1.1.14@aar') {
-        transitive = true
-        exclude group: 'org.opensrp', module: 'opensrp-client-core'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.jakewharton', module: 'butterknife'
-    }
+//    implementation('org.smartregister:opensrp-client-configurable-views:1.1.14@aar') {
+//        transitive = true
+//        exclude group: 'org.opensrp', module: 'opensrp-client-core'
+//        exclude group: 'com.android.support', module: 'appcompat-v7'
+//        exclude group: 'com.jakewharton', module: 'butterknife'
+//    }
 
     ///Upgrade to latest native forms issue tracked here
     //https://github.com/OpenSRP/opensrp-client-reveal/issues/1235

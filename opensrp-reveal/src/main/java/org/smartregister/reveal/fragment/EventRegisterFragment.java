@@ -68,7 +68,7 @@ public class EventRegisterFragment extends BaseDrawerRegisterFragment implements
     }
 
     @Override
-    public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
+    public void initializeAdapter() {
         EventViewHolder eventViewHolder = new EventViewHolder(getContext(), registerActionHandler, paginationViewHandler, deleteEventActionHandler);
         clientAdapter = new RecyclerViewPaginatedAdapter(null, eventViewHolder, context().commonrepository(this.tablename));
         clientAdapter.setCurrentlimit(20);

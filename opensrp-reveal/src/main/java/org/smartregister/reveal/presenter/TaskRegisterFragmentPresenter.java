@@ -14,11 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
-import org.smartregister.configurableviews.model.View;
-import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
@@ -64,10 +59,6 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
 
     private String viewConfigurationIdentifier;
 
-    private ConfigurableViewsHelper viewsHelper;
-
-    private Set<View> visibleColumns;
-
     private TaskRegisterFragmentInteractor interactor;
 
     private List<TaskDetails> tasks;
@@ -104,24 +95,15 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
         this.view = new WeakReference<>(view);
         this.viewConfigurationIdentifier = viewConfigurationIdentifier;
         this.interactor = interactor;
-        viewsHelper = ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper();
         prefsUtil = PreferencesUtil.getInstance();
     }
 
-    @Override
-    public void processViewConfigurations() {
-        if (!StringUtils.isBlank(this.viewConfigurationIdentifier)) {
-            ViewConfiguration viewConfiguration = viewsHelper.getViewConfiguration(this.viewConfigurationIdentifier);
-            if (viewConfiguration != null) {
-                visibleColumns = viewsHelper.getRegisterActiveColumns(this.viewConfigurationIdentifier);
-            }
-        }
-    }
+
 
     @Override
     public void initializeQueries(String mainCondition) {
         if (getView().getAdapter() == null) {
-            getView().initializeAdapter(visibleColumns);
+            getView().initializeAdapter();
         }
         lastLocation = getView().getLocationUtils().getLastLocation();
         if (lastLocation == null) {//if location client has not initialized use last location passed from map
@@ -243,20 +225,7 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
         if (details != null) {
             setTaskDetails(details);
             boolean hasSingleGroupedTask = (BEDNET_DISTRIBUTION.equals(details.getTaskCode()) || BLOOD_SCREENING.equals(details.getTaskCode())) && details.getTaskCount() == 1;
-            if (CASE_CONFIRMATION.equals(details.getTaskCode())) {
-                interactor.getIndexCaseDetails(details.getStructureId(),
-                        Utils.getOperationalAreaLocation(prefsUtil.getCurrentOperationalArea()).getId(), details.getReasonReference());
-            } else if (Task.TaskStatus.COMPLETED.name().equals(details.getTaskStatus())
-                    &&
-                    (BLOOD_SCREENING.equals(details.getTaskCode()) ||
-                            BEDNET_DISTRIBUTION.equals(details.getTaskCode()) ||
-                            REGISTER_FAMILY.equals(details.getTaskCode()) ) ||
-                    hasSingleGroupedTask ||
-                    (details.getTaskCount() != null && details.getTaskCount() > 1 // structures with grouped tasks should display the family profile
-                            && !(REGISTER_FAMILY.equals(details.getTaskCode()) && Task.TaskStatus.READY.name().equals(details.getTaskStatus())))) { // skip if we have a READY family reg task
-                setTaskDetails(details);
-                interactor.fetchFamilyDetails(details.getStructureId());
-            } else if (List.of(RCD,INDEX_CASE,SECONDARY_INDEX_CASE).contains(details.getTaskCode())){
+            if (List.of(RCD,INDEX_CASE,SECONDARY_INDEX_CASE).contains(details.getTaskCode())){
                 interactor.startGDRSActivity(this.getView().getContext(),details);
             } else {
                 getView().showProgressDialog(R.string.opening_form_title, R.string.opening_form_message);
@@ -270,27 +239,6 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
         return Utils.getInterventionLabel();
     }
 
-    /**
-     * Called by interactor when the index event has been queried. If Event is not found an errror is displayed.
-     * If task confirmation is not competed and event was linked to a household and button was selected, then family profile is opened,
-     * otherwise the index case details are displayed
-     *
-     * @param indexCase              the index case details event JSON
-     * @param isLinkedToJurisdiction if index case was linked to FI, false if linked to structure
-     */
-    @Override
-    public void onIndexCaseFound(JSONObject indexCase, boolean isLinkedToJurisdiction) {
-        if (indexCase == null) {
-            getView().displayError(R.string.classification_details, R.string.index_case_not_found);
-        } else {
-            if (isActionClicked && !isLinkedToJurisdiction
-                    && getTaskDetails().getTaskStatus().equals(Task.TaskStatus.READY.name())) {
-                interactor.fetchFamilyDetails(getTaskDetails().getStructureId());
-            } else {
-                getView().displayIndexCaseDetails(indexCase);
-            }
-        }
-    }
 
     @Override
     public void searchTasks(String searchText) {
@@ -446,9 +394,6 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
 
     @Override
     public void onLocationValidated() {
-        if (Constants.Intervention.REGISTER_FAMILY.equals(getTaskDetails().getTaskCode())) {
-            getView().registerFamily(getTaskDetails());
-        }
 
         if ((Constants.Intervention.IRS.equals(getTaskDetails().getTaskCode()))
                 && !Task.TaskStatus.READY.name().equals(getTaskDetails().getTaskStatus())) { // no event for READY tasks
@@ -477,13 +422,6 @@ public class TaskRegisterFragmentPresenter extends BaseFormFragmentPresenter imp
         getView().hideProgressDialog();
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient family) {
-        if (family == null)
-            getView().displayNotification(R.string.fetch_family_failed, R.string.failed_to_find_family);
-        else
-            getView().openFamilyProfile(family, getTaskDetails());
-    }
 
     private List<TaskDetails> getActiveTasks() {
         return isTasksFiltered && filteredTasks != null ? filteredTasks : tasks;

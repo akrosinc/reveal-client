@@ -546,67 +546,7 @@ public class TaskRegisterFragmentInteractor extends BaseInteractor
     return (TaskRegisterFragmentContract.Presenter) presenterCallBack;
   }
 
-  public void getIndexCaseDetails(
-      String structureId, String operationalArea, String indexCaseEventId) {
-    appExecutors
-        .diskIO()
-        .execute(
-            () -> {
-              JSONObject jsonEvent = null;
-              if (StringUtils.isNotBlank(structureId) || StringUtils.isNotBlank(operationalArea)) {
 
-                Cursor cursor = null;
-                try {
-                  String[] params;
-                  if (structureId == null) {
-                    params = new String[] {operationalArea, EventType.CASE_DETAILS_EVENT};
-                  } else {
-                    params =
-                        new String[] {structureId, operationalArea, EventType.CASE_DETAILS_EVENT};
-                  }
-                  String query =
-                      String.format(
-                          "SELECT %s FROM %s WHERE %s IN (%s) AND %s = ?",
-                          event_column.json.name(),
-                          event.name(),
-                          event_column.baseEntityId.name(),
-                          structureId == null ? "?" : "?,?",
-                          event_column.eventType.name());
-                  cursor = getDatabase().rawQuery(query, params);
-                  while (cursor.moveToNext()) {
-                    String jsonEventStr = cursor.getString(0);
-
-                    jsonEventStr = jsonEventStr.replaceAll("'", "");
-                    JSONObject localJsonEvent = new JSONObject(jsonEventStr);
-
-                    if (cursor.getCount() == 1
-                        || localJsonEvent.optString(ID_).equals(indexCaseEventId)) {
-                      jsonEvent = new JSONObject(jsonEventStr);
-                      break;
-                    }
-                  }
-                } catch (Exception e) {
-                  Timber.tag("Reveal Exception").w(e);
-                } finally {
-                  if (cursor != null) {
-                    cursor.close();
-                  }
-                }
-              }
-              JSONObject finalJsonEvent = jsonEvent;
-              appExecutors
-                  .mainThread()
-                  .execute(
-                      () -> {
-                        getPresenter()
-                            .onIndexCaseFound(
-                                finalJsonEvent,
-                                finalJsonEvent != null
-                                    && operationalArea.equals(
-                                        finalJsonEvent.optString(Properties.BASE_ENTITY_ID)));
-                      });
-            });
-  }
 
   @Override
   public void resetTaskInfo(Context context, TaskDetails taskDetails) {

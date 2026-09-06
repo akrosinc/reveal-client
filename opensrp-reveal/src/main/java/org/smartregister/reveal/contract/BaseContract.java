@@ -21,7 +21,6 @@ public interface BaseContract {
 
         void onFormSaveFailure(String eventType);
 
-        void onFamilyFound(CommonPersonObjectClient finalFamily);
     }
 
     interface BaseInteractor {

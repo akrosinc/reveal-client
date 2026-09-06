@@ -54,8 +54,7 @@ public class GDRSFormInteractor extends BaseInteractor {
         @Override public void onFormSaveFailure(String et) {
             Timber.tag("GDRSFormInteractor").e("Save failure: %s", et);
         }
-        @Override public void onFamilyFound(
-                org.smartregister.commonregistry.CommonPersonObjectClient c) {}
+
     };
 
     public GDRSFormInteractor(String locationUUID, String compoundId) {

@@ -35,10 +35,7 @@ public interface BaseFormFragmentContract {
 
     interface Interactor {
 
-        void findNumberOfMembers(String structureId, JSONObject formJSON);
 
-        void findMemberDetails(String structureId, JSONObject formJSON);
 
-        void findSprayDetails(String interventionType, String structureId, JSONObject formJSON);
     }
 }

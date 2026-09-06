@@ -715,7 +715,7 @@ public void positionMyLocationAndLayerSwitcher() {
             setViewVisibility(tvReason, false);
             closeCardView(v.getId());
         } else if (v.getId() == R.id.register_family) {
-            registerFamily();
+//            registerFamily();
             closeCardView(R.id.btn_collapse_spray_card_view);
         } else if (v.getId() == R.id.btn_collapse_mosquito_collection_card_view
                 || v.getId() == R.id.btn_collapse_larval_breeding_card_view
@@ -786,41 +786,10 @@ public void positionMyLocationAndLayerSwitcher() {
     }
 
 
-    @Override
-    public void openStructureProfile(CommonPersonObjectClient family) {
-
-        Intent intent = new Intent(getActivity(), Utils.metadata().profileActivity);
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_BASE_ENTITY_ID, family.getCaseId());
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_HEAD, Utils.getValue(family.getColumnmaps(), DBConstants.KEY.FAMILY_HEAD, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.PRIMARY_CAREGIVER, Utils.getValue(family.getColumnmaps(), DBConstants.KEY.PRIMARY_CAREGIVER, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_NAME, Utils.getValue(family.getColumnmaps(), DBConstants.KEY.FIRST_NAME, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.GO_TO_DUE_PAGE, false);
 
 
-        intent.putExtra(Properties.LOCATION_UUID, listTaskPresenter.getSelectedFeature().id());
-        intent.putExtra(Properties.TASK_IDENTIFIER, listTaskPresenter.getSelectedFeature().getStringProperty(Properties.TASK_IDENTIFIER));
-        intent.putExtra(Properties.TASK_BUSINESS_STATUS, listTaskPresenter.getSelectedFeature().getStringProperty(Properties.TASK_BUSINESS_STATUS));
-        intent.putExtra(Properties.TASK_STATUS, listTaskPresenter.getSelectedFeature().getStringProperty(Properties.TASK_STATUS));
-
-        startActivityForResult(intent, REQUEST_CODE_FAMILY_PROFILE);
-    }
 
 
-    @Override
-    public void registerFamily() {
-        clearSelectedFeature();
-        Intent intent = new Intent(this, FamilyRegisterActivity.class);
-        intent.putExtra(START_REGISTRATION, true);
-        Feature feature = listTaskPresenter.getSelectedFeature();
-        intent.putExtra(Properties.LOCATION_UUID, feature.id());
-        intent.putExtra(Properties.TASK_IDENTIFIER, feature.getStringProperty(Properties.TASK_IDENTIFIER));
-        intent.putExtra(Properties.TASK_BUSINESS_STATUS, feature.getStringProperty(Properties.TASK_BUSINESS_STATUS));
-        intent.putExtra(Properties.TASK_STATUS, feature.getStringProperty(Properties.TASK_STATUS));
-        if (feature.hasProperty(Properties.STRUCTURE_NAME))
-            intent.putExtra(Properties.STRUCTURE_NAME, feature.getStringProperty(Properties.STRUCTURE_NAME));
-        startActivity(intent);
-
-    }
 
     @Override
     public void openRCD() {

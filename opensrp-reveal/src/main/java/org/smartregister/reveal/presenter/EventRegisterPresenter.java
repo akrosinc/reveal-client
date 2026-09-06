@@ -44,8 +44,4 @@ public class EventRegisterPresenter extends BaseRegisterPresenter implements Eve
         view.hideProgressDialog();
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {
-        // Do nothing
-    }
 }

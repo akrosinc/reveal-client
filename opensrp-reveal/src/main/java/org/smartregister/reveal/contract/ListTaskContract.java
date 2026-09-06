@@ -42,9 +42,8 @@ public interface ListTaskContract {
 
         void openTaskRegister(TaskFilterParams filterParams);
 
-        void openStructureProfile(CommonPersonObjectClient family);
 
-        void registerFamily();
+//        void registerFamily();
 
         void openRCD();
 

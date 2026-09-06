@@ -189,9 +189,7 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
                 getView().getJsonFormUtils().populateForm(summary, formJSON);
             }
 
-            if (summary == null && BEDNET_DISTRIBUTION.equals(getTaskDetails().getTaskCode())) {
-                formInteractor.findNumberOfMembers(getTaskDetails().getTaskEntity(), formJSON);
-            } else if (getBuildCountry() == Country.NIGERIA && MDA_DRUG_RECON.equals(getTaskDetails().getTaskCode())) {
+             if (getBuildCountry() == Country.NIGERIA && MDA_DRUG_RECON.equals(getTaskDetails().getTaskCode())) {
                 interactor.findTotalSMCDosageCounts(taskDetails, formJSON);
             } else {
                 getView().startForm(formJSON);
@@ -234,9 +232,6 @@ public class StructureTasksPresenter extends BaseFormFragmentPresenter implement
         getView().hideProgressDialog();//register will refresh on resume
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {//not used
-    }
 
     @Override
     public void onTotalSMCDosageCountsFound(StructureTaskDetails taskDetails, JSONObject formJSON) {

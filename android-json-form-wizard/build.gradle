@@ -80,12 +80,6 @@ repositories {
 
 dependencies {
 
-
-    implementation('org.smartregister:opensrp-simprints:1.1.1@aar') {
-        transitive = true
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'design'
-    }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation('com.google.android.material:material:1.6.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -132,14 +126,6 @@ dependencies {
 
     implementation 'joda-time:joda-time:2.10.14'
     implementation 'com.google.code.gson:gson:2.9.0'
-        implementation('org.akros:opencv341:1.0.0') {
-            exclude group: 'com.android.support.constraint', module: 'constraint-layout'
-            exclude group: 'com.android.support', module: 'design'
-            exclude group: 'com.android.support', module: 'appcompat-v7'
-            exclude group: 'com.android.support.test', module: 'runner'
-            exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
-            exclude group: 'com.google.android.gms', module: 'play-services-vision'
-        }
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
     implementation('com.emredavarci:circleprogressbar:1.0.4@aar') {

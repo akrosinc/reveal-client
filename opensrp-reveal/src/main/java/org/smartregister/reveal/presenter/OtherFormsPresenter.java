@@ -41,8 +41,5 @@ public class OtherFormsPresenter implements OtherFormsContract.Presenter {
         view.hideProgressDialog();
     }
 
-    @Override
-    public void onFamilyFound(CommonPersonObjectClient finalFamily) {
-        // Do nothing
-    }
+
 }

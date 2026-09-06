@@ -90,16 +90,16 @@ public class TaskRegisterActivity extends BaseRevealRegisterActivity implements 
     public TaskRegisterContract.Presenter getPresenter() {
         return (TaskRegisterContract.Presenter) presenter;
     }
-
-    public void startFamilyRegistration(BaseTaskDetails taskDetails) {
-        Intent intent = new Intent(this, FamilyRegisterActivity.class);
-        intent.putExtra(START_REGISTRATION, true);
-        intent.putExtra(Properties.LOCATION_UUID, taskDetails.getStructureId());
-        intent.putExtra(Properties.TASK_IDENTIFIER, taskDetails.getTaskId());
-        intent.putExtra(Properties.TASK_BUSINESS_STATUS, taskDetails.getBusinessStatus());
-        intent.putExtra(Properties.TASK_STATUS, taskDetails.getTaskStatus());
-        startActivity(intent);
-    }
+//
+//    public void startFamilyRegistration(BaseTaskDetails taskDetails) {
+//        Intent intent = new Intent(this, FamilyRegisterActivity.class);
+//        intent.putExtra(START_REGISTRATION, true);
+//        intent.putExtra(Properties.LOCATION_UUID, taskDetails.getStructureId());
+//        intent.putExtra(Properties.TASK_IDENTIFIER, taskDetails.getTaskId());
+//        intent.putExtra(Properties.TASK_BUSINESS_STATUS, taskDetails.getBusinessStatus());
+//        intent.putExtra(Properties.TASK_STATUS, taskDetails.getTaskStatus());
+//        startActivity(intent);
+//    }
 
     public void displayIndexCaseFragment(JSONObject indexCase) {
         ((CaseClassificationContract.View) caseClassificationFragment).displayIndexCase(indexCase);

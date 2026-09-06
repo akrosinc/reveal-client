@@ -85,52 +85,7 @@ public class InteractorUtils {
     }
 
 
-    public boolean archiveClient(String baseEntityId, boolean isFamily) {
-        taskRepository.cancelTasksForEntity(baseEntityId);
-        taskRepository.archiveTasksForEntity(baseEntityId);
-        JSONObject eventsByBaseEntityId = eventClientRepository.getEventsByBaseEntityId(baseEntityId);
-        JSONArray events = eventsByBaseEntityId.optJSONArray("events");
-        JSONObject clientJsonObject = eventsByBaseEntityId.optJSONObject("client");
-        DateTime now = new DateTime();
-        if (events != null) {
-            for (int i = 0; i < events.length(); i++) {
-                try {
-                    JSONObject event = events.getJSONObject(i);
-                    event.put("dateVoided", now);
-                    event.put(EventClientRepository.event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-                } catch (JSONException e) {
-                    Timber.tag("Reveal Exception").w(e);
-                }
-            }
-        }
 
-        boolean saved;
-        try {
-            eventClientRepository.batchInsertEvents(events, 0);
-            clientJsonObject.put("dateVoided", now);
-            clientJsonObject.put(EventClientRepository.client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-            clientJsonObject.getJSONObject("attributes").put("dateRemoved", now);
-            eventClientRepository.addorUpdateClient(baseEntityId, clientJsonObject);
-            RevealApplication.getInstance().setSynced(false);
-            Event archiveEvent = FamilyJsonFormUtils.createFamilyEvent(baseEntityId, Utils.getCurrentLocationId(),
-                    null, isFamily ? EventType.ARCHIVE_FAMILY : EventType.ARCHIVE_FAMILY_MEMBER);
-            archiveEvent.addObs(new Obs().withValue(now).withFieldCode("dateArchived").withFieldType("formsubmissionField"));
-
-            JSONObject eventJson = new JSONObject(gson.toJson(archiveEvent));
-            eventJson.put(EventClientRepository.event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-            eventClientRepository.addEvent(baseEntityId, eventJson);
-
-            clientProcessor.processClient(Collections.singletonList(new EventClient(
-                    gson.fromJson(eventJson.toString(), org.smartregister.domain.Event.class),
-                    gson.fromJson(clientJsonObject.toString(), Client.class))), true);
-            saved = true;
-
-        } catch (JSONException e) {
-            Timber.tag("Reveal Exception").w(e);
-            saved = false;
-        }
-        return saved;
-    }
 
     public boolean archiveEventsForTask(SQLiteDatabase db, BaseTaskDetails taskDetails) {
         boolean archived = true;

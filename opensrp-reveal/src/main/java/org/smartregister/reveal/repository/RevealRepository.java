@@ -35,7 +35,6 @@ import java.util.TimerTask;
 import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
-import org.smartregister.configurableviews.repository.ConfigurableViewsRepository;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.ClientFormRepository;
@@ -79,7 +78,7 @@ public class RevealRepository extends Repository {
     @Override
     public void onCreate(SQLiteDatabase database) {
         super.onCreate(database);
-        ConfigurableViewsRepository.createTable(database);
+
         EventClientRepository.createTable(database, EventClientRepository.Table.client, client_column.values());
         EventClientRepository.createTable(database, event, event_column.values());
 

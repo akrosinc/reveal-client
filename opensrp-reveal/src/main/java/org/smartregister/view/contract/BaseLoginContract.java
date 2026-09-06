@@ -20,7 +20,7 @@ public interface BaseLoginContract {
 
         boolean isUserLoggedOut();
 
-        void processViewCustomizations();
+//        void processViewCustomizations();
 
         void positionViews();
 

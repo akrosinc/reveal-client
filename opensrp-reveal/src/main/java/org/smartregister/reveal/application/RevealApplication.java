@@ -33,13 +33,10 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.commonregistry.CommonFtsObject;
-import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-import org.smartregister.configurableviews.helper.JsonSpecHelper;
+//import org.smartregister.configurableviews.ConfigurableViewsLibrary;
+//import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.domain.Setting;
 import org.smartregister.dto.UserAssignmentDTO;
-import org.smartregister.family.FamilyLibrary;
-import org.smartregister.family.activity.FamilyWizardFormActivity;
-import org.smartregister.family.domain.FamilyMetadata;
 import org.smartregister.family.util.DBConstants;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
@@ -71,7 +68,6 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealSyncConfiguration;
 import org.smartregister.reveal.util.Utils;
-import org.smartregister.reveal.view.FamilyProfileActivity;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
@@ -95,7 +91,7 @@ public class RevealApplication extends DrishtiApplication
 
 {
 
-    private JsonSpecHelper jsonSpecHelper;
+//    private JsonSpecHelper jsonSpecHelper;
 
     private char[] password;
 
@@ -113,7 +109,7 @@ public class RevealApplication extends DrishtiApplication
 
     private FeatureCollection featureCollection;
 
-    private FamilyMetadata metadata;
+
 
     private Feature operationalArea;
     private boolean synced;
@@ -122,9 +118,9 @@ public class RevealApplication extends DrishtiApplication
         return (RevealApplication) mInstance;
     }
 
-    public static JsonSpecHelper getJsonSpecHelper() {
-        return getInstance().jsonSpecHelper;
-    }
+//    public static JsonSpecHelper getJsonSpecHelper() {
+//        return getInstance().jsonSpecHelper;
+//    }
 
     @Override
     public void onCreate() {
@@ -163,14 +159,14 @@ public class RevealApplication extends DrishtiApplication
         } else {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         }
-        ConfigurableViewsLibrary.init(context);
-        FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
+//        ConfigurableViewsLibrary.init(context);
+//        FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
 
         LocationHelper.init(Utils.ALLOWED_LEVELS, Utils.DEFAULT_LOCATION_LEVEL);
 
         SyncStatusBroadcastReceiver.init(this);
         Log.d("SYNC_TRACE", "SYNC_STATUS_RECEIVER_INIT_DONE t=" + System.currentTimeMillis());
-        jsonSpecHelper = new JsonSpecHelper(this);
+//        jsonSpecHelper = new JsonSpecHelper(this);
         serverConfigs = new HashMap<>();
 
         Mapbox.getInstance(getApplicationContext(), BuildConfig.MAPBOX_SDK_ACCESS_TOKEN);
@@ -352,56 +348,56 @@ public class RevealApplication extends DrishtiApplication
         return serverConfigs;
     }
 
-    public FamilyMetadata getMetadata() {
-
-        if (metadata != null) {
-            return metadata;
-        }
-
-        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
-                FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
-
-        if (getBuildCountry() == Country.THAILAND) {
-            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (getBuildCountry() == Country.ZAMBIA) {
-            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (getBuildCountry() == Country.REFAPP) {
-            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else if (getBuildCountry() == Country.NIGERIA) {
-            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        } else {
-            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION,
-                    EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD,
-                    RELATIONSHIP.PRIMARY_CAREGIVER);
-            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-        }
-        metadata.updateFamilyDueRegister(TABLE_NAME.FAMILY_MEMBER, 20, true);
-        metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
-        metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
-        return metadata;
-    }
+//    public FamilyMetadata getMetadata() {
+//
+//        if (metadata != null) {
+//            return metadata;
+//        }
+//
+//        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
+//                FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
+//
+//        if (getBuildCountry() == Country.THAILAND) {
+//            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+//            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+//        } else if (getBuildCountry() == Country.ZAMBIA) {
+//            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+//            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+//        } else if (getBuildCountry() == Country.REFAPP) {
+//            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+//            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+//        } else if (getBuildCountry() == Country.NIGERIA) {
+//            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+//            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+//        } else {
+//            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION,
+//                    EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD,
+//                    RELATIONSHIP.PRIMARY_CAREGIVER);
+//            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+//        }
+//        metadata.updateFamilyDueRegister(TABLE_NAME.FAMILY_MEMBER, 20, true);
+//        metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
+//        metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
+//        return metadata;
+//    }
 
     @NonNull
     private Country getBuildCountry() {

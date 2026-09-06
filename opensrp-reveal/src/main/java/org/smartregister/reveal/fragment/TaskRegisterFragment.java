@@ -120,7 +120,7 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
         return R.layout.fragment_task_register;
     }
 
-    public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
+    public void initializeAdapter() {
         taskAdapter = new TaskRegisterAdapter(getActivity(), registerActionHandler);
         clientsView.setAdapter(taskAdapter);
     }
@@ -385,34 +385,9 @@ public class TaskRegisterFragment extends BaseDrawerRegisterFragment implements 
         interventionTypeTv.setText(getString(interventionLabel));
     }
 
-    @Override
-    public void registerFamily(BaseTaskDetails taskDetails) {
-        ((TaskRegisterActivity) getActivity()).startFamilyRegistration(taskDetails);
-    }
-
-    @Override
-    public void openFamilyProfile(CommonPersonObjectClient family, BaseTaskDetails taskDetails) {
-        Intent intent = new Intent(getContext(), org.smartregister.family.util.Utils.metadata().profileActivity);
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_BASE_ENTITY_ID, family.getCaseId());
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_HEAD, org.smartregister.family.util.Utils.getValue(family.getColumnmaps(), DBConstants.KEY.FAMILY_HEAD, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.PRIMARY_CAREGIVER, org.smartregister.family.util.Utils.getValue(family.getColumnmaps(), DBConstants.KEY.PRIMARY_CAREGIVER, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.FAMILY_NAME, org.smartregister.family.util.Utils.getValue(family.getColumnmaps(), DBConstants.KEY.FIRST_NAME, false));
-        intent.putExtra(org.smartregister.family.util.Constants.INTENT_KEY.GO_TO_DUE_PAGE, false);
 
 
-        intent.putExtra(Properties.LOCATION_UUID, taskDetails.getStructureId());
-        intent.putExtra(Properties.TASK_IDENTIFIER, taskDetails.getTaskId());
-        intent.putExtra(Properties.TASK_BUSINESS_STATUS, taskDetails.getBusinessStatus());
-        intent.putExtra(Properties.TASK_STATUS, taskDetails.getTaskStatus());
 
-        startActivity(intent);
-
-    }
-
-    @Override
-    public void displayIndexCaseDetails(JSONObject indexCase) {
-        ((TaskRegisterActivity) getActivity()).displayIndexCaseFragment(indexCase);
-    }
 
     @Override
     public void setNumberOfFilters(int numberOfFilters) {

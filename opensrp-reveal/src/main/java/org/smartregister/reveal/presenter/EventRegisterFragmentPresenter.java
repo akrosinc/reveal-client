@@ -15,10 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-import org.smartregister.configurableviews.helper.ConfigurableViewsHelper;
-import org.smartregister.configurableviews.model.View;
-import org.smartregister.configurableviews.model.ViewConfiguration;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.Event;
 import org.smartregister.repository.AllSharedPreferences;
@@ -46,9 +42,6 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
 
     private String viewConfigurationIdentifier;
 
-    private ConfigurableViewsHelper viewsHelper;
-
-    private Set<View> visibleColumns;
 
     private EventRegisterContract.View view;
 
@@ -64,18 +57,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
         this.view = view;
         this.interactor = new EventRegisterFragmentInteractor(this);
         this.viewConfigurationIdentifier = viewConfigurationIdentifier;
-        this.viewsHelper = ConfigurableViewsLibrary.getInstance().getConfigurableViewsHelper();
         this.allSharedPreferences = RevealApplication.getInstance().getContext().allSharedPreferences();
-    }
-
-    @Override
-    public void processViewConfigurations() {
-        if (!StringUtils.isBlank(this.viewConfigurationIdentifier)) {
-            ViewConfiguration viewConfiguration = viewsHelper.getViewConfiguration(this.viewConfigurationIdentifier);
-            if (viewConfiguration != null) {
-                visibleColumns = viewsHelper.getRegisterActiveColumns(this.viewConfigurationIdentifier);
-            }
-        }
     }
 
     @Override
@@ -87,7 +69,7 @@ public class EventRegisterFragmentPresenter implements EventRegisterContract.Pre
         String mainSelect = mainSelect(tableName, mainCondition);
 
         view.initializeQueryParams(tableName, countSelect, mainSelect);
-        view.initializeAdapter(visibleColumns);
+        view.initializeAdapter();
 
         view.countExecute();
         view.filterandSortInInitializeQueries();
