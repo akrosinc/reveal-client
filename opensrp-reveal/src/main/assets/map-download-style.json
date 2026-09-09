@@ -29,7 +29,8 @@
       "type": "raster",
       "scheme": "tms",
       "tiles": [
-        "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg90?access_token=${BuildConfig.MAPBOX_SDK_ACCESS_TOKEN}"      ],
+        "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg90?access_token=actualtoken"
+      ],
       "tileSize": 256
     },
     "select-data": {

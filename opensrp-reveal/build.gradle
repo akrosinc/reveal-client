@@ -101,7 +101,6 @@ android {
                 arguments = [eventBusIndex: 'org.smartregister.reveal.RevealEventBusIndex']
             }
         }
-
         // Mapbox & Digital Globe keys from local.properties
 
         if (rootProject.file("local.properties").exists()) {

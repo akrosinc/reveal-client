@@ -76,8 +76,15 @@ public class DataIntentServiceHelper extends BaseHelper {
                         baseUrl,
                         DB_PULL_URL));
 
+//        if (resp.isFailure()) {
+//            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+//            throw new NoHttpResponseException(DB_PULL_URL + " did not return any data");
+//        }
         if (resp.isFailure()) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            // REMOVED: context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            // Same reasoning as PlanIntentServiceHelper — a single-stage failure must not
+            // clear the sync-in-progress guard or fire onSyncComplete() while other stages
+            // are still running.
             throw new NoHttpResponseException(DB_PULL_URL + " did not return any data");
         }
 

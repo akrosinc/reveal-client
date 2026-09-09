@@ -34,6 +34,7 @@ import com.mapbox.mapboxsdk.style.sources.TileSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.repository.RevealMappingHelper;
 import org.smartregister.reveal.util.Constants.StructureType;
@@ -293,7 +294,7 @@ public static boolean isMyLocationComponentActive(Context context, ImageButton m
 
         if (style.getSource(sourceId) == null) {
             // Online Mapbox Satellite Source
-            String mapboxToken = context.getString(R.string.mapbox_access_token);
+            String mapboxToken = BuildConfig.MAPBOX_SDK_ACCESS_TOKEN;
             String tileUrl = "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=" + mapboxToken;
 
             TileSet tileSet = new TileSet("2.1.0", tileUrl);

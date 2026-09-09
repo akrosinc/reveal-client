@@ -102,53 +102,115 @@ public class SyncIntentService extends BaseSyncIntentService {
         super.onHandleIntent(intent);
         handleSync();
     }
-
     protected void handleSync() {
+        fetchedRecords = 0;  // fixes the 127%/158% overshoot — resets the accumulator every cycle
+        totalRecords = 0;
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
 
-        doSync();
+        boolean eventsSyncRan = doSync();
 
-        (new AppExecutors()).mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
-            }
-        });
-    }
-
-    private void doSync() {
-        if (!NetworkUtils.isNetworkAvailable()) {
-            complete(FetchStatus.noConnection);
-            return;
-        }
-
-        try {
-            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
-            boolean isSuccessfulPushSync = false;
-            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
-                isSuccessfulPushSync = pushToServer();
-            }
-
-            if (!hasValidAuthorization) {
-                syncUtils.logoutUser();
-            } else if (!syncUtils.isAppVersionAllowed()) {
-                if (isSuccessfulPushSync) {
-                    syncUtils.logoutUser();
-                } else {
-                    return;
+        if (eventsSyncRan) {
+            (new AppExecutors()).mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
                 }
-            } else {
-                pullECFromServer();
-
-
-
-            }
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e);
-            complete(FetchStatus.fetchedFailed);
+            });
+        } else {
+            Log.d("SYNC_TRACE_RVL", "SKIPPING_HDSS — events sync did not complete successfully (no network, auth failure, or exception)");
         }
     }
+    // In SyncIntentService.java, NOT LocationTaskIntentService.java
+//    protected void handleSync() {
+//        fetchedRecords = 0;
+//        totalRecords = 0;
+//        sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
+//
+//        doSync();
+//
+//        (new AppExecutors()).mainThread().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+//            }
+//        });
+//    }
+//    protected void handleSync() {
+//        sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
+//
+//        doSync();
+//
+//        (new AppExecutors()).mainThread().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+//            }
+//        });
+//    }
 
+//    private void doSync() {
+//        if (!NetworkUtils.isNetworkAvailable()) {
+//            complete(FetchStatus.noConnection);
+//            return;
+//        }
+//
+//        try {
+//            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+//            boolean isSuccessfulPushSync = false;
+//            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+//                isSuccessfulPushSync = pushToServer();
+//            }
+//
+//            if (!hasValidAuthorization) {
+//                syncUtils.logoutUser();
+//            } else if (!syncUtils.isAppVersionAllowed()) {
+//                if (isSuccessfulPushSync) {
+//                    syncUtils.logoutUser();
+//                } else {
+//                    return;
+//                }
+//            } else {
+//                pullECFromServer();
+//
+//
+//
+//            }
+//        } catch (Exception e) {
+//            Timber.tag("Reveal Exception").w(e);
+//            complete(FetchStatus.fetchedFailed);
+//        }
+//    }
+private boolean doSync() {
+    if (!NetworkUtils.isNetworkAvailable()) {
+        complete(FetchStatus.noConnection);
+        return false;
+    }
+
+    try {
+        boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+        boolean isSuccessfulPushSync = false;
+        if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+            isSuccessfulPushSync = pushToServer();
+        }
+
+        if (!hasValidAuthorization) {
+            syncUtils.logoutUser();
+            return false;
+        } else if (!syncUtils.isAppVersionAllowed()) {
+            if (isSuccessfulPushSync) {
+                syncUtils.logoutUser();
+            }
+            return false;
+        } else {
+            pullECFromServer();
+            return true;
+        }
+    } catch (Exception e) {
+        Timber.tag("Reveal Exception").w(e);
+        complete(FetchStatus.fetchedFailed);
+        return false;
+    }
+}
     protected void pullECFromServer() {
         fetchRetry(0, true);
     }
@@ -371,7 +433,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
-        
+
         //sync time not update if sync is fail
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);

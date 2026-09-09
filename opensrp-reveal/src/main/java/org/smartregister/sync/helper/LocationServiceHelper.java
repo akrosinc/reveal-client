@@ -129,19 +129,33 @@ public class LocationServiceHelper extends BaseHelper {
 
             addAttribute(locationSyncTrace, COUNT, String.valueOf(locations.size()));
             stopTrace(locationSyncTrace);
+//
+//            for (Location location : locations) {
+//                try {
+//                    location.setSyncStatus(BaseRepository.TYPE_Synced);
+//                    if (isJurisdiction)
+//                        locationRepository.addOrUpdate(location);
+//                    else {
+//                        structureRepository.addOrUpdate(location);
+//                    }
+//                    location.setGeometry(null);
+//                } catch (Exception e) {
+//                    Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
+//                }
+//            }
 
             for (Location location : locations) {
-                try {
-                    location.setSyncStatus(BaseRepository.TYPE_Synced);
-                    if (isJurisdiction)
-                        locationRepository.addOrUpdate(location);
-                    else {
-                        structureRepository.addOrUpdate(location);
-                    }
-                    location.setGeometry(null);
-                } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
-                }
+                location.setSyncStatus(BaseRepository.TYPE_Synced);
+            }
+
+            if (isJurisdiction) {
+                locationRepository.addOrUpdateBatched(locations);
+            } else {
+                structureRepository.addOrUpdateBatched(locations);
+            }
+
+            for (Location location : locations) {
+                location.setGeometry(null);
             }
             if (!Utils.isEmptyCollection(locations)) {
                 String maxServerVersion = getMaxServerVersion(locations);

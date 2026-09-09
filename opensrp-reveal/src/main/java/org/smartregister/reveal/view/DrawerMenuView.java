@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LSM;
 import static org.smartregister.util.SyncUtils.setAllEntityNotSynced;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,6 +39,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.reporting.view.ProgressIndicatorView;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -470,12 +472,28 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
       startOtherFormsActivity();
     } else if (v.getId() == R.id.btn_navMenu_offline_maps) presenter.onShowOfflineMaps();
     else if (v.getId() == R.id.btn_navMenu_filled_forms) presenter.onShowFilledForms();
+//    else if (v.getId() == R.id.sync_button) {
+//      resetProgressIndicators();
+//      toggleProgressBarView(true);
+//      org.smartregister.reveal.util.Utils.startImmediateSync();
+//      closeDrawerLayout();
+//    }
     else if (v.getId() == R.id.sync_button) {
-      resetProgressIndicators();
-      toggleProgressBarView(true);
-      org.smartregister.reveal.util.Utils.startImmediateSync();
-      closeDrawerLayout();
-    } else if (v.getId() == R.id.btn_link_dashboard) {
+      Context context = getContext();
+
+      // Check the concurrency guard directly using AllSharedPreferences
+      AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+      if (allSharedPreferences.fetchIsSyncInProgress()) {
+        Toast.makeText(context, "Sync is already in progress", Toast.LENGTH_SHORT).show();
+      } else {
+        // Toggle the progress bar view
+        toggleProgressBarView(true);
+
+        org.smartregister.reveal.util.Utils.startImmediateSync();
+        closeDrawerLayout();
+      }
+    }
+    else if (v.getId() == R.id.btn_link_dashboard) {
       String dashboardURL = getBaseUrl().replace("api", "reveal");
       getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(dashboardURL)));
     }

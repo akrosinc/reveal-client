@@ -150,12 +150,31 @@ public class Utils {
 //  public static void startImmediateSync() {
 //    LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
 //  }
+//public static void startImmediateSync() {
+//  AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+//  if (allSharedPreferences.fetchIsSyncInProgress()) {
+//    Timber.tag("SYNC_TRACE_RVL").w("startImmediateSync() skipped — sync already in progress");
+//    return;
+//  }
+//  allSharedPreferences.saveIsSyncInProgress(true);
+//  Timber.tag("SYNC_TRACE_RVL").d("startImmediateSync() proceeding — flag set true");
+//  LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
+//}
 public static void startImmediateSync() {
   AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
   if (allSharedPreferences.fetchIsSyncInProgress()) {
     Timber.tag("SYNC_TRACE_RVL").w("startImmediateSync() skipped — sync already in progress");
+
+    // Show user-facing feedback
+    android.widget.Toast.makeText(
+            RevealApplication.getInstance(),
+            "Sync is already in progress",
+            android.widget.Toast.LENGTH_SHORT
+    ).show();
+
     return;
   }
+
   allSharedPreferences.saveIsSyncInProgress(true);
   Timber.tag("SYNC_TRACE_RVL").d("startImmediateSync() proceeding — flag set true");
   LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);

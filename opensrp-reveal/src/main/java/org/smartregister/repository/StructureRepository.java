@@ -17,6 +17,7 @@ import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.repository.helper.MappingHelper;
 import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.util.P2PUtil;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,5 +232,22 @@ public class StructureRepository extends LocationRepository {
         }
 
         return structuresCount;
+    }
+    public void addOrUpdateBatched(List<Location> locations) {
+        if (Utils.isEmptyCollection(locations)) {
+            return;
+        }
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (Location location : locations) {
+                addOrUpdate(location);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e, "EXCEPTION %s", e.toString());
+        } finally {
+            db.endTransaction();
+        }
     }
 }

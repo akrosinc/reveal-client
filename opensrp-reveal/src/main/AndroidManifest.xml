@@ -264,9 +264,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.mapbox.token"
-            android:value="@string/mapbox_access_token" />
+<!--        <meta-data-->
+<!--            android:name="com.mapbox.token"-->
+<!--            android:value="@string/mapbox_access_token" />-->
 
 <!--        <activity-->
 <!--            android:name="io.ona.kujaku.activities.MapActivity"-->

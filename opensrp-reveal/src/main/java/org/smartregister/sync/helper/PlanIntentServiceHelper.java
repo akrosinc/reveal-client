@@ -166,8 +166,17 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
         request.put("serverVersion", serverVersion);
 
+//        if (httpAgent == null) {
+//            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+//            throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
+//        }
+
         if (httpAgent == null) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            // REMOVED: context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            // Firing completeSync() here clears isSyncInProgress and triggers onSyncComplete()
+            // for every listener while Locations/Tasks may still be running. doSync()'s own
+            // try/catch already handles this failure — let the pipeline's true terminal point
+            // decide when sync is actually complete.
             throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
         }
 
@@ -177,8 +186,13 @@ public class PlanIntentServiceHelper extends BaseHelper {
                         SYNC_PLANS_URL),
                 request.toString());
 
+//        if (resp.isFailure()) {
+//            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+//            FirebaseLogger.logApiFailures(request.toString(), resp);
+//            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+//        }
         if (resp.isFailure()) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            // REMOVED: context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             FirebaseLogger.logApiFailures(request.toString(), resp);
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
