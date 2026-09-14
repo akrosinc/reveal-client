@@ -2,16 +2,15 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.7.22'
-        android_gradle_plugin = '7.3.1'
-        jacoco_version = '0.8.6'
+        kotlin_version = '1.9.24'
+        android_gradle_plugin = '8.5.2'
+        jacoco_version = '0.8.11'
 
     }
 
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
@@ -31,27 +30,37 @@ allprojects {
     group = 'org.smartregister'
 
     ext {
-        androidCompileSdkVersion = 31
-        androidBuildToolsVersion = '28.0.3'
+        androidCompileSdkVersion = 34
+        androidBuildToolsVersion = '34.0.0'
         androidMinSdkVersion = 26
-        androidTargetSdkVersion = 28
+        androidTargetSdkVersion = 34
         androidAnnotationsVersion = '3.0.1'
-        androidToolsBuildGradle = '4.2.2'
+        androidToolsBuildGradle = '8.5.2'
     }
+
+    Properties githubProps = new Properties()
+    File githubPropsFile = rootProject.file("local.properties")
+    if (githubPropsFile.exists()) {
+        githubProps.load(new FileInputStream(githubPropsFile))
+    }
+    def stripQuotes = { String s -> s == null ? null : s.trim().replaceAll('^"|"$', '') }
+    def ghUser = stripQuotes(githubProps.getProperty("githubUsername") ?: githubProps.getProperty("username")) ?: System.getenv("GITHUB_USER")
+    def ghToken = stripQuotes(githubProps.getProperty("githubToken") ?: githubProps.getProperty("password")) ?: System.getenv("GITHUB_TOKEN")
 
     repositories {
         maven {
             url = uri("https://maven.pkg.github.com/akrosinc/maven-repo")
-
-            Properties localProperties = new Properties()
-            File localPropertiesFile = rootProject.file("local.properties")
-            if (localPropertiesFile.exists()) {
-                localProperties.load(new FileInputStream(localPropertiesFile))
-            }
-
             credentials {
-                username = localProperties.getProperty("githubUsername")
-                password = localProperties.getProperty("githubToken")
+                username = ghUser
+                password = ghToken
+            }
+        }
+        // Upgraded artifacts (com.akrosinc:*) published during the modernization
+        maven {
+            url = uri("https://maven.pkg.github.com/akrosinc/upgrade-repo")
+            credentials {
+                username = ghUser
+                password = ghToken
             }
         }
         google()
@@ -76,9 +85,7 @@ subprojects {
                 targetSdkVersion rootProject.ext.androidTargetSdkVersion
             }
 
-            project.android.dexOptions {
-                javaMaxHeapSize = "4g"
-            }
+
 
             project.android.lintOptions {
                 abortOnError false

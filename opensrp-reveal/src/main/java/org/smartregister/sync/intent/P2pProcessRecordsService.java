@@ -81,6 +81,28 @@ public class P2pProcessRecordsService extends BaseSyncIntentService {
         }
     }
 
+    /**
+     * Entry point for WorkManager workers. Processes the pending peer-to-peer records
+     * synchronously on the caller's (worker) thread without the
+     * {@link android.app.IntentService} lifecycle or a background {@code startService()}.
+     * The {@code finally} block replicates the {@link #onDestroy()} cleanup that reset
+     * the peer-to-peer processing flag once the {@code IntentService} was torn down.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runProcessRecords(@NonNull android.content.Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        try {
+            onHandleIntent(new Intent());
+        } finally {
+            if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+                CoreLibrary.getInstance().setPeerToPeerProcessing(false);
+            }
+        }
+    }
+
     @VisibleForTesting
     protected void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(Utils.completeSync(fetchStatus));

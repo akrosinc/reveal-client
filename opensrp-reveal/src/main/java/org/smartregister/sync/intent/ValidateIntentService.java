@@ -3,6 +3,8 @@ package org.smartregister.sync.intent;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +48,23 @@ public class ValidateIntentService extends BaseSyncIntentService {
         context = getBaseContext();
         httpAgent = getOpenSRPContext().getHttpAgent();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Entry point for WorkManager workers. Runs the validation sync synchronously on
+     * the caller's (worker) thread without the {@link android.app.IntentService}
+     * lifecycle or a background {@code startService()}. Initializes {@code context}
+     * and {@code httpAgent} the same way {@link #onStartCommand} did.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runValidation(@NonNull Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        context = appContext;
+        httpAgent = getOpenSRPContext().getHttpAgent();
+        onHandleIntent(new Intent());
     }
 
     @Override

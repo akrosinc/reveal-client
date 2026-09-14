@@ -53,4 +53,21 @@ public class ImageUploadSyncService extends IntentService {
         return CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
                 + AllConstants.PROFILE_IMAGES_UPLOAD_PATH;
     }
+
+    /**
+     * Entry point for WorkManager workers. Uploads the unsynced profile images
+     * synchronously on the caller's (worker) thread without the
+     * {@link android.app.IntentService} lifecycle or a background {@code startService()}.
+     * This class extends the plain {@link android.app.IntentService} (not
+     * {@code BaseSyncIntentService}); its {@link ImageRepository} is initialized in the
+     * constructor, so no additional lifecycle initialization needs replicating here.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runImageUpload(@androidx.annotation.NonNull android.content.Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        onHandleIntent(new Intent());
+    }
 }

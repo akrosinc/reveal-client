@@ -2,11 +2,14 @@ package org.smartregister.sync.intent;
 
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.job.SyncServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.SyncWorker;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 
 import timber.log.Timber;
@@ -30,7 +33,7 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
     protected void onHandleIntent(Intent intent) {
         boolean isSuccessfulSync = processSettings(intent);
         if (isSuccessfulSync) {
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+            RevealWorkScheduler.scheduleJobImmediately(SyncWorker.TAG);
         }
     }
 
@@ -55,8 +58,34 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        initSyncSettingsServiceHelper();
+    }
+
+    /**
+     * Initializes {@link #syncSettingsServiceHelper} the same way {@link #onCreate()}
+     * does. Exposed so WorkManager workers can prepare the service without the
+     * {@link android.app.IntentService} lifecycle.
+     */
+    protected void initSyncSettingsServiceHelper() {
         Context context = CoreLibrary.getInstance().context();
         syncSettingsServiceHelper = new SyncSettingsServiceHelper(context.configuration().dristhiBaseURL(), context.getHttpAgent());
+    }
+
+    /**
+     * Entry point for WorkManager workers. Runs the settings sync synchronously on the
+     * caller's (worker) thread without the {@link android.app.IntentService} lifecycle
+     * or a background {@code startService()}. Initializes the sync helper the same way
+     * {@link #onCreate()} did, then drives the work through {@link #onHandleIntent}
+     * (allowing subclasses to layer additional processing).
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runSettingsSync(@NonNull android.content.Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        initSyncSettingsServiceHelper();
+        onHandleIntent(new Intent());
     }
 
 }

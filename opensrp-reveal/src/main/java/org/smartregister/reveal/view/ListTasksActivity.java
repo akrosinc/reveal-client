@@ -257,6 +257,11 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
     private List<Feature> pendingAdjacentAreas;
     private boolean pendingIsChangeMapPosition;
     private List<Feature> pendingParentLocations;
+    // Tracks whether the Mapbox MapView has been initialized this session. The MapView is only
+    // initialized in onCreate when a plan target level already exists; when the plan is selected
+    // later (via the drawer), we must initialize it then. Guards against calling
+    // mapView.onCreate() twice, which is unsafe.
+    private boolean mapViewInitialized;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -425,6 +430,12 @@ private void initializeMapView(Bundle savedInstanceState) {
         Log.d("MapboxDebug", "mapView is NULL!");
         return;
     }
+
+    if (mapViewInitialized) {
+        Log.d("MapboxDebug", "MapView already initialized this session; skipping re-init.");
+        return;
+    }
+    mapViewInitialized = true;
 
     try {
         mapView.onCreate(savedInstanceState);
@@ -1414,6 +1425,15 @@ public Location getUserCurrentLocation() {
 
     @Override
     public void onDrawerClosed() {
+        // If a plan (and therefore a target level) was selected after onCreate ran with a blank
+        // target level, the MapView was never initialized this session. Initialize it now so its
+        // onStyleLoaded callback flushes any pending map data cached in setGeoJsonSourceWithParents.
+        // Without this, the map stays grey until the activity is recreated (logout/login).
+        if (!mapViewInitialized
+                && StringUtils.isNotBlank(PreferencesUtil.getInstance().getCurrentPlanTargetLevel())) {
+            Log.d(TAG, "Target level now valid on drawer close. Initializing deferred MapView.");
+            initializeMapView(savedInstanceState);
+        }
         listTaskPresenter.onDrawerClosed();
     }
 

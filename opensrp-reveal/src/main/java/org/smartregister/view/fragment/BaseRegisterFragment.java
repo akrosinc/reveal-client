@@ -28,7 +28,8 @@ import org.smartregister.reveal.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
-import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.SyncSettingsWorker;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.NetworkUtils;
@@ -233,7 +234,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         //Sync
         syncButton = view.findViewById(R.id.sync_refresh);
         if (syncButton != null) {
-            syncButton.setOnClickListener(view1 -> SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG));
+            syncButton.setOnClickListener(view1 -> RevealWorkScheduler.scheduleJobImmediately(SyncSettingsWorker.TAG));
         }
     }
 

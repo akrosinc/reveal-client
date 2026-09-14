@@ -18,6 +18,7 @@ package org.smartregister.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -28,10 +29,12 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -771,23 +774,78 @@ public class Utils {
      * @param context    application context when calling the function
      */
     public static void copyDatabase(String dbName, String copyDbName, Context context) {
-        try {
-            final String inFileName = context.getDatabasePath(dbName).getPath();
-            final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
-            File dbFile = new File(inFileName);
-            FileInputStream fis = new FileInputStream(dbFile);
+        final String inFileName = context.getDatabasePath(dbName).getPath();
+        File dbFile = new File(inFileName);
 
-            OutputStream output = new FileOutputStream(outFileName);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ enforces scoped storage; raw java.io writes to the public Downloads
+            // folder fail with EPERM. Write through MediaStore instead, which needs no storage
+            // permission and is the supported way to add files to the Downloads collection.
+            copyDatabaseViaMediaStore(dbFile, copyDbName, context);
+        } else {
+            copyDatabaseLegacy(dbFile, copyDbName);
+        }
+    }
+
+    /**
+     * Android 10+ (API 29+) path. Inserts the DB copy into the MediaStore Downloads collection
+     * and streams the bytes into the returned content Uri.
+     */
+    private static void copyDatabaseViaMediaStore(File dbFile, String copyDbName, Context context) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Downloads.DISPLAY_NAME, copyDbName);
+        values.put(MediaStore.Downloads.MIME_TYPE, "application/octet-stream");
+        values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+        values.put(MediaStore.Downloads.IS_PENDING, 1);
+
+        Uri collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        Uri itemUri = context.getContentResolver().insert(collection, values);
+        if (itemUri == null) {
+            Timber.tag("Reveal Exception").w("copyDatabase: backup error - MediaStore insert returned null");
+            return;
+        }
+
+        try (FileInputStream fis = new FileInputStream(dbFile);
+             OutputStream output = context.getContentResolver().openOutputStream(itemUri)) {
+            if (output == null) {
+                Timber.tag("Reveal Exception").w("copyDatabase: backup error - could not open output stream");
+                return;
+            }
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+            output.flush();
+
+            values.clear();
+            values.put(MediaStore.Downloads.IS_PENDING, 0);
+            context.getContentResolver().update(itemUri, values, null, null);
+        } catch (Exception e) {
+            // Roll back the pending entry so we don't leave a half-written file behind.
+            try {
+                context.getContentResolver().delete(itemUri, null, null);
+            } catch (Exception ignored) {
+                // best effort cleanup
+            }
+            Timber.tag("Reveal Exception").w("copyDatabase: backup error " + e.toString());
+        }
+    }
+
+    /**
+     * Legacy path for API &lt; 29 where direct writes to the public Downloads folder are allowed
+     * (with WRITE_EXTERNAL_STORAGE granted).
+     */
+    private static void copyDatabaseLegacy(File dbFile, String copyDbName) {
+        final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
+        try (FileInputStream fis = new FileInputStream(dbFile);
+             OutputStream output = new FileOutputStream(outFileName)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = fis.read(buffer)) > 0) {
                 output.write(buffer, 0, length);
             }
-
             output.flush();
-            output.close();
-            fis.close();
-
         } catch (Exception e) {
             Timber.tag("Reveal Exception").w("copyDatabase: backup error " + e.toString());
         }

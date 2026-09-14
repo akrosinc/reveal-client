@@ -30,6 +30,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -38,6 +40,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.util.Pair;
@@ -74,8 +77,9 @@ import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.job.RevealWorkScheduler;
 import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.job.LocationTaskServiceJob;
+import org.smartregister.reveal.job.LocationTaskWorker;
 import org.smartregister.reveal.util.Constants.CONFIGURATION;
 import org.smartregister.reveal.util.Constants.Properties;
 import org.smartregister.reveal.util.Constants.Tags;
@@ -150,15 +154,38 @@ public class Utils {
 //  public static void startImmediateSync() {
 //    LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
 //  }
-public static void startImmediateSync() {
-  AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-  if (allSharedPreferences.fetchIsSyncInProgress()) {
-    Timber.tag("SYNC_TRACE_RVL").w("startImmediateSync() skipped — sync already in progress");
-    return;
+public static boolean startImmediateSync() {
+  Context context = CoreLibrary.getInstance().context().applicationContext();
+  // Ask WorkManager whether the sync work is genuinely running/enqueued instead of trusting a
+  // manually-maintained boolean flag. The old flag could get stranded true and then block every
+  // subsequent sync for the whole process lifetime, which is exactly why sync "never ran".
+  if (RevealWorkScheduler.isWorkActive(context, LocationTaskWorker.TAG)) {
+    Timber.tag("SYNC_TRACE_RVL").w("startImmediateSync() skipped — sync work already running/enqueued");
+    showSyncInProgressMessage(context);
+    return false;
   }
-  allSharedPreferences.saveIsSyncInProgress(true);
-  Timber.tag("SYNC_TRACE_RVL").d("startImmediateSync() proceeding — flag set true");
-  LocationTaskServiceJob.scheduleJobImmediately(LocationTaskServiceJob.TAG);
+  Timber.tag("SYNC_TRACE_RVL").d("startImmediateSync() proceeding — enqueuing sync work");
+  RevealWorkScheduler.scheduleJobImmediately(LocationTaskWorker.TAG);
+  return true;
+}
+
+private static void showSyncInProgressMessage(Context context) {
+  new Handler(Looper.getMainLooper()).post(() ->
+      Toast.makeText(context, R.string.sync_already_in_progress, Toast.LENGTH_SHORT).show());
+}
+
+/**
+ * Forces a fresh sync run, cancelling any in-flight/stuck sync work first and bypassing the
+ * "already in progress" guard used by {@link #startImmediateSync()}. Intended for an explicit,
+ * user-confirmed "restart sync" action (e.g. long-press on the Sync button). Because
+ * {@code enqueueImmediate} uses {@link androidx.work.ExistingWorkPolicy#REPLACE}, cancelling
+ * first guarantees the prior request is torn down before the new one is scheduled.
+ */
+public static void forceRestartSync() {
+  Context context = CoreLibrary.getInstance().context().applicationContext();
+  Timber.tag("SYNC_TRACE_RVL").d("forceRestartSync() — cancelling existing work and restarting");
+  RevealWorkScheduler.cancelByName(context, LocationTaskWorker.TAG);
+  RevealWorkScheduler.scheduleJobImmediately(LocationTaskWorker.TAG);
 }
 
   public static Location getOperationalAreaLocation(String operationalArea) {

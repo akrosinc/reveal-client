@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONML;
+import org.smartregister.reveal.thirdparty.json.JSONML;
 import org.json.JSONObject;
 import org.smartregister.reveal.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;

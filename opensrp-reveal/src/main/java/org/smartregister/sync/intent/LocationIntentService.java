@@ -29,4 +29,19 @@ public class LocationIntentService extends BaseSyncIntentService {
         locationServiceHelper.fetchLocationsStructures();
 
     }
+
+    /**
+     * Entry point for WorkManager workers. Runs the location/structure sync
+     * synchronously on the caller's (worker) thread without the
+     * {@link android.app.IntentService} lifecycle or a background
+     * {@code startService()}.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runLocationStructureSync(@androidx.annotation.NonNull android.content.Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        onHandleIntent(new Intent());
+    }
 }

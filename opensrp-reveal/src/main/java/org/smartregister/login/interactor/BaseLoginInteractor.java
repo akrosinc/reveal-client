@@ -20,8 +20,9 @@ import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
-import org.smartregister.job.P2pServiceJob;
-import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.P2pProcessRecordsWorker;
+import org.smartregister.reveal.job.SyncSettingsWorker;
 import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
@@ -227,11 +228,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
         if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
             // Finish processing any unprocessed sync records here
-            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+            RevealWorkScheduler.scheduleJobImmediately(P2pProcessRecordsWorker.TAG);
         }
 
         if (NetworkUtils.isNetworkAvailable()) {
-            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+            RevealWorkScheduler.scheduleJobImmediately(SyncSettingsWorker.TAG);
         }
     }
 

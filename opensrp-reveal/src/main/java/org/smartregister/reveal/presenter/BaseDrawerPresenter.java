@@ -403,9 +403,10 @@ public class BaseDrawerPresenter implements BaseDrawerContract.Presenter {
         syncLabel = headerView.findViewById(R.id.sync_label);
         syncBadge = activity.findViewById(R.id.sync_badge);
         if (syncBadge != null && syncLabel != null) {
-            if (synced && SyncUtils.getTotalSyncProgress() == 100) {
+            int totalSyncProgress = SyncUtils.getTotalSyncProgress();
+            if (synced && totalSyncProgress == 100) {
                 syncBadge.setBackground(ContextCompat.getDrawable(activity, R.drawable.badge_green_oval));
-                syncLabel.setText(getView().getContext().getString(R.string.device_data_synced));
+                syncLabel.setText(getView().getContext().getString(R.string.device_data_synced_percent, totalSyncProgress));
                 syncLabel.setTextColor(ContextCompat.getColor(activity, R.color.alert_complete_green));
                 syncLabel.setBackground(ContextCompat.getDrawable(activity, R.drawable.rounded_border_alert_green));
             } else {

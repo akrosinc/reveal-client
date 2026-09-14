@@ -252,7 +252,16 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     }
 
     headerView.findViewById(R.id.logout_button).setOnClickListener(this);
-    headerView.findViewById(R.id.sync_button).setOnClickListener(this);
+    View syncButton = headerView.findViewById(R.id.sync_button);
+    syncButton.setOnClickListener(this);
+    syncButton.setOnLongClickListener(
+        new View.OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+            confirmRestartSync();
+            return true;
+          }
+        });
 
     districtTextView.setOnLongClickListener(
         new View.OnLongClickListener() {
@@ -471,14 +480,40 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     } else if (v.getId() == R.id.btn_navMenu_offline_maps) presenter.onShowOfflineMaps();
     else if (v.getId() == R.id.btn_navMenu_filled_forms) presenter.onShowFilledForms();
     else if (v.getId() == R.id.sync_button) {
-      resetProgressIndicators();
-      toggleProgressBarView(true);
-      org.smartregister.reveal.util.Utils.startImmediateSync();
+      // Only reset indicators / show the progress bar when a sync actually starts. If a sync is
+      // already in progress, startImmediateSync() returns false (and shows a message), so we must
+      // not wipe the in-flight progress indicators.
+      if (org.smartregister.reveal.util.Utils.startImmediateSync()) {
+        resetProgressIndicators();
+        toggleProgressBarView(true);
+      }
       closeDrawerLayout();
     } else if (v.getId() == R.id.btn_link_dashboard) {
       String dashboardURL = getBaseUrl().replace("api", "reveal");
       getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(dashboardURL)));
     }
+  }
+
+  /**
+   * Shows a confirmation dialog before forcing a sync restart. Triggered by a long-press on the
+   * Sync button so a running sync can be deliberately cancelled and restarted.
+   */
+  private void confirmRestartSync() {
+    AlertDialogUtils.displayNotificationWithCallback(
+        getContext(),
+        R.string.restart_sync_title,
+        R.string.restart_sync_message,
+        R.string.restart_sync_confirm,
+        R.string.cancel,
+        (dialog, which) -> {
+          if (which == DialogInterface.BUTTON_POSITIVE) {
+            resetProgressIndicators();
+            toggleProgressBarView(true);
+            org.smartregister.reveal.util.Utils.forceRestartSync();
+            closeDrawerLayout();
+          }
+          dialog.dismiss();
+        });
   }
 
   @Override

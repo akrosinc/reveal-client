@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
+
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.sync.helper.ValidateAssignmentHelper;
 
@@ -29,8 +31,9 @@ public class ValidateAssignmentReceiver extends BroadcastReceiver {
             destroy(context);
         }
         instance = new ValidateAssignmentReceiver();
-        context.registerReceiver(instance,
-                new IntentFilter(ValidateAssignmentHelper.ACTION_ASSIGNMENT_REMOVED));
+        ContextCompat.registerReceiver(context, instance,
+                new IntentFilter(ValidateAssignmentHelper.ACTION_ASSIGNMENT_REMOVED),
+                ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     public static void destroy(Context context) {

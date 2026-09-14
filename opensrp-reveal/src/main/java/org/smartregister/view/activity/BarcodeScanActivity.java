@@ -68,7 +68,9 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
         if (!barcodeDetector.isOperational()) {
             Timber.w("Detector dependencies are not yet available.");
             IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
-            boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
+            boolean hasLowStorage = androidx.core.content.ContextCompat.registerReceiver(
+                    this, null, lowStorageFilter,
+                    androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED) != null;
 
             if (hasLowStorage) {
                 Utils.showToast(this, this.getResources().getString(R.string.low_storage_error));

@@ -40,8 +40,8 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.job.HdssServiceJob;
-import org.smartregister.job.SyncServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.HdssWorker;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
@@ -103,6 +103,25 @@ public class SyncIntentService extends BaseSyncIntentService {
         handleSync();
     }
 
+    /**
+     * Entry point for WorkManager workers. Runs the full sync synchronously on the
+     * caller's (worker) thread without going through the {@link android.app.IntentService}
+     * lifecycle or a background {@code startService()}. The supplied application
+     * {@link Context} is attached as the base context so the existing
+     * {@code Context}-dependent logic (broadcasts, string lookups, sync utils) works
+     * unchanged.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runSync(@NonNull Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        init(appContext);
+        super.onHandleIntent(new Intent());
+        handleSync();
+    }
+
     protected void handleSync() {
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
 
@@ -111,7 +130,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         (new AppExecutors()).mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+                RevealWorkScheduler.scheduleJobImmediately(HdssWorker.TAG);
             }
         });
     }

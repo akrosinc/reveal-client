@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 
 import static org.smartregister.util.Log.logError;
@@ -27,8 +29,10 @@ public class TimeChangedBroadcastReceiver extends BroadcastReceiver {
         }
 
         singleton = new TimeChangedBroadcastReceiver();
-        context.registerReceiver(singleton, new IntentFilter(Intent.ACTION_TIME_CHANGED));
-        context.registerReceiver(singleton, new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED));
+        ContextCompat.registerReceiver(context, singleton,
+                new IntentFilter(Intent.ACTION_TIME_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED);
+        ContextCompat.registerReceiver(context, singleton,
+                new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     public static TimeChangedBroadcastReceiver getInstance() {

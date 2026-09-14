@@ -17,7 +17,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.evernote.android.job.JobManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
@@ -55,7 +54,6 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.LoginActivity;
 import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
-import org.smartregister.reveal.job.RevealJobCreator;
 import org.smartregister.reveal.model.Environment;
 import org.smartregister.reveal.model.EnvironmentDetails;
 import org.smartregister.reveal.repository.RevealRepository;
@@ -171,9 +169,6 @@ public class RevealApplication extends DrishtiApplication
 
         Mapbox.getInstance(getApplicationContext(), BuildConfig.MAPBOX_SDK_ACCESS_TOKEN);
 
-        //init Job Manager
-        JobManager.create(this).addJobCreator(new RevealJobCreator());
-        Log.d("SYNC_TRACE", "JOB_MANAGER_CREATED t=" + System.currentTimeMillis());
         LangUtils.setLanguage(getApplicationContext());
         NativeFormLibrary.getInstance()
                 .setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());

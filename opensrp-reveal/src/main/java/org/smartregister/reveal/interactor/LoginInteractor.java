@@ -2,9 +2,10 @@ package org.smartregister.reveal.interactor;
 
 import java.lang.ref.WeakReference;
 import org.smartregister.CoreLibrary;
+import org.smartregister.reveal.job.RevealWorkScheduler;
 import org.smartregister.login.interactor.BaseLoginInteractor;
 import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.job.LocationTaskServiceJob;
+import org.smartregister.reveal.job.LocationTaskWorker;
 import org.smartregister.reveal.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -16,7 +17,7 @@ public class LoginInteractor extends BaseLoginInteractor implements BaseLoginCon
 
     @Override
     protected void scheduleJobsPeriodically() {
-        LocationTaskServiceJob.scheduleJob(LocationTaskServiceJob.TAG,
+        RevealWorkScheduler.scheduleJob(LocationTaskWorker.TAG,
                 Utils.getSyncInterval(), getFlexValue((int) Utils.getSyncInterval()));
     }
 

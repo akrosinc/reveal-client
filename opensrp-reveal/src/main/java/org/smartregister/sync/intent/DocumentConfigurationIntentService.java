@@ -50,6 +50,26 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         }
     }
 
+    /**
+     * Entry point for WorkManager workers. Runs the document configuration sync
+     * synchronously on the caller's (worker) thread without the
+     * {@link android.app.IntentService} lifecycle or a background
+     * {@code startService()}. Replicates the initialization previously done in
+     * {@link #onStartCommand(Intent, int, int)} before driving {@link #onHandleIntent}.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runDocumentConfigurationSync(@androidx.annotation.NonNull android.content.Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        manifestRepository = CoreLibrary.getInstance().context().getManifestRepository();
+        clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        configuration = CoreLibrary.getInstance().context().configuration();
+        onHandleIntent(new Intent());
+    }
+
     @VisibleForTesting
     @NotNull
     protected DocumentConfigurationService getDocumentConfigurationService() {

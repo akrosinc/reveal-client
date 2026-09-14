@@ -1,9 +1,11 @@
 package org.smartregister.reveal.sync;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -11,11 +13,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
-import org.smartregister.job.SyncServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.SyncWorker;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.application.RevealApplication;
-import org.smartregister.reveal.job.RevealSyncSettingsServiceJob;
+import org.smartregister.reveal.job.RevealSyncSettingsWorker;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.Utils;
@@ -66,7 +69,7 @@ public class LocationTaskIntentService extends IntentService {
         (new AppExecutors()).mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                RevealSyncSettingsServiceJob.scheduleJobImmediately(RevealSyncSettingsServiceJob.TAG);
+                RevealWorkScheduler.scheduleJobImmediately(RevealSyncSettingsWorker.TAG);
             }
         });
     }
@@ -82,6 +85,22 @@ public class LocationTaskIntentService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         syncUtils = new SyncUtils(getBaseContext());
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Entry point for WorkManager workers. Runs the location/task sync synchronously
+     * on the caller's (worker) thread without the {@link android.app.IntentService}
+     * lifecycle or a background {@code startService()}. Initializes {@code syncUtils}
+     * the same way {@link #onStartCommand} did.
+     *
+     * @param appContext the application context provided by the Worker
+     */
+    public void runLocationTaskSync(@NonNull Context appContext) {
+        if (getBaseContext() == null) {
+            attachBaseContext(appContext);
+        }
+        syncUtils = new SyncUtils(appContext);
+        onHandleIntent(new Intent());
     }
 
     @VisibleForTesting
@@ -128,7 +147,7 @@ public class LocationTaskIntentService extends IntentService {
             @Override
             public void run() {
 
-                SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+                RevealWorkScheduler.scheduleJobImmediately(SyncWorker.TAG);
             }
         });
 

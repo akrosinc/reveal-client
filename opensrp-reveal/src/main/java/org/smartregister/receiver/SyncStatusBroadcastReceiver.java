@@ -7,9 +7,12 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import org.joda.time.DateTime;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.job.ExtendedSyncServiceJob;
+import org.smartregister.reveal.job.RevealWorkScheduler;
+import org.smartregister.reveal.job.ExtendedSyncWorker;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 
@@ -43,8 +46,9 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
         }
 
         singleton = new SyncStatusBroadcastReceiver();
-        context.registerReceiver(singleton,
-                new IntentFilter(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS));
+        ContextCompat.registerReceiver(context, singleton,
+                new IntentFilter(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS),
+                ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     public static void destroy(Context context) {
@@ -155,7 +159,7 @@ private void complete(FetchStatus fetchStatus, Context context) {
 }
 
     protected void startExtendedSync() {
-        ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);
+        RevealWorkScheduler.scheduleJobImmediately(ExtendedSyncWorker.TAG);
     }
 
     public interface SyncStatusListener {

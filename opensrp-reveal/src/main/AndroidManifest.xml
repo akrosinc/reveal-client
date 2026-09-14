@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.smartregister.reveal">
+    xmlns:tools="http://schemas.android.com/tools">
 
 <!--    <uses-permission android:name="android.permission.CAMERA" />-->
 
@@ -435,11 +434,10 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <provider
-            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
-            android:authorities="org.smartregister.reveal.lifecycle-process"
-            android:exported="false"
-            android:multiprocess="true" />
+        <!-- Removed hardcoded androidx.lifecycle.ProcessLifecycleOwnerInitializer
+             provider: that class was removed in lifecycle 2.3+ and caused a
+             ClassNotFoundException crash at startup. Modern lifecycle-process
+             (2.5.1) auto-registers ProcessLifecycleInitializer via androidx.startup. -->
 
         <activity
             android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"

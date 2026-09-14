@@ -525,6 +525,7 @@
     <string name="sync_started">Sync Started</string>
     <string name="sync_progress">Sync Progress</string>
     <string name="device_data_synced">Device data synced</string>
+    <string name="device_data_synced_percent">Device data synced (%1$d%%)</string>
     <string name="device_data_not_synced">Device data not synced</string>
 
     <string name="filled_forms">Filled Forms</string>
@@ -983,6 +984,10 @@
     <string name="sync_failed">Sync Failed</string>
     <string name="sync_failed_no_internet">Sync failed. Check your internet connection.</string>
     <string name="manual_sync_triggered">Manual Sync Triggered&#8230;</string>
+    <string name="sync_already_in_progress">Sync is already in progress&#8230;</string>
+    <string name="restart_sync_title">Restart sync?</string>
+    <string name="restart_sync_message">A sync may already be running. Do you want to cancel it and start a new sync?</string>
+    <string name="restart_sync_confirm">Restart</string>
     <string name="please_wait_message">Please Wait</string>
     <string name="remote_login_generic_error">Error occurred during Login in with server. Please try again...</string>
     <string name="remote_login_base_url_missing_error">Reveal Authorization URL is missing. Please add it in Setting and try again</string>

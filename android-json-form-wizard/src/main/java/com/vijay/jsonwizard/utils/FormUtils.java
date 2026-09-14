@@ -57,7 +57,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.client.utils.BuildConfig;
+import com.vijay.jsonwizard.BuildConfig;
 import org.smartregister.client.utils.contract.ClientFormContract;
 
 import java.io.BufferedReader;
