@@ -66,6 +66,8 @@ allprojects {
         google()
 
         mavenCentral()
+        // Hosts com.commonsware.cwac:saferoom.x used by the :p2p-sync module
+        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
         maven { url 'https://jitpack.io' }
         maven { url "https://repo.maven.apache.org/maven2" }
         mavenLocal()

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="P2pModeSelect"/>
+    <style name="P2pModeSelect.Buttons"/>
+    <style name="P2pModeSelect.Buttons.SendReceive">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginRight">30dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@drawable/round_btn</item>
+        <item name="android:textColor">@drawable/btn_text_color_selector</item>
+
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+    </style>
+
+    <style name="P2pModeSelect.Buttons.Cornered" parent="P2pModeSelect.Buttons.SendReceive">
+        <item name="android:background">@drawable/cornered_btn</item>
+    </style>
+
+    <style name="P2pModeSelect.Buttons.MyBorderlessButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+</resources>

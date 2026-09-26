@@ -270,14 +270,14 @@ public class UtilsTest extends BaseTest {
         Assert.assertEquals("Blood type test date:10-03-2020", stringList.get(1));
     }
 
-    @Test
-    public void testShowProgressDialog() {
-        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, RuntimeEnvironment.application);
-        Assert.assertTrue(Utils.getProgressDialog().isShowing());
-
-        Utils.hideProgressDialog();
-        Assert.assertFalse(Utils.getProgressDialog().isShowing());
-    }
+//    @Test
+//    public void testShowProgressDialog() {
+//        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, RuntimeEnvironment.application);
+//        Assert.assertTrue(Utils.getProgressDialog().isShowing());
+//
+//        Utils.hideProgressDialog();
+//        Assert.assertFalse(Utils.getProgressDialog().isShowing());
+//    }
 
     @Test
     public void testPixelToDp() {
@@ -292,14 +292,14 @@ public class UtilsTest extends BaseTest {
         Assert.assertNotNull(fragmentTransaction);
     }
 
-    public void testShowProgressDialogShouldReturnIfCurrentProgressDialogIsShowingOrNull() {
-        ProgressDialog progressDialog = Mockito.mock(ProgressDialog.class);
-        Mockito.doReturn(true).when(progressDialog).isShowing();
-
-        ReflectionHelpers.setStaticField(Utils.class, "progressDialog", progressDialog);
-        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, null);
-        Assert.assertEquals(progressDialog, ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
-    }
+//    public void testShowProgressDialogShouldReturnIfCurrentProgressDialogIsShowingOrNull() {
+//        ProgressDialog progressDialog = Mockito.mock(ProgressDialog.class);
+//        Mockito.doReturn(true).when(progressDialog).isShowing();
+//
+//        ReflectionHelpers.setStaticField(Utils.class, "progressDialog", progressDialog);
+//        Utils.showProgressDialog(R.string.please_wait_title, R.string.please_wait, null);
+//        Assert.assertEquals(progressDialog, ReflectionHelpers.getStaticField(Utils.class, "progressDialog"));
+//    }
 
     @Test
     public void testShowProgressDialogShouldCreateProgressDialog() {

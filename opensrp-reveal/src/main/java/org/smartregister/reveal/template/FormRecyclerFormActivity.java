@@ -24,6 +24,7 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.interactor.BaseInteractor;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
+import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.util.JsonFormUtils;
@@ -289,6 +290,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     formUtils.populateField(currentForm, FIELD_VISIT_DATE,
                             org.joda.time.LocalDate.now().toString("dd-MM-yyyy"),
                             com.vijay.jsonwizard.constants.JsonFormConstants.VALUE);
+
+                    Map<String, JSONObject> fieldsMap = formUtils.getFields(currentForm);
+                    formUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),"structure_descriptions",
+                        fieldsMap.get("structure_description"),locationUUID);
+
                     Timber.tag("FormSaveInteractor").i("populateForm1: date set to %s",
                             org.joda.time.LocalDate.now().toString("dd-MM-yyyy"));
                 } catch (Exception dateEx) {

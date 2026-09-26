@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.smartregister.p2p.view.QRCodeScannerView
+        android:id="@+id/bsv_qrCodeScanningDialog_barcodeScanner"
+        android:layout_above="@id/tv_qrCodeScanningDialog_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+
+    <TextView
+        android:id="@+id/tv_qrCodeScanningDialog_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text= "@string/qr_code_scanning_dialog_message"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:layout_marginBottom="40dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_above="@id/btn_qrCodeScanningDialog_skipBtn"/>
+
+    <Button
+        android:id="@+id/btn_qrCodeScanningDialog_skipBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        style="@style/P2pModeSelect.Buttons.MyBorderlessButton"
+        android:text="@string/skip"/>
+
+</RelativeLayout>

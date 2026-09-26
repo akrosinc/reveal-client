@@ -63,12 +63,13 @@ public class RevealMultiSelectListFactory extends MultiSelectListFactory {
     @Override
     public void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem) {
         updateSelectedData(multiSelectItem, false);
-        writeToForm();
+        writeToForm("");
         getAlertDialog().dismiss();
 
     }
 
-    public void writeToForm() {
+    @Override
+    public void writeToForm(String val) {
         RevealMultiSelectListUtils.writeToForm(currentAdapterKey, jsonFormFragment, getRevealMultiSelectListAccessoryHashMap());
     }
 
@@ -396,7 +397,7 @@ public class RevealMultiSelectListFactory extends MultiSelectListFactory {
         multiSelectListAccessory.setSelectedAdapter(multiSelectListSelectedAdapter);
         updateRevealMultiSelectListAccessoryHashMap(multiSelectListAccessory);
 
-        writeToForm();
+        writeToForm("");
 
         final RecyclerView recyclerView = new RecyclerView(context);
 

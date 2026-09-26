@@ -1,0 +1,127 @@
+﻿{
+  "count": "2",
+  "encounter_type": "enrolment_initial",
+  "form_version": "0.0.1",
+  "entity_id": "",
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": ""
+  },
+  "step1": {
+    "title": "Durability Enrolment",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "prepare_emanator_label_instruction_destruction",
+        "type": "label",
+        "text": "10. Prepare a label for the emanator that will be removed. Write today’s date, the cluster ID, and household ID on the label. Place the label on the emanator, but do not cover any existing labels",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#AA0000",
+        "label_text_style": "bold",
+        "text_size": "15sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      },
+      {
+        "key": "structure_description",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Select the structure description",
+        "text_size": "8sp",
+        "v_required": {
+          "value": "true",
+          "err": "Required field"
+        }
+      },
+      {
+        "key": "supervisor",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "business_status",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden",
+        "value": "Complete"
+      }
+    ]
+  },
+  "step2": {
+    "title": "Household Questions (continued)",
+    "display_back_button": true,
+    "no_padding": true,
+    "fields": [
+      {
+        "key": "thank_you_label",
+        "type": "label",
+        "text": "42. Fieldworker: Advise the respondent that the team will return to visit in approximately three months.",
+        "read_only": false,
+        "hint_on_text": true,
+        "text_color": "#B90000",
+        "text_size": "20sp",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": ""
+      }
+    ]
+  },
+  "settingsConfig": {
+    "lists": [
+      {
+        "settingsKey":"structure_descriptions",
+        "formKey": "structure_description",
+        "settingsEntity": "task",
+        "settingsEntityFilterKey": "getForEntity"
+      }
+    ]
+  }
+}

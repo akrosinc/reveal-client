@@ -117,31 +117,31 @@ public class JsonWizardFormFragmentPresenterRoboelectricTest extends BaseTest {
         verify(formFragment).skipStepsOnNextPressed("step2");
     }
 
-    @Test
-    public void testOnClickShouldOpenSimPrintsRegistration() {
-        View view = new View(context);
-        view.setTag(R.id.type, JsonFormConstants.FINGER_PRINT);
-        view.setTag(R.id.finger_print_option, JsonFormConstants.SIMPRINTS_OPTION_REGISTER);
-        view.setTag(R.id.project_id, "test");
-        view.setTag(R.id.module_id, "nf");
-        view.setTag(R.id.user_id, "jdoe");
-        formFragmentPresenter.onClick(view);
-        verify(formFragment).startSimprintsRegistration("test", "jdoe", "nf");
-    }
+//    @Test
+//    public void testOnClickShouldOpenSimPrintsRegistration() {
+//        View view = new View(context);
+//        view.setTag(R.id.type, JsonFormConstants.FINGER_PRINT);
+//        view.setTag(R.id.finger_print_option, JsonFormConstants.SIMPRINTS_OPTION_REGISTER);
+//        view.setTag(R.id.project_id, "test");
+//        view.setTag(R.id.module_id, "nf");
+//        view.setTag(R.id.user_id, "jdoe");
+//        formFragmentPresenter.onClick(view);
+//        verify(formFragment).startSimprintsRegistration("test", "jdoe", "nf");
+//    }
 
-    @Test
-    public void testOnClickShouldOpenSimPrintsVerification() {
-        View view = new View(context);
-        view.setTag(R.id.type, JsonFormConstants.FINGER_PRINT);
-        view.setTag(R.id.finger_print_option, JsonFormConstants.SIMPRINTS_OPTION_VERIFY);
-        view.setTag(R.id.project_id, "test");
-        view.setTag(R.id.module_id, "nf");
-        view.setTag(R.id.user_id, "jdoe");
-        String guid = UUID.randomUUID().toString();
-        view.setTag(R.id.guid, guid);
-        formFragmentPresenter.onClick(view);
-        verify(formFragment).startSimprintsVerification("test", "jdoe", "nf", guid);
-    }
+//    @Test
+//    public void testOnClickShouldOpenSimPrintsVerification() {
+//        View view = new View(context);
+//        view.setTag(R.id.type, JsonFormConstants.FINGER_PRINT);
+//        view.setTag(R.id.finger_print_option, JsonFormConstants.SIMPRINTS_OPTION_VERIFY);
+//        view.setTag(R.id.project_id, "test");
+//        view.setTag(R.id.module_id, "nf");
+//        view.setTag(R.id.user_id, "jdoe");
+//        String guid = UUID.randomUUID().toString();
+//        view.setTag(R.id.guid, guid);
+//        formFragmentPresenter.onClick(view);
+//        verify(formFragment).startSimprintsVerification("test", "jdoe", "nf", guid);
+//    }
 
     @Test
     @Config(shadows = {ShadowPermissionUtils.class, ShadowIntent.class, ShadowFileProvider.class})

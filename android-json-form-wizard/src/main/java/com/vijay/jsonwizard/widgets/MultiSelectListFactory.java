@@ -341,11 +341,11 @@ public class MultiSelectListFactory implements FormWidgetFactory {
 
     protected void handleClickEventOnListData(@NonNull MultiSelectItem multiSelectItem) {
         updateSelectedData(multiSelectItem, false);
-        writeToForm();
+        writeToForm("");
         getAlertDialog().dismiss();
     }
 
-    public void writeToForm() {
+    public void writeToForm(String val) {
         MultiSelectListUtils.writeToForm(currentAdapterKey, jsonFormFragment, getMultiSelectListAccessoryHashMap());
     }
 
@@ -381,7 +381,7 @@ public class MultiSelectListFactory implements FormWidgetFactory {
         multiSelectListAccessory.setSelectedAdapter(multiSelectListSelectedAdapter);
         updateMultiSelectListAccessoryHashMap(multiSelectListAccessory);
 
-        writeToForm();
+        writeToForm("");
 
         final RecyclerView recyclerView = new RecyclerView(context);
 

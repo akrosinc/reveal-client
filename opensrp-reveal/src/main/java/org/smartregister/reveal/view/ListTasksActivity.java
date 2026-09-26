@@ -869,6 +869,13 @@ public void positionMyLocationAndLayerSwitcher() {
 
             intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_enrolment_formB.json");
             intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "respondent_consent_enrolment:yes");
+        } else if (upperForm.equals("sp_zm_followup_formA.json")) {
+
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Followup Structure");
+//            intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "respondent_consent_enrolment:yes|respondent_consent_destruction:yes");
+
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_FORM_NAME, "json.form/sp_zm_followup_formB.json");
+//            intent.putExtra(FormRecyclerFormActivity.EXTRA_RECYCLER_GATE_KEYS, "respondent_consent_enrolment:yes");
         } else {
             intent.putExtra(FormRecyclerFormActivity.EXTRA_CHILD_TASK_CODE, "Coverage Structure");
             intent.putExtra(FormRecyclerFormActivity.EXTRA_GATE_FIELD_KEYS, "permission_enter:yes_all,yes_some,no");
