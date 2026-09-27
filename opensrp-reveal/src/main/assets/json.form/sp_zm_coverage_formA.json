@@ -1093,5 +1093,32 @@
         }
       }
     ]
+  },
+  "formBehaviour": {
+    "parent": {
+      "businessStatusField": "business_status"
+    },
+    "form2": {
+      "display": true,
+      "gate": {
+        "keys": "permission_enter:yes_all,yes_some,no"
+      }
+    },
+    "childTasks": {
+      "displayList": true,
+      "editList": true,
+      "childForm": "json.form/sp_zm_coverage_formB.json",
+      "childTaskCode": "Coverage Structure",
+      "gate": {
+        "keys": "permission_enter:yes_all,yes_some"
+      },
+      "passedValues": [],
+      "labels": {
+        "header": "Structures",
+        "countLabel": "14.1. How many separate structures are there in this household? Do not include any livestock shelters or storage areas.",
+        "countHint": "enter number",
+        "emptyMessage": "No structures generated yet. Enter the number above and tap Generate."
+      }
+    }
   }
 }

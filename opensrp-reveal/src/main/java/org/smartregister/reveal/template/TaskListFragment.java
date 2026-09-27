@@ -66,12 +66,16 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
     private String              countLabelText;
     private String              emptyMessageText;
     private String              headerText;
+    /** When false, the count input + Generate/Unlock controls are hidden and the list is read-only. */
+    private boolean             editable = true;
 
     /* ------------------------------------------------------------------ views */
     private EditText     etCount;
     private Button       btnGenerate;
     private Button       btnUnlock;
     private TextView     tvWarning;
+    private LinearLayout layoutCountInput;
+    private TextView     tvCountLabel;
     private TextView     tvError;
     private RecyclerView recyclerView;
     private TextView     tvEmpty;
@@ -115,6 +119,20 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
         this.headerText = header;
     }
 
+    /**
+     * Controls whether the user can change the number of tasks.
+     * When {@code false}, the count input and the Generate/Unlock buttons are hidden;
+     * the list only displays the existing tasks and rows remain tappable.
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+        // If the view is already created, apply immediately.
+        if (getView() != null) {
+            applyEditableVisibility();
+            transitionTo(currentState);
+        }
+    }
+
     /* ------------------------------------------------------------------ lifecycle */
 
     @Override
@@ -137,10 +155,12 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etCount        = view.findViewById(R.id.et_task_count);
-        btnGenerate    = view.findViewById(R.id.btn_generate);
-        btnUnlock      = view.findViewById(R.id.btn_unlock);
-        tvWarning      = view.findViewById(R.id.tv_warning);
+        etCount          = view.findViewById(R.id.et_task_count);
+        btnGenerate      = view.findViewById(R.id.btn_generate);
+        btnUnlock        = view.findViewById(R.id.btn_unlock);
+        tvWarning        = view.findViewById(R.id.tv_warning);
+        layoutCountInput = view.findViewById(R.id.layout_count_input);
+        tvCountLabel     = view.findViewById(R.id.tv_count_label);
         tvError        = view.findViewById(R.id.tv_error);
         recyclerView   = view.findViewById(R.id.recycler_tasks);
         tvEmpty        = view.findViewById(R.id.tv_empty);
@@ -171,12 +191,9 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
         if (countHintText != null && !countHintText.isEmpty()) {
             etCount.setHint(countHintText);
         }
-        if (countLabelText != null && !countLabelText.isEmpty()) {
-            android.widget.TextView tvCountLabel = view.findViewById(R.id.tv_count_label);
-            if (tvCountLabel != null) {
-                tvCountLabel.setText(countLabelText);
-                tvCountLabel.setVisibility(View.VISIBLE);
-            }
+        if (countLabelText != null && !countLabelText.isEmpty() && tvCountLabel != null) {
+            tvCountLabel.setText(countLabelText);
+            tvCountLabel.setVisibility(View.VISIBLE);
         }
         if (emptyMessageText != null && !emptyMessageText.isEmpty()) {
             tvEmpty.setText(emptyMessageText);
@@ -200,8 +217,28 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
             adapter.filter("");
         });
 
+        // Apply read-only visibility before the first state transition
+        applyEditableVisibility();
+
         // Initial state
         transitionTo(State.EMPTY);
+    }
+
+    /**
+     * Shows or hides the count input row, count label and warning based on {@link #editable}.
+     * When not editable, none of the task-count controls are shown at all.
+     */
+    private void applyEditableVisibility() {
+        int vis = editable ? View.VISIBLE : View.GONE;
+        if (layoutCountInput != null) layoutCountInput.setVisibility(vis);
+        if (!editable) {
+            // Ensure label + warning are hidden regardless of configured text.
+            if (tvCountLabel != null) tvCountLabel.setVisibility(View.GONE);
+            if (tvWarning != null) tvWarning.setVisibility(View.GONE);
+        } else if (tvCountLabel != null
+                && countLabelText != null && !countLabelText.isEmpty()) {
+            tvCountLabel.setVisibility(View.VISIBLE);
+        }
     }
 
     /* ------------------------------------------------------------------ public API */
@@ -243,6 +280,16 @@ public class TaskListFragment extends Fragment implements TaskRowCallbacks {
 
     private void transitionTo(State newState) {
         currentState = newState;
+
+        // In read-only mode the count/Generate/Unlock controls stay hidden
+        // regardless of state; only the list and search are shown.
+        if (!editable) {
+            if (layoutCountInput != null) layoutCountInput.setVisibility(View.GONE);
+            if (tvCountLabel != null) tvCountLabel.setVisibility(View.GONE);
+            if (tvWarning != null) tvWarning.setVisibility(View.GONE);
+            return;
+        }
+
         switch (newState) {
             case EMPTY:
                 etCount.setEnabled(true);

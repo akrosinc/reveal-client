@@ -1856,5 +1856,32 @@
         "openmrs_entity_id": ""
       }
     ]
+  },
+  "formBehaviour": {
+    "parent": {
+      "businessStatusField": "business_status"
+    },
+    "form2": {
+      "display": true,
+      "gate": {
+        "keys": "respondent_consent_enrolment:yes|respondent_consent_destruction:yes"
+      }
+    },
+    "childTasks": {
+      "displayList": true,
+      "editList": true,
+      "childForm": "json.form/sp_zm_enrolment_formB.json",
+      "childTaskCode": "Enrolment Structure",
+      "gate": {
+        "keys": "respondent_consent_enrolment:yes"
+      },
+      "passedValues": [],
+      "labels": {
+        "header": "Structures",
+        "countLabel": "14.1. How many separate structures are there in this household? Do not include any livestock shelters or storage areas.",
+        "countHint": "enter number",
+        "emptyMessage": "No structures generated yet. Enter the number above and tap Generate."
+      }
+    }
   }
 }

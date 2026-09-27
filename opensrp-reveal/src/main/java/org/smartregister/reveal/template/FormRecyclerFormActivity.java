@@ -107,6 +107,22 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private boolean recyclerGateLogicAnd = false; // false = OR (default), true = AND
     private String emptyMessage;
 
+    /* ------------------------------------------------------------------ formBehaviour (JSON-driven) */
+    /** Whether step2 (form 2) is shown at all. When true with an empty gate, it shows immediately. */
+    private boolean form2Display = true;
+    /** True once a formBehaviour block explicitly configured form2 (so JSON drives its visibility). */
+    private boolean form2Configured = false;
+    /** Whether the child task recycler is shown at all. */
+    private boolean childListDisplay = true;
+    /** Whether the user can change the number of child tasks (count input + Generate). */
+    private boolean childListEditable = true;
+    /**
+     * When a {@code formBehaviour} block is present, this holds the explicit allow-list of
+     * parent field keys to inject into the child form. When null (no block present), the
+     * legacy auto-inject-all behaviour is used.
+     */
+    private Set<String> passedValues = null;
+
     private boolean recyclerVisible = false;
 
     private boolean form2Visible = false;
@@ -153,6 +169,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Load the single form JSON (contains step1 + optionally step2)
         JSONObject formJSON = formUtils.getFormJSON(this, formName, null, null);
 
+        // If the form declares a "formBehaviour" block, it overrides the intent extras.
+        // When absent (or partially specified) the previously-read intent extras remain in effect.
+        readFormBehaviour(formJSON);
 
         getIntent().putExtra(JsonFormConstants.JSON_FORM_KEY.JSON,
                 formJSON != null ? formJSON.toString()
@@ -604,8 +623,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private void onFormSaved(String json) {
         Timber.tag("FormSaveInteractor").i("onFormSaved: starting save process");
 
-        // Validate: count field must have a value — but only if recycler is visible
-        if (recyclerVisible) {
+        // Validate: count field must have a value — but only if recycler is visible AND editable.
+        // When editList is false the count input is hidden, so there is nothing to validate here.
+        if (recyclerVisible && childListEditable) {
             String countText = getTaskCountFromFragment();
             if (countText == null || countText.trim().isEmpty()) {
                 Timber.tag("FormSaveInteractor").i("onFormSaved: count field is empty, blocking save");
@@ -728,6 +748,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     }
 
     private void showRecycler() {
+        if (!childListDisplay) {
+            return; // recycler is disabled for this form
+        }
         if (!recyclerVisible) {
             recyclerVisible = true;
             setSectionVisible(true);
@@ -748,6 +771,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private boolean step2Committed = false;
 
     private void showStep2() {
+        if (!form2Display) {
+            return; // form2 is disabled for this form
+        }
         if (!form2Visible) {
             form2Visible = true;
             findViewById(R.id.view_divider_form2).setVisibility(View.VISIBLE);
@@ -771,8 +797,22 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         if (json == null) return;
         String jsonStr = json.toString();
 
-        // Check Form 2 gate — multi-key OR/AND with per-key values
-        if (!gateFieldMap.isEmpty()) {
+        // Form 2 visibility on load.
+        // When a formBehaviour "form2" block was declared, JSON drives visibility:
+        //  - display=false  → never show
+        //  - empty gate     → show immediately (no gating condition)
+        //  - non-empty gate → evaluate the gate against the current values
+        // When NOT configured via JSON, fall back to the legacy behaviour:
+        // step2 is only revealed when a (non-empty) gate matches.
+        if (form2Configured) {
+            if (!form2Display) {
+                hideStep2();
+            } else if (gateFieldMap.isEmpty()) {
+                showStep2();
+            } else {
+                evaluateGateFromJson(jsonStr);
+            }
+        } else if (!gateFieldMap.isEmpty()) {
             evaluateGateFromJson(jsonStr);
         }
 
@@ -917,14 +957,20 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         if (countLabel != null) taskListFragment.setCountLabel(countLabel);
         if (recyclerHeader != null) taskListFragment.setHeader(recyclerHeader);
         if (emptyMessage != null) taskListFragment.setEmptyMessage(emptyMessage);
+        taskListFragment.setEditable(childListEditable);
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.container_recycler, taskListFragment, TAG_RECYCLER)
                 .commit();
 
-        // If a recycler gate is configured, start hidden
-        if (!recyclerGateFieldMap.isEmpty()) {
+        // If the recycler is disabled entirely, keep it hidden.
+        if (!childListDisplay) {
+            recyclerVisible = false;
+            findViewById(R.id.container_recycler).setVisibility(View.GONE);
+            setSectionVisible(false);
+        } else if (!recyclerGateFieldMap.isEmpty()) {
+            // A recycler gate is configured — start hidden until the gate is satisfied.
             recyclerVisible = false;
             findViewById(R.id.container_recycler).setVisibility(View.GONE);
             setSectionVisible(false);
@@ -1066,6 +1112,16 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 Timber.tag("FormRecyclerForm").w(e, "Pre-population failed");
             }
 
+            // Apply any server-config backed option lists/fields declared in the child form's
+            // "settingsConfig" block. The filter entity here is the tapped CHILD task
+            // (e.g. settingsEntity="task", settingsEntityFilterKey="getIdentifier"/"getForEntity").
+            try {
+                applySettingsConfigOptionsToLists(formJSON, task);
+                applySettingsConfigOptionsToFields(formJSON, task);
+            } catch (Exception e) {
+                Timber.tag("FormRecyclerForm").w(e, "Child form settingsConfig population failed");
+            }
+
             // Pass matching field values from parent form to child form.
             // Any hidden field in the child form whose key matches a field in the parent form
             // will have its value automatically injected from the parent.
@@ -1180,7 +1236,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     JSONObject field = fields.getJSONObject(i);
                     String key = field.optString("key", "");
                     String type = field.optString("type", "");
+                    // When a formBehaviour block defines passedValues, only those keys are injected.
+                    // When passedValues is null (no block), fall back to injecting all matching keys.
+                    boolean allowed = passedValues == null || passedValues.contains(key);
                     if ("hidden".equals(type) && !excludedKeys.contains(key)
+                            && allowed
                             && parentValues.containsKey(key)) {
                         field.put(JsonFormConstants.VALUE, parentValues.get(key));
                         Timber.tag("FormRecyclerForm").i(
@@ -1374,6 +1434,129 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Recycler gate logic: "and" or "or" (default is "or")
         String recyclerGateLogicRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_LOGIC);
         recyclerGateLogicAnd = "and".equalsIgnoreCase(recyclerGateLogicRaw != null ? recyclerGateLogicRaw.trim() : "");
+    }
+
+    /**
+     * Reads the optional {@code formBehaviour} block from the loaded form JSON and, when present,
+     * overrides the corresponding values previously read from the intent extras.
+     *
+     * <p>The whole block, each sub-object, and each individual field are optional. Anything that
+     * is missing simply leaves the intent-extra-derived value untouched, so existing forms that
+     * have no {@code formBehaviour} block keep behaving exactly as before.</p>
+     *
+     * <p>Expected shape:</p>
+     * <pre>
+     * "formBehaviour": {
+     *   "parent":     { "businessStatusField": "business_status" },
+     *   "form2":      { "display": true, "gate": { "keys": "k:v|k2:v2" } },
+     *   "childTasks": {
+     *     "displayList": true,
+     *     "editList": false,
+     *     "childForm": "json.form/xyz_formB.json",
+     *     "childTaskCode": "Followup Structure",
+     *     "gate": { "keys": "k:v" },
+     *     "passedValues": ["field_a", "field_b"],
+     *     "labels": { "header": "...", "countLabel": "...", "countHint": "...", "emptyMessage": "..." }
+     *   }
+     * }
+     * </pre>
+     */
+    private void readFormBehaviour(JSONObject formJSON) {
+        if (formJSON == null) {
+            return;
+        }
+        JSONObject behaviour = formJSON.optJSONObject("formBehaviour");
+        if (behaviour == null) {
+            Timber.tag("FormRecyclerForm").i("readFormBehaviour: no formBehaviour block, using intent extras");
+            return;
+        }
+
+        // ---- parent ----
+        JSONObject parent = behaviour.optJSONObject("parent");
+        if (parent != null && parent.has("businessStatusField")) {
+            businessStatusField = parent.optString("businessStatusField", businessStatusField);
+        }
+
+        // ---- form2 ----
+        JSONObject form2 = behaviour.optJSONObject("form2");
+        if (form2 != null) {
+            form2Configured = true;
+            form2Display = form2.optBoolean("display", form2Display);
+            JSONObject gate = form2.optJSONObject("gate");
+            if (gate != null && gate.has("keys")) {
+                gateFieldMap = parseGateKeys(gate.optString("keys", ""));
+            }
+        }
+
+        // ---- childTasks ----
+        JSONObject childTasks = behaviour.optJSONObject("childTasks");
+        if (childTasks != null) {
+            childListDisplay  = childTasks.optBoolean("displayList", childListDisplay);
+            childListEditable = childTasks.optBoolean("editList", childListEditable);
+
+            if (childTasks.has("childForm")) {
+                childFormName = childTasks.optString("childForm", childFormName);
+            }
+            if (childTasks.has("childTaskCode")) {
+                childTaskCode = childTasks.optString("childTaskCode", childTaskCode);
+            }
+
+            JSONObject gate = childTasks.optJSONObject("gate");
+            if (gate != null && gate.has("keys")) {
+                recyclerGateFieldMap = parseGateKeys(gate.optString("keys", ""));
+            }
+
+            // passedValues: presence of the block makes it authoritative (empty = pass nothing).
+            if (childTasks.has("passedValues")) {
+                passedValues = new HashSet<>();
+                JSONArray pv = childTasks.optJSONArray("passedValues");
+                if (pv != null) {
+                    for (int i = 0; i < pv.length(); i++) {
+                        String key = pv.optString(i, null);
+                        if (key != null && !key.trim().isEmpty()) {
+                            passedValues.add(key.trim());
+                        }
+                    }
+                }
+            }
+
+            JSONObject labels = childTasks.optJSONObject("labels");
+            if (labels != null) {
+                if (labels.has("header"))       recyclerHeader = labels.optString("header", recyclerHeader);
+                if (labels.has("countLabel"))   countLabel     = labels.optString("countLabel", countLabel);
+                if (labels.has("countHint"))    countHint      = labels.optString("countHint", countHint);
+                if (labels.has("emptyMessage")) emptyMessage   = labels.optString("emptyMessage", emptyMessage);
+            }
+        }
+
+        Timber.tag("FormRecyclerForm").i(
+                "readFormBehaviour: display=%b, editable=%b, childForm=%s, recyclerGateKeys=%s, passedValues=%s",
+                childListDisplay, childListEditable, childFormName,
+                recyclerGateFieldMap.keySet(), passedValues);
+    }
+
+    /**
+     * Parses a gate keys string of the form {@code "key1:val1,val2|key2:val3"} into a map of
+     * field key → set of acceptable (lower-cased) values. Returns an empty map for null/blank input.
+     */
+    private Map<String, Set<String>> parseGateKeys(String raw) {
+        Map<String, Set<String>> map = new HashMap<>();
+        if (raw == null || raw.trim().isEmpty()) {
+            return map;
+        }
+        for (String entry : raw.split("\\|")) {
+            entry = entry.trim();
+            if (entry.contains(":")) {
+                String[] parts = entry.split(":", 2);
+                String fieldKey = parts[0].trim();
+                Set<String> values = new HashSet<>();
+                for (String v : parts[1].split(",")) {
+                    values.add(v.trim().toLowerCase());
+                }
+                map.put(fieldKey, values);
+            }
+        }
+        return map;
     }
 
     /* ------------------------------------------------------------------ default display provider */

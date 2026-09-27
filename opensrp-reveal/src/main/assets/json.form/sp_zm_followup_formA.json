@@ -1,6 +1,6 @@
 ﻿{
   "count": "2",
-  "encounter_type": "enrolment_initial",
+  "encounter_type": "followup_parent",
   "form_version": "0.0.1",
   "entity_id": "",
   "metadata": {
@@ -156,5 +156,32 @@
         "settingsEntityFilterKey": "getIdentifier"
       }
     ]
+  },
+  "formBehaviour": {
+    "parent": {
+      "businessStatusField": "business_status"
+    },
+    "form2": {
+      "display": true,
+      "gate": {
+        "keys": ""
+      }
+    },
+    "childTasks": {
+      "displayList": true,
+      "editList": false,
+      "childForm": "json.form/sp_zm_followup_formB.json",
+      "childTaskCode": "Followup Structure",
+      "gate": {
+        "keys": ""
+      },
+      "passedValues": [],
+      "labels": {
+        "header": "Structures",
+        "countLabel": "14.1. How many separate structures are there in this household? Do not include any livestock shelters or storage areas.",
+        "countHint": "enter number",
+        "emptyMessage": "No structures for this household."
+      }
+    }
   }
 }
