@@ -152,6 +152,8 @@ public class Task implements Serializable {
 
     private String compoundId;
 
+    private Map<String, String> formPrepopulatedData;
+
     /**
      * Nullable. When set, this task is a child of the task identified by this ID.
      * Used by {@link org.smartregister.repository.TaskRepository#getTasksByParentId}

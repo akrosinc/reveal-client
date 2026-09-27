@@ -15,6 +15,7 @@ import com.vijay.jsonwizard.constants.JsonFormConstants;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
@@ -24,7 +25,6 @@ import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.interactor.BaseInteractor;
 import org.smartregister.reveal.util.AppExecutors;
 import org.smartregister.reveal.util.Constants;
-import org.smartregister.reveal.util.Constants.JsonForm;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.util.JsonFormUtils;
@@ -291,9 +291,10 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                             org.joda.time.LocalDate.now().toString("dd-MM-yyyy"),
                             com.vijay.jsonwizard.constants.JsonFormConstants.VALUE);
 
-                    Map<String, JSONObject> fieldsMap = formUtils.getFields(currentForm);
-                    formUtils.populateServerOptions(RevealApplication.getInstance().getServerConfigs(),"structure_descriptions",
-                        fieldsMap.get("structure_description"),locationUUID);
+                    // Data-driven server option population from the form's "settingsConfig" definition.
+                    applySettingsConfigOptionsToLists(currentForm, parentTask);
+
+                    applySettingsConfigOptionsToFields(currentForm,parentTask);
 
                     Timber.tag("FormSaveInteractor").i("populateForm1: date set to %s",
                             org.joda.time.LocalDate.now().toString("dd-MM-yyyy"));
@@ -366,6 +367,203 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         } else {
             Timber.tag("FormSaveInteractor").i("populateForm1: task is NOT_VISITED, no pre-population needed");
         }
+    }
+
+    /**
+     * Data-driven population of server-config backed option lists.
+     *
+     * <p>Reads the {@code settingsConfig.lists} array from the form JSON and, for each entry,
+     * populates the target form field with options from the app server configs. This replaces
+     * hardcoded {@code populateServerOptions(...)} calls so that forms can declare their own
+     * option sources purely in JSON.</p>
+     *
+     * <p>Each list entry supports the following keys:</p>
+     * <ul>
+     *   <li>{@code settingsKey} – the server-config key holding the option set (e.g. "structure_descriptions")</li>
+     *   <li>{@code formKey} – the form field key to populate (e.g. "structure_description")</li>
+     *   <li>{@code settingsEntity} – the entity that supplies the filter value. Currently supported:
+     *       "task" (the parent task) and "location" (the structure/location UUID). Defaults to "location".</li>
+     *   <li>{@code settingsEntityFilterKey} – for {@code settingsEntity == "task"}, the no-arg getter on
+     *       {@link Task} used to resolve the filter value (e.g. "getForEntity"). Ignored for "location".</li>
+     * </ul>
+     *
+     * @param currentForm the mutable form JSON being populated
+     * @param parentTask  the parent task backing this form (may be null)
+     */
+    protected void applySettingsConfigOptionsToLists(JSONObject currentForm, Task parentTask) {
+        if (currentForm == null) {
+            return;
+        }
+
+        JSONObject settingsConfig = currentForm.optJSONObject("settingsConfig");
+        if (settingsConfig == null) {
+            Timber.tag("FormSaveInteractor").i("applySettingsConfigOptions: no settingsConfig, skipping");
+            return;
+        }
+
+        JSONArray lists = settingsConfig.optJSONArray("lists");
+        if (lists == null || lists.length() == 0) {
+            Timber.tag("FormSaveInteractor").i("applySettingsConfigOptions: no lists defined, skipping");
+            return;
+        }
+
+        Map<String, JSONObject> fieldsMap = formUtils.getFields(currentForm);
+        Map<String, Object> serverConfigs = RevealApplication.getInstance().getServerConfigs();
+
+        for (int i = 0; i < lists.length(); i++) {
+            JSONObject listConfig = lists.optJSONObject(i);
+            if (listConfig == null) {
+                continue;
+            }
+
+            String settingsKey = listConfig.optString("settingsKey", null);
+            String formKey = listConfig.optString("formKey", null);
+            String settingsEntity = listConfig.optString("settingsEntity", null);
+            String settingsEntityFilterKey = listConfig.optString("settingsEntityFilterKey", null);
+
+            if (settingsKey == null || formKey == null) {
+                Timber.tag("FormSaveInteractor").w(
+                        "applySettingsConfigOptions: skipping entry %d, missing settingsKey/formKey", i);
+                continue;
+            }
+
+            JSONObject field = fieldsMap.get(formKey);
+            if (field == null) {
+                Timber.tag("FormSaveInteractor").w(
+                        "applySettingsConfigOptions: form field '%s' not found, skipping", formKey);
+                continue;
+            }
+
+            String filterValue = resolveSettingsFilterValue(settingsEntity, settingsEntityFilterKey, parentTask);
+            if (filterValue == null) {
+                Timber.tag("FormSaveInteractor").w(
+                        "applySettingsConfigOptions: could not resolve filter value for entity='%s', filterKey='%s'",
+                        settingsEntity, settingsEntityFilterKey);
+                continue;
+            }
+
+            formUtils.populateServerOptions(serverConfigs, settingsKey, field, filterValue);
+            Timber.tag("FormSaveInteractor").i(
+                    "applySettingsConfigOptions: populated formKey='%s' from settingsKey='%s' filter='%s'",
+                    formKey, settingsKey, filterValue);
+        }
+    }
+
+    /**
+     * Data-driven population of server-config backed option lists.
+     *
+     * <p>Reads the {@code settingsConfig.lists} array from the form JSON and, for each entry,
+     * populates the target form field with options from the app server configs. This replaces
+     * hardcoded {@code populateServerOptions(...)} calls so that forms can declare their own
+     * option sources purely in JSON.</p>
+     *
+     * <p>Each list entry supports the following keys:</p>
+     * <ul>
+     *   <li>{@code settingsKey} – the server-config key holding the option set (e.g. "structure_descriptions")</li>
+     *   <li>{@code formKey} – the form field key to populate (e.g. "structure_description")</li>
+     *   <li>{@code settingsEntity} – the entity that supplies the filter value. Currently supported:
+     *       "task" (the parent task) and "location" (the structure/location UUID). Defaults to "location".</li>
+     *   <li>{@code settingsEntityFilterKey} – for {@code settingsEntity == "task"}, the no-arg getter on
+     *       {@link Task} used to resolve the filter value (e.g. "getForEntity"). Ignored for "location".</li>
+     * </ul>
+     *
+     * @param currentForm the mutable form JSON being populated
+     * @param parentTask  the parent task backing this form (may be null)
+     */
+    protected void applySettingsConfigOptionsToFields(JSONObject currentForm, Task parentTask) {
+        if (currentForm == null) {
+            return;
+        }
+
+        JSONObject settingsConfig = currentForm.optJSONObject("settingsConfig");
+        if (settingsConfig == null) {
+            Timber.tag("FormSaveInteractor").i("applySettingsConfigOptions: no settingsConfig, skipping");
+            return;
+        }
+
+        JSONArray fields = settingsConfig.optJSONArray("field");
+        if (fields == null || fields.length() == 0) {
+            Timber.tag("FormSaveInteractor").i("applySettingsConfigOptions: no fields defined, skipping");
+            return;
+        }
+
+        Map<String, JSONObject> fieldsMap = formUtils.getFields(currentForm);
+        Map<String, Object> serverConfigs = RevealApplication.getInstance().getServerConfigs();
+
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject fieldConfig = fields.optJSONObject(i);
+            if (fieldConfig == null) {
+                continue;
+            }
+
+            String settingsKey = fieldConfig.optString("settingsKey", null);
+            String formKey = fieldConfig.optString("formKey", null);
+            String settingsEntity = fieldConfig.optString("settingsEntity", null);
+            String settingsEntityFilterKey = fieldConfig.optString("settingsEntityFilterKey", null);
+            String targetJsonField = fieldConfig.optString("targetJsonField", "value");
+
+            if (settingsKey == null || formKey == null) {
+                Timber.tag("FormSaveInteractor").w(
+                    "applySettingsConfigOptions: skipping entry %d, missing settingsKey/formKey", i);
+                continue;
+            }
+
+            JSONObject field = fieldsMap.get(formKey);
+            if (field == null) {
+                Timber.tag("FormSaveInteractor").w(
+                    "applySettingsConfigOptions: form field '%s' not found, skipping", formKey);
+                continue;
+            }
+
+            String filterValue = resolveSettingsFilterValue(settingsEntity, settingsEntityFilterKey, parentTask);
+            if (filterValue == null) {
+                Timber.tag("FormSaveInteractor").w(
+                    "applySettingsConfigOptions: could not resolve filter value for entity='%s', filterKey='%s'",
+                    settingsEntity, settingsEntityFilterKey);
+                continue;
+            }
+
+            try {
+                formUtils.populateFieldWithServerOption(serverConfigs, settingsKey, field,
+                    filterValue,targetJsonField);
+                Timber.tag("FormSaveInteractor").i(
+                    "applySettingsConfigOptions: populated formKey='%s' from settingsKey='%s' filter='%s'",
+                    formKey, settingsKey, filterValue);
+            }catch (JSONException e){
+                Timber.tag("FormSaveInteractor").e(e,
+                    "failed to populate field with server value %s,%s,%s",
+                    formKey, settingsKey, filterValue);
+            }
+        }
+    }
+
+    /**
+     * Resolves the filter value used by {@code populateServerOptions} for a settingsConfig entry.
+     *
+     * @param settingsEntity          "task" or "location"
+     * @param settingsEntityFilterKey no-arg getter name on {@link Task} (only for "task")
+     * @param parentTask              the parent task (may be null)
+     * @return the resolved filter value, or null if it cannot be resolved
+     */
+    private String resolveSettingsFilterValue(String settingsEntity,
+                                              String settingsEntityFilterKey,
+                                              Task parentTask) {
+        if ("task".equalsIgnoreCase(settingsEntity)) {
+            if (parentTask == null || settingsEntityFilterKey == null) {
+                return null;
+            }
+            try {
+                java.lang.reflect.Method getter = Task.class.getMethod(settingsEntityFilterKey);
+                Object result = getter.invoke(parentTask);
+                return result != null ? result.toString() : null;
+            } catch (Exception e) {
+                Timber.tag("FormSaveInteractor").e(e,
+                        "resolveSettingsFilterValue: failed to invoke Task.%s()", settingsEntityFilterKey);
+                return null;
+            }
+        }
+        // Default / "location": use the structure UUID passed into this activity.
+        return null;
     }
 
     /**

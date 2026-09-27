@@ -905,6 +905,41 @@ public class RevealJsonFormUtils {
         return null;
     }
 
+    public Pair<JSONArray, JSONArray> populateFieldWithServerOption(
+        Map<String, Object> serverConfigs,
+        String settingsConfigKey, JSONObject field, String filterKey, String targetJsonField
+
+        ) throws JSONException {
+        if (serverConfigs == null || field == null) {
+            return null;
+        }
+        JSONArray serverConfig = (JSONArray) serverConfigs.get(settingsConfigKey);
+        if (serverConfig != null && !serverConfig.isNull(0)) {
+            JSONArray options = serverConfig.optJSONObject(0).optJSONArray(filterKey);
+            if (options == null) {
+                return null;
+            }
+            JSONObject operator = options.optJSONObject(0);
+            if (operator == null) {
+                return null;
+            }
+
+            String name = operator.optString(CONFIGURATION.NAME).trim();
+
+            Timber.tag("FormSaveInteractor").i(
+                "populateFieldWithServerOption: populated name='%s'",
+                name);
+            if (name != null ) {
+                field.put(targetJsonField,name);
+            }
+            Timber.tag("FormSaveInteractor").i(
+                "populateFieldWithServerOption: populated field='%s'",
+                field);
+
+        }
+        return null;
+    }
+
     public static org.smartregister.clientandeventmodel.Event createTaskEvent(String baseEntityId, String locationId,
                                                                               Map<String, String> details, String eventType, String entityType) {
         org.smartregister.clientandeventmodel.Event taskEvent

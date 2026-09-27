@@ -66,6 +66,22 @@
         "openmrs_entity_id": ""
       },
       {
+        "key": "emanator_label",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "label",
+        "text_size": "15sp",
+        "text_color": "#B9B9B9"
+      },
+      {
+        "key": "emanator_id_hidden",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
         "key": "structure_description",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
@@ -78,6 +94,7 @@
           "err": "Required field"
         }
       },
+
       {
         "key": "supervisor",
         "openmrs_entity_parent": "",
@@ -121,6 +138,22 @@
         "formKey": "structure_description",
         "settingsEntity": "task",
         "settingsEntityFilterKey": "getForEntity"
+      }
+    ],
+    "field": [
+      {
+        "settingsKey":"emanator_ids",
+        "formKey": "emanator_id_hidden",
+        "settingsEntity": "task",
+        "targetJsonField": "value",
+        "settingsEntityFilterKey": "getIdentifier"
+      },
+      {
+        "settingsKey":"emanator_ids",
+        "formKey": "emanator_label",
+        "settingsEntity": "task",
+        "targetJsonField": "text",
+        "settingsEntityFilterKey": "getIdentifier"
       }
     ]
   }
