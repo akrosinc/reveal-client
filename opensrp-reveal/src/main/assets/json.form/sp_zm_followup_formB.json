@@ -53,6 +53,20 @@
     "no_padding": true,
     "fields": [
       {
+        "key": "task_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
+        "key": "entity_id",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "hidden"
+      },
+      {
         "key": "prepare_emanator_label_instruction_destruction",
         "type": "label",
         "text": "10. Prepare a label for the emanator that will be removed. Write today’s date, the cluster ID, and household ID on the label. Place the label on the emanator, but do not cover any existing labels",
