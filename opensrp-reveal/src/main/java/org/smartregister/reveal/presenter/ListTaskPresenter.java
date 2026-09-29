@@ -68,6 +68,7 @@ import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.FORM_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_JSON_FOR_TASK;
 import static org.smartregister.reveal.util.Constants.Properties.FORM_TEMPLATE;
 import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_STATUS;
@@ -200,6 +201,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
 
   private String formForTask;
   private String formTemplate;
+  private String formJson;
 
     private LatLng clickedPoint;
 
@@ -446,13 +448,16 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         String code = getPropertyValue(feature, TASK_CODE);
         String formForTaskFromFeature = getPropertyValue(feature, FORM_FOR_TASK);
         String formTemplateFromFeature = getPropertyValue(feature, FORM_TEMPLATE);
+        String formJsonFromFeature = getPropertyValue(feature,FORM_JSON_FOR_TASK);
 
         selectedFeatureInterventionType = code;
         formForTask = formForTaskFromFeature;
         formTemplate = formTemplateFromFeature;
+        formJson = formJsonFromFeature;
+
       Timber.tag("TestFrag").i("ListTaskPresenter onFeatureSelectedByNormalClick feature clicked");
-      Timber.tag("TestFrag").i("ListTaskPresenter formTemplate=%s, formForTask=%s, code=%s, businessStatus=%s",
-              formTemplate, formForTask, code, businessStatus);
+      Timber.tag("TestFrag").i("ListTaskPresenter formTemplate=%s, formForTask=%s, code=%s, businessStatus=%s, formJson=%s",
+              formTemplate, formForTask, code, businessStatus, formJson);
 //        if (interventionHasLocationValidation(businessStatus, code)) {
         if (true) {
             if (validateFarStructures()) {
@@ -987,16 +992,19 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
         } else if (List.of(RCD, INDEX_CASE, SECONDARY_INDEX_CASE).contains(selectedFeatureInterventionType) && getBuildCountry() == Country.GDRS) {
             listTaskView.openRCD();
 //            listTaskView.openFormByTemplate("test");
-        } else if (formTemplate != null) {
+        } else if (formJson != null || formTemplate !=null || formForTask != null) {
             // Template-based tasks always open the template regardless of cardDetails
+
+          if (formJson!=null){
+            listTaskView.openFormByJson(formJson);
+          } else if (formTemplate!=null) {
             listTaskView.openFormByTemplate(formTemplate);
+          } else if (formForTask!=null){
+            startFormWithFormName(formForTask, selectedFeature, null, null);
+          }
         } else if (cardDetails == null || !changeInterventionStatus) {
 
-            if (formForTask != null) {
-              startFormWithFormName(formForTask, selectedFeature, null, null);
-            } else {
               startForm(selectedFeature, null, selectedFeatureInterventionType);
-            }
     } else {
             if (IRS.equals(cardDetails.getInterventionType())) {
                 if (isZambiaIRSLite()) {

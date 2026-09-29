@@ -55,15 +55,42 @@
       ],
       "paint": {
         "fill-color": [
-          "match",
+          "case",
+          [
+            "all",
+            [
+              "has",
+              "taskColor"
+            ],
+            [
+              ">",
+              [
+                "length",
+                [
+                  "to-string",
+                  [
+                    "get",
+                    "taskColor"
+                  ]
+                ]
+              ],
+              0
+            ]
+          ],
           [
             "get",
-            "taskBusinessStatus"
+            "taskColor"
           ],
           [
-            "Not Visited"
-          ],
-          "hsl(46, 88%, 62%)",
+            "match",
+            [
+              "get",
+              "taskBusinessStatus"
+            ],
+            [
+              "Not Visited"
+            ],
+            "hsl(46, 88%, 62%)",
           [
             "enrolled"
           ],
@@ -162,6 +189,7 @@
           ],
           "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
+          ]
         ],
         "fill-opacity": [
           "match",
@@ -217,19 +245,46 @@
           15
         ],
         "circle-color": [
-          "match",
+          "case",
+          [
+            "all",
+            [
+              "has",
+              "taskColor"
+            ],
+            [
+              ">",
+              [
+                "length",
+                [
+                  "to-string",
+                  [
+                    "get",
+                    "taskColor"
+                  ]
+                ]
+              ],
+              0
+            ]
+          ],
           [
             "get",
-            "taskBusinessStatus"
+            "taskColor"
           ],
           [
-            "Not Visited"
-          ],
-          "hsl(46, 88%, 62%)",
-          [
-            "enrolled"
-          ],
-          "hsl(303, 86%, 57%)",
+            "match",
+            [
+              "get",
+              "taskBusinessStatus"
+            ],
+            [
+              "Not Visited"
+            ],
+            "hsl(46, 88%, 62%)",
+            [
+              "enrolled"
+            ],
+            "hsl(303, 86%, 57%)",
           [
             "Not Sprayed",
             "Incomplete",
@@ -323,6 +378,7 @@
           ],
           "hsl(191, 100%, 30%)",
           "hsl(0, 0%, 78%)"
+          ]
         ],
         "circle-stroke-width": 1,
         "circle-opacity": 0.5

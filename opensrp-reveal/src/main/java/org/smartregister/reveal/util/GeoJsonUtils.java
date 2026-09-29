@@ -35,6 +35,7 @@ import static org.smartregister.reveal.util.Constants.Properties.COMPOUND_ID;
 import static org.smartregister.reveal.util.Constants.Properties.FAMILY_MEMBER_NAMES;
 import static org.smartregister.reveal.util.Constants.Properties.FEATURE_SELECT_TASK_BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.FORM_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_JSON_FOR_TASK;
 import static org.smartregister.reveal.util.Constants.Properties.FORM_TEMPLATE;
 import static org.smartregister.reveal.util.Constants.Properties.HOUSEHOLD_ID;
 import static org.smartregister.reveal.util.Constants.Properties.LOCATION_TYPE;
@@ -44,6 +45,7 @@ import static org.smartregister.reveal.util.Constants.Properties.STRUCTURE_NAME;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_BUSINESS_STATUS;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_CODE_LIST;
+import static org.smartregister.reveal.util.Constants.Properties.TASK_COLOR;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_IDENTIFIER;
 import static org.smartregister.reveal.util.Constants.Properties.TASK_STATUS;
 
@@ -58,6 +60,8 @@ import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Action;
+import org.smartregister.domain.Action.ActionConfigEnum;
+import org.smartregister.domain.Action.ActionTaskConfig;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
@@ -129,7 +133,41 @@ public class GeoJsonUtils {
                         taskProperties.put(FORM_FOR_TASK,action.getForm().getName());
                         if (action.getForm().isTemplate()){
                             taskProperties.put(FORM_TEMPLATE,action.getForm().getTitle());
+                            Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks payload='%s'",action.getForm().getPayload());
+                            if (action.getForm().getPayload()!=null){
+                                taskProperties.put(FORM_JSON_FOR_TASK,action.getForm().getPayload());
+                            }
                         }
+                    }
+
+                    Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks action.getConfig()='%s'",action.getConfig());
+
+                    action.getConfig().entrySet().stream()
+                        .forEach(actionConfigEnumActionTaskConfigEntry -> Timber.tag("TestFrag")
+                            .i("Geojson getGeoJsonFromStructuresAndTasks key=%s,value=%s"
+                                , actionConfigEnumActionTaskConfigEntry.getKey(),actionConfigEnumActionTaskConfigEntry.getValue()));
+
+                    if (action.getConfig()!=null && !action.getConfig().isEmpty() && action.getConfig().containsKey(
+                        ActionConfigEnum.TASK_COLOR_CONFIG)){
+                        Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks not null and has key action.getConfig()='%s'",action.getConfig());
+
+                        ActionTaskConfig actionTaskConfig = action.getConfig()
+                            .get(ActionConfigEnum.TASK_COLOR_CONFIG);
+                        Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks actionTaskConfig='%s'",actionTaskConfig);
+
+                        if (actionTaskConfig!=null) {
+                            Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks actionTaskConfig is not null actionTaskConfig='%s'",actionTaskConfig);
+
+                            Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks businessStatus='%s'",task.getBusinessStatus());
+
+                            Map<String, String> businessStatusMap = actionTaskConfig.getBusinessStatusMap();
+                            Timber.tag("TestFrag").i("Geojson getGeoJsonFromStructuresAndTasks businessStatusMap.containsKey(task.getBusinessStatus()!=null?task.getBusinessStatus():null)='%s'",businessStatusMap.containsKey(task.getBusinessStatus()!=null?task.getBusinessStatus():null));
+
+                            if (businessStatusMap.containsKey(task.getBusinessStatus()!=null?task.getBusinessStatus():null)){
+                                 String color = businessStatusMap.get(task.getBusinessStatus());
+                                 taskProperties.put(TASK_COLOR,color);
+                             }
+                         }
                     }
                 }
 

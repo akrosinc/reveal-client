@@ -49,6 +49,8 @@ public interface ListTaskContract {
 
         void openFormByTemplate(String formTemplate);
 
+        void openFormByJson(String formTemplate);
+
 //        void setGeoJsonSource(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition);
 
         void setGeoJsonSourceWithParents(@NonNull FeatureCollection featureCollection, Feature operationalArea,List<Feature> adjacentOperationalAreas, boolean changeMapPosition, List<Feature> parentLocations);

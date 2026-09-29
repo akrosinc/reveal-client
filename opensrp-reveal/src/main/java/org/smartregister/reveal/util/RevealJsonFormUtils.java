@@ -223,6 +223,49 @@ public class RevealJsonFormUtils {
         }
         return null;
     }
+    public JSONObject getFormJSONObjectFromFormString(String formString, BaseTaskDetails task, Location structure) {
+
+        String taskBusinessStatus = "";
+        String taskIdentifier = "";
+        String taskStatus = "";
+        String entityId = "";
+        if (task != null) {
+            taskBusinessStatus = task.getBusinessStatus();
+            taskIdentifier = task.getTaskId();
+            taskStatus = task.getTaskStatus();
+
+            entityId = task.getTaskEntity();
+        }
+
+        String structureId = "";
+        String structureUUID = "";
+        int structureVersion = 0;
+        String structureType = "";
+        if (structure != null) {
+            structureId = structure.getId();
+            structureUUID = structure.getProperties().getUid();
+            structureVersion = structure.getProperties().getVersion();
+            structureType = structure.getProperties().getType();
+        }
+
+        String sprayStatus = null;
+        String familyHead = null;
+
+        if (task instanceof TaskDetails) {
+            sprayStatus = ((TaskDetails) task).getSprayStatus();
+            familyHead = ((TaskDetails) task).getFamilyName();
+        }
+
+        try {
+            JSONObject formJson = populateFormDetails(formString, entityId, structureId, taskIdentifier,
+                taskBusinessStatus, taskStatus, structureUUID, structureVersion);
+            populateFormFields(formJson, structureType, sprayStatus, familyHead);
+            return formJson;
+        } catch (JSONException e) {
+            Timber.tag("Reveal Exception").w(e, "error launching form from String %s", formString);
+        }
+        return null;
+    }
 
     public String getFormString(Context context, String formName, String structureType) {
         String formString = null;

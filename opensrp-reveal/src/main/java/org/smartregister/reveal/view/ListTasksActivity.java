@@ -815,14 +815,17 @@ public void positionMyLocationAndLayerSwitcher() {
         startActivity(intent);
     }
 
+    @Override
     public void openFormByTemplate(String formTemplate){
         Timber.tag("TestFrag").i("ListTaskActivity openFormByTemplate feature clicked");
-
-//        if (formTemplate == "Form-List-Form"){
-            openTemplate();
-//        }
+        openTemplate();
     }
 
+    @Override
+    public void openFormByJson(String formTemplate){
+        Timber.tag("TestFrag").i("ListTaskActivity openFormByJson feature clicked");
+        openFormJson();
+    }
 
     /**
      * Opens {@link org.smartregister.reveal.template.GDRSFormRecyclerActivity} for the
@@ -863,6 +866,25 @@ public void positionMyLocationAndLayerSwitcher() {
         // labels, business status field, editability) is now declared per-form in the
         // "formBehaviour" block inside each *_formA.json and read by FormRecyclerFormActivity.
         intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_NAME, "json.form/" + upperForm);
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
+
+        startActivity(intent);
+    }
+
+    public void openFormJson() {
+        clearSelectedFeature();
+        Feature feature = listTaskPresenter.getSelectedFeature();
+
+        Intent intent = new Intent(this, FormRecyclerFormActivity.class);
+        String upperForm = feature.getStringProperty(Properties.FORM_FOR_TASK);
+        Timber.tag("TestFrag").i("ListTasksActivity openTemplate form %s", upperForm);
+
+        // Runtime plumbing only. All behavioural config (child form/code, gates,
+        // labels, business status field, editability) is now declared per-form in the
+        // "formBehaviour" block inside each *_formA.json and read by FormRecyclerFormActivity.
+
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_JSON, feature.getStringProperty(Properties.FORM_JSON_FOR_TASK));
         intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, feature.getStringProperty(Properties.TASK_IDENTIFIER));
         intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, feature.id());
 

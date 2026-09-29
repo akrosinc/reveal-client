@@ -63,6 +63,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     /* ------------------------------------------------------------------ intent extra keys */
     public static final String EXTRA_FORM_NAME             = "formName";
+    public static final String EXTRA_FORM_JSON             = "formJson";
     public static final String EXTRA_GATE_FIELD_KEYS       = "gateFieldKeys";
     public static final String EXTRA_GATE_LOGIC            = "gateLogic";
     public static final String EXTRA_PARENT_TASK_ID        = Constants.Properties.TASK_IDENTIFIER;
@@ -91,6 +92,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     /* ------------------------------------------------------------------ state */
     private String formName;
+    private String formJson;
     /** Map of gate field key → set of acceptable values for that key */
     private Map<String, Set<String>> gateFieldMap;
     private boolean gateLogicAnd = false; // false = OR (default), true = AND
@@ -166,9 +168,13 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         taskRepository = RevealApplication.getInstance().getTaskRepository();
         appExecutors   = RevealApplication.getInstance().getAppExecutors();
 
-        // Load the single form JSON (contains step1 + optionally step2)
-        JSONObject formJSON = formUtils.getFormJSON(this, formName, null, null);
-
+        JSONObject formJSON;
+        if (formJson!=null) {
+            formJSON = formUtils.getFormJSONObjectFromFormString(formJson,null,null);
+        } else {
+            // Load the single form JSON (contains step1 + optionally step2)
+            formJSON = formUtils.getFormJSON(this, formName, null, null);
+        }
         // If the form declares a "formBehaviour" block, it overrides the intent extras.
         // When absent (or partially specified) the previously-read intent extras remain in effect.
         readFormBehaviour(formJSON);
@@ -1380,6 +1386,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private void readExtras() {
         Intent intent       = getIntent();
         formName            = intent.getStringExtra(EXTRA_FORM_NAME);
+        formJson            = intent.getStringExtra(EXTRA_FORM_JSON);
         parentTaskId        = intent.getStringExtra(EXTRA_PARENT_TASK_ID);
         locationUUID        = intent.getStringExtra(EXTRA_LOCATION_UUID);
         childTaskCode       = intent.getStringExtra(EXTRA_CHILD_TASK_CODE);

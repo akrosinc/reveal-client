@@ -16,4 +16,5 @@ public class FormFacade {
   private String name;
   private String title;
   private boolean template;
+  private String payload;
 }
