@@ -48,7 +48,7 @@
     "encounter_location": ""
   },
   "step1": {
-    "title": "Durability Enrolment",
+    "title": "childform",
     "display_back_button": true,
     "no_padding": true,
     "fields": [
@@ -151,5 +151,14 @@
         "settingsEntityFilterKey": "getIdentifier"
       }
     ]
+  },
+  "formBehaviour": {
+    "parent": {
+      "businessStatusField": "business_status"
+    },
+    "childTasks": {
+      "displayList": false,
+      "editList": false
+    }
   }
 }

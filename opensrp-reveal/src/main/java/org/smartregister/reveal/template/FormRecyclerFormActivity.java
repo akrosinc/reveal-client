@@ -2,6 +2,9 @@ package org.smartregister.reveal.template;
 
 import static org.smartregister.reveal.util.Constants.BusinessStatus.IN_PROGRESS;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_JSON_FOR_TASK;
+import static org.smartregister.reveal.util.Constants.Properties.FORM_TEMPLATE;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,11 +16,14 @@ import androidx.annotation.Nullable;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
+import java.util.Optional;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.domain.Action;
 import org.smartregister.domain.Period;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.R;
@@ -77,6 +83,12 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     public static final String EXTRA_RECYCLER_GATE_KEYS    = "recyclerGateFieldKeys";
     public static final String EXTRA_RECYCLER_GATE_LOGIC   = "recyclerGateLogic";
     public static final String EXTRA_EMPTY_MESSAGE         = "emptyMessage";
+    /**
+     * JSON object string of parent form field values ({@code {"key":"value",...}}) passed from a
+     * launching (parent) template to the child template so hidden child fields with matching keys
+     * can be pre-filled. Mirrors {@link #injectParentFieldsIntoChildForm} across the intent boundary.
+     */
+    public static final String EXTRA_PARENT_VALUES         = "parentValues";
 
     /* ------------------------------------------------------------------ fragment tags */
     private static final String TAG_FORM1    = "form1";
@@ -93,6 +105,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     /* ------------------------------------------------------------------ state */
     private String formName;
     private String formJson;
+    /** Parent form field values passed in from a launching template (JSON object string), if any. */
+    private String parentValuesJson;
     /** Map of gate field key → set of acceptable values for that key */
     private Map<String, Set<String>> gateFieldMap;
     private boolean gateLogicAnd = false; // false = OR (default), true = AND
@@ -100,6 +114,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private String locationUUID;
     private String childTaskCode;
     private String childFormName;
+    private String childFormJson;
     private String businessStatusField;
     private String countHint;
     private String countLabel;
@@ -179,6 +194,13 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // When absent (or partially specified) the previously-read intent extras remain in effect.
         readFormBehaviour(formJSON);
 
+        // Apply any parent field values forwarded from a launching template into this form's
+        // matching hidden fields (cross-activity equivalent of injectParentFieldsIntoChildForm).
+        // The sending side already applied the parent's passedValues allow-list, so no re-filtering.
+        if (formJSON != null) {
+            injectValuesIntoChildForm(parseParentValuesExtra(), formJSON, false);
+        }
+
         getIntent().putExtra(JsonFormConstants.JSON_FORM_KEY.JSON,
                 formJSON != null ? formJSON.toString()
                         : "{\"encounter_type\":\"placeholder\",\"count\":\"1\","
@@ -195,6 +217,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Populate form data on disk thread, then commit both step fragments
         showProgress("Loading…");
         appExecutors.diskIO().execute(() -> {
+            setChildForm();
             populateForm1();
             appExecutors.mainThread().execute(() -> {
                 commitStep1Fragment();
@@ -1086,9 +1109,37 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
             });
         });
     }
+    public void openChildFormJson(Task task) {
+
+        Intent intent = new Intent(this, FormRecyclerFormActivity.class);
+
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_FORM_JSON, childFormJson);
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_TASK_ID, task.getIdentifier());
+        intent.putExtra(FormRecyclerFormActivity.EXTRA_LOCATION_UUID, locationUUID);
+
+        // Snapshot this (parent) form's current field values and forward them to the child
+        // template so hidden child fields with matching keys can be pre-filled — the
+        // cross-activity equivalent of injectParentFieldsIntoChildForm().
+        // Apply this parent's passedValues allow-list here (the receiving side won't re-filter).
+        Map<String, String> parentValues = collectFormValues(getmJSONObject());
+        if (passedValues != null) {
+            parentValues.keySet().retainAll(passedValues);
+        }
+        if (!parentValues.isEmpty()) {
+            intent.putExtra(FormRecyclerFormActivity.EXTRA_PARENT_VALUES,
+                    new JSONObject(parentValues).toString());
+        }
+
+        startActivity(intent);
+    }
 
     @Override
     public void onTaskTap(Task task) {
+        if (childFormJson !=null){
+            openChildFormJson(task);
+            return;
+        }
+
         if (childFormName == null) {
             Timber.tag("FormRecyclerForm").w("No childFormName configured");
             return;
@@ -1206,18 +1257,22 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
      * since they are system-managed.
      */
     private void injectParentFieldsIntoChildForm(JSONObject parentForm, JSONObject childForm) {
-        // Excluded keys that are system-managed and should not be overwritten
-        Set<String> excludedKeys = new HashSet<>();
-        excludedKeys.add(FIELD_TASK_ID);
-        excludedKeys.add(FIELD_ENTITY_ID);
-        excludedKeys.add(FIELD_BUSINESS_STATUS);
+        // Inline path: this (parent) activity's passedValues is the authoritative allow-list.
+        injectValuesIntoChildForm(collectFormValues(parentForm), childForm, true);
+    }
 
+    /**
+     * Builds a map of all non-empty {@code key → value} pairs across every step of a form.
+     * Used both to snapshot the parent form inline and to serialise values into
+     * {@link #EXTRA_PARENT_VALUES} when launching a child template in a new activity.
+     */
+    private Map<String, String> collectFormValues(JSONObject form) {
+        Map<String, String> values = new HashMap<>();
+        if (form == null) return values;
         try {
-            // Build a map of all parent field values across all steps
-            Map<String, String> parentValues = new HashMap<>();
-            int stepCount = parentForm.optInt("count", 1);
+            int stepCount = form.optInt("count", 1);
             for (int s = 1; s <= stepCount; s++) {
-                JSONObject step = parentForm.optJSONObject("step" + s);
+                JSONObject step = form.optJSONObject("step" + s);
                 if (step == null) continue;
                 JSONArray fields = step.optJSONArray("fields");
                 if (fields == null) continue;
@@ -1226,12 +1281,32 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     String key = field.optString("key", "");
                     String value = field.optString("value", "");
                     if (!key.isEmpty() && !value.isEmpty()) {
-                        parentValues.put(key, value);
+                        values.put(key, value);
                     }
                 }
             }
+        } catch (Exception e) {
+            Timber.tag("FormRecyclerForm").w(e, "collectFormValues error");
+        }
+        return values;
+    }
 
-            // Scan child form hidden fields and inject matching parent values
+    /**
+     * Injects the supplied parent values into any matching hidden fields of the child form.
+     * System-managed keys ({@code task_id}, {@code entity_id}, {@code business_status}) are skipped,
+     * and when {@link #passedValues} is set only those keys are injected.
+     */
+    private void injectValuesIntoChildForm(Map<String, String> parentValues, JSONObject childForm,
+                                           boolean applyPassedValuesFilter) {
+        if (parentValues == null || parentValues.isEmpty() || childForm == null) {
+            return;
+        }
+        Set<String> excludedKeys = new HashSet<>();
+        excludedKeys.add(FIELD_TASK_ID);
+        excludedKeys.add(FIELD_ENTITY_ID);
+        excludedKeys.add(FIELD_BUSINESS_STATUS);
+
+        try {
             int childStepCount = childForm.optInt("count", 1);
             for (int s = 1; s <= childStepCount; s++) {
                 JSONObject step = childForm.optJSONObject("step" + s);
@@ -1242,9 +1317,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     JSONObject field = fields.getJSONObject(i);
                     String key = field.optString("key", "");
                     String type = field.optString("type", "");
-                    // When a formBehaviour block defines passedValues, only those keys are injected.
-                    // When passedValues is null (no block), fall back to injecting all matching keys.
-                    boolean allowed = passedValues == null || passedValues.contains(key);
+                    // When applyPassedValuesFilter is set and a formBehaviour block defines
+                    // passedValues, only those keys are injected. Otherwise inject all matching keys
+                    // (the sending side already filtered when values arrive via EXTRA_PARENT_VALUES).
+                    boolean allowed = !applyPassedValuesFilter
+                            || passedValues == null || passedValues.contains(key);
                     if ("hidden".equals(type) && !excludedKeys.contains(key)
                             && allowed
                             && parentValues.containsKey(key)) {
@@ -1256,8 +1333,33 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 }
             }
         } catch (Exception e) {
-            Timber.tag("FormRecyclerForm").w(e, "injectParentFieldsIntoChildForm error");
+            Timber.tag("FormRecyclerForm").w(e, "injectValuesIntoChildForm error");
         }
+    }
+
+    /**
+     * Parses the {@link #EXTRA_PARENT_VALUES} JSON object string into a {@code key → value} map.
+     * Returns an empty map when the extra is absent or malformed.
+     */
+    private Map<String, String> parseParentValuesExtra() {
+        Map<String, String> values = new HashMap<>();
+        if (parentValuesJson == null || parentValuesJson.trim().isEmpty()) {
+            return values;
+        }
+        try {
+            JSONObject obj = new JSONObject(parentValuesJson);
+            java.util.Iterator<String> keys = obj.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = obj.optString(key, "");
+                if (!value.isEmpty()) {
+                    values.put(key, value);
+                }
+            }
+        } catch (Exception e) {
+            Timber.tag("FormRecyclerForm").w(e, "parseParentValuesExtra: invalid parentValues JSON");
+        }
+        return values;
     }
 
     /* ------------------------------------------------------------------ completion check */
@@ -1387,6 +1489,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         Intent intent       = getIntent();
         formName            = intent.getStringExtra(EXTRA_FORM_NAME);
         formJson            = intent.getStringExtra(EXTRA_FORM_JSON);
+        parentValuesJson    = intent.getStringExtra(EXTRA_PARENT_VALUES);
         parentTaskId        = intent.getStringExtra(EXTRA_PARENT_TASK_ID);
         locationUUID        = intent.getStringExtra(EXTRA_LOCATION_UUID);
         childTaskCode       = intent.getStringExtra(EXTRA_CHILD_TASK_CODE);
@@ -1441,6 +1544,29 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         // Recycler gate logic: "and" or "or" (default is "or")
         String recyclerGateLogicRaw = intent.getStringExtra(EXTRA_RECYCLER_GATE_LOGIC);
         recyclerGateLogicAnd = "and".equalsIgnoreCase(recyclerGateLogicRaw != null ? recyclerGateLogicRaw.trim() : "");
+    }
+
+    private void setChildForm(){
+        PlanDefinition planDefinitionById = RevealApplication.getInstance().getPlanDefinitionRepository().findPlanDefinitionById(
+            PreferencesUtil.getInstance().getCurrentPlanId());
+
+        Optional<Action> anyAction = planDefinitionById.getActions().stream()
+            .filter(action -> action.getForm() != null)
+            .filter(action -> action.getCode().equals(childTaskCode)).findAny();
+
+        if (anyAction.isPresent()) {
+            Action action = anyAction.get();
+            if (action.getForm() != null) {
+                if (action.getForm().isTemplate()) {
+                    Timber.tag("TestFrag")
+                        .i("Geojson getGeoJsonFromStructuresAndTasks payload='%s'",
+                            action.getForm().getPayload());
+                    if (action.getForm().getPayload() != null) {
+                        childFormJson = action.getForm().getPayload();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1507,6 +1633,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
             if (childTasks.has("childTaskCode")) {
                 childTaskCode = childTasks.optString("childTaskCode", childTaskCode);
             }
+
 
             JSONObject gate = childTasks.optJSONObject("gate");
             if (gate != null && gate.has("keys")) {
