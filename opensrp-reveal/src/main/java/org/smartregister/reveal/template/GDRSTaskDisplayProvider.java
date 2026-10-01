@@ -3,6 +3,7 @@ package org.smartregister.reveal.template;
 import org.smartregister.domain.HdssIndividual;
 import org.smartregister.domain.Task;
 import org.smartregister.reveal.R;
+import org.smartregister.reveal.application.RevealApplication;
 import org.smartregister.reveal.util.Constants;
 
 import java.util.Map;
@@ -57,17 +58,22 @@ public class GDRSTaskDisplayProvider implements TaskDisplayProvider {
     }
 
     @Override
-    public int getActionColourRes(Task task) {
+    public int getActionColour(Task task) {
         boolean complete = Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus());
+        int resId;
         switch (task.getCode()) {
             case Constants.Action.INDEX_CASE_MEMBER:
-                return complete ? R.color.purple : R.color.cyan;
+                resId = complete ? R.color.purple : R.color.cyan;
+                break;
             case Constants.Action.SECONDARY_INDEX_CASE_MEMBER:
-                return complete ? R.color.pnc_circle_green : R.color.not_visited_yellow;
+                resId = complete ? R.color.pnc_circle_green : R.color.not_visited_yellow;
+                break;
             case Constants.Action.RCD_MEMBER:
             default:
-                return complete ? R.color.pnc_circle_green : R.color.not_visited_yellow;
+                resId = complete ? R.color.pnc_circle_green : R.color.not_visited_yellow;
+                break;
         }
+        return RevealApplication.getInstance().getResources().getColor(resId, null);
     }
 
     @Override

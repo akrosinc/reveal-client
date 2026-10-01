@@ -122,8 +122,9 @@ public class TaskRecyclerAdapter
 
         Drawable bg = holder.btnAction.getBackground();
         if (bg instanceof GradientDrawable) {
-            ((GradientDrawable) bg).setColor(
-                    context.getResources().getColor(displayProvider.getActionColourRes(task), null));
+            // Resolved ARGB colour supplied directly by the provider
+            // (e.g. parsed from the plan's TASK_COLOR_CONFIG).
+            ((GradientDrawable) bg).setColor(displayProvider.getActionColour(task));
         }
 
         // Tap — open the task form

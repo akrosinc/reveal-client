@@ -1699,6 +1699,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
      * Simple display provider using only Task fields — no external data needed.
      */
     private static class DefaultTaskDisplayProvider implements TaskDisplayProvider {
+
+        /** Lazily-resolved current plan definition used to read per-task colour config. */
+        private PlanDefinition planDefinition;
+        private boolean planResolved = false;
+
         @Override
         public String getPrimaryLabel(Task task) {
             return task.getDescription() != null ? task.getDescription() : task.getCode();
@@ -1715,10 +1720,163 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                     ? "Edit" : "Record";
         }
 
+        /**
+         * Resolves the button background colour from the plan definition's
+         * {@code TASK_COLOR_CONFIG} using the same construct as
+         * {@link org.smartregister.reveal.util.GeoJsonUtils#getGeoJsonFromStructuresAndTasks}:
+         * match the action by the task's code, then look up the configured colour for the
+         * task's business status.
+         *
+         * @return the parsed ARGB colour from the plan config, or the resolved default colour
+         *         (green when complete, yellow otherwise) when no colour is configured.
+         */
         @Override
-        public int getActionColourRes(Task task) {
-            return Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())
+        public int getActionColour(Task task) {
+            Integer configColour = resolveColourFromPlan(task);
+            if (configColour != null) {
+                return configColour;
+            }
+            // Fallback: resolve the default colour resources to ARGB.
+            int resId = Constants.BusinessStatus.COMPLETE.equals(task.getBusinessStatus())
                     ? R.color.pnc_circle_green : R.color.not_visited_yellow;
+            return RevealApplication.getInstance().getResources().getColor(resId, null);
+        }
+
+        /**
+         * @return the parsed ARGB colour from the plan's {@code TASK_COLOR_CONFIG} for the
+         *         task's code + business status, or {@code null} when none is configured.
+         */
+        private Integer resolveColourFromPlan(Task task) {
+            if (task == null || task.getCode() == null) {
+                return null;
+            }
+
+            PlanDefinition plan = resolvePlanDefinition();
+            if (plan == null || plan.getActions() == null) {
+                return null;
+            }
+
+            Optional<Action> anyAction = plan.getActions().stream()
+                    .filter(action -> action.getCode() != null)
+                    .filter(action -> action.getCode().equals(task.getCode()))
+                    .findAny();
+
+            if (!anyAction.isPresent()) {
+                return null;
+            }
+
+            Action action = anyAction.get();
+            Map<Action.ActionConfigEnum, Action.ActionTaskConfig> config = action.getConfig();
+            if (config == null || config.isEmpty()
+                    || !config.containsKey(Action.ActionConfigEnum.TASK_COLOR_CONFIG)) {
+                return null;
+            }
+
+            Action.ActionTaskConfig actionTaskConfig =
+                    config.get(Action.ActionConfigEnum.TASK_COLOR_CONFIG);
+            if (actionTaskConfig == null || actionTaskConfig.getBusinessStatusMap() == null) {
+                return null;
+            }
+
+            Map<String, String> businessStatusMap = actionTaskConfig.getBusinessStatusMap();
+            String businessStatus = task.getBusinessStatus();
+            if (businessStatus == null || !businessStatusMap.containsKey(businessStatus)) {
+                return null;
+            }
+
+            String color = businessStatusMap.get(businessStatus);
+            if (color == null || color.trim().isEmpty()) {
+                return null;
+            }
+
+            Integer parsed = parseColour(color.trim());
+            if (parsed == null) {
+                Timber.tag("FormRecyclerForm")
+                        .w("getActionColour: unparseable colour '%s' for code=%s status=%s",
+                                color, task.getCode(), businessStatus);
+            }
+            return parsed;
+        }
+
+        /**
+         * Parses a colour string into an ARGB int. Supports hex (e.g. {@code #RRGGBB},
+         * {@code #AARRGGBB}) and CSS-style {@code hsl(h, s%, l%)} / {@code hsla(h, s%, l%, a)}.
+         *
+         * @return the ARGB colour, or {@code null} if the string cannot be parsed.
+         */
+        private Integer parseColour(String raw) {
+            String value = raw.toLowerCase();
+            try {
+                if (value.startsWith("hsl")) {
+                    return parseHsl(value);
+                }
+                return android.graphics.Color.parseColor(raw);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+
+        /**
+         * Parses {@code hsl(h, s%, l%)} or {@code hsla(h, s%, l%, a)} into an ARGB int.
+         * Hue is in degrees [0,360), saturation/lightness are percentages, alpha is [0,1].
+         */
+        private Integer parseHsl(String value) {
+            int open = value.indexOf('(');
+            int close = value.indexOf(')');
+            if (open < 0 || close < 0 || close <= open) {
+                return null;
+            }
+            String[] parts = value.substring(open + 1, close).split(",");
+            if (parts.length < 3) {
+                return null;
+            }
+
+            float h = Float.parseFloat(parts[0].trim());
+            float s = Float.parseFloat(parts[1].trim().replace("%", "")) / 100f;
+            float l = Float.parseFloat(parts[2].trim().replace("%", "")) / 100f;
+            float alpha = 1f;
+            if (parts.length >= 4) {
+                alpha = Float.parseFloat(parts[3].trim());
+            }
+
+            float c = (1 - Math.abs(2 * l - 1)) * s;
+            float hp = ((h % 360) + 360) % 360 / 60f;
+            float x = c * (1 - Math.abs(hp % 2 - 1));
+            float r1 = 0, g1 = 0, b1 = 0;
+            if (hp < 1)      { r1 = c; g1 = x; }
+            else if (hp < 2) { r1 = x; g1 = c; }
+            else if (hp < 3) { g1 = c; b1 = x; }
+            else if (hp < 4) { g1 = x; b1 = c; }
+            else if (hp < 5) { r1 = x; b1 = c; }
+            else             { r1 = c; b1 = x; }
+
+            float m = l - c / 2f;
+            int r = Math.round((r1 + m) * 255);
+            int g = Math.round((g1 + m) * 255);
+            int b = Math.round((b1 + m) * 255);
+            int a = Math.round(alpha * 255);
+            return android.graphics.Color.argb(
+                    clamp(a), clamp(r), clamp(g), clamp(b));
+        }
+
+        private int clamp(int v) {
+            return Math.max(0, Math.min(255, v));
+        }
+
+        private PlanDefinition resolvePlanDefinition() {
+            if (!planResolved) {
+                planResolved = true;
+                try {
+                    String planId = PreferencesUtil.getInstance().getCurrentPlanId();
+                    planDefinition = RevealApplication.getInstance()
+                            .getPlanDefinitionRepository()
+                            .findPlanDefinitionById(planId);
+                } catch (Exception e) {
+                    Timber.tag("FormRecyclerForm").w(e, "resolvePlanDefinition failed");
+                    planDefinition = null;
+                }
+            }
+            return planDefinition;
         }
 
         @Override

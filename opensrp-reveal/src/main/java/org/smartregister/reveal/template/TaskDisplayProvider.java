@@ -30,10 +30,13 @@ public interface TaskDisplayProvider {
     String getActionLabel(Task task);
 
     /**
-     * Background colour resource id for the action button.
-     * Typically varies by business status.
+     * Resolved ARGB background colour for the action button.
+     *
+     * <p>Return a fully-resolved colour int (e.g. from {@code ContextCompat.getColor(...)}
+     * or {@code Color.parseColor(...)}), not a colour resource id. Typically varies by
+     * business status, and may come from a plan definition's {@code TASK_COLOR_CONFIG}.
      */
-    int getActionColourRes(Task task);
+    int getActionColour(Task task);
 
     /**
      * Text colour resource id for the action button.
