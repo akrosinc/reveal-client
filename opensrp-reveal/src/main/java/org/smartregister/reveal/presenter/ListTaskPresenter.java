@@ -417,7 +417,7 @@ public class ListTaskPresenter implements ListTaskContract.Presenter, PasswordRe
     }
 
     private void onFeatureSelected(Feature feature, boolean isLongclick) {
-        Timber.tag("TestFrag").i("ListTaskPresenter onFeatureSelected feature clicked");
+        Timber.tag("TestFrag").i("ListTaskPresenter onFeatureSelected feature clicked feature=%s",feature.id());
         this.selectedFeature = feature;
         this.changeInterventionStatus = false;
         markStructureIneligibleSelected = false;

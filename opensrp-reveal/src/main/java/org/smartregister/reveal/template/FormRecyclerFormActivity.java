@@ -34,6 +34,7 @@ import org.smartregister.reveal.util.Constants;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealJsonFormUtils;
 import org.smartregister.util.JsonFormUtils;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -124,6 +125,21 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     private boolean recyclerGateLogicAnd = false; // false = OR (default), true = AND
     private String emptyMessage;
 
+    /**
+     * Static base label shown for each child task row (from {@code childTasks.labels.taskLabel},
+     * e.g. "Emanator"). Used as the primary label and as the fallback when {@link #taskSettingLabel}
+     * is not configured or cannot be resolved for a given task.
+     */
+    private String taskLabel;
+    /**
+     * Optional settings-driven per-task label config (from {@code childTasks.labels.taskSettingLabel}).
+     * When present, each row's label is resolved from the server configs by filtering with a
+     * no-arg getter on the child {@link Task}. Shape:
+     * <pre>{ "settingsKey": "...", "settingsEntity": "task", "settingsEntityFilterKey": "getIdentifier" }</pre>
+     * Falls back to {@link #taskLabel} when the lookup yields nothing.
+     */
+    private JSONObject taskSettingLabel;
+
     /* ------------------------------------------------------------------ formBehaviour (JSON-driven) */
     /** Whether step2 (form 2) is shown at all. When true with an empty gate, it shows immediately. */
     private boolean form2Display = true;
@@ -155,6 +171,13 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
     /* ------------------------------------------------------------------ setContentView guard */
     private boolean contentViewSet = false;
+
+    /**
+     * True until the first {@code onResume} runs. {@code onCreate} already triggers an initial
+     * {@link #refreshTaskList()}, so the first {@code onResume} skips its own refresh to avoid a
+     * redundant double load. Subsequent resumes (returning from a child form) refresh normally.
+     */
+    private boolean skipNextResumeRefresh = true;
 
     @Override
     public void setContentView(int layoutResID) {
@@ -227,6 +250,25 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
             });
         });
 
+        refreshTaskList();
+    }
+
+    /**
+     * Refresh the child task list whenever the user returns to this screen — e.g. after
+     * completing a child form that was launched via {@code startActivity} (see
+     * {@link #openChildFormJson(Task)}), which does not deliver an {@code onActivityResult}
+     * callback. This ensures the list reflects the latest business status from the DB.
+     *
+     * <p>The first {@code onResume} after {@code onCreate} is skipped because {@code onCreate}
+     * already triggers a {@link #refreshTaskList()}.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (skipNextResumeRefresh) {
+            skipNextResumeRefresh = false;
+            return;
+        }
         refreshTaskList();
     }
 
@@ -317,11 +359,37 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         Timber.tag("FormSaveInteractor").i("populateForm1: parentTask found. status=%s, businessStatus=%s, forEntity=%s",
                 parentTask.getStatus(), parentTask.getBusinessStatus(), parentTask.getForEntity());
 
-        // Always inject entity_id and details.taskIdentifier into mJSONObject
+        // Work on a private deep copy of the form JSON on this disk thread instead of
+        // mutating the live, shared mJSONObject. The base JsonFormActivity / framework
+        // may still be reading/mutating the live instance on the main thread during
+        // onCreate setup, which caused a ConcurrentModificationException when this
+        // thread serialized it (JSONObject.toString -> LinkedHashMap iteration).
+        // We publish the fully-populated copy once, via setmJSONObject(...), after all
+        // mutations are done; the fragment commit on the main thread then reads it.
+        JSONObject liveForm = getmJSONObject();
+        if (liveForm == null) {
+            Timber.tag("FormSaveInteractor").i("populateForm1: live form JSON is null, skipping");
+            return;
+        }
+        JSONObject workingForm;
+        try {
+            // Deep copy by re-parsing a snapshot string; serialize under the lock to
+            // avoid racing with any concurrent writer on the live instance.
+            String snapshot;
+            synchronized (liveForm) {
+                snapshot = liveForm.toString();
+            }
+            workingForm = new JSONObject(snapshot);
+        } catch (Exception copyEx) {
+            Timber.tag("FormSaveInteractor").e(copyEx, "populateForm1: failed to copy form JSON, aborting pre-population");
+            return;
+        }
+
+        // Always inject entity_id and details.taskIdentifier into the working copy
         // so that when the form saves, the event has the correct baseEntityId
         // and clientProcessor can find the task to update.
         try {
-            JSONObject currentForm = getmJSONObject();
+            JSONObject currentForm = workingForm;
             if (currentForm != null) {
                 currentForm.put("entity_id", parentTask.getForEntity());
                 JSONObject details = currentForm.has("details")
@@ -372,7 +440,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
             Timber.tag("FormSaveInteractor").i("populateForm1: task not NOT_VISITED, looking for last event");
 
-            String encounterType = getEncounterTypeFromForm();
+            String encounterType = workingForm.optString(Constants.JsonForm.ENCOUNTER_TYPE, "");
             String entityId = parentTask.getForEntity();
 
             Timber.tag("FormSaveInteractor").i("populateForm1: searching with entityId=%s, encounterType=%s",
@@ -400,13 +468,9 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                         lastEvent != null && lastEvent.getObs() != null ? lastEvent.getObs().size() : 0);
 
                 if (lastEvent != null) {
-                    JSONObject currentForm = getmJSONObject();
-                    Timber.tag("FormSaveInteractor").i("populateForm1: currentForm=%b, calling populateForm",
-                            currentForm != null);
-                    if (currentForm != null) {
-                        formUtils.populateForm(lastEvent, currentForm);
-                        Timber.tag("FormSaveInteractor").i("populateForm1: populateForm complete");
-                    }
+                    Timber.tag("FormSaveInteractor").i("populateForm1: calling populateForm on working copy");
+                    formUtils.populateForm(lastEvent, workingForm);
+                    Timber.tag("FormSaveInteractor").i("populateForm1: populateForm complete");
                 }
             } else {
                 Timber.tag("FormSaveInteractor").i("populateForm1: no event found in DB for entity=%s, encounterType=%s",
@@ -415,6 +479,11 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         } else {
             Timber.tag("FormSaveInteractor").i("populateForm1: task is NOT_VISITED, no pre-population needed");
         }
+
+        // Publish the fully-populated copy as the activity's form JSON. The fragment
+        // commit (on the main thread, after this disk-thread method returns) will read it.
+        setmJSONObject(workingForm);
+        Timber.tag("FormSaveInteractor").i("populateForm1: published populated form via setmJSONObject");
     }
 
     /**
@@ -475,10 +544,21 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 continue;
             }
 
-            JSONObject field = fieldsMap.get(formKey);
-            if (field == null) {
+            // A field may be a top-level step field OR live inside a repeating_group's "value"
+            // template. getFields(...) only returns top-level fields, so for repeating-group
+            // members we also search the templates and populate every matching occurrence.
+            List<JSONObject> targetFields = new ArrayList<>();
+            JSONObject topLevelField = fieldsMap.get(formKey);
+            if (topLevelField != null) {
+                targetFields.add(topLevelField);
+            } else {
+                targetFields.addAll(findFieldsInRepeatingGroups(currentForm, formKey));
+            }
+
+            if (targetFields.isEmpty()) {
                 Timber.tag("FormSaveInteractor").w(
-                        "applySettingsConfigOptions: form field '%s' not found, skipping", formKey);
+                        "applySettingsConfigOptions: form field '%s' not found (top-level or repeating group), skipping",
+                        formKey);
                 continue;
             }
 
@@ -490,10 +570,12 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 continue;
             }
 
-            formUtils.populateServerOptions(serverConfigs, settingsKey, field, filterValue);
+            for (JSONObject field : targetFields) {
+                formUtils.populateServerOptions(serverConfigs, settingsKey, field, filterValue);
+            }
             Timber.tag("FormSaveInteractor").i(
-                    "applySettingsConfigOptions: populated formKey='%s' from settingsKey='%s' filter='%s'",
-                    formKey, settingsKey, filterValue);
+                    "applySettingsConfigOptions: populated formKey='%s' (%d occurrence(s)) from settingsKey='%s' filter='%s'",
+                    formKey, targetFields.size(), settingsKey, filterValue);
         }
     }
 
@@ -612,6 +694,150 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
         }
         // Default / "location": use the structure UUID passed into this activity.
         return null;
+    }
+
+    /**
+     * Resolves the display label for a single child task row.
+     *
+     * <p>Resolution order:
+     * <ol>
+     *   <li>If {@link #taskSettingLabel} is configured, resolve the filter value from the task
+     *       (via {@code settingsEntityFilterKey}, e.g. {@code getIdentifier}) and look up the
+     *       {@code name} of the first option under that filter in the {@code settingsKey} server
+     *       config. This is the same data shape used by
+     *       {@link RevealJsonFormUtils#populateFieldWithServerOption}.</li>
+     *   <li>Otherwise, or if the lookup yields nothing, fall back to the static {@link #taskLabel}.</li>
+     *   <li>If neither is available, return {@code null} so the caller can use its own default.</li>
+     * </ol>
+     *
+     * @param task the child task whose row label is being resolved
+     * @return the resolved label, or {@code null} when no settings/static label applies
+     */
+    private String resolveTaskRowLabel(Task task) {
+        String settingsValue = null;
+        if (taskSettingLabel != null && task != null) {
+            String settingsKey = taskSettingLabel.optString("settingsKey", null);
+            String settingsEntity = taskSettingLabel.optString("settingsEntity", null);
+            String settingsEntityFilterKey = taskSettingLabel.optString("settingsEntityFilterKey", null);
+
+            if (settingsKey != null) {
+                String filterValue = resolveSettingsFilterValue(settingsEntity, settingsEntityFilterKey, task);
+                if (filterValue != null) {
+                    String resolved = resolveServerConfigName(settingsKey, filterValue);
+                    if (resolved != null && !resolved.trim().isEmpty()) {
+                        settingsValue = resolved.trim();
+                    }
+                }
+            }
+        }
+
+        boolean hasBase = taskLabel != null && !taskLabel.trim().isEmpty();
+        // Combine: "<taskLabel> - <settingsValue>" when both are present; otherwise use
+        // whichever one is available.
+        if (hasBase && settingsValue != null) {
+            return taskLabel.trim() + " - " + settingsValue;
+        }
+        if (settingsValue != null) {
+            return settingsValue;
+        }
+        // Fallback to the static label from childTasks.labels.taskLabel.
+        return taskLabel;
+    }
+
+    /**
+     * Finds every field template with the given {@code formKey} that lives inside a
+     * {@code repeating_group}'s {@code "value"} array, across all steps.
+     *
+     * <p>Top-level step fields are handled separately by {@link RevealJsonFormUtils#getFields};
+     * this method only descends into repeating-group templates so that settings-driven options
+     * (e.g. spinner lists) can be injected into the template. The template is what the
+     * {@code RepeatingGroupGenerator} clones for each generated instance, so populating it here
+     * means every generated row inherits the options.
+     *
+     * @param formJSON the full form JSON (with {@code count} + {@code stepN} objects)
+     * @param formKey  the field key to locate inside repeating groups
+     * @return a list of matching field {@link JSONObject}s (empty if none found)
+     */
+    private List<JSONObject> findFieldsInRepeatingGroups(JSONObject formJSON, String formKey) {
+        List<JSONObject> matches = new ArrayList<>();
+        if (formJSON == null || formKey == null) {
+            return matches;
+        }
+        int count;
+        try {
+            count = Integer.parseInt(formJSON.optString("count", "1"));
+        } catch (NumberFormatException e) {
+            count = 1;
+        }
+        for (int s = 1; s <= count; s++) {
+            JSONObject step = formJSON.optJSONObject("step" + s);
+            if (step == null) {
+                continue;
+            }
+            JSONArray fields = step.optJSONArray(JsonFormConstants.FIELDS);
+            if (fields == null) {
+                continue;
+            }
+            for (int i = 0; i < fields.length(); i++) {
+                JSONObject field = fields.optJSONObject(i);
+                if (field == null) {
+                    continue;
+                }
+                if (!JsonFormConstants.REPEATING_GROUP.equals(field.optString(JsonFormConstants.TYPE))) {
+                    continue;
+                }
+                JSONArray template = field.optJSONArray("value");
+                if (template == null) {
+                    continue;
+                }
+                for (int v = 0; v < template.length(); v++) {
+                    JSONObject member = template.optJSONObject(v);
+                    if (member != null && formKey.equals(member.optString(JsonFormConstants.KEY))) {
+                        matches.add(member);
+                    }
+                }
+            }
+        }
+        return matches;
+    }
+
+    /**
+     * Looks up the {@code name} of the first option under {@code filterKey} in the server config
+     * identified by {@code settingsConfigKey}. Mirrors the data shape read by
+     * {@link RevealJsonFormUtils#populateFieldWithServerOption}:
+     * {@code serverConfigs[settingsConfigKey][0][filterKey][0].name}.
+     *
+     * @return the resolved name, or {@code null} if any level is absent
+     */
+    private String resolveServerConfigName(String settingsConfigKey, String filterKey) {
+        try {
+            Map<String, Object> serverConfigs = RevealApplication.getInstance().getServerConfigs();
+            if (serverConfigs == null) {
+                return null;
+            }
+            Object raw = serverConfigs.get(settingsConfigKey);
+            if (!(raw instanceof JSONArray)) {
+                return null;
+            }
+            JSONArray serverConfig = (JSONArray) raw;
+            if (serverConfig.isNull(0)) {
+                return null;
+            }
+            JSONArray options = serverConfig.optJSONObject(0).optJSONArray(filterKey);
+            if (options == null) {
+                return null;
+            }
+            JSONObject option = options.optJSONObject(0);
+            if (option == null) {
+                return null;
+            }
+            return option.optString(Constants.CONFIGURATION.NAME, null);
+        } catch (Exception e) {
+            Timber.tag("FormSaveInteractor").e(e,
+                    "resolveServerConfigName: failed for settingsKey='%s', filterKey='%s'",
+                    settingsConfigKey, filterKey);
+            return null;
+        }
     }
 
     /**
@@ -1660,6 +1886,8 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
                 if (labels.has("countLabel"))   countLabel     = labels.optString("countLabel", countLabel);
                 if (labels.has("countHint"))    countHint      = labels.optString("countHint", countHint);
                 if (labels.has("emptyMessage")) emptyMessage   = labels.optString("emptyMessage", emptyMessage);
+                if (labels.has("taskLabel"))    taskLabel      = labels.optString("taskLabel", taskLabel);
+                if (labels.has("taskSettingLabel")) taskSettingLabel = labels.optJSONObject("taskSettingLabel");
             }
         }
 
@@ -1698,7 +1926,7 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
     /**
      * Simple display provider using only Task fields — no external data needed.
      */
-    private static class DefaultTaskDisplayProvider implements TaskDisplayProvider {
+    private class DefaultTaskDisplayProvider implements TaskDisplayProvider {
 
         /** Lazily-resolved current plan definition used to read per-task colour config. */
         private PlanDefinition planDefinition;
@@ -1706,6 +1934,12 @@ public class FormRecyclerFormActivity extends TemplateHostActivity
 
         @Override
         public String getPrimaryLabel(Task task) {
+            // Settings-driven / static label from childTasks.labels (taskSettingLabel → taskLabel).
+            String configuredLabel = resolveTaskRowLabel(task);
+            if (configuredLabel != null && !configuredLabel.trim().isEmpty()) {
+                return configuredLabel;
+            }
+            // Legacy fallback: task description, then code.
             return task.getDescription() != null ? task.getDescription() : task.getCode();
         }
 
