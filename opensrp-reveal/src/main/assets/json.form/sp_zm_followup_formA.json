@@ -52,34 +52,6 @@
     "display_back_button": true,
     "no_padding": true,
     "fields": [
-
-      {
-        "key": "eligible_structure",
-        "openmrs_entity_parent": "",
-        "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "type": "native_radio",
-        "label": "1. Is this an eligible structure?",
-        "text_size": "8sp",
-        "options": [
-          {
-            "key": "yes",
-            "text": "Yes"
-          },
-          {
-            "key": "no",
-            "text": "No"
-          },
-          {
-            "key": "no_already_visited",
-            "text": "No; this structure is part of a household that was already visited"
-          }
-        ],
-        "v_required": {
-          "value": true,
-          "err": "Required field"
-        }
-      },
       {
         "key": "supervisor",
         "openmrs_entity_parent": "",
@@ -97,13 +69,7 @@
         "edit_type": "name",
         "text_size": "6sp",
         "editable": true,
-        "read_only": true,
-        "relevance": {
-          "step1:eligible_structure": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        }
+        "read_only": true
       },
       {
         "key": "date_label",
@@ -115,13 +81,7 @@
         "text_size": "13sp",
         "openmrs_entity_parent": "",
         "openmrs_entity": "",
-        "openmrs_entity_id": "",
-        "relevance": {
-          "step1:eligible_structure": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        }
+        "openmrs_entity_id": ""
       },
       {
         "key": "visit_date",
@@ -136,12 +96,6 @@
         "v_required": {
           "value": true,
           "err": "Please specify the date"
-        },
-        "relevance": {
-          "step1:eligible_structure": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
         }
       },
       {
@@ -156,18 +110,12 @@
           { "key": "no_adult", "text": "b. No appropriate adult available" },
           { "key": "no_one_home", "text": "c. No-one home" }
         ],
-        "v_required": { "value": "true", "err": "Required field" },
-        "relevance": {
-          "step1:eligible_structure": {
-            "type": "string",
-            "ex": "equalTo(., \"yes\")"
-          }
-        }
+        "v_required": { "value": "true", "err": "Required field" }
       },
       {
         "key": "explain_consent",
         "type": "label",
-        "text": "5. Field worker: Please explain consent form",
+        "text": "5. Field worker: Please explain the purpose of today’s visit, and confirm that the household respondent still consents to participation",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B90000",
@@ -190,8 +138,8 @@
         "type": "native_radio",
         "label": "6. Did the respondent consent to participation?",
         "options": [
-          { "key": "yes", "text": "a. Yes, consent form completed" },
-          { "key": "no", "text": "b. No, declined" }
+          { "key": "yes", "text": "a. Yes, participation agreed" },
+          { "key": "no", "text": "b. No, declined and wish to withdraw from study" }
         ],
         "v_required": { "value": "true", "err": "Required field" },
         "relevance": {
@@ -218,7 +166,16 @@
         "calculation": {
           "rules-engine": {
             "ex-rules": {
-              "rules-file": "sp_zm_durability_followup_calculation.yml"
+              "rules-dynamic": [
+                { "key": "step1_business_status" },
+                {
+                  "name": "step1_business_status",
+                  "description": "Business status calculation",
+                  "priority": 1,
+                  "condition": "true",
+                  "actions": "calculation = step1_eligible_person == 'no_adult' ? 'No appropriate adult available' : step1_eligible_person == 'no_one_home' ? 'No one home' : step1_respondent_consent == 'no' ? 'Refused' : step1_eligible_structure == 'no_already_visited' ? 'Not Eligible' : 'Not Visited'"
+                }
+              ]
             }
           }
         }
@@ -1220,7 +1177,7 @@
       {
         "key": "advise_label",
         "type": "label",
-        "text": "54. Fieldworker: Advise the respondent that the team will return to visit in approximately one month.",
+        "text": "54. Fieldworker: Advise the respondent that the team will return to visit in approximately three month.",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B90000",

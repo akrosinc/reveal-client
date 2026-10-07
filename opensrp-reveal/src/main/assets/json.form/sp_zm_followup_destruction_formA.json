@@ -1397,7 +1397,7 @@
       {
         "key": "advise_label",
         "type": "label",
-        "text": "31. Fieldworker: Advise the respondent that the team will return to visit in approximately one month.",
+        "text": "31. Fieldworker: Advise the respondent that the team will return to visit in approximately three month.",
         "read_only": false,
         "hint_on_text": true,
         "text_color": "#B90000",

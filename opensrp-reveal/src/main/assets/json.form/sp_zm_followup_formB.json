@@ -548,7 +548,7 @@
         "openmrs_entity": "",
         "openmrs_entity_id": "",
         "type": "native_radio",
-        "label": "19. Is this household part of the destructive sample?",
+        "label": "19.  Is this emanator part of the destructive sample?",
         "options": [
           { "key": "yes", "text": "Yes" },
           { "key": "no", "text": "No" }
