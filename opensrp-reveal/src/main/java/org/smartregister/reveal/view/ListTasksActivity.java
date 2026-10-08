@@ -113,11 +113,14 @@ import com.mapbox.pluginscalebar.ScaleBarOptions;
 import com.mapbox.pluginscalebar.ScaleBarPlugin;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.PlanDefinition;
+import org.smartregister.domain.PlanDefinitionSearch;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.Task;
@@ -128,6 +131,11 @@ import org.smartregister.receiver.SyncProgressBroadcastReceiver;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.reporting.view.ProgressIndicatorView;
+import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.repository.PlanDefinitionSearchRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
 import org.smartregister.reveal.application.RevealApplication;
@@ -183,7 +191,8 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.*;
 //        View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView, OnLocationComponentInitializedCallback, SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener, OnMapReadyCallback {
 public class ListTasksActivity extends BaseMapActivity implements ListTaskContract.ListTaskView,
         View.OnClickListener, SyncStatusBroadcastReceiver.SyncStatusListener, UserLocationView,
-        SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener {
+        SyncProgressBroadcastReceiver.SyncProgressListener, ValidateAssignmentReceiver.UserAssignmentListener
+{
     private ListTaskPresenter listTaskPresenter;
 
     private GeoJsonSource geoJsonSource;
@@ -303,6 +312,9 @@ public class ListTasksActivity extends BaseMapActivity implements ListTaskContra
         initializeCardViews();
 
         initializeToolbar();
+//        if (BuildConfig.DEBUG) {
+//            setupDummyPlanForTesting();
+//        }
     }
 
     @NonNull
@@ -572,34 +584,7 @@ protected void initializeScaleBarPlugin(MapboxMap mapboxMap) {
 
     }
 
-//    public void positionMyLocationAndLayerSwitcher() {
-//        FrameLayout.LayoutParams myLocationButtonParams = (FrameLayout.LayoutParams) myLocationButton.getLayoutParams();
-//        if (!List.of(Country.MALI, Country.ZAMBIA, Country.NAMIBIA, Country.SENEGAL, Country.RWANDA,
-//                        Country.SENEGAL_EN, Country.RWANDA_EN, Country.NIGERIA, Country.GDRS, Country.NIH)
-//                .contains(getBuildCountry())) {
-//            positionMyLocationAndLayerSwitcher(myLocationButtonParams, myLocationButtonParams.topMargin);
-//        } else {
-//            int progressHeight = getResources().getDimensionPixelSize(R.dimen.progress_height);
-//
-//            int bottomMargin = (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.mda || org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.survey_coverage) ? progressHeight + 40 : 40;
-//            positionMyLocationAndLayerSwitcher(myLocationButtonParams, bottomMargin);
-//
-//            if (layerSwitcherFab != null) {
-//                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) layerSwitcherFab.getLayoutParams();
-//                //position the layer selector above location button and with similar bottom margin
-//                if (org.smartregister.reveal.util.Utils.getInterventionLabel() == R.string.irs)
-//                    params.bottomMargin = myLocationButton.getMeasuredHeight() + progressHeight + 80;
-//                else
-//                    params.bottomMargin = myLocationButton.getMeasuredHeight() + bottomMargin + 40;
-//                //Make the layer selector is same size as my location button
-//                params.height = myLocationButton.getMeasuredHeight();
-//                params.width = myLocationButton.getMeasuredWidth();
-//                params.rightMargin = getResources().getDimensionPixelOffset(R.dimen.my_location_btn_margin);
-//                layerSwitcherFab.setScaleType(FloatingActionButton.ScaleType.CENTER);
-//                layerSwitcherFab.setLayoutParams(params);
-//            }
-//        }
-//    }
+
 public void positionMyLocationAndLayerSwitcher() {
     // Guard against null reference if the view hasn't been inflated yet
     if (myLocationButton == null) {
@@ -1101,16 +1086,7 @@ public void displaySelectedFeature(Feature feature, LatLng clickedPoint, double 
         }
     }
 
-//    @Override
-//    public void clearSelectedFeature() {
-//        if (selectedGeoJsonSource != null) {
-//            try {
-//                selectedGeoJsonSource.setGeoJson(new com.cocoahero.android.geojson.FeatureCollection().toJSON().toString());
-//            } catch (JSONException e) {
-//                Timber.tag("Reveal Exception").w(e, "Error clearing selected feature");
-//            }
-//        }
-//    }
+
 @Override
 public void clearSelectedFeature() {
     if (selectedGeoJsonSource != null) {
@@ -1157,12 +1133,7 @@ public void clearSelectedFeature() {
         }
     }
 
-//    private void initializeProgressDialog() {
-//        progressDialog = new ProgressDialog(this);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setTitle(R.string.fetching_structures_title);
-//        progressDialog.setMessage(getString(R.string.fetching_structures_message));
-//    }
+
 
     private void initializeProgressDialog() {
         progressDialog = new ProgressDialog(this);
@@ -1382,10 +1353,7 @@ public Location getUserCurrentLocation() {
         return jsonFormUtils;
     }
 
-//    @Override
-//    public void focusOnUserLocation(boolean focusOnUserLocation) {
-//        kujakuMapView.focusOnUserLocation(focusOnUserLocation, RenderMode.COMPASS);
-//    }
+
 @Override
 public void focusOnUserLocation(boolean focusOnUserLocation) {
     if (mMapboxMap != null) {
@@ -1835,7 +1803,6 @@ private class RefreshGeowidgetReceiver extends BroadcastReceiver {
         super.onLowMemory();
         if (mapView != null) mapView.onLowMemory();
     }
-
 
 
 }

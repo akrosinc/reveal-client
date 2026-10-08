@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -541,8 +542,19 @@ public class UserService {
     public void saveOrganizations(TeamMember teamMember) {
         if (teamMember != null && teamMember.team != null) {
             List<String> organizations = teamMember.team.organizationIds;
-            if (organizations != null && !organizations.isEmpty())
-                saveOrganizations(organizations);
+            // Original code:
+            // if (organizations != null && !organizations.isEmpty())
+            //     saveOrganizations(organizations);
+            if (organizations != null && !organizations.isEmpty()) {
+                Set<String> existing = fetchOrganizations();
+                if (existing != null && !existing.isEmpty()) {
+                    Set<String> merged = new HashSet<>(existing);
+                    merged.addAll(organizations);
+                    saveOrganizations(new ArrayList<>(merged));
+                } else {
+                    saveOrganizations(organizations);
+                }
+            }
         }
     }
 
@@ -552,6 +564,11 @@ public class UserService {
 
     public Set<String> fetchOrganizations() {
         String organizationIds = allSharedPreferences.getPreference(ORGANIZATION_IDS);
+        // Original code:
+        // return Arrays.stream(StringUtils.split(organizationIds, ",")).collect(Collectors.toSet());
+        if (StringUtils.isBlank(organizationIds)) {
+            return new HashSet<>();
+        }
         return Arrays.stream(StringUtils.split(organizationIds, ",")).collect(Collectors.toSet());
     }
 

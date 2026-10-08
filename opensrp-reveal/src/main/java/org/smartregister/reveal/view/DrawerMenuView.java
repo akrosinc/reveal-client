@@ -56,7 +56,8 @@ import org.smartregister.util.Utils;
 import timber.log.Timber;
 
 /** Created by samuelgithengi on 3/21/19. */
-public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.View {
+public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.View
+{
 
   private TextView planTextView;
   private TextView operationalAreaTextView;
@@ -465,7 +466,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
           PreferencesUtil.getInstance()
               .getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId()))) {
         AlertDialogUtils.displayNotification(
-            v.getContext(), R.string.action_not_available, R.string.action_not_available_message);
+            v.getContext(), R.string.action_not_available,                                                                                                                              R.string.action_not_available_message);
         return;
       }
 

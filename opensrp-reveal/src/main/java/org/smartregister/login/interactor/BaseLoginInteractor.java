@@ -6,6 +6,8 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
 import org.apache.commons.lang3.StringUtils;
@@ -124,12 +126,17 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     private void remoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml) {
-
+        String baseUrl = getSharedPreferences().fetchBaseURL("");
+        Log.d("loginResponse", " Checking remote login URL"+ baseUrl);
         try {
             if (getSharedPreferences().fetchBaseURL("").isEmpty()) {
+                Log.d("loginResponse", " Checking remote login URL in if"+ baseUrl);
+
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", "");
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
+                Log.d("loginResponse", " Checking remote login URL in else"+ baseUrl);
+
                 tryRemoteLogin(userName, password, accountAuthenticatorXml, loginResponse -> {
                     getLoginView().enableLoginButton(true);
                     if (loginResponse == LoginResponse.SUCCESS) {
@@ -153,9 +160,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 }
                             }
                     } else {
+
                         if (loginResponse == null) {
                             getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
                         } else {
+                            Log.d("loginResponse:", loginResponse.toString());
+                            Log.d("loginResponse:", loginResponse.message() + " " + loginResponse.payload());
                             if (loginResponse == NO_INTERNET_CONNECTIVITY) {
                                 getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
                             } else if (loginResponse == UNKNOWN_RESPONSE) {

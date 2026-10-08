@@ -78,6 +78,7 @@ import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -188,38 +189,85 @@ public class RevealApplication extends DrishtiApplication
 
 
     }
-
     private void loadRevealEnvironments() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
-                .build();
         RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                try (Response response = client.newCall(request).execute()) {
-                    final List<Environment> servers = new Gson()
-                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
-                            }.getType());
-
-                    if (BuildConfig.DEBUG) {
-                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080",
-                                "https://sso-uw.akros.digital",
-                                Country.GDRS);
-                        Environment environment = new Environment("LOCAL",environmentDetails);
-                        servers.add(environment);
+                List<Environment> servers = new ArrayList<>();
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER).build();
+                    try (Response response = client.newCall(request).execute()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Environment> remoteServers = new Gson().fromJson(
+                                    response.body().string(),
+                                    new TypeToken<List<Environment>>() {}.getType());
+                            if (remoteServers != null) {
+                                servers.addAll(remoteServers);
+                            }
+                        }
                     }
-                    Gson gson = new Gson();
-                    servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
-                    PreferencesUtil.getInstance()
-                            .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
-                                    Collectors.joining(",")));
                 } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w("failed to fetch envs...");
+                    Timber.tag("Reveal Exception").w("Failed to fetch remote envs, continuing with local configurations...");
+                }
+
+                if (BuildConfig.DEBUG) {
+                    EnvironmentDetails environmentDetails = new EnvironmentDetails(
+                            "http://10.0.2.2:8080",
+                            "https://sso-uw.akros.digital",
+                            Country.GDRS);
+                    servers.add(new Environment("LOCAL", environmentDetails));
+                }
+
+                EnvironmentDetails iqZmDetails = new EnvironmentDetails(
+                        "https://api-iq-zm.akros.digital",
+                        "https://sso-iq-zm.akros.digital",
+                        Country.ZAMBIA);
+                servers.add(new Environment("IQ_ZM", iqZmDetails));
+
+                Gson gson = new Gson();
+                servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
+                PreferencesUtil.getInstance()
+                        .setEnvironment("env_keys", servers.stream().map(Environment::getKey).collect(Collectors.joining(",")));
+
+                if (StringUtils.isBlank(context.allSharedPreferences().fetchBaseURL(""))) {
+                    PreferencesUtil.getInstance().setBaseURL("https://api-iq-zm.akros.digital");
+                    PreferencesUtil.getInstance().setBuildCountry(Country.ZAMBIA.toString());
                 }
             }
         });
-
     }
+//        private void loadRevealEnvironments() {
+//        OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
+//                .build();
+//        RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try (Response response = client.newCall(request).execute()) {
+//                    final List<Environment> servers = new Gson()
+//                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
+//                            }.getType());
+//
+//                    if (BuildConfig.DEBUG) {
+//                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080",
+//                        "https://sso-uw.akros.digital",
+//                        Country.GDRS);
+//                        Environment environment = new Environment("LOCAL",environmentDetails);
+//                        servers.add(environment);
+//                    }
+//                    Gson gson = new Gson();
+//                    servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
+//                    PreferencesUtil.getInstance()
+//                            .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
+//                                    Collectors.joining(",")));
+//                } catch (Exception e) {
+//                    Timber.tag("Reveal Exception").w("failed to fetch envs...");
+//                }
+//            }
+//        });
+//
+//    }
 
     /**
      * Removes the username and forces a remote login in case the username did not match the openmrs username

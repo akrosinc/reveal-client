@@ -28,7 +28,8 @@ import timber.log.Timber;
 import static org.smartregister.AllConstants.ROWID;
 
 
-public class StructureRepository extends LocationRepository {
+public class StructureRepository extends LocationRepository
+{
 
     public static String STRUCTURE_TABLE = "structure";
     protected static final String SYNC_STATUS = "sync_status";

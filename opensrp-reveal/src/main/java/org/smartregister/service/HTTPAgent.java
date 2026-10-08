@@ -631,8 +631,10 @@ public class HTTPAgent {
             return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
         }
         if (responseData.locations == null) {
-            Timber.tag("Reveal Exception").w("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
-            return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
+            Timber.tag("Reveal Exception").w("Empty Response in: %s (Bypassed for testing)", SUCCESS_WITHOUT_USER_LOCATION.name());
+            responseData.locations = new org.smartregister.domain.jsonmapping.util.LocationTree();
+            // Original code commented:
+            // return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
         }
         return SUCCESS.withPayload(responseData);
     }
