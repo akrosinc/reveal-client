@@ -7,12 +7,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.core.content.ContextCompat;
-
 import org.joda.time.DateTime;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.reveal.job.RevealWorkScheduler;
-import org.smartregister.reveal.job.ExtendedSyncWorker;
+import org.smartregister.job.ExtendedSyncServiceJob;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.DrishtiSyncScheduler;
 
@@ -30,6 +27,8 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
     public static final String ACTION_SYNC_STATUS = "sync_status";
     public static final String EXTRA_FETCH_STATUS = "fetch_status";
     public static final String EXTRA_COMPLETE_STATUS = "complete_status";
+    private long lastExtendedSyncTriggerTime = 0;
+    private static final long EXTENDED_SYNC_COOLDOWN_MS = 60_000; // 60s cooldown
 
     private static SyncStatusBroadcastReceiver singleton;
     private final ArrayList<SyncStatusListener> syncStatusListeners;
@@ -46,9 +45,8 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
         }
 
         singleton = new SyncStatusBroadcastReceiver();
-        ContextCompat.registerReceiver(context, singleton,
-                new IntentFilter(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS),
-                ContextCompat.RECEIVER_NOT_EXPORTED);
+        context.registerReceiver(singleton,
+                new IntentFilter(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS));
     }
 
     public static void destroy(Context context) {
@@ -158,10 +156,18 @@ private void complete(FetchStatus fetchStatus, Context context) {
     }
 }
 
-    protected void startExtendedSync() {
-        RevealWorkScheduler.scheduleJobImmediately(ExtendedSyncWorker.TAG);
+//    protected void startExtendedSync() {
+//        ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);
+//    }
+protected void startExtendedSync() {
+    long now = System.currentTimeMillis();
+    if (now - lastExtendedSyncTriggerTime < EXTENDED_SYNC_COOLDOWN_MS) {
+        Log.d("SYNC_TRACE_RVL", "SKIPPING_EXTENDED_SYNC — triggered too recently, avoiding collision with prior cycle");
+        return;
     }
-
+    lastExtendedSyncTriggerTime = now;
+    ExtendedSyncServiceJob.scheduleJobImmediately(ExtendedSyncServiceJob.TAG);
+}
     public interface SyncStatusListener {
         void onSyncStart();
 

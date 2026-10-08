@@ -15,6 +15,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
 import org.smartregister.util.PropertiesConverter;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -369,5 +370,31 @@ public class LocationRepository extends BaseRepository {
 
         return getLocationsByIds(locationIds);
     }
-
+    public void addOrUpdateBatched(List<Location> locations) {
+        if (Utils.isEmptyCollection(locations)) {
+            return;
+        }
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (Location location : locations) {
+                if (StringUtils.isBlank(location.getId())) {
+                    continue; // skip invalid entries instead of throwing mid-batch
+                }
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(ID, location.getId());
+                contentValues.put(UUID, location.getProperties().getUid());
+                contentValues.put(PARENT_ID, location.getProperties().getParentId());
+                contentValues.put(NAME, location.getProperties().getName());
+                contentValues.put(GEOJSON, gson.toJson(location));
+                contentValues.put(SYNC_STATUS, location.getSyncStatus());
+                db.replace(getLocationTableName(), null, contentValues);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Timber.tag("Reveal Exception").w(e, "Error batch inserting locations");
+        } finally {
+            db.endTransaction();
+        }
+    }
 }

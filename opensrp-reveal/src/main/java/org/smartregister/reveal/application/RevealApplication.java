@@ -17,6 +17,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.evernote.android.job.JobManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
@@ -32,10 +33,13 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.commonregistry.CommonFtsObject;
-//import org.smartregister.configurableviews.ConfigurableViewsLibrary;
-//import org.smartregister.configurableviews.helper.JsonSpecHelper;
+import org.smartregister.configurableviews.ConfigurableViewsLibrary;
+import org.smartregister.configurableviews.helper.JsonSpecHelper;
 import org.smartregister.domain.Setting;
 import org.smartregister.dto.UserAssignmentDTO;
+import org.smartregister.family.FamilyLibrary;
+import org.smartregister.family.activity.FamilyWizardFormActivity;
+import org.smartregister.family.domain.FamilyMetadata;
 import org.smartregister.family.util.DBConstants;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
@@ -54,6 +58,7 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.activity.LoginActivity;
 import org.smartregister.reveal.activity.ReadableJsonWizardFormActivity;
+import org.smartregister.reveal.job.RevealJobCreator;
 import org.smartregister.reveal.model.Environment;
 import org.smartregister.reveal.model.EnvironmentDetails;
 import org.smartregister.reveal.repository.RevealRepository;
@@ -66,12 +71,14 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.reveal.util.RevealSyncConfiguration;
 import org.smartregister.reveal.util.Utils;
+import org.smartregister.reveal.view.FamilyProfileActivity;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.receiver.TimeChangedBroadcastReceiver;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +96,7 @@ public class RevealApplication extends DrishtiApplication
 
 {
 
-//    private JsonSpecHelper jsonSpecHelper;
+    private JsonSpecHelper jsonSpecHelper;
 
     private char[] password;
 
@@ -107,7 +114,7 @@ public class RevealApplication extends DrishtiApplication
 
     private FeatureCollection featureCollection;
 
-
+    private FamilyMetadata metadata;
 
     private Feature operationalArea;
     private boolean synced;
@@ -116,9 +123,9 @@ public class RevealApplication extends DrishtiApplication
         return (RevealApplication) mInstance;
     }
 
-//    public static JsonSpecHelper getJsonSpecHelper() {
-//        return getInstance().jsonSpecHelper;
-//    }
+    public static JsonSpecHelper getJsonSpecHelper() {
+        return getInstance().jsonSpecHelper;
+    }
 
     @Override
     public void onCreate() {
@@ -157,18 +164,21 @@ public class RevealApplication extends DrishtiApplication
         } else {
             CoreLibrary.getInstance().setEcClientFieldsFile(Constants.ECClientConfig.ZAMBIA_EC_CLIENT_FIELDS);
         }
-//        ConfigurableViewsLibrary.init(context);
-//        FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
+        ConfigurableViewsLibrary.init(context);
+        FamilyLibrary.init(context, getMetadata(), BuildConfig.VERSION_CODE, BuildConfig.DATABASE_VERSION);
 
         LocationHelper.init(Utils.ALLOWED_LEVELS, Utils.DEFAULT_LOCATION_LEVEL);
 
         SyncStatusBroadcastReceiver.init(this);
         Log.d("SYNC_TRACE", "SYNC_STATUS_RECEIVER_INIT_DONE t=" + System.currentTimeMillis());
-//        jsonSpecHelper = new JsonSpecHelper(this);
+        jsonSpecHelper = new JsonSpecHelper(this);
         serverConfigs = new HashMap<>();
 
         Mapbox.getInstance(getApplicationContext(), BuildConfig.MAPBOX_SDK_ACCESS_TOKEN);
 
+        //init Job Manager
+        JobManager.create(this).addJobCreator(new RevealJobCreator());
+        Log.d("SYNC_TRACE", "JOB_MANAGER_CREATED t=" + System.currentTimeMillis());
         LangUtils.setLanguage(getApplicationContext());
         NativeFormLibrary.getInstance()
                 .setClientFormDao(CoreLibrary.getInstance().context().getClientFormRepository());
@@ -179,38 +189,85 @@ public class RevealApplication extends DrishtiApplication
 
 
     }
-
     private void loadRevealEnvironments() {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
-                .build();
         RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                try (Response response = client.newCall(request).execute()) {
-                    final List<Environment> servers = new Gson()
-                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
-                            }.getType());
-
-                    if (BuildConfig.DEBUG) {
-                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080",
-                                "https://sso-uw.akros.digital",
-                                Country.GDRS);
-                        Environment environment = new Environment("LOCAL",environmentDetails);
-                        servers.add(environment);
+                List<Environment> servers = new ArrayList<>();
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER).build();
+                    try (Response response = client.newCall(request).execute()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Environment> remoteServers = new Gson().fromJson(
+                                    response.body().string(),
+                                    new TypeToken<List<Environment>>() {}.getType());
+                            if (remoteServers != null) {
+                                servers.addAll(remoteServers);
+                            }
+                        }
                     }
-                    Gson gson = new Gson();
-                    servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
-                    PreferencesUtil.getInstance()
-                            .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
-                                    Collectors.joining(",")));
                 } catch (Exception e) {
-                    Timber.tag("Reveal Exception").w("failed to fetch envs...");
+                    Timber.tag("Reveal Exception").w("Failed to fetch remote envs, continuing with local configurations...");
+                }
+
+                if (BuildConfig.DEBUG) {
+                    EnvironmentDetails environmentDetails = new EnvironmentDetails(
+                            "http://10.0.2.2:8080",
+                            "https://sso-uw.akros.digital",
+                            Country.GDRS);
+                    servers.add(new Environment("LOCAL", environmentDetails));
+                }
+
+                EnvironmentDetails iqZmDetails = new EnvironmentDetails(
+                        "https://api-iq-zm.akros.digital",
+                        "https://sso-iq-zm.akros.digital",
+                        Country.ZAMBIA);
+                servers.add(new Environment("IQ_ZM", iqZmDetails));
+
+                Gson gson = new Gson();
+                servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
+                PreferencesUtil.getInstance()
+                        .setEnvironment("env_keys", servers.stream().map(Environment::getKey).collect(Collectors.joining(",")));
+
+                if (StringUtils.isBlank(context.allSharedPreferences().fetchBaseURL(""))) {
+                    PreferencesUtil.getInstance().setBaseURL("https://api-iq-zm.akros.digital");
+                    PreferencesUtil.getInstance().setBuildCountry(Country.ZAMBIA.toString());
                 }
             }
         });
-
     }
+//        private void loadRevealEnvironments() {
+//        OkHttpClient client = new OkHttpClient();
+//        Request request = new Request.Builder().get().url(BuildConfig.CONFIG_SERVER)
+//                .build();
+//        RevealApplication.getInstance().getAppExecutors().networkIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try (Response response = client.newCall(request).execute()) {
+//                    final List<Environment> servers = new Gson()
+//                            .fromJson(response.body().string(), new TypeToken<List<Environment>>() {
+//                            }.getType());
+//
+//                    if (BuildConfig.DEBUG) {
+//                        EnvironmentDetails environmentDetails = new EnvironmentDetails("http://10.0.2.2:8080",
+//                        "https://sso-uw.akros.digital",
+//                        Country.GDRS);
+//                        Environment environment = new Environment("LOCAL",environmentDetails);
+//                        servers.add(environment);
+//                    }
+//                    Gson gson = new Gson();
+//                    servers.forEach(server -> PreferencesUtil.getInstance().setEnvironment(server.getKey(), gson.toJson(server.getData())));
+//                    PreferencesUtil.getInstance()
+//                            .setEnvironment("env_keys", servers.stream().map(s -> s.getKey()).collect(
+//                                    Collectors.joining(",")));
+//                } catch (Exception e) {
+//                    Timber.tag("Reveal Exception").w("failed to fetch envs...");
+//                }
+//            }
+//        });
+//
+//    }
 
     /**
      * Removes the username and forces a remote login in case the username did not match the openmrs username
@@ -343,56 +400,56 @@ public class RevealApplication extends DrishtiApplication
         return serverConfigs;
     }
 
-//    public FamilyMetadata getMetadata() {
-//
-//        if (metadata != null) {
-//            return metadata;
-//        }
-//
-//        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
-//                FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
-//
-//        if (getBuildCountry() == Country.THAILAND) {
-//            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-//            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-//        } else if (getBuildCountry() == Country.ZAMBIA) {
-//            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-//            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-//        } else if (getBuildCountry() == Country.REFAPP) {
-//            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-//            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-//        } else if (getBuildCountry() == Country.NIGERIA) {
-//            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
-//                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
-//                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
-//            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-//        } else {
-//            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION,
-//                    EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD,
-//                    RELATIONSHIP.PRIMARY_CAREGIVER);
-//            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
-//                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
-//                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
-//        }
-//        metadata.updateFamilyDueRegister(TABLE_NAME.FAMILY_MEMBER, 20, true);
-//        metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
-//        metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
-//        return metadata;
-//    }
+    public FamilyMetadata getMetadata() {
+
+        if (metadata != null) {
+            return metadata;
+        }
+
+        metadata = new FamilyMetadata(FamilyWizardFormActivity.class, ReadableJsonWizardFormActivity.class,
+                FamilyProfileActivity.class, CONFIGURATION.UNIQUE_ID_KEY, true);
+
+        if (getBuildCountry() == Country.THAILAND) {
+            metadata.updateFamilyRegister(JSON_FORM.THAILAND_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.THAILAND_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.ZAMBIA) {
+            metadata.updateFamilyRegister(JSON_FORM.ZAMBIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.ZAMBIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.REFAPP) {
+            metadata.updateFamilyRegister(JSON_FORM.REFAPP_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.REFAPP_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else if (getBuildCountry() == Country.NIGERIA) {
+            metadata.updateFamilyRegister(JSON_FORM.NIGERIA_FAMILY_REGISTER, TABLE_NAME.FAMILY,
+                    EventType.FAMILY_REGISTRATION, EventType.UPDATE_FAMILY_REGISTRATION,
+                    CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD, RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.NIGERIA_FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        } else {
+            metadata.updateFamilyRegister(JSON_FORM.FAMILY_REGISTER, TABLE_NAME.FAMILY, EventType.FAMILY_REGISTRATION,
+                    EventType.UPDATE_FAMILY_REGISTRATION, CONFIGURATION.FAMILY_REGISTER, RELATIONSHIP.FAMILY_HEAD,
+                    RELATIONSHIP.PRIMARY_CAREGIVER);
+            metadata.updateFamilyMemberRegister(JSON_FORM.FAMILY_MEMBER_REGISTER, TABLE_NAME.FAMILY_MEMBER,
+                    EventType.FAMILY_MEMBER_REGISTRATION, EventType.UPDATE_FAMILY_MEMBER_REGISTRATION,
+                    CONFIGURATION.FAMILY_MEMBER_REGISTER, RELATIONSHIP.FAMILY);
+        }
+        metadata.updateFamilyDueRegister(TABLE_NAME.FAMILY_MEMBER, 20, true);
+        metadata.updateFamilyActivityRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
+        metadata.updateFamilyOtherMemberRegister(TABLE_NAME.FAMILY_MEMBER, Integer.MAX_VALUE, false);
+        return metadata;
+    }
 
     @NonNull
     private Country getBuildCountry() {

@@ -15,7 +15,8 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AllSharedPreferences {
+public class AllSharedPreferences
+{
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
     public static final String ANM_IDENTIFIER_SET_PREFERENCE_KEY = "anmIdentifierSet";
     private static final String HOST = "HOST";

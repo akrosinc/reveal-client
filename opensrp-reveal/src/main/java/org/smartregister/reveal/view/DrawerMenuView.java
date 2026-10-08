@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.Intervention.LSM;
 import static org.smartregister.util.SyncUtils.setAllEntityNotSynced;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -38,6 +39,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.reporting.view.ProgressIndicatorView;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.reveal.BuildConfig;
 import org.smartregister.reveal.R;
@@ -54,7 +56,8 @@ import org.smartregister.util.Utils;
 import timber.log.Timber;
 
 /** Created by samuelgithengi on 3/21/19. */
-public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.View {
+public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.View
+{
 
   private TextView planTextView;
   private TextView operationalAreaTextView;
@@ -252,16 +255,7 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
     }
 
     headerView.findViewById(R.id.logout_button).setOnClickListener(this);
-    View syncButton = headerView.findViewById(R.id.sync_button);
-    syncButton.setOnClickListener(this);
-    syncButton.setOnLongClickListener(
-        new View.OnLongClickListener() {
-          @Override
-          public boolean onLongClick(View v) {
-            confirmRestartSync();
-            return true;
-          }
-        });
+    headerView.findViewById(R.id.sync_button).setOnClickListener(this);
 
     districtTextView.setOnLongClickListener(
         new View.OnLongClickListener() {
@@ -472,48 +466,38 @@ public class DrawerMenuView implements View.OnClickListener, BaseDrawerContract.
           PreferencesUtil.getInstance()
               .getInterventionTypeForPlan(PreferencesUtil.getInstance().getCurrentPlanId()))) {
         AlertDialogUtils.displayNotification(
-            v.getContext(), R.string.action_not_available, R.string.action_not_available_message);
+            v.getContext(), R.string.action_not_available,                                                                                                                              R.string.action_not_available_message);
         return;
       }
 
       startOtherFormsActivity();
     } else if (v.getId() == R.id.btn_navMenu_offline_maps) presenter.onShowOfflineMaps();
     else if (v.getId() == R.id.btn_navMenu_filled_forms) presenter.onShowFilledForms();
+//    else if (v.getId() == R.id.sync_button) {
+//      resetProgressIndicators();
+//      toggleProgressBarView(true);
+//      org.smartregister.reveal.util.Utils.startImmediateSync();
+//      closeDrawerLayout();
+//    }
     else if (v.getId() == R.id.sync_button) {
-      // Only reset indicators / show the progress bar when a sync actually starts. If a sync is
-      // already in progress, startImmediateSync() returns false (and shows a message), so we must
-      // not wipe the in-flight progress indicators.
-      if (org.smartregister.reveal.util.Utils.startImmediateSync()) {
-        resetProgressIndicators();
+      Context context = getContext();
+
+      // Check the concurrency guard directly using AllSharedPreferences
+      AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+      if (allSharedPreferences.fetchIsSyncInProgress()) {
+        Toast.makeText(context, "Sync is already in progress", Toast.LENGTH_SHORT).show();
+      } else {
+        // Toggle the progress bar view
         toggleProgressBarView(true);
+
+        org.smartregister.reveal.util.Utils.startImmediateSync();
+        closeDrawerLayout();
       }
-      closeDrawerLayout();
-    } else if (v.getId() == R.id.btn_link_dashboard) {
+    }
+    else if (v.getId() == R.id.btn_link_dashboard) {
       String dashboardURL = getBaseUrl().replace("api", "reveal");
       getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(dashboardURL)));
     }
-  }
-
-  /**
-   * Shows a confirmation dialog before forcing a sync restart. Triggered by a long-press on the
-   * Sync button so a running sync can be deliberately cancelled and restarted.
-   */
-  private void confirmRestartSync() {
-    AlertDialogUtils.displayNotificationWithCallback(
-        getContext(),
-        R.string.restart_sync_title,
-        R.string.restart_sync_message,
-        R.string.restart_sync_confirm,
-        R.string.cancel,
-        (dialog, which) -> {
-          if (which == DialogInterface.BUTTON_POSITIVE) {
-            resetProgressIndicators();
-            toggleProgressBarView(true);
-            org.smartregister.reveal.util.Utils.forceRestartSync();
-            closeDrawerLayout();
-          }
-          dialog.dismiss();
-        });
   }
 
   @Override

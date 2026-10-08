@@ -40,8 +40,8 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.reveal.job.RevealWorkScheduler;
-import org.smartregister.reveal.job.HdssWorker;
+import org.smartregister.job.HdssServiceJob;
+import org.smartregister.job.SyncServiceJob;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
@@ -102,72 +102,115 @@ public class SyncIntentService extends BaseSyncIntentService {
         super.onHandleIntent(intent);
         handleSync();
     }
-
-    /**
-     * Entry point for WorkManager workers. Runs the full sync synchronously on the
-     * caller's (worker) thread without going through the {@link android.app.IntentService}
-     * lifecycle or a background {@code startService()}. The supplied application
-     * {@link Context} is attached as the base context so the existing
-     * {@code Context}-dependent logic (broadcasts, string lookups, sync utils) works
-     * unchanged.
-     *
-     * @param appContext the application context provided by the Worker
-     */
-    public void runSync(@NonNull Context appContext) {
-        if (getBaseContext() == null) {
-            attachBaseContext(appContext);
-        }
-        init(appContext);
-        super.onHandleIntent(new Intent());
-        handleSync();
-    }
-
     protected void handleSync() {
+        fetchedRecords = 0;  // fixes the 127%/158% overshoot — resets the accumulator every cycle
+        totalRecords = 0;
         sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
 
-        doSync();
+        boolean eventsSyncRan = doSync();
 
-        (new AppExecutors()).mainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                RevealWorkScheduler.scheduleJobImmediately(HdssWorker.TAG);
-            }
-        });
-    }
-
-    private void doSync() {
-        if (!NetworkUtils.isNetworkAvailable()) {
-            complete(FetchStatus.noConnection);
-            return;
-        }
-
-        try {
-            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
-            boolean isSuccessfulPushSync = false;
-            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
-                isSuccessfulPushSync = pushToServer();
-            }
-
-            if (!hasValidAuthorization) {
-                syncUtils.logoutUser();
-            } else if (!syncUtils.isAppVersionAllowed()) {
-                if (isSuccessfulPushSync) {
-                    syncUtils.logoutUser();
-                } else {
-                    return;
+        if (eventsSyncRan) {
+            (new AppExecutors()).mainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
                 }
-            } else {
-                pullECFromServer();
-
-
-
-            }
-        } catch (Exception e) {
-            Timber.tag("Reveal Exception").w(e);
-            complete(FetchStatus.fetchedFailed);
+            });
+        } else {
+            Log.d("SYNC_TRACE_RVL", "SKIPPING_HDSS — events sync did not complete successfully (no network, auth failure, or exception)");
         }
     }
+    // In SyncIntentService.java, NOT LocationTaskIntentService.java
+//    protected void handleSync() {
+//        fetchedRecords = 0;
+//        totalRecords = 0;
+//        sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
+//
+//        doSync();
+//
+//        (new AppExecutors()).mainThread().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+//            }
+//        });
+//    }
+//    protected void handleSync() {
+//        sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
+//
+//        doSync();
+//
+//        (new AppExecutors()).mainThread().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                SyncServiceJob.scheduleJobImmediately(HdssServiceJob.TAG);
+//            }
+//        });
+//    }
 
+//    private void doSync() {
+//        if (!NetworkUtils.isNetworkAvailable()) {
+//            complete(FetchStatus.noConnection);
+//            return;
+//        }
+//
+//        try {
+//            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+//            boolean isSuccessfulPushSync = false;
+//            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+//                isSuccessfulPushSync = pushToServer();
+//            }
+//
+//            if (!hasValidAuthorization) {
+//                syncUtils.logoutUser();
+//            } else if (!syncUtils.isAppVersionAllowed()) {
+//                if (isSuccessfulPushSync) {
+//                    syncUtils.logoutUser();
+//                } else {
+//                    return;
+//                }
+//            } else {
+//                pullECFromServer();
+//
+//
+//
+//            }
+//        } catch (Exception e) {
+//            Timber.tag("Reveal Exception").w(e);
+//            complete(FetchStatus.fetchedFailed);
+//        }
+//    }
+private boolean doSync() {
+    if (!NetworkUtils.isNetworkAvailable()) {
+        complete(FetchStatus.noConnection);
+        return false;
+    }
+
+    try {
+        boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+        boolean isSuccessfulPushSync = false;
+        if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+            isSuccessfulPushSync = pushToServer();
+        }
+
+        if (!hasValidAuthorization) {
+            syncUtils.logoutUser();
+            return false;
+        } else if (!syncUtils.isAppVersionAllowed()) {
+            if (isSuccessfulPushSync) {
+                syncUtils.logoutUser();
+            }
+            return false;
+        } else {
+            pullECFromServer();
+            return true;
+        }
+    } catch (Exception e) {
+        Timber.tag("Reveal Exception").w(e);
+        complete(FetchStatus.fetchedFailed);
+        return false;
+    }
+}
     protected void pullECFromServer() {
         fetchRetry(0, true);
     }
@@ -390,7 +433,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
-        
+
         //sync time not update if sync is fail
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);

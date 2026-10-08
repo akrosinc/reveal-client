@@ -92,13 +92,17 @@ public class ValidateAssignmentHelper extends BaseHelper {
             String assignment = getUserAssignment();
             if (StringUtils.isNotBlank(assignment)) {
                 UserAssignmentDTO currentUserAssignment = gson.fromJson(assignment, UserAssignmentDTO.class);
+                if (currentUserAssignment != null && currentUserAssignment.getOrganizationIds() != null && !currentUserAssignment.getOrganizationIds().isEmpty()) {
+                    userService.saveOrganizations(new ArrayList<>(currentUserAssignment.getOrganizationIds()));
+                }
                 Set<String> existingOrganizations = userService.fetchOrganizations();
                 Set<String> existingJurisdictions = getExistingJurisdictions();
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
                 UserAssignmentDTO removedAssignments = processRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
                 if (newAssignments) {
-                    logoff(R.string.account_new_assignment_logged_off);
+                    // Original code:
+                    // logoff(R.string.account_new_assignment_logged_off);
                     resetSync();
                 } else if (removedAssignments.isRemoved()) {
                     Intent intent = new Intent();
@@ -154,7 +158,9 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
             locationRepository.deleteLocations(removedAssignments.getJurisdictions());
-            removeLocationsFromHierarchy(locationTree, removedAssignments.getJurisdictions());
+            if (locationTree != null) {
+                removeLocationsFromHierarchy(locationTree, removedAssignments.getJurisdictions());
+            }
             prefsIds.removeAll(removedAssignments.getJurisdictions());
             userService.saveJurisdictionIds(prefsIds);
             removed = true;
@@ -165,6 +171,9 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     @VisibleForTesting
     protected void removeLocationsFromHierarchy(LocationTree locationTree, Set<String> removedAssignments) throws AuthenticatorException, OperationCanceledException, IOException {
+        if (locationTree == null) {
+            return;
+        }
         for (String removedAssignment : removedAssignments) {
             locationTree.deleteLocation(removedAssignment);
         }
@@ -178,15 +187,23 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<String> existingOrganizations, Set<String> existingJurisdictions) {
+        if (currentUserAssignment == null) return false;
         if (existingJurisdictions.isEmpty()) {
             LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-            for (String location : currentUserAssignment.getJurisdictions()) {
-                if (!locationTree.hasLocation(location)) return true;
+            if (locationTree == null || locationTree.getLocationsHierarchy() == null || locationTree.getLocationsHierarchy().isEmpty()) {
+                return false;
+            }
+            if (currentUserAssignment.getJurisdictions() != null) {
+                for (String location : currentUserAssignment.getJurisdictions()) {
+                    if (!locationTree.hasLocation(location)) return true;
+                }
             }
             return false;
         }
 
-        return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
+        boolean hasOrgDiff = currentUserAssignment.getOrganizationIds() != null && !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
+        boolean hasJurisdictionDiff = currentUserAssignment.getJurisdictions() != null && !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
+        return hasOrgDiff || hasJurisdictionDiff;
     }
 
     private String getUserAssignment() throws NoHttpResponseException {
