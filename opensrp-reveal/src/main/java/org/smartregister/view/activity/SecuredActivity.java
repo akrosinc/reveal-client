@@ -2,8 +2,6 @@ package org.smartregister.view.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-
-import androidx.core.content.ContextCompat;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -101,7 +99,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         }
 
         onResumption();
-
+        setupReplicationBroadcastReceiver();
 
         if (CoreLibrary.getInstance().getP2POptions() != null
                 && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
@@ -226,6 +224,41 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         return this.metaData != null && !this.metaData.equalsIgnoreCase("undefined");
     }
 
+    /**
+     * Called by CloudantSyncHandler when it receives a replication complete callback.
+     * CloudantSyncHandler takes care of calling this on the main thread.
+     */
+    public void replicationComplete() {
+        //Toast.makeText(getApplicationContext(), "Replication Complete", Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Called by TasksModel when it receives a replication error callback.
+     * TasksModel takes care of calling this on the main thread.
+     */
+    public void replicationError() {
+        Timber.tag("Reveal Exception").w(LOG_TAG, "error()");
+        //Toast.makeText(getApplicationContext(), "Replication Error", Toast.LENGTH_LONG).show();
+    }
+
+    private void setupReplicationBroadcastReceiver() {
+        // The filter's action is BROADCAST_ACTION
+        IntentFilter opensrpClientIntentFilter = new IntentFilter(
+                CloudantSync.ACTION_DATABASE_CREATED);
+        opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
+        opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
+
+        openSRPClientBroadCastReceiver = new OpenSRPClientBroadCastReceiver(this);
+        // Registers the OpenSRPClientBroadCastReceiver and its intent filters
+        registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
+    }
+
+    public void showToast(String message) {
+        Utils.showToast(this, message);
+    }
 
     protected Context context() {
         return CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());

@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
@@ -30,9 +31,11 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
+import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.reveal.api.RevealService;
 import org.smartregister.reveal.util.FirebaseLogger;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -109,6 +112,32 @@ public class PlanIntentServiceHelper extends BaseHelper {
             Long maxServerVersion = 0l;
 
             String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+            try {
+                String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+                if (baseUrl.endsWith("/")) {
+                    baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                }
+                Response<String> resp = getHttpAgent().fetch(baseUrl + RevealService.USER_ASSIGNMENT_URL);
+                if (resp != null && !resp.isFailure() && StringUtils.isNotBlank(resp.payload())) {
+                    UserAssignmentDTO userAssignment = gson.fromJson(resp.payload(), UserAssignmentDTO.class);
+                    if (userAssignment != null && userAssignment.getOrganizationIds() != null && !userAssignment.getOrganizationIds().isEmpty()) {
+                        String refreshedOrgIds = StringUtils.join(userAssignment.getOrganizationIds(), ",");
+                        if (!refreshedOrgIds.equals(organizationIds)) {
+                            serverVersion = 0;
+                            allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, "0");
+                            organizationIds = refreshedOrgIds;
+                            allSharedPreferences.savePreference(AllConstants.ORGANIZATION_IDS, organizationIds);
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                Timber.tag("Reveal Exception").w(ex, "Failed to refresh organization IDs from user-assignment");
+            }
+
+            if (planDefinitionRepository.findAllPlanDefinitions().size() < 2 && serverVersion > 0) {
+                serverVersion = 0;
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, "0");
+            }
 
             startPlanTrace(FETCH);
 
@@ -166,8 +195,17 @@ public class PlanIntentServiceHelper extends BaseHelper {
         }
         request.put("serverVersion", serverVersion);
 
+//        if (httpAgent == null) {
+//            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+//            throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
+//        }
+
         if (httpAgent == null) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            // REMOVED: context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            // Firing completeSync() here clears isSyncInProgress and triggers onSyncComplete()
+            // for every listener while Locations/Tasks may still be running. doSync()'s own
+            // try/catch already handles this failure — let the pipeline's true terminal point
+            // decide when sync is actually complete.
             throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
         }
 
@@ -177,8 +215,13 @@ public class PlanIntentServiceHelper extends BaseHelper {
                         SYNC_PLANS_URL),
                 request.toString());
 
+//        if (resp.isFailure()) {
+//            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+//            FirebaseLogger.logApiFailures(request.toString(), resp);
+//            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+//        }
         if (resp.isFailure()) {
-            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            // REMOVED: context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             FirebaseLogger.logApiFailures(request.toString(), resp);
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }

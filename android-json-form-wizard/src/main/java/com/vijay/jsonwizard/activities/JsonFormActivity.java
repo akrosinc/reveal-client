@@ -305,7 +305,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 String[] address = addressString.split(":");
                 try {
                     JSONObject viewData = getObjectUsingAddress(address, popup);
-                    if (viewData != null && viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
+                    if (viewData.has(JsonFormConstants.HIDDEN) && viewData.getBoolean(JsonFormConstants.HIDDEN)) {
                         toggleViewVisibility(curView, false, popup);
                     }
                 } catch (JSONException e) {
@@ -441,33 +441,34 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                 if (view.getTag(R.id.extraPopup) != null) {
                     isPopup = (boolean) view.getTag(R.id.extraPopup);
                 }
-
-                if (calculation) {
-                    Pair<String[], JSONObject> addressAndValue = getCalculationAddressAndValue(view);
-                    if (addressAndValue != null) {
-                        registerDependency(view, addressAndValue.first, dependencyMap);
+                Pair<String[], JSONObject> addressAndValue = calculation ? getCalculationAddressAndValue(view) :
+                        getRelevanceAddress(view, isPopup);
+                if (addressAndValue != null) {
+                    String[] address = addressAndValue.first;
+                    List<String> widgets = null;
+                    if (address.length > 2) {
+                        if (RuleConstant.RULES_DYNAMIC.equals(address[0])) {
+                            widgets = getDynamicRules(address);
+                        } else {
+                            widgets = getRules(address[1], address[2], true);
+                        }
+                    } else if (address.length == 2) {
+                        widgets = Arrays.asList(address[0] + "_" + address[1]);
                     }
-                } else {
-                    // For relevance: register dependencies for ALL keys (multi-key AND support)
-                    String relevanceTag = (String) view.getTag(R.id.relevance);
-                    Object addressTag = view.getTag(R.id.address);
-                    Object extraPopupTag = view.getTag(R.id.extraPopup);
-                    if (relevanceTag != null && relevanceTag.length() > 0 && addressTag != null && extraPopupTag != null) {
-                        boolean widgetDisplay = (boolean) extraPopupTag;
-                        if (widgetDisplay == isPopup) {
-                            String widgetKey = (String) view.getTag(R.id.key);
-                            String stepName = ((String) addressTag).split(":")[0];
-                            JSONObject relevance = new JSONObject(relevanceTag);
-                            Iterator<String> keys = relevance.keys();
-                            while (keys.hasNext()) {
-                                String curKey = keys.next();
-                                JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
-                                // Each key references a different field — derive address from curKey directly
-                                String[] address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
-                                if (address != null) {
-                                    registerDependency(view, address, dependencyMap);
-                                }
-                            }
+
+                    if (widgets == null)
+                        continue;
+                    for (String widget : widgets) {
+                        if (!widget.startsWith(RuleConstant.STEP)) {
+                            continue;
+                        }
+                        String key = (String) view.getTag(R.id.address);
+                        if (!dependencyMap.containsKey(widget)) {
+                            Set<String> views = new HashSet<>();
+                            views.add(key);
+                            dependencyMap.put(widget, views);
+                        } else {
+                            dependencyMap.get(widget).add(key);
                         }
                     }
                 }
@@ -476,35 +477,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
             }
         }
 
-    }
-
-    private void registerDependency(View view, String[] address, Map<String, Set<String>> dependencyMap) throws JSONException {
-        List<String> widgets = null;
-        if (address.length > 2) {
-            if (RuleConstant.RULES_DYNAMIC.equals(address[0])) {
-                widgets = getDynamicRules(address);
-            } else {
-                widgets = getRules(address[1], address[2], true);
-            }
-        } else if (address.length == 2) {
-            widgets = Arrays.asList(address[0] + "_" + address[1]);
-        }
-
-        if (widgets == null)
-            return;
-        for (String widget : widgets) {
-            if (!widget.startsWith(RuleConstant.STEP)) {
-                continue;
-            }
-            String key = (String) view.getTag(R.id.address);
-            if (!dependencyMap.containsKey(widget)) {
-                Set<String> views = new HashSet<>();
-                views.add(key);
-                dependencyMap.put(widget, views);
-            } else {
-                dependencyMap.get(widget).add(key);
-            }
-        }
     }
 
     @Override
@@ -1222,93 +1194,34 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     protected void addRelevance(View view, boolean popup, boolean isForNextStep) {
         try {
-            String viewKey = (String) view.getTag(R.id.key);
-            String relevanceTag = (String) view.getTag(R.id.relevance);
-            Object addressTag = view.getTag(R.id.address);
-            Object extraPopupTag = view.getTag(R.id.extraPopup);
-
-            if (relevanceTag == null || relevanceTag.length() == 0 || addressTag == null || extraPopupTag == null) {
-                return;
-            }
-
-            String stepName = ((String) addressTag).split(":")[0];
-            boolean widgetDisplay = (boolean) extraPopupTag;
-
-            if (widgetDisplay != popup) {
-                return;
-            }
-
-            JSONObject relevance = new JSONObject(relevanceTag);
-            Iterator<String> keys = relevance.keys();
-
-            // AND logic: all relevance conditions must be satisfied
+            Pair<String[], JSONObject> addressPair = getRelevanceAddress(view, popup);
             boolean comparison = true;
-            boolean hasEvaluated = false;
-            String[] lastAddress = null;
-            boolean isPopup = false;
+            if (addressPair != null) {
+                String[] address = addressPair.first;
+                JSONObject curRelevance = addressPair.second;
+                boolean isPopup = checkPopUpValidity(address, popup);
+                if (address.length > 1) {
 
-            while (keys.hasNext()) {
-                String curKey = keys.next();
-                JSONObject curRelevance = relevance.has(curKey) ? relevance.getJSONObject(curKey) : null;
-
-                // Each key references a different field, so always derive address from curKey.
-                // getAddressFromMap is keyed by widget, not by relevance target — it would
-                // return the same (first-key) address for every iteration.
-                String[] address = getAddress(view, curKey, curRelevance, JsonFormConstants.RELEVANCE);
-
-                if (address != null && address.length > 1) {
-                    lastAddress = address;
-                    isPopup = checkPopUpValidity(address, popup);
                     Facts curValueMap = getValueFromAddress(address, isPopup);
-                    Timber.tag("RelevanceDebug").i("addRelevance key=%s, curKey=%s, factsSize=%d, facts=%s",
-                            viewKey, curKey, curValueMap.asMap().size(), curValueMap.asMap().toString());
                     try {
-                        boolean curComparison = isRelevant(curValueMap, curRelevance);
-                        Timber.tag("RelevanceDebug").i("addRelevance key=%s, curKey=%s, curComparison=%b",
-                                viewKey, curKey, curComparison);
-                        if (!curComparison) {
-                            comparison = false;
-                            break; // AND: one false means not relevant
-                        }
-                        hasEvaluated = true;
+                        comparison = isRelevant(curValueMap, curRelevance);
                     } catch (Exception e) {
-                        Timber.tag("WriteValue").e(e, "JsonFormActivity --> addRelevance --> comparison for curKey=%s", curKey);
-                        comparison = false;
-                        break;
+                        Timber.tag("WriteValue").e(e, "JsonFormActivity --> addRelevance --> comparison");
                     }
-                }
-            }
 
-            if (!hasEvaluated) {
-                // No conditions could be evaluated — fall back to original single-key behavior
-                Pair<String[], JSONObject> addressPair = getRelevanceAddress(view, popup);
-                if (addressPair != null) {
-                    lastAddress = addressPair.first;
-                    isPopup = checkPopUpValidity(lastAddress, popup);
-                    if (lastAddress.length > 1) {
-                        Facts curValueMap = getValueFromAddress(lastAddress, isPopup);
-                        try {
-                            comparison = isRelevant(curValueMap, addressPair.second);
-                        } catch (Exception e) {
-                            Timber.tag("WriteValue").e(e, "JsonFormActivity --> addRelevance --> fallback comparison");
-                        }
+                }
+
+                if (isForNextStep) {
+                    if (((address.length == 2 && address[0].equals(nextStep())) || (address.length == 3 && address[2].contains(nextStep()))) && comparison) {
+                        setNextStepRelevant(true);
                     }
                 } else {
-                    return; // no relevance to evaluate
+                    if (Utils.isRunningOnUiThread()) {
+                        toggleViewVisibility(view, comparison, isPopup);
+                    }
                 }
             }
 
-            Timber.tag("RelevanceDebug").i("addRelevance key=%s, finalComparison=%b", viewKey, comparison);
-
-            if (isForNextStep) {
-                if (lastAddress != null && ((lastAddress.length == 2 && lastAddress[0].equals(nextStep())) || (lastAddress.length == 3 && lastAddress[2].contains(nextStep()))) && comparison) {
-                    setNextStepRelevant(true);
-                }
-            } else {
-                if (Utils.isRunningOnUiThread()) {
-                    toggleViewVisibility(view, comparison, isPopup);
-                }
-            }
 
         } catch (Exception e) {
             Timber.tag("WriteValue").e(e);
@@ -2359,16 +2272,6 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
     private void clearHiddenViewsValues(JSONObject object, String addressString) {
         if (object != null) {
-            // Don't clear values for read_only fields — they are pre-populated
-            // programmatically and should persist through visibility changes.
-            if (object.optBoolean(JsonFormConstants.READ_ONLY, false)) {
-                return;
-            }
-            // Don't clear values for fields with a default — they will be
-            // re-applied when the field becomes visible again.
-            if (object.has(JsonFormConstants.DEFAULT)) {
-                return;
-            }
             String objectKey = addressString.replace(":", "_");
             formValuesCacheMap.remove(objectKey);
             formValuesCacheMap.put(objectKey, "");
@@ -2402,7 +2305,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
 
                 curCanvasView.invalidate();
             } else {
-                if (object != null && !JsonFormConstants.REPEATING_GROUP.contains(object.optString(JsonFormConstants.TYPE))) {
+                if (!JsonFormConstants.REPEATING_GROUP.contains(object.optString(JsonFormConstants.TYPE))) {
                     clearHiddenViewsValues(object, addressString);
                 }
                 curCanvasView.setEnabled(false);
@@ -2461,11 +2364,7 @@ public class JsonFormActivity extends JsonFormBaseActivity implements JsonApi {
                     ((RadioButton) child).setChecked(false);
                 } else if (child instanceof EditText) {
                     EditText editText = (EditText) child;
-                    // Don't clear read_only fields — their values are pre-populated
-                    // and should persist through visibility changes
-                    boolean isReadOnly = child.getTag(R.id.key) != null
-                            && !editText.isFocusable();
-                    if (!isReadOnly && !TextUtils.isEmpty(editText.getText().toString())) {
+                    if (!TextUtils.isEmpty(editText.getText().toString())) {
                         editText.setText("");
                     }
                 } else if (child instanceof MaterialSpinner) {

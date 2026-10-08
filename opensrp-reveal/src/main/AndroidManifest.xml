@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.smartregister.reveal">
 
 <!--    <uses-permission android:name="android.permission.CAMERA" />-->
 
@@ -105,50 +106,36 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-        <!-- Template host activities — register concrete FormRecyclerTemplate subclasses here -->
         <activity
-            android:name=".template.GDRSFormRecyclerActivity"
+            android:name=".view.FamilyRegisterActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+            android:parentActivityName=".view.ListTasksActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.ListTasksActivity" />
+        </activity>
         <activity
-            android:name=".template.FormRecyclerFormActivity"
+            android:name=".view.FamilyProfileActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-<!--        <activity-->
-<!--            android:name=".view.FamilyRegisterActivity"-->
-<!--            android:exported="false"-->
-<!--            android:parentActivityName=".view.ListTasksActivity"-->
-<!--            android:theme="@style/AppTheme.NoActionBar" >-->
-<!--            <meta-data-->
-<!--                android:name="android.support.PARENT_ACTIVITY"-->
-<!--                android:value=".view.ListTasksActivity" />-->
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name=".view.FamilyProfileActivity"-->
-<!--            android:exported="false"-->
-<!--            android:parentActivityName=".view.FamilyRegisterActivity"-->
-<!--            android:theme="@style/AppTheme.NoActionBar" >-->
-<!--            <meta-data-->
-<!--                android:name="android.support.PARENT_ACTIVITY"-->
-<!--                android:value=".view.FamilyRegisterActivity" />-->
-<!--        </activity>-->
+            android:parentActivityName=".view.FamilyRegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.FamilyRegisterActivity" />
+        </activity>
+        <activity android:name="org.smartregister.family.activity.FamilyWizardFormActivity" android:exported="false" />
         <activity android:name="com.vijay.jsonwizard.activities.JsonWizardFormActivity" android:exported="false" />
         <activity android:name="org.smartregister.reveal.activity.ReadableJsonWizardFormActivity" android:exported="false" />
-<!--        <activity-->
-<!--            android:name=".view.FamilyOtherMemberProfileActivity"-->
-<!--            android:exported="false"-->
-<!--            android:parentActivityName=".view.FamilyProfileActivity"-->
-<!--            android:theme="@style/AppTheme.NoActionBar">-->
-<!--            <meta-data-->
-<!--                android:name="android.support.PARENT_ACTIVITY"-->
-<!--                android:value=".view.FamilyProfileActivity" />-->
-<!--        </activity>-->
+        <activity
+            android:name=".view.FamilyOtherMemberProfileActivity"
+            android:exported="false"
+            android:parentActivityName=".view.FamilyProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.FamilyProfileActivity" />
+        </activity>
         <activity
             android:name=".view.FilterTasksActivity"
             android:exported="false"
@@ -277,9 +264,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.mapbox.token"
-            android:value="@string/mapbox_access_token" />
+<!--        <meta-data-->
+<!--            android:name="com.mapbox.token"-->
+<!--            android:value="@string/mapbox_access_token" />-->
 
 <!--        <activity-->
 <!--            android:name="io.ona.kujaku.activities.MapActivity"-->
@@ -306,7 +293,10 @@
 
         <service android:name="org.smartregister.configurableviews.service.PullConfigurableViewsIntentService" android:exported="false" />
 
-       <activity
+<!--        <activity android:name="org.smartregister.simprint.SimPrintsRegisterActivity"  android:exported="false"/>-->
+<!--        <activity android:name="org.smartregister.simprint.SimPrintsVerifyActivity" android:exported="false"/>-->
+<!--        <activity android:name="org.smartregister.simprint.SimPrintsIdentifyActivity" android:exported="false"/>-->
+        <activity
             android:name="com.karumi.dexter.DexterActivity"
             android:theme="@style/Dexter.Internal.Theme.Transparent"  android:exported="false"/>
 
@@ -434,10 +424,11 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <!-- Removed hardcoded androidx.lifecycle.ProcessLifecycleOwnerInitializer
-             provider: that class was removed in lifecycle 2.3+ and caused a
-             ClassNotFoundException crash at startup. Modern lifecycle-process
-             (2.5.1) auto-registers ProcessLifecycleInitializer via androidx.startup. -->
+        <provider
+            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+            android:authorities="org.smartregister.reveal.lifecycle-process"
+            android:exported="false"
+            android:multiprocess="true" />
 
         <activity
             android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"

@@ -53,7 +53,7 @@ public class MultiSelectListSelectedAdapter extends RecyclerView.Adapter<MultiSe
                 data.remove(position);
                 notifyDataSetChanged();
 
-                multiSelectListFactory.writeToForm("");
+                multiSelectListFactory.writeToForm();
             }
         });
         String value = multiSelectItem.getValue();

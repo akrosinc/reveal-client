@@ -20,10 +20,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
@@ -885,7 +883,6 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
     private class HintAdapter extends BaseAdapter {
 
         private static final int HINT_TYPE = -1;
-        private static final int DIVIDER_TYPE = -2;
 
         private SpinnerAdapter mSpinnerAdapter;
         private Context mContext;
@@ -946,59 +943,11 @@ public class MaterialSpinner extends AppCompatSpinner implements ValueAnimator.A
                 return getHintView(parent, isDropDownView);
             }
             //workaround to have multiple types in spinner
-            // Never reuse a wrapped divider container / hint view as a plain item convertView.
             if (convertView != null) {
-                boolean reusable = convertView.getTag() != null
-                        && convertView.getTag() instanceof Integer
-                        && (Integer) convertView.getTag() != HINT_TYPE
-                        && (Integer) convertView.getTag() != DIVIDER_TYPE;
-                convertView = reusable ? convertView : null;
+                convertView = (convertView.getTag() != null && convertView.getTag() instanceof Integer && (Integer) convertView.getTag() != HINT_TYPE) ? convertView : null;
             }
-            int absolutePosition = position;
             position = hint != null ? position - 1 : position;
-
-            if (isDropDownView) {
-                View itemView = mSpinnerAdapter.getDropDownView(position, convertView, parent);
-                // Add a horizontal divider above every dropdown item except the first visible one.
-                return wrapWithDivider(itemView, parent, absolutePosition);
-            }
-            return mSpinnerAdapter.getView(position, convertView, parent);
-        }
-
-        /**
-         * Wraps a dropdown item view in a vertical container with a thin horizontal
-         * divider line drawn above it, so consecutive items are visually separated.
-         * The first visible dropdown item does not get a top divider.
-         */
-        private View wrapWithDivider(View itemView, ViewGroup parent, int absolutePosition) {
-            // The first selectable row (index 0, or index 1 when a hint occupies index 0)
-            // should not have a leading divider.
-            int firstItemIndex = hint != null ? 1 : 0;
-            if (absolutePosition <= firstItemIndex) {
-                return itemView;
-            }
-
-            LinearLayout container = new LinearLayout(mContext);
-            container.setOrientation(LinearLayout.VERTICAL);
-            container.setLayoutParams(new AbsListView.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            container.setTag(DIVIDER_TYPE);
-
-            View divider = new View(mContext);
-            divider.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, dpToPx(1)));
-            divider.setBackgroundColor(mContext.getResources()
-                    .getColor(R.color.spinner_item_divider_color));
-
-            // Detach the item view from any previous parent before re-adding.
-            if (itemView.getParent() instanceof ViewGroup) {
-                ((ViewGroup) itemView.getParent()).removeView(itemView);
-            }
-
-            container.addView(divider);
-            container.addView(itemView);
-            return container;
+            return isDropDownView ? mSpinnerAdapter.getDropDownView(position, convertView, parent) : mSpinnerAdapter.getView(position, convertView, parent);
         }
 
         private View getHintView(final ViewGroup parent, final boolean isDropDownView) {

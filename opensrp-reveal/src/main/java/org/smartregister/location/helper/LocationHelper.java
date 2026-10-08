@@ -2,6 +2,7 @@ package org.smartregister.location.helper;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
+import android.util.Log;
 import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -424,11 +425,17 @@ public class LocationHelper {
             if (node == null) {
                 return null;
             }
+            String activePlan = PreferencesUtil.getInstance().getCurrentPlanId();
+            Log.d("HIERARCHY_TRACE", "getDefaultLocationHierarchy -> Node: " + node.getName()
+                    + " | NodePlanIds: " + node.getPlanIds()
+                    + " | ActivePlan: " + activePlan);
 
            boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
                     .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
                     .isPresent();
-
+            if (!isNodeWithinCurrentPlan) {
+                Log.w("HIERARCHY_TRACE", "FILTERED OUT (default): " + node.getName() + " does not match plan " + activePlan);
+            }
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
@@ -471,10 +478,17 @@ public class LocationHelper {
             if (node == null ) {
                 return null;
             }
-
+            String activePlan = PreferencesUtil.getInstance().getCurrentPlanId();
+            Log.d("HIERARCHY_TRACE", "getFormJsonData -> Node: " + node.getName()
+                    + " | NodePlanIds: " + node.getPlanIds()
+                    + " | ActivePlan: " + activePlan);
           boolean isNodeWithinCurrentPlan = node.getPlanIds().stream()
                     .filter(planId -> PreferencesUtil.getInstance().getCurrentPlanId().equals(planId)).findAny()
                     .isPresent();
+
+            if (!isNodeWithinCurrentPlan) {
+                Log.w("HIERARCHY_TRACE", "FILTERED OUT (tree item): " + node.getName() + " does not match plan " + activePlan);
+            }
             String name = node.getName();
             formLocation.name = getReadableName(name);
             formLocation.key = idKey ? node.getLocationId() : name;
@@ -712,7 +726,8 @@ public class LocationHelper {
 
     public androidx.core.util.Pair<String, ArrayList<String>> extractLocationHierarchy(List<String> geographicLevels,
             String targetGeographicLevel) {
-
+        Log.d("HIERARCHY_TRACE", "extractLocationHierarchy CALLED with Levels: "
+                + geographicLevels + " | TargetLevel: " + targetGeographicLevel);
         List<String> operationalAreaLevels = geographicLevels;
         operationalAreaLevels.remove(targetGeographicLevel);
         List<String> defaultLocation =  generateDefaultLocationHierarchy(operationalAreaLevels);
@@ -736,7 +751,7 @@ public class LocationHelper {
     }
 
     private void removeUnauthorizedOperationalAreas(List<String> operationalAreas, List<FormLocation> entireTree) {
-
+        Log.d("HIERARCHY_TRACE", "Pruning Tree — Authorized Areas list: " + operationalAreas);
         for (FormLocation countryLocation : entireTree) {
             for (FormLocation provinceLocation : countryLocation.nodes) {
                 if (provinceLocation.nodes == null) {

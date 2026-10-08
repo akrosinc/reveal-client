@@ -98,6 +98,12 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 AccountResponse response = getOpenSRPContext().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
 
+                if (response != null && response.getAccessToken() != null) {
+                    android.util.Log.i("ACCESS_TOKEN", "==================== TOKEN FOR POSTMAN ====================");
+                    android.util.Log.i("ACCESS_TOKEN", "Bearer " + response.getAccessToken());
+                    android.util.Log.i("ACCESS_TOKEN", "============================================================");
+                }
+
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
 
                 loginResponse = getOpenSRPContext().userService().fetchUserDetails(response.getAccessToken());

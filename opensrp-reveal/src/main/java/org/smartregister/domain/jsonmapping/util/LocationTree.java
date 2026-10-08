@@ -43,6 +43,11 @@ public class LocationTree {
     }
 
     public Location findLocation(String locationId) {
+        // Original code commented:
+        // return locationsHierarchy.getNode(locationId).getNode();
+        if (locationsHierarchy == null || locationsHierarchy.getNode(locationId) == null) {
+            return null;
+        }
         return locationsHierarchy.getNode(locationId).getNode();
     }
 

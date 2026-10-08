@@ -2,15 +2,16 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.9.24'
-        android_gradle_plugin = '8.5.2'
-        jacoco_version = '0.8.11'
+        kotlin_version = '1.7.22'
+        android_gradle_plugin = '7.3.1'
+        jacoco_version = '0.8.6'
 
     }
 
     repositories {
         google()
         mavenCentral()
+        jcenter()
         maven { url 'https://plugins.gradle.org/m2/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
@@ -30,44 +31,32 @@ allprojects {
     group = 'org.smartregister'
 
     ext {
-        androidCompileSdkVersion = 34
-        androidBuildToolsVersion = '34.0.0'
+        androidCompileSdkVersion = 31
+        androidBuildToolsVersion = '28.0.3'
         androidMinSdkVersion = 26
-        androidTargetSdkVersion = 34
+        androidTargetSdkVersion = 28
         androidAnnotationsVersion = '3.0.1'
-        androidToolsBuildGradle = '8.5.2'
+        androidToolsBuildGradle = '4.2.2'
     }
-
-    Properties githubProps = new Properties()
-    File githubPropsFile = rootProject.file("local.properties")
-    if (githubPropsFile.exists()) {
-        githubProps.load(new FileInputStream(githubPropsFile))
-    }
-    def stripQuotes = { String s -> s == null ? null : s.trim().replaceAll('^"|"$', '') }
-    def ghUser = stripQuotes(githubProps.getProperty("githubUsername") ?: githubProps.getProperty("username")) ?: System.getenv("GITHUB_USER")
-    def ghToken = stripQuotes(githubProps.getProperty("githubToken") ?: githubProps.getProperty("password")) ?: System.getenv("GITHUB_TOKEN")
 
     repositories {
         maven {
             url = uri("https://maven.pkg.github.com/akrosinc/maven-repo")
-            credentials {
-                username = ghUser
-                password = ghToken
+
+            Properties localProperties = new Properties()
+            File localPropertiesFile = rootProject.file("local.properties")
+            if (localPropertiesFile.exists()) {
+                localProperties.load(new FileInputStream(localPropertiesFile))
             }
-        }
-        // Upgraded artifacts (com.akrosinc:*) published during the modernization
-        maven {
-            url = uri("https://maven.pkg.github.com/akrosinc/upgrade-repo")
+
             credentials {
-                username = ghUser
-                password = ghToken
+                username = localProperties.getProperty("githubUsername")
+                password = localProperties.getProperty("githubToken")
             }
         }
         google()
 
         mavenCentral()
-        // Hosts com.commonsware.cwac:saferoom.x used by the :p2p-sync module
-        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
         maven { url 'https://jitpack.io' }
         maven { url "https://repo.maven.apache.org/maven2" }
         mavenLocal()
@@ -87,7 +76,9 @@ subprojects {
                 targetSdkVersion rootProject.ext.androidTargetSdkVersion
             }
 
-
+            project.android.dexOptions {
+                javaMaxHeapSize = "4g"
+            }
 
             project.android.lintOptions {
                 abortOnError false

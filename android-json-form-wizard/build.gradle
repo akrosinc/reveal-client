@@ -14,11 +14,11 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.8"
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
 android {
-    namespace 'com.vijay.jsonwizard'
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
 
@@ -30,20 +30,8 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         multiDexEnabled true
-        testInstrumentationRunner "androidx.multidex.MultiDexTestRunner"
+        testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
 
-        // AGP 8 removed VERSION_NAME/VERSION_CODE from library BuildConfig;
-        // re-expose VERSION_NAME explicitly since FormUtils reads it.
-        buildConfigField "String", "VERSION_NAME", "\"${project.VERSION_NAME}\""
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    buildFeatures {
-        buildConfig true
     }
 
     buildTypes {
@@ -83,15 +71,27 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/akrosinc/maven-repo")
 
+        Properties localProperties = new Properties()
+        File localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(new FileInputStream(localPropertiesFile))
+        }
+
         credentials {
-            username = rootProject.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = rootProject.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            username = localProperties.getProperty("githubUsername")
+            password = localProperties.getProperty("githubToken")
         }
     }
 }
 
 dependencies {
 
+
+    implementation('org.smartregister:opensrp-simprints:1.1.1@aar') {
+        transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+    }
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation('com.google.android.material:material:1.6.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -131,16 +131,24 @@ dependencies {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
 
-    implementation 'com.akrosinc:client-utils:1.0.0@aar'
+    implementation 'org.smartregister:opensrp-utils:0.0.6@aar'
 
     implementation "org.jeasy:easy-rules-core:3.4.0"
     implementation "org.jeasy:easy-rules-mvel:3.4.0"
 
     implementation 'joda-time:joda-time:2.10.14'
     implementation 'com.google.code.gson:gson:2.9.0'
+        implementation('org.akros:opencv341:1.0.0') {
+            exclude group: 'com.android.support.constraint', module: 'constraint-layout'
+            exclude group: 'com.android.support', module: 'design'
+            exclude group: 'com.android.support', module: 'appcompat-v7'
+            exclude group: 'com.android.support.test', module: 'runner'
+            exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
+            exclude group: 'com.google.android.gms', module: 'play-services-vision'
+        }
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-    implementation(project(':circleprogressbar')) {
+    implementation('com.emredavarci:circleprogressbar:1.0.4@aar') {
         exclude group: 'com.android.support.constraint', module: 'constraint-layout'
         exclude group: 'com.android.support', module: 'design'
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -148,7 +156,7 @@ dependencies {
         exclude group: 'com.android.support.test.espresso', module: 'espresso-core'
     }
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    api "org.greenrobot:eventbus:3.2.0"
+    implementation "org.greenrobot:eventbus:3.2.0"
     implementation 'androidx.multidex:multidex:2.0.1'
 
     // PowerMock
@@ -180,17 +188,19 @@ dependencies {
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:3.12.4'
     testImplementation('com.squareup:fest-android:1.0.8') { exclude module: 'support-v4' }
-    testImplementation 'org.robolectric:robolectric:4.11.1'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
     testImplementation "org.json:json:20220320"
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     reports {
-        xml.required = true
-        xml.outputLocation = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
-        html.required = true
-        html.outputLocation = file("${buildDir}/reports/jacoco/jacocoRootReport/html")
+
+        xml.enabled = true
+        xml.destination = file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml")
+
+        html.enabled = true
+        html.destination file("${buildDir}/reports/jacoco/jacocoRootReport/html")
     }
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']

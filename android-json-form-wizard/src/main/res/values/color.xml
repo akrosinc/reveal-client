@@ -43,6 +43,5 @@
     <color name="transparent">#00000000</color>
     <color name="contact_tests_actionbar">#102E4F</color>
     <color name="contact_counselling_actionbar">#5D9D52</color>
-    <color name="spinner_item_divider_color">#E0E0E0</color>
 
 </resources>

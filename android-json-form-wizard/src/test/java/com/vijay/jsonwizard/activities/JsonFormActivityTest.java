@@ -377,7 +377,59 @@ public class JsonFormActivityTest extends BaseActivityTest {
         return controller.get();
     }
 
+    @Test
+    public void testRefreshExpansionPanelShouldInvokeExpectedMethods() throws JSONException {
+        activity = Mockito.spy(activity);
 
+        Utils mockUtils = Mockito.mock(Utils.class);
+        FormUtils mockFormUtils = Mockito.mock(FormUtils.class);
+
+        ReflectionHelpers.setField(activity, "formUtils", mockFormUtils);
+        ReflectionHelpers.setField(activity, "utils", mockUtils);
+
+        JSONArray jsonArray = new JSONArray();
+        LinearLayout linearLayout = new LinearLayout(RuntimeEnvironment.application);
+        RefreshExpansionPanelEvent event = new RefreshExpansionPanelEvent(jsonArray, linearLayout);
+
+        //Layout
+        RelativeLayout layoutHeader = new RelativeLayout(activity);
+        ImageView status = new ImageView(activity);
+        status.setId(R.id.statusImageView);
+        layoutHeader.addView(status, 0);
+        linearLayout.addView(layoutHeader);
+
+        LinearLayout contentLayout = (new LinearLayout(activity));
+        linearLayout.addView(contentLayout, 1);
+        LinearLayout mainContentView = new LinearLayout(activity);
+        mainContentView.setId(R.id.contentView);
+        contentLayout.addView(mainContentView);
+
+        LinearLayout buttonLayout = (new LinearLayout(activity));
+        buttonLayout.setId(R.id.accordion_bottom_navigation);
+        contentLayout.addView(buttonLayout);
+
+        Button undoButton = new Button(activity);
+        undoButton.setId(R.id.undo_button);
+        buttonLayout.addView(undoButton);
+        //
+
+        List<String> values = Arrays.asList("Done", "Not Done");
+        Mockito.doReturn(values)
+                .when(mockUtils)
+                .createExpansionPanelChildren(ArgumentMatchers.any(JSONArray.class));
+
+        activity.refreshExpansionPanel(event);
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+
+        Mockito.verify(mockFormUtils)
+                .updateExpansionPanelRecyclerView(ArgumentMatchers.eq(values), ArgumentMatchers.eq(status), ArgumentMatchers.any(Context.class));
+
+        Mockito.verify(mockFormUtils)
+                .addValuesDisplay(ArgumentMatchers.eq(values), ArgumentMatchers.eq(mainContentView), ArgumentMatchers.any(Context.class));
+
+        Mockito.verify(mockUtils)
+                .enableExpansionPanelViews(ArgumentMatchers.eq(linearLayout));
+    }
 
     @Test
     public void testGetRelevanceAddressReturnsExpectedAddressAndRelevancePair() throws JSONException {

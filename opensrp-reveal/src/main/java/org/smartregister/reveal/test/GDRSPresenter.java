@@ -6,6 +6,7 @@ import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.RCD;
 import static org.smartregister.reveal.util.Constants.Action.RCD_MEMBER;
 import static org.smartregister.reveal.util.Constants.Action.SECONDARY_INDEX_CASE_MEMBER;
+import static org.smartregister.reveal.util.Constants.Action.STRUCTURE_TASK_SYNCED;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.INDEX_CASE_COMPLETE;
 import static org.smartregister.reveal.util.Constants.BusinessStatus.NOT_VISITED;
@@ -14,12 +15,20 @@ import static org.smartregister.reveal.util.Constants.BusinessStatus.SECONDARY_I
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.mapbox.geojson.Feature;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.HdssIndividual;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.reveal.contract.BaseContract;
 
 import org.smartregister.reveal.util.Constants;
@@ -88,7 +97,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        gdrsActivity.getTaskRepository().add(task);
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
       } else if (INDEX_CASE.equals(task.getCode())) {
         Timber.tag("RevealMap").i("Is index case");
         String businessStatusIndexCase;
@@ -119,7 +128,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
         task.setSyncStatus(TYPE_Unsynced);
-        gdrsActivity.getTaskRepository().add(task);
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
         Timber.tag("RevealMap").i("FormSaved 3");
       } else {
         String businessStatusIndexCase;
@@ -150,7 +159,7 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
         task.setBusinessStatus(businessStatusIndexCase);
         task.setStatus(Task.TaskStatus.COMPLETED);
         task.setLastModified(new DateTime());
-        gdrsActivity.getTaskRepository().add(task);
+        gdrsActivity.getTaskRepository().addOrUpdate(task);
       }
     }
     gdrsActivity.populateActionList("Saving task");
@@ -164,6 +173,8 @@ public class GDRSPresenter implements BaseContract.BasePresenter {
     Toast.makeText(gdrsActivity, "Failure to save form data", Toast.LENGTH_LONG).show();
   }
 
+  @Override
+  public void onFamilyFound(CommonPersonObjectClient finalFamily) {}
 
   public void findLastEvent(String baseEntityId, String eventType) {
     gdrsInteractor.findLastEvent(baseEntityId, eventType);

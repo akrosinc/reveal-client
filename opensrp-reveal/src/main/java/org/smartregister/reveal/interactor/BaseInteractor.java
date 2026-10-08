@@ -5,7 +5,7 @@ import static org.smartregister.AllConstants.MULTI_SELECT_LIST;
 import static org.smartregister.AllConstants.TYPE;
 import static org.smartregister.family.util.DBConstants.KEY.BASE_ENTITY_ID;
 import static org.smartregister.family.util.DBConstants.KEY.DATE_REMOVED;
-
+import static org.smartregister.family.util.Utils.metadata;
 import static org.smartregister.reveal.util.Constants.Action.HABITAT_SURVEY;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE;
 import static org.smartregister.reveal.util.Constants.Action.INDEX_CASE_MEMBER;
@@ -1321,7 +1321,7 @@ private void saveRegisterStructureForm(JSONObject jsonForm) {
                 task.setBusinessStatus(businessStatus);
                 task.setStatus(Task.TaskStatus.COMPLETED);
                 task.setSyncStatus(BaseRepository.TYPE_Created);
-                taskRepository.add(task);
+                taskRepository.addOrUpdate(task);
                 Set<Task> removedTasks = new HashSet<>();
                 for (Task bloodScreeningTask :
                     taskRepository.getTasksByEntityAndCode(
@@ -1332,7 +1332,7 @@ private void saveRegisterStructureForm(JSONObject jsonForm) {
                         BLOOD_SCREENING)) {
                   bloodScreeningTask.setStatus(Task.TaskStatus.CANCELLED);
                   bloodScreeningTask.setSyncStatus(BaseRepository.TYPE_Created);
-                  taskRepository.add(bloodScreeningTask);
+                  taskRepository.addOrUpdate(bloodScreeningTask);
                   removedTasks.add(bloodScreeningTask);
                 }
                 revealApplication.setSynced(false);
@@ -1366,7 +1366,48 @@ private void saveRegisterStructureForm(JSONObject jsonForm) {
     return queryBuilder.mainCondition(mainCondition);
   }
 
+  public void fetchFamilyDetails(String structureId) {
+    appExecutors
+        .diskIO()
+        .execute(
+            () -> {
+              Cursor cursor = null;
+              CommonPersonObjectClient family = null;
+              try {
+                cursor =
+                    database.rawQuery(
+                        String.format(
+                            "SELECT %s FROM %S WHERE %s = ? AND %s IS NULL",
+                            INTENT_KEY.BASE_ENTITY_ID,
+                            TABLE_NAME.FAMILY,
+                            STRUCTURE_ID,
+                            DATE_REMOVED),
+                        new String[] {structureId});
+                if (cursor.moveToNext()) {
+                  String baseEntityId = cursor.getString(0);
+                  setCommonRepository();
+                  final CommonPersonObject personObject =
+                      commonRepository.findByBaseEntityId(baseEntityId);
+                  family =
+                      new CommonPersonObjectClient(
+                          personObject.getCaseId(), personObject.getDetails(), "");
+                  family.setColumnmaps(personObject.getColumnmaps());
+                }
+              } catch (Exception e) {
+                Timber.tag("Reveal Exception").w(e);
+              } finally {
+                if (cursor != null) cursor.close();
+              }
 
+              CommonPersonObjectClient finalFamily = family;
+              appExecutors
+                  .mainThread()
+                  .execute(
+                      () -> {
+                        presenterCallBack.onFamilyFound(finalFamily);
+                      });
+            });
+  }
 
   public void startGDRSActivity(Context context, TaskDetails details) {
     Intent intent = new Intent(context, GDRSActivity.class);
@@ -1382,7 +1423,12 @@ private void saveRegisterStructureForm(JSONObject jsonForm) {
     return database;
   }
 
-
+  public void setCommonRepository() {
+    if (commonRepository == null) {
+      commonRepository =
+          revealApplication.getContext().commonrepository(metadata().familyRegister.tableName);
+    }
+  }
 
   @Override
   public void findLastEvent(String eventBaseEntityId, String eventType) {
