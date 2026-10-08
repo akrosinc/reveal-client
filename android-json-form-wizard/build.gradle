@@ -130,7 +130,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
-
+    implementation('org.smartregister:opensrp-simprints:1.1.1@aar') {
+        transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+    }
     implementation 'com.akrosinc:client-utils:1.0.0@aar'
 
     implementation "org.jeasy:easy-rules-core:3.4.0"

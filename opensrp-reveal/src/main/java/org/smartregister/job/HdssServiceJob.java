@@ -8,16 +8,16 @@ import org.smartregister.AllConstants;
 import org.smartregister.sync.intent.HdssSyncIntentService;
 
 
-public class HdssServiceJob extends BaseJob {
-
-    public static final String TAG = "HdssServiceJob";
-
-    @NonNull
-    @Override
-    protected Result onRunJob(@NonNull Params params) {
-        Intent intent = new Intent(getApplicationContext(), HdssSyncIntentService.class);
-        getApplicationContext().startService(intent);
-        return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
-
-    }
-}
+//public class HdssServiceJob extends BaseJob {
+//
+//    public static final String TAG = "HdssServiceJob";
+//
+//    @NonNull
+//    @Override
+//    protected Result onRunJob(@NonNull Params params) {
+//        Intent intent = new Intent(getApplicationContext(), HdssSyncIntentService.class);
+//        getApplicationContext().startService(intent);
+//        return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
+//
+//    }
+//}
