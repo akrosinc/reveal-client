@@ -22,9 +22,11 @@ import org.smartregister.reveal.util.Country;
 import org.smartregister.reveal.util.PreferencesUtil;
 import org.smartregister.util.LangUtils;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import timber.log.Timber;
 
 
 public class SettingsActivity extends MultiLanguageActivity {
@@ -47,9 +49,18 @@ public class SettingsActivity extends MultiLanguageActivity {
 
 
     protected static void setPreferenceData(ListPreference preference) {
-        List<String> options = Arrays.asList(preferenceUtil.getStringPreference("env_keys").split(","));
-        preference.setEntries((String[]) options.toArray());
-        preference.setEntryValues((String[]) options.toArray());
+        String envKeys = preferenceUtil.getStringPreference("env_keys");
+        List<String> options = new ArrayList<>();
+        if (envKeys != null && !envKeys.trim().isEmpty()) {
+            for (String key : envKeys.split(",")) {
+                if (key != null && !key.trim().isEmpty()) {
+                    options.add(key.trim());
+                }
+            }
+        }
+        String[] entries = options.toArray(new String[0]);
+        preference.setEntries(entries);
+        preference.setEntryValues(entries);
 
     }
 
@@ -100,9 +111,21 @@ public class SettingsActivity extends MultiLanguageActivity {
                 setPreferenceData(envPreference);
 
                 envPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    if (newValue != null) {
+                    if (newValue != null && !newValue.toString().trim().isEmpty()) {
 
-                        EnvironmentDetails details = gson.fromJson(preferenceUtil.getStringPreference(newValue.toString()),EnvironmentDetails.class);
+                        String environmentJson = preferenceUtil.getStringPreference(newValue.toString());
+                        EnvironmentDetails details = environmentJson != null && !environmentJson.trim().isEmpty()
+                                ? gson.fromJson(environmentJson, EnvironmentDetails.class)
+                                : null;
+
+                        if (details == null) {
+                            // No stored environment data for the selected key (e.g. environments
+                            // failed to load from the config server). Don't update the base URL and
+                            // reject the change instead of crashing with an NPE.
+                            Timber.w("No environment details found for key: %s", newValue);
+                            return false;
+                        }
+
                         preferenceUtil.setBaseURL(details.getRevealServerUrl());
                         preferenceUtil.setBuildCountry(details.getBuildCountry() != null ?  details.getBuildCountry().toString() : Country.ZAMBIA.toString() );
 

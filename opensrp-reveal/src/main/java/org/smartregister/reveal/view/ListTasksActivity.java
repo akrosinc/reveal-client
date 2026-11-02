@@ -907,7 +907,16 @@ public void positionMyLocationAndLayerSwitcher() {
             }
         }
 
-        // 2. GUARD: If map or source is null, cache for post-style initialization
+        // 2. GUARD: Never touch the map after the activity is going away. A late
+        // async callback (e.g. from ListTaskInteractor) can arrive after the map's
+        // native resources have been released, which crashes with
+        // "IllegalStateException: invalid native peer".
+        if (isFinishing() || isDestroyed() || mapView == null) {
+            Log.w("MapboxDebug", "Activity finishing/destroyed; dropping map update.");
+            return;
+        }
+
+        // 3. GUARD: If map or source is null, cache for post-style initialization
         if (geoJsonSource == null || mMapboxMap == null) {
             Log.w("MapboxDebug", "Map or GeoJsonSource not ready yet! Caching data for flush after style load...");
             this.pendingFeatureCollection = featureCollection;
@@ -918,11 +927,38 @@ public void positionMyLocationAndLayerSwitcher() {
             return;
         }
 
+        // 4. GUARD: The Java source object can still reference a destroyed native
+        // peer (e.g. during a style reload). Re-resolve it from the current style
+        // and bail out if the style isn't fully loaded or the source is gone.
+        Style currentStyle = mMapboxMap.getStyle();
+        if (currentStyle == null || !currentStyle.isFullyLoaded()) {
+            Log.w("MapboxDebug", "Style not ready; caching data for flush after style load...");
+            this.pendingFeatureCollection = featureCollection;
+            this.pendingOperationalArea = operationalArea;
+            this.pendingAdjacentAreas = adjacentOperationalAreas;
+            this.pendingIsChangeMapPosition = isChangeMapPosition;
+            this.pendingParentLocations = parentLocations;
+            return;
+        }
+        GeoJsonSource liveSource = currentStyle.getSourceAs(getString(R.string.reveal_datasource_name));
+        if (liveSource == null) {
+            Log.w("MapboxDebug", "reveal data source missing from current style; dropping update.");
+            return;
+        }
+        geoJsonSource = liveSource;
+
         // Clear pending cache when actively rendering
         this.pendingFeatureCollection = null;
 
-        // 3. Update GeoJSON Source
-        geoJsonSource.setGeoJson(featureCollection);
+        // 5. Update GeoJSON Source
+        try {
+            geoJsonSource.setGeoJson(featureCollection);
+        } catch (RuntimeException e) {
+            // Defends against a race where the native peer is invalidated between
+            // the checks above and this call (style swap / teardown on another frame).
+            Log.e("MapboxDebug", "Failed to set GeoJSON on source; map likely torn down.", e);
+            return;
+        }
 
         // 4. Update style layers inside getStyle callback
         mMapboxMap.getStyle(style -> {
@@ -1323,6 +1359,15 @@ public Location getUserCurrentLocation() {
     @Override
     public void onDestroy() {
         listTaskPresenter = null;
+        // Release the map's native resources and drop references so any late
+        // async callbacks don't operate on a destroyed native peer.
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
+        mMapboxMap = null;
+        geoJsonSource = null;
+        selectedGeoJsonSource = null;
+        pendingFeatureCollection = null;
         super.onDestroy();
     }
 
